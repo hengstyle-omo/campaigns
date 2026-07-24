@@ -209,6 +209,21 @@
         .keep-pink-fill {
             fill: #c9707e !important;
         }
+
+        .choice-button {
+            font-weight: 600 !important;
+        }
+        .choice-button[aria-pressed="true"] {
+            border-width: 1.5px !important;
+        }
+        #btnThemePink[aria-pressed="true"],
+        .preset-button[aria-pressed="true"] {
+            border-color: #c9707e !important;
+        }
+        #btnThemeBlue[aria-pressed="true"],
+        [data-theme="blue"] .preset-button[aria-pressed="true"] {
+            border-color: #1b365d !important;
+        }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col justify-between selection:bg-dyson-rose selection:text-white">
@@ -228,10 +243,13 @@
             
             <div class="flex items-center space-x-2 sm:space-x-3 text-xs text-slate-600">
                 <span class="hidden sm:inline font-medium"><i class="fa-solid fa-heart text-dyson-rose mr-1 animate-pulse"></i> 七夕情人節特別限定</span>
-                <button onclick="playAirportChime()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[11px] sm:text-xs">
-                    <i class="fa-solid fa-volume-high text-dyson-rose"></i>
-                    <span>登機廣播音效</span>
+                <button type="button" id="airportAudioButton" aria-pressed="false" aria-label="播放機場廣播" onclick="toggleAirportAnnouncement()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[11px] sm:text-xs">
+                    <i id="airportAudioIcon" class="fa-solid fa-bullhorn text-dyson-rose"></i>
+                    <span id="airportAudioLabel">播放機場廣播</span>
                 </button>
+                <audio id="airportFinalCallAudio" preload="none" class="hidden">
+                    <source src="./assets/audio/dyson_hd19_boading_final_call.mp3" type="audio/mpeg">
+                </audio>
             </div>
         </div>
     </header>
@@ -248,30 +266,30 @@
             <!-- Vertical Stack for Theme & Preset -->
             <div class="flex flex-col gap-3 px-2">
                 <!-- Theme Selection -->
-                <div class="bg-white border border-rose-200/60 rounded-xl p-3 space-y-2">
+                <div class="space-y-1.5">
                     <span class="text-[10px] font-bold text-dyson-rose flex items-center gap-1 uppercase tracking-tight">
                         <i class="fa-solid fa-palette"></i> 配色主題 Theme
                     </span>
                     <div class="grid grid-cols-2 gap-2">
-                        <button type="button" id="btnThemePink" onclick="setTheme('pink')" class="py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[10px] font-bold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                        <button type="button" id="btnThemePink" aria-pressed="true" onclick="setTheme('pink')" class="choice-button py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
                             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #e89da2 !important; border: 1.5px solid #c9707e !important;"></span> 粉霧玫瑰
                         </button>
-                        <button type="button" id="btnThemeBlue" onclick="setTheme('blue')" class="py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                        <button type="button" id="btnThemeBlue" aria-pressed="false" onclick="setTheme('blue')" class="choice-button py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
                             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #1b365d !important; border: 1.5px solid #96b9dc !important;"></span> 普魯士藍
                         </button>
                     </div>
                 </div>
 
                 <!-- Scenario Preset Option -->
-                <div class="bg-rose-50/70 border border-rose-200/60 rounded-xl p-3 space-y-2">
+                <div class="space-y-1.5">
                     <span class="text-[10px] font-bold text-dyson-rose flex items-center gap-1 tracking-tight">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> 浪漫情境 VIBES
                     </span>
                     <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="applyModePreset('together')" class="py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border border-rose-200/80 flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                        <button type="button" id="btnPresetTogether" aria-pressed="true" onclick="applyModePreset('together')" class="choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border-2 border-dyson-rose flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-heart-circle-bolt text-dyson-rose text-[10px]"></i> 浪漫同行
                         </button>
-                        <button type="button" onclick="applyModePreset('gift')" class="py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border border-rose-200/80 flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                        <button type="button" id="btnPresetGift" aria-pressed="false" onclick="applyModePreset('gift')" class="choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border border-rose-200/80 flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-paper-plane text-dyson-rose text-[10px]"></i> 飛向愛人
                         </button>
                     </div>
@@ -287,9 +305,9 @@
                         <label class="block text-[10px] font-bold text-dyson-rose uppercase tracking-wider">
                             <i class="fa-solid fa-user-heart mr-1"></i> 旅客 / 情侶名稱 PASSENGER
                         </label>
-                        <span id="charCount" class="text-[10px] text-slate-500 font-mono">8/15</span>
+                        <span id="charCount" class="text-[10px] text-slate-500 font-sans">8/15</span>
                     </div>
-                    <input type="text" id="inPassenger" value="YOU & ME" maxlength="15" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-semibold text-dyson-dark placeholder-slate-400 focus:outline-none focus:border-dyson-rose focus:ring-1 focus:ring-dyson-rose transition">
+                    <input type="text" id="inPassenger" value="YOU & ME" maxlength="15" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-bold text-dyson-dark placeholder-slate-400 focus:outline-none focus:border-dyson-rose focus:ring-1 focus:ring-dyson-rose transition">
                 </div>
 
                 <!-- Flight Route -->
@@ -299,7 +317,7 @@
                             <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
                                 <i class="fa-solid fa-plane-departure mr-1 text-dyson-rose"></i> 出發地 FROM
                             </label>
-                            <span id="charCountOrigin" class="text-[9px] text-slate-400 font-mono">6/12</span>
+                            <span id="charCountOrigin" class="text-[9px] text-slate-400 font-sans">6/12</span>
                         </div>
                         <input type="text" id="inOrigin" value="TAIPEI" maxlength="12" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-bold text-dyson-dark focus:outline-none focus:border-dyson-rose transition uppercase">
                     </div>
@@ -308,7 +326,7 @@
                             <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
                                 <i class="fa-solid fa-plane-arrival mr-1 text-dyson-rose"></i> 目的地 TO
                             </label>
-                            <span id="charCountDest" class="text-[9px] text-slate-400 font-mono">8/12</span>
+                            <span id="charCountDest" class="text-[9px] text-slate-400 font-sans">8/12</span>
                         </div>
                         <input type="text" id="inDestination" value="ANYWHERE" maxlength="12" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-bold text-dyson-dark focus:outline-none focus:border-dyson-rose transition uppercase">
                     </div>
@@ -320,13 +338,13 @@
                         <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
                             <i class="fa-solid fa-calendar-days mr-1 text-dyson-rose"></i> 日期 DATE
                         </label>
-                        <input type="date" id="inDate" value="2026-08-19" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-semibold text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
+                        <input type="date" id="inDate" value="2026-08-19" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
                     </div>
                     <div>
                         <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
                             <i class="fa-solid fa-clock mr-1 text-dyson-rose"></i> BOARDING
                         </label>
-                        <input type="text" id="inTime" value="13:14" placeholder="13:14" maxlength="5" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-bold font-mono text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
+                        <input type="text" id="inTime" value="13:14" placeholder="13:14" maxlength="5" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
                     </div>
                 </div>
 
@@ -337,11 +355,11 @@
                             <i class="fa-solid fa-quote-left mr-1 text-dyson-rose"></i> 情意悄悄話 MESSAGE
                         </label>
                         <div class="flex items-center gap-2">
-                            <span id="charCountMsg" class="text-[9px] text-slate-400 font-mono">23/45</span>
+                            <span id="charCountMsg" class="text-[9px] text-slate-400 font-sans">23/45</span>
                             <button type="button" onclick="randomizeInspiration()" class="text-[9px] text-dyson-rose bg-rose-100/60 border border-rose-200 px-2 py-0.5 rounded-full transition font-medium">隨機</button>
                         </div>
                     </div>
-                    <input type="text" id="inMessage" value="YOU ARE MY DESTINATION." maxlength="45" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
+                    <textarea id="inMessage" rows="2" maxlength="45" class="w-full h-[58px] resize-none bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans leading-relaxed text-dyson-dark focus:outline-none focus:border-dyson-rose transition">YOU ARE MY DESTINATION.</textarea>
                 </div>
 
                 <!-- Format Controls -->
@@ -429,7 +447,7 @@
                                 </div>
 
                                 <div class="flex flex-col items-center shrink-0">
-                                    <img src="https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1" alt="Dyson HD19" referrerpolicy="no-referrer" class="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded-2xl overflow-hidden" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                    <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
                                 </div>
                             </div>
                         </div>
@@ -484,7 +502,7 @@
                             </div>
 
                             <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
-                                <img id="qrCodeLandscape" src="" alt="QR Code" class="h-11 w-11 object-contain rounded-none">
+                                <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
                                 <span class="text-[8px] font-light text-dyson-rose tracking-tight mt-1">了解更多活動資訊</span>
                             </div>
                         </div>
@@ -503,7 +521,7 @@
 
                         <div class="flex-1 grid grid-cols-12 gap-3 items-center py-1.5 min-h-0">
                             <div class="col-span-4 h-[180px] w-full bg-white/80 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden mx-auto">
-                                <img src="https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png" alt="Dyson Product Back" referrerpolicy="no-referrer" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                <img src="./assets/images/dyson_product_hd19.png" alt="Dyson Product Back" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="loadOriginalImage(this, 'https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png');">
                             </div>
 
                             <div class="col-span-8 flex flex-col justify-center space-y-2">
@@ -554,14 +572,14 @@
                         <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                     </p>
                     <div class="w-full grid grid-cols-3 gap-3">
-                        <button type="button" onclick="downloadBoardingPass()" class="w-full py-2.5 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs sm:text-sm rounded-xl border border-rose-200/80 shadow-md flex items-center justify-center gap-1.5 transition transform active:scale-95">
-                            <i class="fa-solid fa-file-arrow-down text-dyson-rose"></i> 下載圖片
+                        <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-file-arrow-down text-dyson-rose w-4 text-center"></i> 下載圖片
                         </button>
-                        <button type="button" onclick="shareBoardingPass()" class="w-full py-2.5 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-rose-300/40 flex items-center justify-center gap-1.5 transition transform active:scale-95">
-                            <i class="fa-solid fa-image"></i> 分享圖片
+                        <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl border border-transparent shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                         </button>
-                        <button type="button" onclick="shareGameLink()" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100/80 text-dyson-dark font-bold text-xs sm:text-sm rounded-xl border border-rose-200 shadow-sm flex items-center justify-center gap-1.5 transition transform active:scale-95">
-                            <i class="fa-solid fa-paper-plane text-dyson-rose"></i> 分享遊戲
+                        <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane text-dyson-rose w-4 text-center"></i> 分享遊戲
                         </button>
                     </div>
                 </div>
@@ -594,11 +612,11 @@
                                 <!-- Product Image & QR Code Side-by-Side -->
                                 <div class="pb-1 relative flex items-center justify-between px-1 shrink-0">
                                     <div class="flex items-center justify-center flex-1 pr-2">
-                                        <img src="https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1" alt="Dyson HD19" referrerpolicy="no-referrer" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                        <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
                                     </div>
                                     <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
                                         <span class="text-[8px] font-light text-dyson-rose tracking-tight mb-1">了解更多活動資訊</span>
-                                        <img id="qrCodePortrait" src="" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm">
+                                        <img id="qrCodePortrait" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
                                     </div>
                                 </div>
 
@@ -728,7 +746,7 @@
 
                             <div class="flex-1 flex flex-col justify-start space-y-2 pt-1">
                                 <div class="w-[140px] h-[140px] bg-white/80 border border-rose-100 shadow-sm rounded-2xl shrink-0 mx-auto relative overflow-hidden">
-                                    <img src="https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png" alt="Dyson Product Back" referrerpolicy="no-referrer" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                    <img src="./assets/images/dyson_product_hd19.png" alt="Dyson Product Back" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="loadOriginalImage(this, 'https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png');">
                                 </div>
 
                                 <div class="space-y-1.5">
@@ -778,14 +796,14 @@
                             <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                         </p>
                         <div class="flex flex-col gap-2.5 w-36 sm:w-40">
-                            <button type="button" onclick="downloadBoardingPass()" class="w-full py-2.5 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-md flex items-center justify-center gap-2 transition transform active:scale-95">
-                                <i class="fa-solid fa-file-arrow-down text-dyson-rose"></i> 下載圖片
+                            <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-file-arrow-down text-dyson-rose w-4 text-center"></i> 下載圖片
                             </button>
-                            <button type="button" onclick="shareBoardingPass()" class="w-full py-2.5 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-lg hover:shadow-rose-300/40 flex items-center justify-center gap-2 transition transform active:scale-95">
-                                <i class="fa-solid fa-image"></i> 分享圖片
+                            <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl border border-transparent shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                             </button>
-                            <button type="button" onclick="shareGameLink()" class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100/80 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                                <i class="fa-solid fa-paper-plane text-dyson-rose"></i> 分享遊戲
+                            <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-paper-plane text-dyson-rose w-4 text-center"></i> 分享遊戲
                             </button>
                         </div>
                     </div>
@@ -810,6 +828,7 @@
         let currentMode = 'portrait';
         let currentTheme = 'pink';
         let isFlipped = false;
+        let currentPreset = 'together';
 
         const classOptions = [
             { en: 'First Class', zh: '頭等艙' },
@@ -838,13 +857,17 @@
             if (theme === 'blue') {
                 document.body.setAttribute('data-theme', 'blue');
                 // Standardized Class names to maintain White Backgrounds
-                if (btnPink) btnPink.className = "py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
-                if (btnBlue) btnBlue.className = "py-1.5 px-1 bg-white border-2 border-dyson-navy text-dyson-dark text-[10px] font-bold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnPink) btnPink.className = "choice-button py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnBlue) btnBlue.className = "choice-button py-1.5 px-1 bg-white border-2 border-dyson-navy text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnPink) btnPink.setAttribute('aria-pressed', 'false');
+                if (btnBlue) btnBlue.setAttribute('aria-pressed', 'true');
                 showToast("已切換至「普魯士藍 (Prussian Blue)」尊榮主題！", "fa-palette");
             } else {
                 document.body.removeAttribute('data-theme');
-                if (btnPink) btnPink.className = "py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[10px] font-bold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
-                if (btnBlue) btnBlue.className = "py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnPink) btnPink.className = "choice-button py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnBlue) btnBlue.className = "choice-button py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnPink) btnPink.setAttribute('aria-pressed', 'true');
+                if (btnBlue) btnBlue.setAttribute('aria-pressed', 'false');
                 showToast("已切換至「粉霧玫瑰」情人節主題！", "fa-palette");
             }
 
@@ -872,54 +895,65 @@
             return classOptions[idx];
         }
 
-        function initQrCode() {
-            const targetUrl = "https://www.dyson.tw/";
+        function loadOriginalImage(image, originalUrl) {
+            image.onerror = function () {
+                this.onerror = null;
+                this.src = getFallbackSvgDataUrl(this);
+            };
+            image.referrerPolicy = 'no-referrer';
+            image.src = originalUrl;
+        }
+
+        function loadGeneratedQr(image) {
+            image.onerror = null;
+            image.src = getFallbackSvgDataUrl('qr');
+
+            if (typeof QRCode === 'undefined') return;
+
             const tempContainer = document.createElement('div');
             tempContainer.style.display = 'none';
             document.body.appendChild(tempContainer);
 
-            function applyQrDataUrl(dataUrl) {
-                const qrL = document.getElementById('qrCodeLandscape');
-                const qrP = document.getElementById('qrCodePortrait');
-                if (qrL) qrL.src = dataUrl;
-                if (qrP) qrP.src = dataUrl;
-            }
-
-            const defaultSvgQr = getFallbackSvgDataUrl('qr');
-            applyQrDataUrl(defaultSvgQr);
-
-            if (typeof QRCode !== 'undefined') {
-                try {
-                    const darkColor = currentTheme === 'blue' ? "#112239" : "#1e1c24";
-                    const qrcode = new QRCode(tempContainer, {
-                        text: targetUrl,
-                        width: 160,
-                        height: 160,
-                        colorDark: darkColor,
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
-                    });
-
-                    setTimeout(() => {
-                        const img = tempContainer.querySelector('img');
-                        const cvs = tempContainer.querySelector('canvas');
-                        let dataUrl = '';
-                        if (img && img.src && img.src.startsWith('data:')) {
-                            dataUrl = img.src;
-                        } else if (cvs) {
-                            dataUrl = cvs.toDataURL('image/png');
-                        }
-                        if (dataUrl) {
-                            applyQrDataUrl(dataUrl);
-                        }
-                        if (document.body.contains(tempContainer)) {
-                            document.body.removeChild(tempContainer);
-                        }
-                    }, 100);
-                } catch (e) {
-                    console.log("QRCode library init error, using vector QR code fallback");
+            const cleanup = () => {
+                if (document.body.contains(tempContainer)) {
+                    document.body.removeChild(tempContainer);
                 }
+            };
+
+            try {
+                new QRCode(tempContainer, {
+                    text: 'https://www.dyson.tw/',
+                    width: 160,
+                    height: 160,
+                    colorDark: currentTheme === 'blue' ? '#112239' : '#1e1c24',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+
+                setTimeout(() => {
+                    const generatedImage = tempContainer.querySelector('img');
+                    const generatedCanvas = tempContainer.querySelector('canvas');
+                    const dataUrl = generatedImage?.src?.startsWith('data:')
+                        ? generatedImage.src
+                        : generatedCanvas?.toDataURL('image/png');
+                    if (dataUrl) image.src = dataUrl;
+                    cleanup();
+                }, 100);
+            } catch (error) {
+                cleanup();
             }
+        }
+
+        function initQrCode() {
+            const qrImagePath = './assets/images/dyson_campaign_qrcode.png';
+            ['qrCodeLandscape', 'qrCodePortrait'].forEach(id => {
+                const image = document.getElementById(id);
+                if (!image) return;
+                image.onerror = function () {
+                    loadGeneratedQr(this);
+                };
+                image.src = qrImagePath;
+            });
         }
 
         function setupEventListeners() {
@@ -928,6 +962,7 @@
                 const el = document.getElementById(id);
                 if (el) {
                     el.addEventListener('input', (e) => {
+                        if (currentPreset) setScenarioSelection(null);
                         if (id === 'inTime') {
                             let raw = el.value.replace(/\D/g, '');
                             let formatted = '';
@@ -1121,6 +1156,23 @@
             if (cardP) cardP.classList.remove('rotate-y-180');
         }
 
+        function setScenarioSelection(preset) {
+            currentPreset = preset;
+            const btnTogether = document.getElementById('btnPresetTogether');
+            const btnGift = document.getElementById('btnPresetGift');
+            const selectedClass = "choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border-2 border-dyson-rose flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+            const unselectedClass = "choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border border-rose-200/80 flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+
+            if (btnTogether) {
+                btnTogether.className = preset === 'together' ? selectedClass : unselectedClass;
+                btnTogether.setAttribute('aria-pressed', preset === 'together' ? 'true' : 'false');
+            }
+            if (btnGift) {
+                btnGift.className = preset === 'gift' ? selectedClass : unselectedClass;
+                btnGift.setAttribute('aria-pressed', preset === 'gift' ? 'true' : 'false');
+            }
+        }
+
         function applyModePreset(preset) {
             const elPass = document.getElementById('inPassenger');
             const elOrig = document.getElementById('inOrigin');
@@ -1128,12 +1180,13 @@
             const elMsg = document.getElementById('inMessage');
 
             currentClassObj = getRandomClass();
+            setScenarioSelection(preset);
 
             if (preset === 'gift') {
                 if (elPass) elPass.value = 'Dyson';
                 if (elOrig) elOrig.value = 'ME';
                 if (elDest) elDest.value = 'YOUR HEART';
-                if (elMsg) elMsg.value = 'EVERY MOMENT WITH YOU IS MY FAVORITE DESTINATION.';
+                if (elMsg) elMsg.value = 'YOU ARE MY FAVORITE DESTINATION, ALWAYS.';
                 showToast("已載入「飛向愛人」浪漫設定！");
             } else if (preset === 'together') {
                 if (elPass) elPass.value = 'YOU & ME';
@@ -1164,6 +1217,7 @@
             const elMsg = document.getElementById('inMessage');
             if (elMsg) elMsg.value = randomMsg;
             currentClassObj = getRandomClass();
+            setScenarioSelection(null);
             updatePass();
             showToast("已隨機套用浪漫靈感與機票艙等！");
         }
@@ -1222,6 +1276,52 @@
             }
         }
 
+        function resetAirportAnnouncementButton() {
+            const button = document.getElementById('airportAudioButton');
+            const icon = document.getElementById('airportAudioIcon');
+            const label = document.getElementById('airportAudioLabel');
+
+            if (button) {
+                button.setAttribute('aria-pressed', 'false');
+                button.setAttribute('aria-label', '播放機場廣播');
+            }
+            if (icon) icon.className = 'fa-solid fa-bullhorn text-dyson-rose';
+            if (label) label.textContent = '播放機場廣播';
+        }
+
+        async function toggleAirportAnnouncement() {
+            const audio = document.getElementById('airportFinalCallAudio');
+            const button = document.getElementById('airportAudioButton');
+            const icon = document.getElementById('airportAudioIcon');
+            const label = document.getElementById('airportAudioLabel');
+
+            if (!audio) return;
+
+            if (!audio.paused) {
+                audio.pause();
+                audio.currentTime = 0;
+                resetAirportAnnouncementButton();
+                showToast('已停止機場廣播', 'fa-volume-xmark');
+                return;
+            }
+
+            try {
+                audio.currentTime = 0;
+                await audio.play();
+                if (button) {
+                    button.setAttribute('aria-pressed', 'true');
+                    button.setAttribute('aria-label', '停止機場廣播');
+                }
+                if (icon) icon.className = 'fa-solid fa-stop text-dyson-rose';
+                if (label) label.textContent = '停止機場廣播';
+            } catch (error) {
+                resetAirportAnnouncementButton();
+                showToast('找不到廣播音檔，請確認 assets/audio 中的 MP3 檔案', 'fa-circle-exclamation');
+            }
+        }
+
+        document.getElementById('airportFinalCallAudio')?.addEventListener('ended', resetAirportAnnouncementButton);
+
         function getFallbackSvgDataUrl(imgOrType, isDark = false) {
             let type = '';
             if (typeof imgOrType === 'string') {
@@ -1260,17 +1360,26 @@
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         }
 
+        async function fetchImageAsDataUrl(url, timeoutMs) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(url, { mode: 'cors', signal: controller.signal });
+                if (!res.ok) return null;
+                const blob = await res.blob();
+                return await blobToDataUrl(blob);
+            } catch (error) {
+                return null;
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
+
         async function imageToDataUrl(url, alt) {
             if (!url || url.startsWith('data:')) return url;
 
-            try {
-                const res = await fetch(url, { mode: 'cors' });
-                if (res.ok) {
-                    const blob = await res.blob();
-                    const dataUrl = await blobToDataUrl(blob);
-                    if (dataUrl) return dataUrl;
-                }
-            } catch (e) {}
+            const directDataUrl = await fetchImageAsDataUrl(url, 2500);
+            if (directDataUrl) return directDataUrl;
 
             const proxies = [
                 `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
@@ -1278,16 +1387,11 @@
                 `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
             ];
 
-            for (const proxyUrl of proxies) {
-                try {
-                    const res = await fetch(proxyUrl);
-                    if (res.ok) {
-                        const blob = await res.blob();
-                        const dataUrl = await blobToDataUrl(blob);
-                        if (dataUrl) return dataUrl;
-                    }
-                } catch (e) {}
-            }
+            const proxyResults = await Promise.all(
+                proxies.map(proxyUrl => fetchImageAsDataUrl(proxyUrl, 3500))
+            );
+            const proxyDataUrl = proxyResults.find(Boolean);
+            if (proxyDataUrl) return proxyDataUrl;
 
             return getFallbackSvgDataUrl(alt);
         }
@@ -1306,7 +1410,10 @@
             playAirportChime();
 
             if (document.fonts && document.fonts.ready) {
-                await document.fonts.ready;
+                await Promise.race([
+                    document.fonts.ready,
+                    new Promise(resolve => setTimeout(resolve, 2500))
+                ]);
             }
 
             let targetId = '';
@@ -1344,10 +1451,10 @@
             clonedEl.style.height = targetHeight + 'px';
             clonedEl.classList.remove('rotate-y-180', 'backface-hidden');
 
-            const imgs = clonedEl.querySelectorAll('img');
-            for (let img of imgs) {
+            const imgs = Array.from(clonedEl.querySelectorAll('img'));
+            await Promise.all(imgs.map(async (img) => {
                 try {
-                    if (img.src && img.src.startsWith('data:')) continue;
+                    if (img.src && img.src.startsWith('data:')) return;
                     const dataUrl = await imageToDataUrl(img.src, img.alt || img.id || '');
                     if (dataUrl) {
                         img.src = dataUrl;
@@ -1357,21 +1464,26 @@
                 } catch (e) {
                     img.src = getFallbackSvgDataUrl(img);
                 }
-            }
+            }));
 
             tempContainer.appendChild(clonedEl);
             document.body.appendChild(tempContainer);
 
             try {
+                if (typeof html2canvas !== 'function') {
+                    throw new Error('圖片產生工具尚未載入');
+                }
+
                 const canvas = await html2canvas(clonedEl, {
                     scale: 3,
                     useCORS: true,
-                    allowTaint: true,
+                    allowTaint: false,
                     backgroundColor: null,
                     width: width,
                     height: targetHeight,
                     windowWidth: width,
                     windowHeight: targetHeight,
+                    imageTimeout: 5000,
                     logging: false,
                     onclone: (clonedDoc) => {
                         const target = clonedDoc.getElementById(targetId);
@@ -1397,28 +1509,63 @@
             }
         }
 
-        async function downloadBoardingPass() {
+        function setDownloadButtonBusy(button, isBusy) {
+            if (!button) return;
+
+            if (isBusy) {
+                button.dataset.originalHtml = button.innerHTML;
+                button.disabled = true;
+                button.setAttribute('aria-busy', 'true');
+                button.classList.add('opacity-70', 'cursor-wait');
+                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 text-center"></i> 產生中';
+            } else {
+                button.disabled = false;
+                button.removeAttribute('aria-busy');
+                button.classList.remove('opacity-70', 'cursor-wait');
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                    delete button.dataset.originalHtml;
+                }
+            }
+        }
+
+        function canvasToPngBlob(canvas) {
+            return new Promise((resolve) => {
+                canvas.toBlob(resolve, 'image/png');
+            });
+        }
+
+        function triggerBlobDownload(blob, fileName) {
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = fileName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+        }
+
+        async function downloadBoardingPass(button) {
+            setDownloadButtonBusy(button, true);
             try {
                 const { canvas, fileName } = await generateBoardingPassCanvas();
-                canvas.toBlob((blob) => {
-                    if (!blob) {
-                        showToast("生成圖片失敗，請再試一次", "fa-circle-exclamation");
-                        return;
-                    }
-                    const link = document.createElement('a');
-                    link.download = fileName;
-                    link.href = URL.createObjectURL(blob);
-                    link.click();
-                    showToast("已成功下載專屬登機證！", "fa-circle-check");
-                }, 'image/png');
+                const blob = await canvasToPngBlob(canvas);
+                if (!blob) throw new Error('無法建立下載圖片');
+
+                triggerBlobDownload(blob, fileName);
+                showToast("已成功下載專屬登機證！", "fa-circle-check");
             } catch (err) {
                 console.error('下載失敗:', err);
-                showToast("生成失敗，請再試一次", "fa-circle-exclamation");
+                showToast("下載失敗，請重新整理後再試一次", "fa-circle-exclamation");
+            } finally {
+                setDownloadButtonBusy(button, false);
             }
         }
 
         function copyShareTextToClipboard() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛✈️ 快來領取專屬登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareText = "Dyson Airways HD19 航班即將起飛✈️ 快來領取專屬登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
             try {
                 const tempInput = document.createElement('textarea');
                 tempInput.value = shareText;
@@ -1440,7 +1587,7 @@
 
         async function shareGameLink() {
             const shareTitle = "Dyson HD19 專屬登機證";
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取你的專屬登機證 ❤️";
+            const shareText = "Dyson Airways HD19 航班即將起飛✈️ 快來領取你的專屬登機證";
             const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
 
             const shareData = {
@@ -1453,7 +1600,7 @@
             if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                 try {
                     await navigator.share(shareData);
-                    showToast("成功分享遊戲連結！ ❤️", "fa-circle-check");
+                    showToast("成功分享遊戲連結！", "fa-circle-check");
                     return;
                 } catch (shareErr) {
                     if (shareErr.name === 'AbortError') {
@@ -1473,7 +1620,7 @@
         }
 
         async function shareBoardingPass() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛✈️ 快來領取專屬登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareText = "Dyson Airways HD19 航班即將起飛✈️ 快來領取專屬登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
             const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
 
             // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
