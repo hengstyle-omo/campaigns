@@ -172,7 +172,8 @@
             background-color: #1b365d !important;
         }
         [data-theme="blue"] .bg-gradient-to-r.from-dyson-pink {
-            background-image: linear-gradient(to right, #96b9dc, #1b365d) !important;
+            background-image: none !important;
+            background-color: #1b365d !important;
         }
         [data-theme="blue"] .bg-rose-50,
         [data-theme="blue"] .bg-rose-50\/50,
@@ -208,6 +209,12 @@
         }
         .keep-pink-fill {
             fill: #c9707e !important;
+        }
+        [data-theme="blue"] .keep-pink-rose {
+            color: #a66f3f !important;
+        }
+        [data-theme="blue"] .keep-pink-fill {
+            fill: #a66f3f !important;
         }
 
         .choice-button {
@@ -267,8 +274,8 @@
             <div class="flex flex-col gap-3 px-2">
                 <!-- Theme Selection -->
                 <div class="space-y-1.5">
-                    <span class="text-[10px] font-bold text-dyson-rose flex items-center gap-1 uppercase tracking-tight">
-                        <i class="fa-solid fa-palette"></i> 配色主題 Theme
+                    <span class="text-[10px] font-semibold text-slate-600 flex items-center gap-1 uppercase tracking-wider">
+                        <i class="fa-solid fa-palette text-dyson-rose"></i> 配色主題 Theme
                     </span>
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button" id="btnThemePink" aria-pressed="true" onclick="setTheme('pink')" class="choice-button py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[10px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
@@ -282,8 +289,8 @@
 
                 <!-- Scenario Preset Option -->
                 <div class="space-y-1.5">
-                    <span class="text-[10px] font-bold text-dyson-rose flex items-center gap-1 tracking-tight">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> 浪漫情境 VIBES
+                    <span class="text-[10px] font-semibold text-slate-600 flex items-center gap-1 uppercase tracking-wider">
+                        <i class="fa-solid fa-wand-magic-sparkles text-dyson-rose"></i> 浪漫情境 VIBES
                     </span>
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button" id="btnPresetTogether" aria-pressed="true" onclick="applyModePreset('together')" class="choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[10px] font-semibold rounded-lg border-2 border-dyson-rose flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
@@ -297,13 +304,13 @@
             </div>
 
             <!-- Form Groups -->
-            <form id="ticketForm" class="space-y-3 px-4" onsubmit="event.preventDefault();">
+            <form id="ticketForm" class="space-y-3 px-2" onsubmit="event.preventDefault();">
                 
                 <!-- Passenger Name -->
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <label class="block text-[10px] font-bold text-dyson-rose uppercase tracking-wider">
-                            <i class="fa-solid fa-user-heart mr-1"></i> 旅客 / 情侶名稱 PASSENGER
+                            <i aria-hidden="true" class="fa-solid fa-user mr-1 text-dyson-rose"></i>旅客 / 情侶名稱 PASSENGER
                         </label>
                         <span id="charCount" class="text-[10px] text-slate-500 font-sans">8/15</span>
                     </div>
@@ -351,8 +358,8 @@
                 <!-- Message Control -->
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
-                            <i class="fa-solid fa-quote-left mr-1 text-dyson-rose"></i> 情意悄悄話 MESSAGE
+                        <label class="block text-[10px] font-bold text-dyson-rose uppercase tracking-wider">
+                            <i class="fa-solid fa-quote-left mr-1"></i> 情意悄悄話 MESSAGE
                         </label>
                         <div class="flex items-center gap-2">
                             <span id="charCountMsg" class="text-[9px] text-slate-400 font-sans">23/45</span>
@@ -572,14 +579,14 @@
                         <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                     </p>
                     <div class="w-full grid grid-cols-3 gap-3">
-                        <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                            <i class="fa-solid fa-file-arrow-down text-dyson-rose w-4 text-center"></i> 下載圖片
-                        </button>
-                        <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl border border-transparent shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                         </button>
-                        <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                            <i class="fa-solid fa-paper-plane text-dyson-rose w-4 text-center"></i> 分享遊戲
+                        <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane w-4 text-center"></i> 分享遊戲
+                        </button>
+                        <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                         </button>
                     </div>
                 </div>
@@ -796,14 +803,14 @@
                             <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                         </p>
                         <div class="flex flex-col gap-2.5 w-36 sm:w-40">
-                            <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                                <i class="fa-solid fa-file-arrow-down text-dyson-rose w-4 text-center"></i> 下載圖片
-                            </button>
-                            <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl border border-transparent shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                             </button>
-                            <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-white hover:bg-rose-50 text-dyson-dark font-bold text-xs rounded-xl border border-rose-200/80 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                                <i class="fa-solid fa-paper-plane text-dyson-rose w-4 text-center"></i> 分享遊戲
+                            <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-paper-plane w-4 text-center"></i> 分享遊戲
+                            </button>
+                            <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                             </button>
                         </div>
                     </div>
@@ -1565,7 +1572,7 @@
         }
 
         function copyShareTextToClipboard() {
-            const shareText = "Dyson Airways HD19 航班即將起飛✈️ 快來領取專屬登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
             try {
                 const tempInput = document.createElement('textarea');
                 tempInput.value = shareText;
@@ -1587,7 +1594,7 @@
 
         async function shareGameLink() {
             const shareTitle = "Dyson HD19 專屬登機證";
-            const shareText = "Dyson Airways HD19 航班即將起飛✈️ 快來領取你的專屬登機證";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證";
             const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
 
             const shareData = {
@@ -1620,7 +1627,7 @@
         }
 
         async function shareBoardingPass() {
-            const shareText = "Dyson Airways HD19 航班即將起飛✈️ 快來領取專屬登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
             const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
 
             // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
