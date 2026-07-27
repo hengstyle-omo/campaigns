@@ -198,6 +198,14 @@
         [data-theme="blue"] .border-rose-200\/80 {
             border-color: rgba(150, 185, 220, 0.8) !important;
         }
+        [data-theme="blue"] .download-button {
+            background-color: #e2eaf4 !important;
+            color: #1b365d !important;
+            border-color: rgba(27, 54, 93, 0.6) !important;
+        }
+        [data-theme="blue"] .download-button:hover {
+            background-color: #d3e0ee !important;
+        }
 
         /* Portrait Back Dynamic Theme Override */
         [data-theme="blue"] #ticketPortraitBack {
@@ -586,7 +594,7 @@
                         <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-paper-plane w-4 text-center"></i> 分享遊戲
                         </button>
-                        <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <button type="button" onclick="downloadBoardingPass(this)" class="download-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                         </button>
                     </div>
@@ -810,7 +818,7 @@
                             <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-paper-plane w-4 text-center"></i> 分享遊戲
                             </button>
-                            <button type="button" onclick="downloadBoardingPass(this)" class="w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <button type="button" onclick="downloadBoardingPass(this)" class="download-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                             </button>
                         </div>
