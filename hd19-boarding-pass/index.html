@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-53">
+    <meta name="app-version" content="20260728-55">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <script>
         (function openLinePageInExternalBrowser() {
@@ -677,16 +677,16 @@
                     <p class="text-xs font-bold text-dyson-rose tracking-wider uppercase mb-2.5 flex items-center gap-1.5">
                         <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                     </p>
-                    <div class="w-full grid grid-cols-3 gap-3">
+                    <div class="w-full grid grid-cols-2 gap-3">
                         <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
-                        </button>
-                        <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                            <i class="fa-solid fa-paper-plane w-4 text-center"></i> 分享遊戲
                         </button>
                         <button type="button" onclick="downloadBoardingPass(this)" class="download-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                         </button>
+                        <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="col-span-2 w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
+                        </a>
                     </div>
                 </div>
             </div>
@@ -910,12 +910,12 @@
                             <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                             </button>
-                            <button type="button" onclick="shareGameLink()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
-                                <i class="fa-solid fa-paper-plane w-4 text-center"></i> 分享遊戲
-                            </button>
                             <button type="button" onclick="downloadBoardingPass(this)" class="download-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                             </button>
+                            <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="w-full h-10 px-2 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-[10px] rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition transform active:scale-95 whitespace-nowrap">
+                                <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1849,40 +1849,6 @@
             } catch (clipErr) {
                 console.log('Clipboard copy failed', clipErr);
                 return false;
-            }
-        }
-
-        async function shareGameLink() {
-            const shareTitle = "Dyson HD19 專屬登機證";
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證";
-            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
-
-            const shareData = {
-                title: shareTitle,
-                text: shareText,
-                url: shareUrl
-            };
-
-            // Try Native Web Share API for text/link directly to apps like LINE, FB, Messages
-            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-                try {
-                    await navigator.share(shareData);
-                    showToast("成功分享遊戲連結！", "fa-circle-check");
-                    return;
-                } catch (shareErr) {
-                    if (shareErr.name === 'AbortError') {
-                        showToast("取消分享", "fa-circle-info");
-                        return;
-                    }
-                }
-            }
-
-            // Fallback: Copy link text to clipboard
-            const success = copyShareTextToClipboard();
-            if (success) {
-                showToast("遊戲連結已複製！直接貼上發送給好友", "fa-copy");
-            } else {
-                showToast("複製失敗，請手動複製", "fa-circle-exclamation");
             }
         }
 
