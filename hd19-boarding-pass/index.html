@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-47">
+    <meta name="app-version" content="20260728-51">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <script>
         (function openLinePageInExternalBrowser() {
@@ -79,6 +79,71 @@
             -webkit-text-fill-color: transparent !important;
         }
 
+        .date-time-row {
+            display: flex !important;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            gap: 0.75rem;
+            overflow: hidden;
+        }
+
+        .date-time-column {
+            flex: 1 1 0;
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: calc(50% - 0.375rem);
+            overflow: hidden;
+        }
+
+        .date-picker-shell,
+        .boarding-time-input {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .date-picker-shell {
+            height: 34px;
+            overflow: hidden;
+            contain: layout paint;
+            isolation: isolate;
+            background-color: rgba(248, 250, 252, 0.3);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .date-picker-shell:focus-within {
+            border-color: #c9707e;
+        }
+
+        .date-native-input {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            height: 100%;
+            box-sizing: border-box;
+            opacity: 0;
+            z-index: 2;
+            border: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        .date-native-input::-webkit-date-and-time-value {
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .date-native-input::-webkit-calendar-picker-indicator {
+            margin: 0;
+            padding: 0;
+        }
+
         .ambient-glow {
             position: absolute;
             width: 550px;
@@ -121,10 +186,16 @@
 
         .perspective-1000 {
             perspective: 1000px;
+            -webkit-perspective: 1000px;
         }
         .transform-style-3d {
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
+            transform: rotateY(0deg);
+            -webkit-transform: rotateY(0deg);
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+            isolation: isolate;
         }
         .backface-hidden {
             backface-visibility: hidden;
@@ -132,6 +203,31 @@
         }
         .rotate-y-180 {
             transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+        }
+        .card-face {
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+            will-change: transform;
+        }
+        .card-face-front {
+            transform: translateZ(0.1px);
+            -webkit-transform: translateZ(0.1px);
+        }
+        .card-face-back {
+            transform: rotateY(180deg) translateZ(0.1px);
+            -webkit-transform: rotateY(180deg) translateZ(0.1px);
+        }
+        .card-face.is-active {
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .card-face.is-inactive {
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .transform-style-3d.is-flipping .card-face {
+            visibility: visible;
         }
 
         ::-webkit-scrollbar {
@@ -367,21 +463,21 @@
                 </div>
 
                 <!-- Date & Time Controls -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="min-w-0">
+                <div class="date-time-row">
+                    <div class="date-time-column">
                         <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
                             <i class="fa-solid fa-calendar-days mr-1 text-dyson-rose"></i> 日期 DATE
                         </label>
-                        <div class="relative min-w-0 rounded-xl focus-within:ring-1 focus-within:ring-dyson-rose">
-                            <input type="date" id="inDate" value="2026-08-19" aria-label="日期 DATE" class="date-native-input w-full min-w-0 cursor-pointer bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans focus:outline-none focus:border-dyson-rose transition">
-                            <input type="text" id="inDateDisplay" value="2026/08/19" readonly aria-hidden="true" tabindex="-1" class="pointer-events-none absolute inset-0 w-full min-w-0 bg-transparent border border-transparent rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark outline-none">
+                        <div class="date-picker-shell relative min-w-0 rounded-xl focus-within:ring-1 focus-within:ring-dyson-rose">
+                            <input type="date" id="inDate" value="2026-08-19" aria-label="日期 DATE" class="date-native-input w-full min-w-0 cursor-pointer rounded-xl focus:outline-none">
+                            <span id="inDateDisplay" aria-hidden="true" class="pointer-events-none absolute inset-0 z-[1] flex items-center w-full min-w-0 overflow-hidden rounded-xl px-3 text-xs font-normal font-sans text-dyson-dark whitespace-nowrap">2026/08/19</span>
                         </div>
                     </div>
-                    <div class="min-w-0">
+                    <div class="date-time-column">
                         <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
                             <i class="fa-solid fa-clock mr-1 text-dyson-rose"></i> BOARDING
                         </label>
-                        <input type="text" id="inTime" value="13:14" placeholder="13:14" maxlength="5" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
+                        <input type="text" id="inTime" value="13:14" placeholder="13:14" maxlength="5" class="boarding-time-input h-[34px] w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
                     </div>
                 </div>
 
@@ -396,7 +492,7 @@
                             <button type="button" onclick="randomizeInspiration()" class="text-[9px] text-dyson-rose bg-rose-100/60 border border-rose-200 px-2 py-0.5 rounded-full transition font-medium">隨機</button>
                         </div>
                     </div>
-                    <textarea id="inMessage" rows="2" maxlength="45" class="w-full h-[58px] resize-none bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans leading-relaxed text-dyson-dark focus:outline-none focus:border-dyson-rose transition">YOU ARE MY FAVORITE DESTINATION, ALWAYS.</textarea>
+                    <textarea id="inMessage" rows="2" maxlength="45" class="w-full h-[58px] resize-none bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans leading-relaxed text-dyson-dark focus:outline-none focus:border-dyson-rose transition">YOU ARE MY DESTINATION, ALWAYS.</textarea>
                 </div>
 
                 <!-- Format Controls -->
@@ -432,7 +528,7 @@
                 <div id="cardInnerLandscape" onclick="toggleCardFlip()" class="transform-style-3d w-full max-w-2xl h-[320px] relative cursor-pointer group">
                     
                     <!-- LANDSCAPE FRONT SIDE -->
-                    <div id="ticketLandscape" class="backface-hidden ticket-pass-bg w-full h-full rounded-3xl shadow-2xl text-slate-800 overflow-hidden relative border border-white/80 flex absolute inset-0">
+                    <div id="ticketLandscape" class="card-face card-face-front is-active backface-hidden ticket-pass-bg w-full h-full rounded-3xl shadow-2xl text-slate-800 overflow-hidden relative border border-white/80 flex absolute inset-0">
                         <div class="ticket-tear-left shadow-inner"></div>
                         
                         <div class="w-2/3 p-5 flex flex-col justify-between relative bg-gradient-to-br from-white via-[#fdf2f4] to-[#fce8eb] overflow-hidden">
@@ -478,7 +574,7 @@
                             <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/80 relative z-10 shrink-0">
                                 <div class="pr-2 flex-1 min-w-0 flex flex-col justify-center">
                                     <div class="h-[54px] flex items-center justify-start min-w-0">
-                                        <p id="outMessageL" class="keep-pink-rose text-xs sm:text-sm text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY FAVORITE DESTINATION, ALWAYS."</p>
+                                        <p id="outMessageL" class="keep-pink-rose text-xs sm:text-sm text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY DESTINATION, ALWAYS."</p>
                                     </div>
                                     <p class="text-[9px] text-slate-500 font-medium mt-2 leading-relaxed">七夕情人節限定 x 輕巧登機 x 完美造型<br>Supersonic™ Travel HD19 國際電壓隨行吹風機</p>
                                 </div>
@@ -546,7 +642,7 @@
                     </div>
 
                     <!-- LANDSCAPE BACK SIDE -->
-                    <div id="ticketLandscapeBack" class="backface-hidden rotate-y-180 ticket-pass-bg text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-white/80 flex flex-col justify-between absolute inset-0 overflow-hidden">
+                    <div id="ticketLandscapeBack" class="card-face card-face-back is-inactive backface-hidden rotate-y-180 ticket-pass-bg text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-white/80 flex flex-col justify-between absolute inset-0 overflow-hidden">
                         
                         <div class="flex justify-between items-center border-b border-rose-200/80 pb-2.5 shrink-0">
                             <div class="flex items-center space-x-2">
@@ -629,7 +725,7 @@
                     <div id="cardInnerPortrait" onclick="toggleCardFlip()" class="transform-style-3d w-[320px] h-[580px] relative cursor-pointer group shrink-0">
                         
                         <!-- PORTRAIT FRONT SIDE -->
-                        <div id="ticketPortrait" class="backface-hidden w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden relative text-slate-800 flex flex-col justify-between absolute inset-0 border border-rose-100">
+                        <div id="ticketPortrait" class="card-face card-face-front is-active backface-hidden w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden relative text-slate-800 flex flex-col justify-between absolute inset-0 border border-rose-100">
 
                             <!-- Header -->
                             <div class="ticket-header-grad px-3.5 py-3 text-white relative overflow-hidden shrink-0">
@@ -678,7 +774,7 @@
 
                                     <!-- MESSAGE -->
                                     <div class="h-[54px] py-1 flex flex-col items-center justify-center text-center shrink-0 min-w-0 bg-transparent">
-                                        <p id="outMessageP" class="keep-pink-rose text-xs sm:text-sm font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY FAVORITE DESTINATION, ALWAYS."</p>
+                                        <p id="outMessageP" class="keep-pink-rose text-xs sm:text-sm font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY DESTINATION, ALWAYS."</p>
                                     </div>
                                 </div>
 
@@ -769,7 +865,7 @@
                         </div>
 
                         <!-- PORTRAIT BACK SIDE -->
-                        <div id="ticketPortraitBack" class="backface-hidden rotate-y-180 bg-gradient-to-br from-white via-rose-50/90 to-amber-50/50 text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-rose-100 flex flex-col justify-between absolute inset-0 overflow-hidden">
+                        <div id="ticketPortraitBack" class="card-face card-face-back is-inactive backface-hidden rotate-y-180 bg-gradient-to-br from-white via-rose-50/90 to-amber-50/50 text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-rose-100 flex flex-col justify-between absolute inset-0 overflow-hidden">
                             
                             <div class="ticket-header-grad p-3 text-white relative -m-5 mb-1 shrink-0">
                                 <div class="flex justify-between items-center px-1">
@@ -870,6 +966,7 @@
         let currentMode = 'portrait';
         let currentTheme = 'pink';
         let isFlipped = false;
+        let flipAnimationTimer = null;
         let currentPreset = 'together';
         const classOptions = [
             { en: 'First Class', zh: '頭等艙' },
@@ -888,6 +985,7 @@
             syncDateDisplay();
             initQrCode();
             updatePass();
+            resetFlipVisuals();
             preloadAllImagesToDataUrls();
         };
 
@@ -1120,7 +1218,7 @@
             const dateInput = document.getElementById('inDate');
             const dateDisplay = document.getElementById('inDateDisplay');
             if (!dateDisplay) return;
-            dateDisplay.value = (dateInput?.value || '2026-08-19').replace(/-/g, '/');
+            dateDisplay.textContent = (dateInput?.value || '2026-08-19').replace(/-/g, '/');
         }
 
         function setTimePreset(timeStr) {
@@ -1142,7 +1240,7 @@
 
             const gate = document.getElementById('inGate')?.value || '19';
             const seat = document.getElementById('inSeat')?.value || '52O';
-            const message = document.getElementById('inMessage')?.value || 'YOU ARE MY FAVORITE DESTINATION, ALWAYS.';
+            const message = document.getElementById('inMessage')?.value || 'YOU ARE MY DESTINATION, ALWAYS.';
 
             // Helper for 3-letter airport code calculation
             function getCode(str, isDest) {
@@ -1233,30 +1331,61 @@
                 btnL.className = "py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:text-dyson-dark font-semibold text-xs flex items-center justify-center gap-2 transition";
             }
 
-            if (isFlipped) {
-                isFlipped = false;
-                resetFlipVisuals();
-            }
+            isFlipped = false;
+            resetFlipVisuals();
         }
 
         function toggleCardFlip() {
             isFlipped = !isFlipped;
-            const targetId = currentMode === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait';
+            const modeAtFlip = currentMode;
+            const flippedAtFlip = isFlipped;
+            const targetId = modeAtFlip === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait';
             const card = document.getElementById(targetId);
-            if (card) {
-                if (isFlipped) {
-                    card.classList.add('rotate-y-180');
-                } else {
-                    card.classList.remove('rotate-y-180');
-                }
+            if (!card) return;
+
+            if (flipAnimationTimer) {
+                clearTimeout(flipAnimationTimer);
+                flipAnimationTimer = null;
             }
+
+            updateCardFaceVisibility(modeAtFlip, flippedAtFlip, true);
+
+            requestAnimationFrame(() => {
+                card.classList.toggle('rotate-y-180', flippedAtFlip);
+            });
+
+            flipAnimationTimer = setTimeout(() => {
+                updateCardFaceVisibility(modeAtFlip, flippedAtFlip, false);
+                flipAnimationTimer = null;
+            }, 850);
+        }
+
+        function updateCardFaceVisibility(mode, flipped, isAnimating = false) {
+            const card = document.getElementById(mode === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait');
+            const front = document.getElementById(mode === 'landscape' ? 'ticketLandscape' : 'ticketPortrait');
+            const back = document.getElementById(mode === 'landscape' ? 'ticketLandscapeBack' : 'ticketPortraitBack');
+            if (!card || !front || !back) return;
+
+            card.classList.toggle('is-flipping', isAnimating);
+            card.setAttribute('data-visible-side', flipped ? 'back' : 'front');
+
+            front.classList.toggle('is-active', !flipped);
+            front.classList.toggle('is-inactive', flipped);
+            back.classList.toggle('is-active', flipped);
+            back.classList.toggle('is-inactive', !flipped);
         }
 
         function resetFlipVisuals() {
+            if (flipAnimationTimer) {
+                clearTimeout(flipAnimationTimer);
+                flipAnimationTimer = null;
+            }
             const cardL = document.getElementById('cardInnerLandscape');
             const cardP = document.getElementById('cardInnerPortrait');
-            if (cardL) cardL.classList.remove('rotate-y-180');
-            if (cardP) cardP.classList.remove('rotate-y-180');
+            if (cardL) cardL.classList.remove('rotate-y-180', 'is-flipping');
+            if (cardP) cardP.classList.remove('rotate-y-180', 'is-flipping');
+            updateCardFaceVisibility('landscape', false, false);
+            updateCardFaceVisibility('portrait', false, false);
         }
 
         function setScenarioSelection(preset) {
@@ -1289,13 +1418,13 @@
                 if (elPass) elPass.value = 'Dyson';
                 if (elOrig) elOrig.value = 'ME';
                 if (elDest) elDest.value = 'YOUR HEART';
-                if (elMsg) elMsg.value = 'YOU ARE MY FAVORITE DESTINATION, ALWAYS.';
+                if (elMsg) elMsg.value = 'YOU ARE MY DESTINATION, ALWAYS.';
                 showToast("已載入「飛向愛人」浪漫設定！");
             } else if (preset === 'together') {
                 if (elPass) elPass.value = 'YOU & ME';
                 if (elOrig) elOrig.value = 'TAIPEI';
                 if (elDest) elDest.value = 'ANYWHERE';
-                if (elMsg) elMsg.value = 'YOU ARE MY FAVORITE DESTINATION, ALWAYS.';
+                if (elMsg) elMsg.value = 'YOU ARE MY DESTINATION, ALWAYS.';
                 showToast("已載入「浪漫同行」專屬設定！");
             }
             updatePass();
@@ -1310,7 +1439,7 @@
                 "登機證已入手，立刻把你跟HD19打包走！",
                 "直飛你的內心深處；你，就是我人生最終的降落處。",
                 "下一站，全世界！快跟我一起去探索與體驗這世界。",
-                "YOU ARE MY FAVORITE DESTINATION, ALWAYS.",
+                "YOU ARE MY DESTINATION, ALWAYS.",
                 "FLY ME TO YOUR HEART.",
                 "LOVE IS IN THE AIR, ALWAYS WITH YOU.",
                 "100% LOVE, ZERO DAMAGE.",
