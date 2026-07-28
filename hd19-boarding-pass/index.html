@@ -1855,7 +1855,7 @@
         }
 
         function copyShareTextToClipboard() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
             try {
                 const tempInput = document.createElement('textarea');
                 tempInput.value = shareText;
@@ -1876,8 +1876,8 @@
         }
 
         async function shareBoardingPass() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
-            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
 
             // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
             copyShareTextToClipboard();
@@ -1904,7 +1904,7 @@
                     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                         try {
                             await navigator.share(shareData);
-                            showToast("圖片與遊戲連結已複製！貼上即可發文", "fa-circle-check");
+                            showToast("圖片與遊戲連結已複製！", "fa-circle-check");
                             return;
                         } catch (shareErr) {
                             if (shareErr.name === 'AbortError') {
