@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-51">
+    <meta name="app-version" content="20260728-52">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <script>
         (function openLinePageInExternalBrowser() {
@@ -186,16 +186,10 @@
 
         .perspective-1000 {
             perspective: 1000px;
-            -webkit-perspective: 1000px;
         }
         .transform-style-3d {
             transform-style: preserve-3d;
-            -webkit-transform-style: preserve-3d;
-            transform: rotateY(0deg);
-            -webkit-transform: rotateY(0deg);
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform;
-            isolation: isolate;
         }
         .backface-hidden {
             backface-visibility: hidden;
@@ -203,31 +197,6 @@
         }
         .rotate-y-180 {
             transform: rotateY(180deg);
-            -webkit-transform: rotateY(180deg);
-        }
-        .card-face {
-            backface-visibility: hidden !important;
-            -webkit-backface-visibility: hidden !important;
-            will-change: transform;
-        }
-        .card-face-front {
-            transform: translateZ(0.1px);
-            -webkit-transform: translateZ(0.1px);
-        }
-        .card-face-back {
-            transform: rotateY(180deg) translateZ(0.1px);
-            -webkit-transform: rotateY(180deg) translateZ(0.1px);
-        }
-        .card-face.is-active {
-            visibility: visible;
-            pointer-events: auto;
-        }
-        .card-face.is-inactive {
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .transform-style-3d.is-flipping .card-face {
-            visibility: visible;
         }
 
         ::-webkit-scrollbar {
@@ -528,7 +497,7 @@
                 <div id="cardInnerLandscape" onclick="toggleCardFlip()" class="transform-style-3d w-full max-w-2xl h-[320px] relative cursor-pointer group">
                     
                     <!-- LANDSCAPE FRONT SIDE -->
-                    <div id="ticketLandscape" class="card-face card-face-front is-active backface-hidden ticket-pass-bg w-full h-full rounded-3xl shadow-2xl text-slate-800 overflow-hidden relative border border-white/80 flex absolute inset-0">
+                    <div id="ticketLandscape" class="backface-hidden ticket-pass-bg w-full h-full rounded-3xl shadow-2xl text-slate-800 overflow-hidden relative border border-white/80 flex absolute inset-0">
                         <div class="ticket-tear-left shadow-inner"></div>
                         
                         <div class="w-2/3 p-5 flex flex-col justify-between relative bg-gradient-to-br from-white via-[#fdf2f4] to-[#fce8eb] overflow-hidden">
@@ -642,7 +611,7 @@
                     </div>
 
                     <!-- LANDSCAPE BACK SIDE -->
-                    <div id="ticketLandscapeBack" class="card-face card-face-back is-inactive backface-hidden rotate-y-180 ticket-pass-bg text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-white/80 flex flex-col justify-between absolute inset-0 overflow-hidden">
+                    <div id="ticketLandscapeBack" class="backface-hidden rotate-y-180 ticket-pass-bg text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-white/80 flex flex-col justify-between absolute inset-0 overflow-hidden">
                         
                         <div class="flex justify-between items-center border-b border-rose-200/80 pb-2.5 shrink-0">
                             <div class="flex items-center space-x-2">
@@ -725,7 +694,7 @@
                     <div id="cardInnerPortrait" onclick="toggleCardFlip()" class="transform-style-3d w-[320px] h-[580px] relative cursor-pointer group shrink-0">
                         
                         <!-- PORTRAIT FRONT SIDE -->
-                        <div id="ticketPortrait" class="card-face card-face-front is-active backface-hidden w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden relative text-slate-800 flex flex-col justify-between absolute inset-0 border border-rose-100">
+                        <div id="ticketPortrait" class="backface-hidden w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden relative text-slate-800 flex flex-col justify-between absolute inset-0 border border-rose-100">
 
                             <!-- Header -->
                             <div class="ticket-header-grad px-3.5 py-3 text-white relative overflow-hidden shrink-0">
@@ -865,7 +834,7 @@
                         </div>
 
                         <!-- PORTRAIT BACK SIDE -->
-                        <div id="ticketPortraitBack" class="card-face card-face-back is-inactive backface-hidden rotate-y-180 bg-gradient-to-br from-white via-rose-50/90 to-amber-50/50 text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-rose-100 flex flex-col justify-between absolute inset-0 overflow-hidden">
+                        <div id="ticketPortraitBack" class="backface-hidden rotate-y-180 bg-gradient-to-br from-white via-rose-50/90 to-amber-50/50 text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-rose-100 flex flex-col justify-between absolute inset-0 overflow-hidden">
                             
                             <div class="ticket-header-grad p-3 text-white relative -m-5 mb-1 shrink-0">
                                 <div class="flex justify-between items-center px-1">
@@ -966,7 +935,6 @@
         let currentMode = 'portrait';
         let currentTheme = 'pink';
         let isFlipped = false;
-        let flipAnimationTimer = null;
         let currentPreset = 'together';
         const classOptions = [
             { en: 'First Class', zh: '頭等艙' },
@@ -985,7 +953,6 @@
             syncDateDisplay();
             initQrCode();
             updatePass();
-            resetFlipVisuals();
             preloadAllImagesToDataUrls();
         };
 
@@ -1331,61 +1298,30 @@
                 btnL.className = "py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:text-dyson-dark font-semibold text-xs flex items-center justify-center gap-2 transition";
             }
 
-            isFlipped = false;
-            resetFlipVisuals();
+            if (isFlipped) {
+                isFlipped = false;
+                resetFlipVisuals();
+            }
         }
 
         function toggleCardFlip() {
             isFlipped = !isFlipped;
-            const modeAtFlip = currentMode;
-            const flippedAtFlip = isFlipped;
-            const targetId = modeAtFlip === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait';
+            const targetId = currentMode === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait';
             const card = document.getElementById(targetId);
-            if (!card) return;
-
-            if (flipAnimationTimer) {
-                clearTimeout(flipAnimationTimer);
-                flipAnimationTimer = null;
+            if (card) {
+                if (isFlipped) {
+                    card.classList.add('rotate-y-180');
+                } else {
+                    card.classList.remove('rotate-y-180');
+                }
             }
-
-            updateCardFaceVisibility(modeAtFlip, flippedAtFlip, true);
-
-            requestAnimationFrame(() => {
-                card.classList.toggle('rotate-y-180', flippedAtFlip);
-            });
-
-            flipAnimationTimer = setTimeout(() => {
-                updateCardFaceVisibility(modeAtFlip, flippedAtFlip, false);
-                flipAnimationTimer = null;
-            }, 850);
-        }
-
-        function updateCardFaceVisibility(mode, flipped, isAnimating = false) {
-            const card = document.getElementById(mode === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait');
-            const front = document.getElementById(mode === 'landscape' ? 'ticketLandscape' : 'ticketPortrait');
-            const back = document.getElementById(mode === 'landscape' ? 'ticketLandscapeBack' : 'ticketPortraitBack');
-            if (!card || !front || !back) return;
-
-            card.classList.toggle('is-flipping', isAnimating);
-            card.setAttribute('data-visible-side', flipped ? 'back' : 'front');
-
-            front.classList.toggle('is-active', !flipped);
-            front.classList.toggle('is-inactive', flipped);
-            back.classList.toggle('is-active', flipped);
-            back.classList.toggle('is-inactive', !flipped);
         }
 
         function resetFlipVisuals() {
-            if (flipAnimationTimer) {
-                clearTimeout(flipAnimationTimer);
-                flipAnimationTimer = null;
-            }
             const cardL = document.getElementById('cardInnerLandscape');
             const cardP = document.getElementById('cardInnerPortrait');
-            if (cardL) cardL.classList.remove('rotate-y-180', 'is-flipping');
-            if (cardP) cardP.classList.remove('rotate-y-180', 'is-flipping');
-            updateCardFaceVisibility('landscape', false, false);
-            updateCardFaceVisibility('portrait', false, false);
+            if (cardL) cardL.classList.remove('rotate-y-180');
+            if (cardP) cardP.classList.remove('rotate-y-180');
         }
 
         function setScenarioSelection(preset) {
