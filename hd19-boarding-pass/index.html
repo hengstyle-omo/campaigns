@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-35">
+    <meta name="app-version" content="20260728-45">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
+    <script>
+        (function openLinePageInExternalBrowser() {
+            const isLineBrowser = /Line\//i.test(navigator.userAgent || '');
+            const currentUrl = new URL(window.location.href);
+            if (isLineBrowser && currentUrl.searchParams.get('openExternalBrowser') !== '1') {
+                currentUrl.searchParams.set('openExternalBrowser', '1');
+                window.location.replace(currentUrl.toString());
+            }
+        })();
+    </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2canvas for Direct HTML Snapshot -->
@@ -60,6 +70,13 @@
             color: #2d2a32;
             min-height: 100vh;
             transition: background 0.5s ease;
+        }
+
+        .date-native-input,
+        .date-native-input:focus,
+        .date-native-input::-webkit-date-and-time-value {
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
         }
 
         .ambient-glow {
@@ -253,9 +270,9 @@
     <header class="fixed top-0 left-0 right-0 z-[100] border-b border-rose-100/80 backdrop-blur-md bg-white/85 shadow-sm transition-all duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
             <div class="flex items-center space-x-2.5 sm:space-x-3 shrink-0">
-                <img src="https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-6 object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
-                <span class="h-3.5 sm:h-4 w-px bg-rose-200/80"></span>
-                <img src="https://img2.91mai.com/o2o/image/868ce2a2-8242-44af-a034-4af1b72ea151.png" alt="Supersonic Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-5 object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                <img src="./assets/images/dyson_logo_black.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-6 object-contain" onerror="loadDysonLogoFallback(this);">
+                <span class="h-3.5 sm:h-4 w-px bg-slate-300/80"></span>
+                <img src="./assets/images/dyson_supersonic_travel_black.png" alt="Supersonic Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-5 object-contain" onerror="loadSupersonicLogoFallback(this);">
             </div>
             
             <div class="flex items-center space-x-2 sm:space-x-3 text-xs text-slate-600">
@@ -356,8 +373,8 @@
                             <i class="fa-solid fa-calendar-days mr-1 text-dyson-rose"></i> 日期 DATE
                         </label>
                         <div class="relative min-w-0 rounded-xl focus-within:ring-1 focus-within:ring-dyson-rose">
-                            <input type="text" id="inDateDisplay" value="2026/08/19" readonly aria-hidden="true" tabindex="-1" class="pointer-events-none w-full min-w-0 bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark transition">
-                            <input type="date" id="inDate" value="2026-08-19" aria-label="日期 DATE" class="absolute inset-0 h-full w-full cursor-pointer opacity-0">
+                            <input type="date" id="inDate" value="2026-08-19" aria-label="日期 DATE" class="date-native-input w-full min-w-0 cursor-pointer bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans focus:outline-none focus:border-dyson-rose transition">
+                            <input type="text" id="inDateDisplay" value="2026/08/19" readonly aria-hidden="true" tabindex="-1" class="pointer-events-none absolute inset-0 w-full min-w-0 bg-transparent border border-transparent rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark outline-none">
                         </div>
                     </div>
                     <div class="min-w-0">
@@ -375,11 +392,11 @@
                             <i class="fa-solid fa-quote-left mr-1"></i> 情意悄悄話 MESSAGE
                         </label>
                         <div class="flex items-center gap-2">
-                            <span id="charCountMsg" class="text-[9px] text-slate-400 font-sans">23/45</span>
+                            <span id="charCountMsg" class="text-[9px] text-slate-400 font-sans">40/45</span>
                             <button type="button" onclick="randomizeInspiration()" class="text-[9px] text-dyson-rose bg-rose-100/60 border border-rose-200 px-2 py-0.5 rounded-full transition font-medium">隨機</button>
                         </div>
                     </div>
-                    <textarea id="inMessage" rows="2" maxlength="45" class="w-full h-[58px] resize-none bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans leading-relaxed text-dyson-dark focus:outline-none focus:border-dyson-rose transition">YOU ARE MY DESTINATION.</textarea>
+                    <textarea id="inMessage" rows="2" maxlength="45" class="w-full h-[58px] resize-none bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans leading-relaxed text-dyson-dark focus:outline-none focus:border-dyson-rose transition">YOU ARE MY FAVORITE DESTINATION, ALWAYS.</textarea>
                 </div>
 
                 <!-- Format Controls -->
@@ -406,7 +423,7 @@
                     Live Boarding Pass Preview
                 </span>
                 <button type="button" onclick="toggleCardFlip()" class="text-xs text-dyson-rose hover:text-dyson-dark bg-white/80 hover:bg-rose-50 border border-rose-200 px-3 py-1 rounded-full font-semibold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-rotate text-dyson-rose"></i> 翻轉檢視卡片背面
+                    <i class="fa-solid fa-rotate text-dyson-rose"></i> 檢視卡片
                 </button>
             </div>
 
@@ -422,8 +439,8 @@
                             <div class="flex justify-between items-start relative z-10 shrink-0">
                                 <div class="min-w-0 flex-1 pr-2">
                                     <div class="flex items-center space-x-2">
-                                        <img src="https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
-                                        <img src="https://img2.91mai.com/o2o/image/868ce2a2-8242-44af-a034-4af1b72ea151.png" alt="Category Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-4 object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_supersonic_travel_white.png" alt="Category Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-4 object-contain" onerror="loadSupersonicLogoFallback(this);">
                                     </div>
                                     <p class="text-[8px] sm:text-[9px] text-dyson-rose font-bold tracking-tight mt-0.5 whitespace-nowrap">DYSON AIRWAYS • FLIGHT HD19 • VALENTINE SPECIAL</p>
                                 </div>
@@ -461,7 +478,7 @@
                             <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/80 relative z-10 shrink-0">
                                 <div class="pr-2 flex-1 min-w-0 flex flex-col justify-center">
                                     <div class="h-[54px] flex items-center justify-start min-w-0">
-                                        <p id="outMessageL" class="keep-pink-rose text-xs sm:text-sm text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY DESTINATION."</p>
+                                        <p id="outMessageL" class="keep-pink-rose text-xs sm:text-sm text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY FAVORITE DESTINATION, ALWAYS."</p>
                                     </div>
                                     <p class="text-[9px] text-slate-500 font-medium mt-2 leading-relaxed">七夕情人節限定 x 輕巧登機 x 完美造型<br>Supersonic™ Travel HD19 國際電壓隨行吹風機</p>
                                 </div>
@@ -523,7 +540,7 @@
 
                             <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
                                 <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                <span class="text-[8px] font-light text-dyson-rose tracking-tight mt-1">了解更多活動資訊</span>
+                                <span class="text-[8px] font-light text-dyson-rose tracking-tight mt-1">領取專屬優惠</span>
                             </div>
                         </div>
                     </div>
@@ -533,7 +550,7 @@
                         
                         <div class="flex justify-between items-center border-b border-rose-200/80 pb-2.5 shrink-0">
                             <div class="flex items-center space-x-2">
-                                <img src="https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                <img src="./assets/images/dyson_logo_white.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
                                 <span class="text-xs font-bold text-dyson-rose">Supersonic™ Travel HD19</span>
                             </div>
                             <span class="inline-flex items-center justify-center text-[10px] bg-rose-100/80 text-dyson-rose border border-rose-200 px-3 py-1 rounded-full font-semibold uppercase leading-none text-center">TRAVEL ESSENTIALS</span>
@@ -550,8 +567,8 @@
                                         <img src="https://img2.91mai.com/o2o/image/8f7026ab-fa75-439f-95ae-bcc5d3b6d994.png" alt="Worldwide Voltage" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">WORLDWIDE VOLTAGE 國際電壓</div>
-                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">100-240V~ 50/60Hz．全球適用</div>
+                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">國際電壓</div>
+                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">100-240V．全球適用</div>
                                     </div>
                                 </div>
 
@@ -560,7 +577,7 @@
                                         <img src="https://img2.91mai.com/o2o/image/e4fdaf70-c264-42d4-ad0b-6b615005d1e7.png" alt="Travel Ready" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">TRAVEL READY 旅行好夥伴</div>
+                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">旅行好夥伴</div>
                                         <div class="text-[10px] font-semibold text-slate-600 leading-normal">輕巧好收納．輕鬆好攜帶</div>
                                     </div>
                                 </div>
@@ -570,8 +587,8 @@
                                         <img src="https://img2.91mai.com/o2o/image/7317e915-5215-4653-870d-5e32b76fab4e.png" alt="Smart Temp Control" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">SMART TEMPERATURE CONTROL 智慧控溫</div>
-                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">每秒智慧監測100次．秀髮零熱損</div>
+                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">智慧控溫</div>
+                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">每秒智慧監測100次．秀髮零熱損傷</div>
                                     </div>
                                 </div>
                             </div>
@@ -618,8 +635,8 @@
                             <div class="ticket-header-grad px-3.5 py-3 text-white relative overflow-hidden shrink-0">
                                 <div class="flex justify-between items-center relative z-10">
                                     <div class="flex items-center space-x-2">
-                                        <img src="https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png" alt="dyson" data-is-dark="true" referrerpolicy="no-referrer" class="h-4 object-contain filter brightness-0 invert" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this, true);">
-                                        <img src="https://img2.91mai.com/o2o/image/868ce2a2-8242-44af-a034-4af1b72ea151.png" alt="Category Logo" data-is-dark="true" referrerpolicy="no-referrer" class="h-3.5 object-contain filter brightness-0 invert" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this, true);">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-is-dark="true" referrerpolicy="no-referrer" class="h-4 object-contain" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_supersonic_travel_white.png" alt="Category Logo" data-is-dark="true" referrerpolicy="no-referrer" class="h-3.5 object-contain" onerror="loadSupersonicLogoFallback(this);">
                                     </div>
                                     <span class="text-xs font-black tracking-widest uppercase font-serif">BOARDING PASS</span>
                                 </div>
@@ -635,7 +652,7 @@
                                         <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
                                     </div>
                                     <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
-                                        <span class="text-[8px] font-light text-dyson-rose tracking-tight mb-1">了解更多活動資訊</span>
+                                        <span class="text-[8px] font-light text-dyson-rose tracking-tight mb-1">領取專屬優惠</span>
                                         <img id="qrCodePortrait" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
                                     </div>
                                 </div>
@@ -661,7 +678,7 @@
 
                                     <!-- MESSAGE -->
                                     <div class="h-[54px] py-1 flex flex-col items-center justify-center text-center shrink-0 min-w-0 bg-transparent">
-                                        <p id="outMessageP" class="keep-pink-rose text-xs sm:text-sm font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY DESTINATION."</p>
+                                        <p id="outMessageP" class="keep-pink-rose text-xs sm:text-sm font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY FAVORITE DESTINATION, ALWAYS."</p>
                                     </div>
                                 </div>
 
@@ -757,47 +774,52 @@
                             <div class="ticket-header-grad p-3 text-white relative -m-5 mb-1 shrink-0">
                                 <div class="flex justify-between items-center px-1">
                                     <div class="flex items-center space-x-2">
-                                        <img src="https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 object-contain filter brightness-0 invert" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 object-contain" onerror="loadDysonLogoFallback(this);">
                                         <span class="text-[9px] font-bold uppercase">HD19</span>
                                     </div>
                                     <span class="text-[10px] font-black uppercase tracking-wider">TRAVEL SPECIFICATIONS</span>
                                 </div>
                             </div>
 
-                            <div class="flex-1 flex flex-col justify-start space-y-2 pt-1">
+                            <div class="flex-1 min-h-0 flex flex-col justify-start space-y-2 pt-1">
                                 <div class="w-[140px] h-[140px] bg-white/80 border border-rose-100 shadow-sm rounded-2xl shrink-0 mx-auto relative overflow-hidden">
                                     <img src="./assets/images/dyson_product_hd19.png" alt="Dyson Product Back" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="loadOriginalImage(this, 'https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png');">
                                 </div>
 
-                                <div class="space-y-1.5">
-                                    <div class="bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
+                                <div class="flex-1 min-h-0 flex flex-col gap-1.5">
+                                    <div class="shrink-0 bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
                                         <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
                                             <img src="https://img2.91mai.com/o2o/image/8f7026ab-fa75-439f-95ae-bcc5d3b6d994.png" alt="Worldwide Voltage" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
                                         </div>
                                         <div class="min-w-0">
-                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">WORLDWIDE VOLTAGE 國際電壓</div>
-                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">100-240V~ 50/60Hz．全球適用</div>
+                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">國際電壓</div>
+                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">100-240V．全球適用</div>
                                         </div>
                                     </div>
 
-                                    <div class="bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
+                                    <div class="shrink-0 bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
                                         <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
                                             <img src="https://img2.91mai.com/o2o/image/e4fdaf70-c264-42d4-ad0b-6b615005d1e7.png" alt="Travel Ready" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
                                         </div>
                                         <div class="min-w-0">
-                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">TRAVEL READY 旅行好夥伴</div>
+                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">旅行好夥伴</div>
                                             <div class="text-[10px] font-semibold text-slate-600 leading-normal">輕巧好收納．輕鬆好攜帶</div>
                                         </div>
                                     </div>
 
-                                    <div class="bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
+                                    <div class="shrink-0 bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
                                         <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
                                             <img src="https://img2.91mai.com/o2o/image/7317e915-5215-4653-870d-5e32b76fab4e.png" alt="Smart Temp Control" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
                                         </div>
                                         <div class="min-w-0">
-                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">SMART TEMPERATURE CONTROL 智慧控溫</div>
-                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">每秒智慧監測100次．秀髮零熱損</div>
+                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">智慧控溫</div>
+                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">每秒智慧監測100次．秀髮零熱損傷</div>
                                         </div>
+                                    </div>
+
+                                    <div class="flex-1 min-h-[72px] flex flex-col items-center justify-center">
+                                        <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
+                                        <span class="mt-1 text-[8px] font-medium text-dyson-rose tracking-tight">領取專屬優惠</span>
                                     </div>
                                 </div>
                             </div>
@@ -838,31 +860,6 @@
         <p>© 2026 Dyson Supersonic™ Travel HD19 Valentine's Campaign. All rights reserved.</p>
     </footer>
 
-    <!-- LINE In-App Browser Save Preview -->
-    <div id="lineSaveModal" role="dialog" aria-modal="true" aria-labelledby="lineSaveTitle" class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm" onclick="if (event.target === this) closeLineSavePreview()">
-        <div class="relative flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
-            <button type="button" id="lineSaveCloseButton" onclick="closeLineSavePreview()" aria-label="關閉圖片預覽" class="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-slate-600 shadow-md transition hover:bg-slate-100">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="border-b border-rose-100 px-5 py-4 pr-14">
-                <h2 id="lineSaveTitle" class="text-base font-bold text-dyson-dark">
-                    <i class="fa-solid fa-image mr-2 text-dyson-rose"></i>登機證圖片已產生
-                </h2>
-                <p class="mt-1 text-xs leading-relaxed text-slate-600">請長按下方圖片，選擇「儲存圖片」或「加入照片」。</p>
-            </div>
-            <div class="min-h-0 flex-1 overflow-auto bg-slate-100 p-3">
-                <img id="lineSavePreviewImage" src="" alt="Dyson HD19 專屬登機證預覽" class="mx-auto block h-auto max-h-[65vh] max-w-full select-auto rounded-xl bg-white shadow-md" style="-webkit-touch-callout: default;">
-            </div>
-            <div class="space-y-2 border-t border-slate-100 px-5 py-4">
-                <p id="lineSaveFileName" class="truncate text-center text-[10px] text-slate-400"></p>
-                <p class="text-center text-[11px] leading-relaxed text-slate-500">若長按仍無法儲存，請從 LINE 右上角選單改用外部瀏覽器開啟，再按「下載圖片」。</p>
-                <button type="button" onclick="closeLineSavePreview()" class="w-full rounded-xl bg-dyson-softBg px-4 py-2.5 text-xs font-semibold text-dyson-rose transition hover:bg-[#f0dfe2]">
-                    我知道了
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-dyson-rose/40 flex items-center gap-3 transition-all duration-300">
         <i id="toastIcon" class="fa-solid fa-circle-check text-dyson-pink text-lg"></i>
@@ -874,8 +871,6 @@
         let currentTheme = 'pink';
         let isFlipped = false;
         let currentPreset = 'together';
-        let linePreviewObjectUrl = null;
-
         const classOptions = [
             { en: 'First Class', zh: '頭等艙' },
             { en: 'Business Class', zh: '商務艙' },
@@ -951,6 +946,46 @@
             image.src = originalUrl;
         }
 
+        function loadDysonLogoFallback(image) {
+            const blackLogoPath = './assets/images/dyson_logo_black.png';
+            const originalBlackLogo = 'https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png';
+
+            if (!image.dataset.blackLogoTried && !image.src.includes('dyson_logo_black.png')) {
+                image.dataset.blackLogoTried = 'true';
+                image.src = blackLogoPath;
+                return;
+            }
+
+            if (!image.dataset.originalLogoTried) {
+                image.dataset.originalLogoTried = 'true';
+                image.src = originalBlackLogo;
+                return;
+            }
+
+            image.onerror = null;
+            image.src = getFallbackSvgDataUrl(image);
+        }
+
+        function loadSupersonicLogoFallback(image) {
+            const blackLogoPath = './assets/images/dyson_supersonic_travel_black.png';
+            const originalLogo = 'https://img2.91mai.com/o2o/image/868ce2a2-8242-44af-a034-4af1b72ea151.png';
+
+            if (!image.dataset.blackLogoTried && !image.src.includes('dyson_supersonic_travel_black.png')) {
+                image.dataset.blackLogoTried = 'true';
+                image.src = blackLogoPath;
+                return;
+            }
+
+            if (!image.dataset.originalLogoTried) {
+                image.dataset.originalLogoTried = 'true';
+                image.src = originalLogo;
+                return;
+            }
+
+            image.onerror = null;
+            image.src = getFallbackSvgDataUrl(image);
+        }
+
         function loadGeneratedQr(image) {
             image.onerror = null;
             image.src = getFallbackSvgDataUrl('qr');
@@ -993,7 +1028,7 @@
 
         function initQrCode() {
             const qrImagePath = './assets/images/dyson_campaign_qrcode.png';
-            ['qrCodeLandscape', 'qrCodePortrait'].forEach(id => {
+            ['qrCodeLandscape', 'qrCodePortrait', 'qrCodePortraitBack'].forEach(id => {
                 const image = document.getElementById(id);
                 if (!image) return;
                 image.onerror = function () {
@@ -1066,6 +1101,15 @@
                     updatePass();
                 });
             }
+
+            const dateEl = document.getElementById('inDate');
+            if (dateEl) {
+                dateEl.addEventListener('change', () => {
+                    if (currentPreset) setScenarioSelection(null);
+                    syncDateDisplay();
+                    updatePass();
+                });
+            }
         }
 
         function syncDateDisplay() {
@@ -1094,7 +1138,7 @@
 
             const gate = document.getElementById('inGate')?.value || '19';
             const seat = document.getElementById('inSeat')?.value || '52O';
-            const message = document.getElementById('inMessage')?.value || 'FLYING TOGETHER INTO OUR BRIGHT FUTURE.';
+            const message = document.getElementById('inMessage')?.value || 'YOU ARE MY FAVORITE DESTINATION, ALWAYS.';
 
             // Helper for 3-letter airport code calculation
             function getCode(str, isDest) {
@@ -1247,7 +1291,7 @@
                 if (elPass) elPass.value = 'YOU & ME';
                 if (elOrig) elOrig.value = 'TAIPEI';
                 if (elDest) elDest.value = 'ANYWHERE';
-                if (elMsg) elMsg.value = 'FLYING TOGETHER INTO OUR BRIGHT FUTURE.';
+                if (elMsg) elMsg.value = 'YOU ARE MY FAVORITE DESTINATION, ALWAYS.';
                 showToast("已載入「浪漫同行」專屬設定！");
             }
             updatePass();
@@ -1262,7 +1306,7 @@
                 "登機證已入手，立刻把你跟HD19打包走！",
                 "直飛你的內心深處；你，就是我人生最終的降落處。",
                 "下一站，全世界！快跟我一起去探索與體驗這世界。",
-                "YOU ARE MY FAVORITE DESTINATION.",
+                "YOU ARE MY FAVORITE DESTINATION, ALWAYS.",
                 "FLY ME TO YOUR HEART.",
                 "LOVE IS IN THE AIR, ALWAYS WITH YOU.",
                 "100% LOVE, ZERO DAMAGE.",
@@ -1607,60 +1651,35 @@
             return /Line\//i.test(navigator.userAgent || '');
         }
 
-        function showLineSavePreview(blob, fileName) {
-            const modal = document.getElementById('lineSaveModal');
-            const previewImage = document.getElementById('lineSavePreviewImage');
-            const fileNameLabel = document.getElementById('lineSaveFileName');
-            if (!modal || !previewImage) {
-                throw new Error('無法開啟圖片預覽');
-            }
+        function openCurrentPageInExternalBrowser() {
+            const externalUrl = new URL(window.location.href);
+            externalUrl.searchParams.set('openExternalBrowser', '1');
+            externalUrl.searchParams.set('from', 'line-download');
 
-            if (linePreviewObjectUrl) {
-                URL.revokeObjectURL(linePreviewObjectUrl);
-            }
-            linePreviewObjectUrl = URL.createObjectURL(blob);
-            previewImage.src = linePreviewObjectUrl;
-            if (fileNameLabel) fileNameLabel.textContent = fileName;
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
-            document.getElementById('lineSaveCloseButton')?.focus();
+            const link = document.createElement('a');
+            link.href = externalUrl.toString();
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         }
-
-        function closeLineSavePreview() {
-            const modal = document.getElementById('lineSaveModal');
-            const previewImage = document.getElementById('lineSavePreviewImage');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-            document.body.classList.remove('overflow-hidden');
-            if (previewImage) previewImage.src = '';
-            if (linePreviewObjectUrl) {
-                URL.revokeObjectURL(linePreviewObjectUrl);
-                linePreviewObjectUrl = null;
-            }
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') closeLineSavePreview();
-        });
 
         async function downloadBoardingPass(button) {
+            if (isLineInAppBrowser()) {
+                showToast("正在改用外部瀏覽器開啟…", "fa-arrow-up-right-from-square");
+                openCurrentPageInExternalBrowser();
+                return;
+            }
+
             setDownloadButtonBusy(button, true);
             try {
                 const { canvas, fileName } = await generateBoardingPassCanvas();
                 const blob = await canvasToPngBlob(canvas);
                 if (!blob) throw new Error('無法建立下載圖片');
-
-                if (isLineInAppBrowser()) {
-                    showLineSavePreview(blob, fileName);
-                    showToast("圖片已產生，請長按圖片儲存", "fa-image");
-                } else {
-                    triggerBlobDownload(blob, fileName);
-                    showToast("已成功下載專屬登機證！", "fa-circle-check");
-                }
+                triggerBlobDownload(blob, fileName);
+                showToast("已成功下載專屬登機證！", "fa-circle-check");
             } catch (err) {
                 console.error('下載失敗:', err);
                 showToast("下載失敗，請重新整理後再試一次", "fa-circle-exclamation");
@@ -1670,7 +1689,7 @@
         }
 
         function copyShareTextToClipboard() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
             try {
                 const tempInput = document.createElement('textarea');
                 tempInput.value = shareText;
@@ -1693,7 +1712,7 @@
         async function shareGameLink() {
             const shareTitle = "Dyson HD19 專屬登機證";
             const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證";
-            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
 
             const shareData = {
                 title: shareTitle,
@@ -1725,8 +1744,8 @@
         }
 
         async function shareBoardingPass() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass";
-            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證 👉 https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
+            const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass?openExternalBrowser=1";
 
             // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
             copyShareTextToClipboard();
