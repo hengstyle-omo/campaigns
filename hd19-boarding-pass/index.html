@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-55">
+    <meta name="app-version" content="20260728-58">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <script>
         (function openLinePageInExternalBrowser() {
@@ -140,8 +140,14 @@
         }
 
         .date-native-input::-webkit-calendar-picker-indicator {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
+            opacity: 0;
+            cursor: pointer;
         }
 
         .ambient-glow {
@@ -285,12 +291,12 @@
         [data-theme="blue"] .border-rose-200\/80 {
             border-color: rgba(150, 185, 220, 0.8) !important;
         }
-        [data-theme="blue"] .download-button {
+        [data-theme="blue"] .ticket-action-button {
             background-color: #e2eaf4 !important;
             color: #1b365d !important;
             border-color: rgba(27, 54, 93, 0.6) !important;
         }
-        [data-theme="blue"] .download-button:hover {
+        [data-theme="blue"] .ticket-action-button:hover {
             background-color: #d3e0ee !important;
         }
 
@@ -677,14 +683,14 @@
                     <p class="text-xs font-bold text-dyson-rose tracking-wider uppercase mb-2.5 flex items-center gap-1.5">
                         <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                     </p>
-                    <div class="w-full grid grid-cols-2 gap-3">
-                        <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                    <div class="w-full grid grid-cols-3 gap-3">
+                        <button type="button" onclick="shareBoardingPass()" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                         </button>
-                        <button type="button" onclick="downloadBoardingPass(this)" class="download-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                         </button>
-                        <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="col-span-2 w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
                         </a>
                     </div>
@@ -907,13 +913,13 @@
                             <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                         </p>
                         <div class="flex flex-col gap-2.5 w-36 sm:w-40">
-                            <button type="button" onclick="shareBoardingPass()" class="w-full h-10 px-3 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <button type="button" onclick="shareBoardingPass()" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                             </button>
-                            <button type="button" onclick="downloadBoardingPass(this)" class="download-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                             </button>
-                            <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="w-full h-10 px-2 bg-gradient-to-r from-dyson-pink via-dyson-rose to-dyson-bronze hover:opacity-95 text-white font-bold text-[10px] rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition transform active:scale-95 whitespace-nowrap">
+                            <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
                             </a>
                         </div>
@@ -1183,6 +1189,23 @@
 
             const dateEl = document.getElementById('inDate');
             if (dateEl) {
+                const openDatePicker = (event) => {
+                    if (typeof dateEl.showPicker !== 'function') return;
+                    try {
+                        event.preventDefault();
+                        dateEl.showPicker();
+                    } catch (error) {
+                        dateEl.focus({ preventScroll: true });
+                    }
+                };
+
+                dateEl.addEventListener('click', openDatePicker);
+                dateEl.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        openDatePicker(event);
+                    }
+                });
+
                 dateEl.addEventListener('change', () => {
                     if (currentPreset) setScenarioSelection(null);
                     syncDateDisplay();
