@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-52">
+    <meta name="app-version" content="20260728-53">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <script>
         (function openLinePageInExternalBrowser() {
@@ -197,6 +197,10 @@
         }
         .rotate-y-180 {
             transform: rotateY(180deg);
+        }
+        .ios-face-concealed {
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
 
         ::-webkit-scrollbar {
@@ -935,6 +939,11 @@
         let currentMode = 'portrait';
         let currentTheme = 'pink';
         let isFlipped = false;
+        let isFlipAnimating = false;
+        let flipMidpointTimer = null;
+        let flipEndTimer = null;
+        const useIOSFaceGuard = /iPad|iPhone|iPod/.test(navigator.userAgent || '')
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         let currentPreset = 'together';
         const classOptions = [
             { en: 'First Class', zh: '頭等艙' },
@@ -953,6 +962,7 @@
             syncDateDisplay();
             initQrCode();
             updatePass();
+            initializeIOSFaceGuard();
             preloadAllImagesToDataUrls();
         };
 
@@ -1305,23 +1315,84 @@
         }
 
         function toggleCardFlip() {
-            isFlipped = !isFlipped;
+            if (useIOSFaceGuard && isFlipAnimating) return;
+
+            const nextFlipped = !isFlipped;
+            isFlipped = nextFlipped;
+            const modeAtFlip = currentMode;
             const targetId = currentMode === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait';
             const card = document.getElementById(targetId);
-            if (card) {
-                if (isFlipped) {
-                    card.classList.add('rotate-y-180');
-                } else {
-                    card.classList.remove('rotate-y-180');
-                }
+            if (!card) return;
+
+            card.classList.toggle('rotate-y-180', nextFlipped);
+
+            if (useIOSFaceGuard) {
+                clearIOSFlipTimers();
+                isFlipAnimating = true;
+
+                flipMidpointTimer = setTimeout(() => {
+                    if (currentMode === modeAtFlip) {
+                        setIOSVisibleFace(modeAtFlip, nextFlipped);
+                    }
+                    flipMidpointTimer = null;
+                }, 400);
+
+                flipEndTimer = setTimeout(() => {
+                    isFlipAnimating = false;
+                    flipEndTimer = null;
+                }, 850);
             }
         }
 
         function resetFlipVisuals() {
+            clearIOSFlipTimers();
             const cardL = document.getElementById('cardInnerLandscape');
             const cardP = document.getElementById('cardInnerPortrait');
             if (cardL) cardL.classList.remove('rotate-y-180');
             if (cardP) cardP.classList.remove('rotate-y-180');
+            initializeIOSFaceGuard();
+        }
+
+        function clearIOSFlipTimers() {
+            if (flipMidpointTimer) {
+                clearTimeout(flipMidpointTimer);
+                flipMidpointTimer = null;
+            }
+            if (flipEndTimer) {
+                clearTimeout(flipEndTimer);
+                flipEndTimer = null;
+            }
+            isFlipAnimating = false;
+        }
+
+        function getCardFaces(mode) {
+            if (mode === 'landscape') {
+                return {
+                    front: document.getElementById('ticketLandscape'),
+                    back: document.getElementById('ticketLandscapeBack')
+                };
+            }
+            return {
+                front: document.getElementById('ticketPortrait'),
+                back: document.getElementById('ticketPortraitBack')
+            };
+        }
+
+        function setIOSVisibleFace(mode, showBack) {
+            if (!useIOSFaceGuard) return;
+            const { front, back } = getCardFaces(mode);
+            if (!front || !back) return;
+
+            front.classList.toggle('ios-face-concealed', showBack);
+            back.classList.toggle('ios-face-concealed', !showBack);
+            front.setAttribute('aria-hidden', showBack ? 'true' : 'false');
+            back.setAttribute('aria-hidden', showBack ? 'false' : 'true');
+        }
+
+        function initializeIOSFaceGuard() {
+            if (!useIOSFaceGuard) return;
+            setIOSVisibleFace('landscape', false);
+            setIOSVisibleFace('portrait', false);
         }
 
         function setScenarioSelection(preset) {
@@ -1620,7 +1691,8 @@
             clonedEl.style.left = '0';
             clonedEl.style.width = width + 'px';
             clonedEl.style.height = targetHeight + 'px';
-            clonedEl.classList.remove('rotate-y-180', 'backface-hidden');
+            clonedEl.classList.remove('rotate-y-180', 'backface-hidden', 'ios-face-concealed');
+            clonedEl.removeAttribute('aria-hidden');
 
             const imgs = Array.from(clonedEl.querySelectorAll('img'));
             await Promise.all(imgs.map(async (img) => {
