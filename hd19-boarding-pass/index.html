@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-45">
+    <meta name="app-version" content="20260728-47">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <script>
         (function openLinePageInExternalBrowser() {
@@ -439,8 +439,8 @@
                             <div class="flex justify-between items-start relative z-10 shrink-0">
                                 <div class="min-w-0 flex-1 pr-2">
                                     <div class="flex items-center space-x-2">
-                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
-                                        <img src="./assets/images/dyson_supersonic_travel_white.png" alt="Category Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-4 object-contain" onerror="loadSupersonicLogoFallback(this);">
+                                        <img src="./assets/images/dyson_logo_black.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_supersonic_travel_black.png" alt="Category Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-4 object-contain" onerror="loadSupersonicLogoFallback(this);">
                                     </div>
                                     <p class="text-[8px] sm:text-[9px] text-dyson-rose font-bold tracking-tight mt-0.5 whitespace-nowrap">DYSON AIRWAYS • FLIGHT HD19 • VALENTINE SPECIAL</p>
                                 </div>
@@ -550,7 +550,7 @@
                         
                         <div class="flex justify-between items-center border-b border-rose-200/80 pb-2.5 shrink-0">
                             <div class="flex items-center space-x-2">
-                                <img src="./assets/images/dyson_logo_white.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
+                                <img src="./assets/images/dyson_logo_black.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
                                 <span class="text-xs font-bold text-dyson-rose">Supersonic™ Travel HD19</span>
                             </div>
                             <span class="inline-flex items-center justify-center text-[10px] bg-rose-100/80 text-dyson-rose border border-rose-200 px-3 py-1 rounded-full font-semibold uppercase leading-none text-center">TRAVEL ESSENTIALS</span>
@@ -635,8 +635,8 @@
                             <div class="ticket-header-grad px-3.5 py-3 text-white relative overflow-hidden shrink-0">
                                 <div class="flex justify-between items-center relative z-10">
                                     <div class="flex items-center space-x-2">
-                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-is-dark="true" referrerpolicy="no-referrer" class="h-4 object-contain" onerror="loadDysonLogoFallback(this);">
-                                        <img src="./assets/images/dyson_supersonic_travel_white.png" alt="Category Logo" data-is-dark="true" referrerpolicy="no-referrer" class="h-3.5 object-contain" onerror="loadSupersonicLogoFallback(this);">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-is-dark="true" data-logo-tone="white" referrerpolicy="no-referrer" class="h-4 object-contain" style="filter: brightness(0) invert(1);" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_supersonic_travel_white.png" alt="Category Logo" data-is-dark="true" data-logo-tone="white" referrerpolicy="no-referrer" class="h-3.5 object-contain" style="filter: brightness(0) invert(1);" onerror="loadSupersonicLogoFallback(this);">
                                     </div>
                                     <span class="text-xs font-black tracking-widest uppercase font-serif">BOARDING PASS</span>
                                 </div>
@@ -774,7 +774,7 @@
                             <div class="ticket-header-grad p-3 text-white relative -m-5 mb-1 shrink-0">
                                 <div class="flex justify-between items-center px-1">
                                     <div class="flex items-center space-x-2">
-                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 object-contain" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-logo-tone="white" referrerpolicy="no-referrer" class="h-4 object-contain" style="filter: brightness(0) invert(1);" onerror="loadDysonLogoFallback(this);">
                                         <span class="text-[9px] font-bold uppercase">HD19</span>
                                     </div>
                                     <span class="text-[10px] font-black uppercase tracking-wider">TRAVEL SPECIFICATIONS</span>
@@ -949,6 +949,7 @@
         function loadDysonLogoFallback(image) {
             const blackLogoPath = './assets/images/dyson_logo_black.png';
             const originalBlackLogo = 'https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png';
+            const renderWhite = image.dataset.logoTone === 'white';
 
             if (!image.dataset.blackLogoTried && !image.src.includes('dyson_logo_black.png')) {
                 image.dataset.blackLogoTried = 'true';
@@ -963,12 +964,14 @@
             }
 
             image.onerror = null;
-            image.src = getFallbackSvgDataUrl(image);
+            image.style.filter = 'none';
+            image.src = getFallbackSvgDataUrl('dyson-logo', renderWhite);
         }
 
         function loadSupersonicLogoFallback(image) {
             const blackLogoPath = './assets/images/dyson_supersonic_travel_black.png';
             const originalLogo = 'https://img2.91mai.com/o2o/image/868ce2a2-8242-44af-a034-4af1b72ea151.png';
+            const renderWhite = image.dataset.logoTone === 'white';
 
             if (!image.dataset.blackLogoTried && !image.src.includes('dyson_supersonic_travel_black.png')) {
                 image.dataset.blackLogoTried = 'true';
@@ -983,7 +986,8 @@
             }
 
             image.onerror = null;
-            image.src = getFallbackSvgDataUrl(image);
+            image.style.filter = 'none';
+            image.src = getFallbackSvgDataUrl('supersonic-logo', renderWhite);
         }
 
         function loadGeneratedQr(image) {
@@ -1445,6 +1449,8 @@
                 svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><rect width="240" height="240" rx="20" fill="${isBlue ? '#eaf1f8' : '#fdf2f4'}" stroke="${isBlue ? 'rgba(27,54,93,0.3)' : 'rgba(209,130,142,0.3)'}" stroke-width="2"/><defs><linearGradient id="pGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${isBlue ? '#d5e2f2' : '#fce8eb'}"/><stop offset="100%" stop-color="${primaryAccent}"/></linearGradient><linearGradient id="bGrad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#e0a96d"/><stop offset="100%" stop-color="#b86b72"/></linearGradient></defs><g transform="translate(18, 15)"><circle cx="45" cy="55" r="32" fill="none" stroke="url(#pGrad1)" stroke-width="14"/><circle cx="45" cy="55" r="22" fill="${logoColor}"/><circle cx="45" cy="55" r="12" fill="url(#bGrad1)"/><circle cx="45" cy="55" r="5" fill="#ffffff" opacity="0.9"/><rect x="38" y="86" width="14" height="95" rx="7" fill="url(#pGrad1)"/><rect x="38" y="145" width="14" height="32" rx="4" fill="#17121b"/></g><g transform="translate(115, 15)"><rect x="10" y="32" width="65" height="46" rx="8" fill="url(#pGrad1)"/><rect x="5" y="30" width="12" height="50" rx="4" fill="${logoColor}"/><rect x="62" y="35" width="15" height="40" rx="4" fill="url(#bGrad1)"/><rect x="35" y="78" width="14" height="103" rx="7" fill="url(#pGrad1)"/><rect x="35" y="145" width="14" height="32" rx="4" fill="#17121b"/></g></svg>`;
             } else if (type.includes('hd19') || type.includes('639202210906470000')) {
                 svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" rx="20" fill="none"/><defs><linearGradient id="pGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${isBlue ? '#d5e2f2' : '#fce8eb'}"/><stop offset="50%" stop-color="${secondaryAccent}"/><stop offset="100%" stop-color="${primaryAccent}"/></linearGradient><linearGradient id="bGrad2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e0a96d"/><stop offset="100%" stop-color="#b86b72"/></linearGradient></defs><circle cx="90" cy="62" r="38" fill="none" stroke="url(#pGrad2)" stroke-width="16"/><circle cx="90" cy="62" r="26" fill="${logoColor}"/><circle cx="90" cy="62" r="14" fill="url(#bGrad2)"/><circle cx="90" cy="62" r="6" fill="#ffffff" opacity="0.95"/><rect x="82" y="98" width="16" height="68" rx="8" fill="url(#pGrad2)"/><rect x="82" y="142" width="16" height="22" rx="4" fill="#2d2230"/></svg>`;
+            } else if (type.includes('supersonic')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 44"><text x="2" y="30" fill="${logoColor}" font-family="Montserrat,Arial,sans-serif" font-size="27" font-weight="600" letter-spacing="-1">supersonic™</text><text x="190" y="29" fill="${logoColor}" font-family="Montserrat,Arial,sans-serif" font-size="10" font-weight="600" letter-spacing="1">TRAVEL</text></svg>`;
             } else if (type.includes('dyson') || type.includes('b547989b')) {
                 svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44"><g fill="${logoColor}"><path d="M26,6 h7 v32 h-7 v-3.5 C24,37 21,39 16.5,39 C8.5,39 2,32 2,23 C2,14 8.5,7 16.5,7 C21,7 24,9 26,11.5 Z M18,13.5 C12.5,13.5 8.5,17.5 8.5,23 C8.5,28.5 12.5,32.5 18,32.5 C23.5,32.5 27.5,28.5 27.5,23 C27.5,17.5 23.5,13.5 18,13.5 Z"/><path d="M38,14 h7.5 l5.5,14 l5.5,-14 h7.5 l-9.5,22 c-2.5,6 -5.5,8.5 -11.5,8.5 h-3 v-6 h2 c3,0 4.5,-1 6,-5 Z"/><path d="M85,14 v6 c-2,-1.5 -4.5,-2.5 -7.5,-2.5 c-3.5,0 -5.5,1.5 -5.5,3.5 c0,2.5 3,3.5 7.5,5 c6,2 10.5,4.5 10.5,10.5 C90,43 82.5,46 75,46 C70.5,46 66.5,44.5 63.5,42 v-6.5 c2.5,2 5.5,3.5 9,3.5 c4,0 6,-1.5 6,-4 c0,-2.5 -2.5,-3.5 -7.5,-5 C65,28 60.5,25.5 60.5,19.5 C60.5,13.5 67,11 74.5,11 C78.5,11 82,12 85,14 Z"/><path d="M109,11 C118,11 125,18 125,27 C125,36 118,43 109,43 C100,43 93,36 93,27 C93,18 100,11 109,11 Z M109,17.5 C103.5,17.5 99.5,21.5 99.5,27 C99.5,32.5 103.5,36.5 109,36.5 C114.5,36.5 118.5,32.5 118.5,27 C118.5,21.5 114.5,17.5 109,17.5 Z"/><path d="M131,14 h6.5 v3.5 c2,-2.5 5.5,-4 9.5,-4 c7,0 11,4.5 11,12 v13 h-7 v-12 c0,-4.5 -2,-7 -6,-7 c-4,0 -7,2.5 -7,7 v12 h-7 Z"/></g></svg>`;
             } else if (type.includes('voltage') || type.includes('8f7026ab')) {
