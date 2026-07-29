@@ -2093,7 +2093,7 @@
                     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                         try {
                             await navigator.share(shareData);
-                            showToast("圖片與遊戲連結已複製！", "fa-circle-check");
+                            showToast("圖片分享完成！別忘了貼上已複製的遊戲連結，分享情人節遊戲！", "fa-circle-check");
                             return;
                         } catch (shareErr) {
                             if (shareErr.name === 'AbortError') {
