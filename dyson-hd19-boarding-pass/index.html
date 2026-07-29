@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260728-60">
+    <meta name="app-version" content="20260729-61">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QF125DEKNR"></script>
@@ -355,6 +355,9 @@
         [data-theme="blue"] .ticket-action-primary:hover {
             background-color: #112239 !important;
         }
+        [data-theme="blue"] #ticketLandscape .landscape-route-line {
+            border-color: #c88b58 !important;
+        }
 
         /* Portrait Back Dynamic Theme Override */
         [data-theme="blue"] #ticketPortraitBack {
@@ -404,6 +407,21 @@
         #privacyDialog::backdrop {
             background: rgba(24, 20, 25, 0.5);
             backdrop-filter: blur(3px);
+        }
+        #desktopShareDialog {
+            width: min(92vw, 560px);
+            max-height: min(90vh, 780px);
+            margin: auto;
+            padding: 0;
+            border: 0;
+            border-radius: 24px;
+            background: #ffffff;
+            color: #2d2a32;
+            box-shadow: 0 24px 80px rgba(45, 42, 50, 0.28);
+        }
+        #desktopShareDialog::backdrop {
+            background: rgba(24, 20, 25, 0.56);
+            backdrop-filter: blur(4px);
         }
     </style>
 </head>
@@ -603,7 +621,7 @@
 
                                     <div class="w-16 sm:w-20 px-1 flex flex-col items-center justify-center shrink-0">
                                         <div class="w-full relative flex items-center justify-center h-6">
-                                            <div class="w-full border-t-2 border-dashed border-dyson-rose/60"></div>
+                                            <div class="landscape-route-line w-full border-t-2 border-dashed border-dyson-rose/60"></div>
                                             <div class="absolute w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 border border-white/80 shadow-sm flex items-center justify-center">
                                                 <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-dyson-rose fill-current keep-pink-fill" viewBox="0 0 24 24">
                                                     <g transform="rotate(90 12 12)">
@@ -687,7 +705,7 @@
 
                             <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
                                 <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mt-1">領取$500優惠</span>
+                                <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mt-1">領取 $500 優惠</span>
                             </div>
                         </div>
                     </div>
@@ -799,7 +817,7 @@
                                         <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
                                     </div>
                                     <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
-                                        <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mb-1">領取$500優惠</span>
+                                        <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mb-1">領取 $500 優惠</span>
                                         <img id="qrCodePortrait" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
                                     </div>
                                 </div>
@@ -965,7 +983,7 @@
 
                                     <div class="flex-1 min-h-[72px] flex flex-col items-center justify-center">
                                         <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                        <span class="mt-1 text-[10px] font-semibold text-dyson-rose tracking-tight">領取$500優惠</span>
+                                        <span class="mt-1 text-[10px] font-semibold text-dyson-rose tracking-tight">領取 $500 優惠</span>
                                     </div>
                                 </div>
                             </div>
@@ -1061,6 +1079,51 @@
         </div>
     </dialog>
 
+    <dialog id="desktopShareDialog" aria-labelledby="desktopShareDialogTitle" onclick="if (event.target === this) closeDesktopShareDialog()">
+        <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-rose-100 bg-white px-5 sm:px-6 py-4">
+            <div>
+                <h2 id="desktopShareDialogTitle" class="text-base sm:text-lg font-bold text-dyson-dark">分享專屬登機證</h2>
+                <p class="mt-0.5 text-[11px] text-slate-500">選擇適合你的桌機分享方式</p>
+            </div>
+            <button type="button" onclick="closeDesktopShareDialog()" aria-label="關閉分享視窗" class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-dyson-rose transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="overflow-y-auto px-5 sm:px-6 py-5">
+            <div class="rounded-2xl border border-rose-100 bg-slate-50/70 p-3 flex items-center justify-center">
+                <img id="desktopSharePreview" alt="專屬登機證預覽" class="max-h-[280px] max-w-full rounded-xl object-contain shadow-md">
+            </div>
+
+            <p class="mt-4 text-xs leading-5 text-slate-600">
+                建議先複製圖片貼到 LINE、Messenger 或 Email，再複製活動文字與連結一起傳送。
+            </p>
+
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button type="button" id="desktopSystemShareButton" onclick="sharePreparedDesktopFile()" class="ticket-action-primary h-11 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    系統分享／傳到其他裝置
+                </button>
+                <button type="button" onclick="copyPreparedDesktopImage()" class="h-11 px-4 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-dyson-rose font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="fa-regular fa-copy"></i>
+                    複製圖片
+                </button>
+                <button type="button" onclick="copyPreparedShareText()" class="h-11 px-4 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 text-dyson-rose font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-link"></i>
+                    複製活動文字與連結
+                </button>
+                <button type="button" onclick="downloadPreparedDesktopImage()" class="h-11 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    下載圖片
+                </button>
+            </div>
+
+            <p id="desktopSystemShareHint" class="hidden mt-3 text-[11px] leading-5 text-slate-500">
+                此瀏覽器未提供圖片系統分享，可使用複製圖片或下載圖片。
+            </p>
+        </div>
+    </dialog>
+
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-dyson-rose/40 flex items-center gap-3 transition-all duration-300">
         <i id="toastIcon" class="fa-solid fa-circle-check text-dyson-pink text-lg"></i>
@@ -1077,6 +1140,8 @@
         const useIOSFaceGuard = /iPad|iPhone|iPod/.test(navigator.userAgent || '')
             || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         let currentPreset = 'together';
+        const campaignShareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證🎟️\nhttps://hlh.tw/dyson-hd19-boarding-pass";
+        let preparedDesktopShare = null;
         function trackCampaignEvent(eventName, eventParams = {}) {
             if (typeof window.gtag !== 'function') return;
             window.gtag('event', eventName, {
@@ -2029,10 +2094,9 @@
         }
 
         function copyShareTextToClipboard() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證🎟️\nhttps://hlh.tw/dyson-hd19-boarding-pass";
             try {
                 const tempInput = document.createElement('textarea');
-                tempInput.value = shareText;
+                tempInput.value = campaignShareText;
                 tempInput.style.position = 'fixed';
                 tempInput.style.left = '-9999px';
                 tempInput.style.top = '0';
@@ -2049,8 +2113,162 @@
             }
         }
 
+        function isMobileShareDevice() {
+            const userAgent = navigator.userAgent || '';
+            const reportsMobile = navigator.userAgentData?.mobile === true;
+            const mobileUserAgent = /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent);
+            const iPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            return reportsMobile || mobileUserAgent || iPadOS;
+        }
+
+        function canNativeShareFile(file) {
+            if (!file || typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
+                return false;
+            }
+            try {
+                return navigator.canShare({ files: [file] });
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function clearPreparedDesktopShare() {
+            if (preparedDesktopShare?.previewUrl) {
+                URL.revokeObjectURL(preparedDesktopShare.previewUrl);
+            }
+            preparedDesktopShare = null;
+            const preview = document.getElementById('desktopSharePreview');
+            if (preview) preview.removeAttribute('src');
+        }
+
+        function openDesktopShareDialog(blob, file, fileName) {
+            clearPreparedDesktopShare();
+
+            const previewUrl = URL.createObjectURL(blob);
+            preparedDesktopShare = {
+                blob,
+                file,
+                fileName,
+                previewUrl
+            };
+
+            const preview = document.getElementById('desktopSharePreview');
+            const dialog = document.getElementById('desktopShareDialog');
+            const systemShareButton = document.getElementById('desktopSystemShareButton');
+            const systemShareHint = document.getElementById('desktopSystemShareHint');
+            const supportsNativeFileShare = canNativeShareFile(file);
+
+            if (preview) preview.src = previewUrl;
+            if (systemShareButton) systemShareButton.classList.toggle('hidden', !supportsNativeFileShare);
+            if (systemShareHint) systemShareHint.classList.toggle('hidden', supportsNativeFileShare);
+            if (dialog && !dialog.open) dialog.showModal();
+        }
+
+        function closeDesktopShareDialog() {
+            const dialog = document.getElementById('desktopShareDialog');
+            if (dialog?.open) {
+                dialog.close();
+            } else {
+                clearPreparedDesktopShare();
+            }
+        }
+
+        async function sharePreparedDesktopFile() {
+            const prepared = preparedDesktopShare;
+            if (!prepared || !canNativeShareFile(prepared.file)) {
+                showToast("此瀏覽器不支援圖片系統分享，請改用複製圖片或下載圖片", "fa-circle-info", 4000);
+                return;
+            }
+
+            try {
+                await navigator.share({
+                    title: "Dyson HD19 專屬登機證",
+                    text: campaignShareText,
+                    files: [prepared.file]
+                });
+                trackCampaignEvent('desktop_native_share_complete', {
+                    card_format: currentMode,
+                    theme_name: currentTheme,
+                    card_side: isFlipped ? 'back' : 'front',
+                    ...getRouteTrackingParams()
+                });
+                closeDesktopShareDialog();
+                showToast("圖片分享完成！", "fa-circle-check");
+            } catch (shareErr) {
+                if (shareErr.name === 'AbortError') {
+                    showToast("取消分享", "fa-circle-info");
+                    return;
+                }
+                console.error('桌機系統分享失敗:', shareErr);
+                showToast("系統分享無法使用，請改用複製圖片或下載圖片", "fa-circle-exclamation", 4000);
+            }
+        }
+
+        async function copyPreparedDesktopImage() {
+            const prepared = preparedDesktopShare;
+            if (!prepared) return;
+
+            if (!navigator.clipboard?.write || typeof ClipboardItem === 'undefined') {
+                showToast("此瀏覽器不支援複製圖片，請改用下載圖片", "fa-circle-info", 4000);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': prepared.blob })
+                ]);
+                trackCampaignEvent('copy_boarding_pass_image', {
+                    card_format: currentMode,
+                    theme_name: currentTheme,
+                    card_side: isFlipped ? 'back' : 'front'
+                });
+                showToast("圖片已複製，可貼到 LINE、Messenger 或 Email", "fa-circle-check", 4000);
+            } catch (error) {
+                console.error('複製圖片失敗:', error);
+                showToast("圖片複製失敗，請改用下載圖片", "fa-circle-exclamation", 4000);
+            }
+        }
+
+        async function copyPreparedShareText() {
+            let successful = false;
+
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(campaignShareText);
+                    successful = true;
+                } catch (error) {
+                    successful = false;
+                }
+            }
+
+            if (!successful) successful = copyShareTextToClipboard();
+
+            if (successful) {
+                trackCampaignEvent('copy_campaign_share_text');
+                showToast("活動文字與連結已複製！", "fa-circle-check");
+            } else {
+                showToast("複製失敗，請手動複製活動網址", "fa-circle-exclamation");
+            }
+        }
+
+        function downloadPreparedDesktopImage() {
+            const prepared = preparedDesktopShare;
+            if (!prepared) return;
+
+            triggerBlobDownload(prepared.blob, prepared.fileName);
+            trackCampaignEvent('download_boarding_pass', {
+                card_format: currentMode,
+                theme_name: currentTheme,
+                card_side: isFlipped ? 'back' : 'front',
+                source: 'desktop_share_dialog',
+                ...getRouteTrackingParams()
+            });
+            showToast("已成功下載專屬登機證！", "fa-circle-check");
+        }
+
+        document.getElementById('desktopShareDialog')?.addEventListener('close', clearPreparedDesktopShare);
+
         async function shareBoardingPass() {
-            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證🎟️\nhttps://hlh.tw/dyson-hd19-boarding-pass";
             trackCampaignEvent('share_boarding_pass', {
                 card_format: currentMode,
                 theme_name: currentTheme,
@@ -2058,8 +2276,11 @@
                 ...getRouteTrackingParams()
             });
 
-            // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
-            copyShareTextToClipboard();
+            const useMobileShareFlow = isMobileShareDevice();
+            if (useMobileShareFlow) {
+                // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
+                copyShareTextToClipboard();
+            }
 
             try {
                 const { canvas, fileName } = await generateBoardingPassCanvas();
@@ -2072,9 +2293,15 @@
 
                     const file = new File([blob], fileName, { type: 'image/png' });
 
+                    if (!useMobileShareFlow) {
+                        openDesktopShareDialog(blob, file, fileName);
+                        showToast("圖片已產生，請選擇分享方式", "fa-share-nodes");
+                        return;
+                    }
+
                     const shareData = {
                         title: "Dyson HD19 專屬登機證",
-                        text: shareText,
+                        text: campaignShareText,
                         files: [file]
                     };
 
