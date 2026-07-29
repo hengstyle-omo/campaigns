@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="app-version" content="20260728-60">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QF125DEKNR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('set', {
+            page_type: 'campaign',
+            campaign_id: 'dyson_hd19_2026_valentine',
+            campaign_name: 'dyson hd19 七夕情人節',
+            brand_name: 'dyson'
+        });
+        gtag('config', 'G-QF125DEKNR');
+    </script>
     <script>
         (function openLinePageInExternalBrowser() {
             const isLineBrowser = /Line\//i.test(navigator.userAgent || '');
@@ -225,8 +241,20 @@
             transition: background 0.5s ease;
         }
         .ticket-header-grad {
-            background: linear-gradient(135deg, #e89da2 0%, #d1828e 100%);
+            background: linear-gradient(135deg, #c9707e 0%, #d1828e 100%);
             transition: background 0.5s ease;
+        }
+        .portrait-front-header {
+            background: linear-gradient(135deg, #c9707e 0%, #d1828e 100%);
+            transition: background 0.5s ease;
+        }
+        .portrait-front-soft-bg {
+            background-color: #fdf2f4;
+            transition: background-color 0.5s ease;
+        }
+        #ticketLandscapeBack,
+        #ticketPortraitBack {
+            background: #fdf2f4;
         }
 
         /* Dynamic Theme Overrides for Prussian Blue (data-theme="blue") */
@@ -241,10 +269,31 @@
             background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 50%, #e2eaf4 100%) !important;
         }
         [data-theme="blue"] .ticket-pass-bg {
-            background: linear-gradient(135deg, #e6eef7 0%, #d5e3f2 50%, #c4d7ed 100%);
+            background: #f0f4f8;
+        }
+        [data-theme="blue"] #ticketLandscapeBack {
+            background: #f0f4f8 !important;
         }
         [data-theme="blue"] .ticket-header-grad {
-            background: linear-gradient(135deg, #112239 0%, #1b365d 100%) !important;
+            background: linear-gradient(135deg, #1b365d 0%, #274b73 100%) !important;
+        }
+        [data-theme="blue"] .portrait-front-header {
+            background: linear-gradient(135deg, #1b365d 0%, #274b73 100%) !important;
+        }
+        [data-theme="blue"] .portrait-front-soft-bg {
+            background-color: #f0f4f8 !important;
+        }
+        [data-theme="blue"] #inPassenger:focus,
+        [data-theme="blue"] #inOrigin:focus,
+        [data-theme="blue"] #inDestination:focus,
+        [data-theme="blue"] #inTime:focus,
+        [data-theme="blue"] #inMessage:focus {
+            border-color: #1b365d !important;
+            box-shadow: 0 0 0 1px #1b365d !important;
+        }
+        [data-theme="blue"] .date-picker-shell:focus-within {
+            border-color: #1b365d !important;
+            box-shadow: 0 0 0 1px #1b365d !important;
         }
         [data-theme="blue"] .ticket-tear-left,
         [data-theme="blue"] .ticket-tear-right {
@@ -299,10 +348,28 @@
         [data-theme="blue"] .ticket-action-button:hover {
             background-color: #d3e0ee !important;
         }
+        .ticket-action-primary {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #c9707e !important;
+            color: #ffffff !important;
+            border-color: #c9707e !important;
+        }
+        .ticket-action-primary:hover {
+            background-color: #b85f70 !important;
+        }
+        [data-theme="blue"] .ticket-action-primary {
+            background-color: #1b365d !important;
+            color: #ffffff !important;
+            border-color: #1b365d !important;
+        }
+        [data-theme="blue"] .ticket-action-primary:hover {
+            background-color: #112239 !important;
+        }
 
         /* Portrait Back Dynamic Theme Override */
         [data-theme="blue"] #ticketPortraitBack {
-            background: linear-gradient(135deg, #f0f4f8 0%, #e2eaf4 100%) !important;
+            background: #f0f4f8 !important;
         }
 
         /* Specific Pink Highlight Keep Classes */
@@ -615,7 +682,7 @@
 
                             <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
                                 <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                <span class="text-[8px] font-light text-dyson-rose tracking-tight mt-1">領取專屬優惠</span>
+                                <span class="text-[8px] font-bold text-dyson-rose tracking-tight mt-1">領取$500優惠</span>
                             </div>
                         </div>
                     </div>
@@ -684,13 +751,13 @@
                         <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                     </p>
                     <div class="w-full grid grid-cols-3 gap-3">
-                        <button type="button" onclick="shareBoardingPass()" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <button type="button" onclick="shareBoardingPass()" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                         </button>
-                        <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                         </button>
-                        <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'landscape' })" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                             <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
                         </a>
                     </div>
@@ -707,7 +774,7 @@
                         <div id="ticketPortrait" class="backface-hidden w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden relative text-slate-800 flex flex-col justify-between absolute inset-0 border border-rose-100">
 
                             <!-- Header -->
-                            <div class="ticket-header-grad px-3.5 py-3 text-white relative overflow-hidden shrink-0">
+                            <div class="portrait-front-header px-3.5 py-3 text-white relative overflow-hidden shrink-0">
                                 <div class="flex justify-between items-center relative z-10">
                                     <div class="flex items-center space-x-2">
                                         <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-is-dark="true" data-logo-tone="white" referrerpolicy="no-referrer" class="h-4 object-contain" style="filter: brightness(0) invert(1);" onerror="loadDysonLogoFallback(this);">
@@ -719,7 +786,7 @@
                             </div>
 
                             <!-- TOP SECTION (ABOVE TEAR LINE) - FAINT SOFT PINK BG -->
-                            <div class="px-4 pt-2 pb-1 bg-rose-50/50 flex flex-col justify-between shrink-0">
+                            <div class="portrait-front-soft-bg px-4 pt-2 pb-1 flex flex-col justify-between shrink-0">
                             
                                 <!-- Product Image & QR Code Side-by-Side -->
                                 <div class="pb-1 relative flex items-center justify-between px-1 shrink-0">
@@ -727,7 +794,7 @@
                                         <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
                                     </div>
                                     <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
-                                        <span class="text-[8px] font-light text-dyson-rose tracking-tight mb-1">領取專屬優惠</span>
+                                        <span class="text-[8px] font-bold text-dyson-rose tracking-tight mb-1">領取$500優惠</span>
                                         <img id="qrCodePortrait" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
                                     </div>
                                 </div>
@@ -761,7 +828,7 @@
 
                             <!-- DASHED TEAR LINE CONNECTED WITH SIDE NOTCHES -->
                             <div class="relative flex items-center justify-center shrink-0 h-5">
-                                <div class="absolute inset-x-0 top-0 h-1/2 bg-rose-50/50"></div>
+                                <div class="portrait-front-soft-bg absolute inset-x-0 top-0 h-1/2"></div>
                                 <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white"></div>
                                 <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[#f4ecee] rounded-full z-10 shadow-inner ticket-tear-left"></div>
                                 <div class="w-full border-t-2 border-dashed border-slate-200/80 relative z-10"></div>
@@ -820,7 +887,7 @@
                                     </div>
 
                                     <!-- SEAMLESS SOFT PINK CONTAINER FOR BAGGAGE & SUBTEXT WITH TOP BORDER -->
-                                    <div class="-mx-4 flex-1 flex flex-col justify-between bg-rose-50/50 text-slate-800 border-t border-rose-100/80">
+                                    <div class="portrait-front-soft-bg -mx-4 flex-1 flex flex-col justify-between text-slate-800 border-t border-rose-100/80">
                                         <!-- BAGGAGE ALLOWANCE SECTION -->
                                         <div class="px-4 py-3">
                                             <div class="flex items-center justify-between text-[8px] font-medium text-slate-500 uppercase tracking-wider mb-1">
@@ -850,7 +917,6 @@
                                 <div class="flex justify-between items-center px-1">
                                     <div class="flex items-center space-x-2">
                                         <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-logo-tone="white" referrerpolicy="no-referrer" class="h-4 object-contain" style="filter: brightness(0) invert(1);" onerror="loadDysonLogoFallback(this);">
-                                        <span class="text-[9px] font-bold uppercase">HD19</span>
                                     </div>
                                     <span class="text-[10px] font-black uppercase tracking-wider">TRAVEL SPECIFICATIONS</span>
                                 </div>
@@ -894,13 +960,13 @@
 
                                     <div class="flex-1 min-h-[72px] flex flex-col items-center justify-center">
                                         <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                        <span class="mt-1 text-[8px] font-medium text-dyson-rose tracking-tight">領取專屬優惠</span>
+                                        <span class="mt-1 text-[8px] font-bold text-dyson-rose tracking-tight">領取$500優惠</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="border-t border-rose-200/80 text-center text-[9px] text-slate-500 shrink-0 h-[45px] flex items-center justify-center -mx-5 -mb-5">
-                                <p class="font-medium">Dyson Supersonic™ Travel 隨行護航</p>
+                                <p class="font-medium">Dyson Supersonic™ Travel HD19 隨行護航</p>
                             </div>
 
                         </div>
@@ -913,13 +979,13 @@
                             <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
                         </p>
                         <div class="flex flex-col gap-2.5 w-36 sm:w-40">
-                            <button type="button" onclick="shareBoardingPass()" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <button type="button" onclick="shareBoardingPass()" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
                             </button>
-                            <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
                             </button>
-                            <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'portrait' })" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
                                 <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
                             </a>
                         </div>
@@ -951,6 +1017,31 @@
         const useIOSFaceGuard = /iPad|iPhone|iPod/.test(navigator.userAgent || '')
             || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         let currentPreset = 'together';
+        function trackCampaignEvent(eventName, eventParams = {}) {
+            if (typeof window.gtag !== 'function') return;
+            window.gtag('event', eventName, {
+                page_type: 'campaign',
+                campaign_id: 'dyson_hd19_2026_valentine',
+                campaign_name: 'dyson hd19 七夕情人節',
+                brand_name: 'dyson',
+                ...eventParams
+            });
+        }
+
+        function getRouteTrackingParams() {
+            const normalizeLocation = (value) => String(value || '')
+                .trim()
+                .toUpperCase()
+                .replace(/[^\p{L}\p{N}\s-]/gu, '')
+                .replace(/\s+/g, ' ')
+                .slice(0, 12);
+
+            return {
+                departure: normalizeLocation(document.getElementById('inOrigin')?.value),
+                destination: normalizeLocation(document.getElementById('inDestination')?.value)
+            };
+        }
+
         const classOptions = [
             { en: 'First Class', zh: '頭等艙' },
             { en: 'Business Class', zh: '商務艙' },
@@ -996,6 +1087,9 @@
 
             initQrCode();
             preloadAllImagesToDataUrls();
+            trackCampaignEvent('select_theme', {
+                theme_name: theme
+            });
         }
 
         async function preloadAllImagesToDataUrls() {
@@ -1221,14 +1315,6 @@
             dateDisplay.textContent = (dateInput?.value || '2026-08-19').replace(/-/g, '/');
         }
 
-        function setTimePreset(timeStr) {
-            const el = document.getElementById('inTime');
-            if (el) {
-                el.value = timeStr;
-                updatePass();
-            }
-        }
-
         function updatePass() {
             const passenger = document.getElementById('inPassenger')?.value || 'YOU & ME';
             const origin = (document.getElementById('inOrigin')?.value || 'TAIPEI').toUpperCase();
@@ -1335,6 +1421,9 @@
                 isFlipped = false;
                 resetFlipVisuals();
             }
+            trackCampaignEvent('select_card_format', {
+                card_format: mode
+            });
         }
 
         function toggleCardFlip() {
@@ -1348,6 +1437,10 @@
             if (!card) return;
 
             card.classList.toggle('rotate-y-180', nextFlipped);
+            trackCampaignEvent('flip_card', {
+                card_format: modeAtFlip,
+                card_side: nextFlipped ? 'back' : 'front'
+            });
 
             if (useIOSFaceGuard) {
                 clearIOSFlipTimers();
@@ -1458,12 +1551,15 @@
                 showToast("已載入「浪漫同行」專屬設定！");
             }
             updatePass();
+            trackCampaignEvent('select_vibe', {
+                vibe_name: preset
+            });
         }
 
         function randomizeInspiration() {
             const messages = [
                 "歡迎搭乘 Dyson HD19 航班！本航班售出不退票，你的人生我全包！",
-                "七夕情人節快樂！💕💗💖💘💝💞",
+                "七夕情人節快樂！❤️",
                 "搭乘 Dyson HD19 航班：風速最高，甜度超標，一生一世不逃票！",
                 "每秒100次智慧控溫，就像我對你的愛永不降溫。",
                 "登機證已入手，立刻把你跟HD19打包走！",
@@ -1481,6 +1577,7 @@
             if (elMsg) elMsg.value = randomMsg;
             currentClassObj = getRandomClass();
             setScenarioSelection(null);
+            trackCampaignEvent('randomize_message');
             updatePass();
             showToast("已隨機套用浪漫靈感與機票艙等！");
         }
@@ -1577,6 +1674,7 @@
                 }
                 if (icon) icon.className = 'fa-solid fa-stop text-dyson-rose';
                 if (label) label.textContent = '停止機場廣播';
+                trackCampaignEvent('play_airport_audio');
             } catch (error) {
                 resetAirportAnnouncementButton();
                 showToast('找不到廣播音檔，請確認 assets/audio 中的 MP3 檔案', 'fa-circle-exclamation');
@@ -1845,6 +1943,12 @@
                 const blob = await canvasToPngBlob(canvas);
                 if (!blob) throw new Error('無法建立下載圖片');
                 triggerBlobDownload(blob, fileName);
+                trackCampaignEvent('download_boarding_pass', {
+                    card_format: currentMode,
+                    theme_name: currentTheme,
+                    card_side: isFlipped ? 'back' : 'front',
+                    ...getRouteTrackingParams()
+                });
                 showToast("已成功下載專屬登機證！", "fa-circle-check");
             } catch (err) {
                 console.error('下載失敗:', err);
@@ -1878,6 +1982,12 @@
         async function shareBoardingPass() {
             const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證";
             const shareUrl = "https://hlh.tw/dyson-hd19-boarding-pass";
+            trackCampaignEvent('share_boarding_pass', {
+                card_format: currentMode,
+                theme_name: currentTheme,
+                card_side: isFlipped ? 'back' : 'front',
+                ...getRouteTrackingParams()
+            });
 
             // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
             copyShareTextToClipboard();
