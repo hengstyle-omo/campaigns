@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="app-version" content="20260728-60">
+    <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QF125DEKNR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('set', {
+            page_type: 'campaign',
+            campaign_id: 'dyson_hd19_2026_valentine',
+            campaign_name: 'dyson hd19 七夕情人節',
+            brand_name: 'dyson'
+        });
+        gtag('config', 'G-QF125DEKNR');
+    </script>
+    <script>
+        (function openLinePageInExternalBrowser() {
+            const isLineBrowser = /Line\//i.test(navigator.userAgent || '');
+            const currentUrl = new URL(window.location.href);
+            if (isLineBrowser && currentUrl.searchParams.get('openExternalBrowser') !== '1') {
+                currentUrl.searchParams.set('openExternalBrowser', '1');
+                window.location.replace(currentUrl.toString());
+            }
+        })();
+    </script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for Direct HTML Snapshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- QRCode.js for Native QR Code Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Montserrat:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dyson: {
+                            pink: '#e89da2',
+                            rose: '#c9707e',
+                            bronze: '#b86b72',
+                            dark: '#1e1c24',
+                            cream: '#faf5f3',
+                            accent: '#d89b65',
+                            softBg: '#f6ecee',
+                            // Prussian Blue Theme Colors
+                            navy: '#1b365d',
+                            deepNavy: '#112239',
+                            softBlue: '#e2eaf4'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'Noto Sans TC', 'sans-serif'],
+                        serif: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        html, body {
+            overflow-x: hidden !important;
+            width: 100%;
+            max-width: 100vw;
+            touch-action: pan-y;
+            position: relative;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #faf7f5 0%, #f4ecee 50%, #fdfbfb 100%);
+            color: #2d2a32;
+            min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+
+        .date-native-input,
+        .date-native-input:focus,
+        .date-native-input::-webkit-date-and-time-value {
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        .date-time-row {
+            display: flex !important;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            gap: 0.75rem;
+            overflow: hidden;
+        }
+
+        .date-time-column {
+            flex: 1 1 0;
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: calc(50% - 0.375rem);
+            overflow: hidden;
+        }
+
+        .date-picker-shell,
+        .boarding-time-input {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .date-picker-shell {
+            height: 34px;
+            overflow: hidden;
+            contain: layout paint;
+            isolation: isolate;
+            background-color: rgba(248, 250, 252, 0.3);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .date-picker-shell:focus-within {
+            border-color: #c9707e;
+        }
+
+        .date-native-input {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            height: 100%;
+            box-sizing: border-box;
+            opacity: 0;
+            z-index: 2;
+            border: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        .date-native-input::-webkit-date-and-time-value {
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .date-native-input::-webkit-calendar-picker-indicator {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(232, 157, 162, 0.22) 0%, rgba(209, 130, 142, 0.08) 50%, transparent 70%);
+            filter: blur(70px);
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 0;
+            transition: background 0.5s ease;
+        }
+
+        .ticket-tear-left, .ticket-tear-right {
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: #f4ecee;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            transition: background-color 0.3s ease;
+        }
+        .ticket-tear-left { left: -10px; }
+        .ticket-tear-right { right: -10px; }
+
+        .export-mode .ticket-tear-left,
+        .export-mode .ticket-tear-right {
+            background-color: #ffffff;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.15);
+        }
+
+        .dashed-tear {
+            background-color: #ffffff;
+            background-image: linear-gradient(to bottom, #cbd5e1 50%, rgba(255, 255, 255, 0) 0%);
+            background-position: left;
+            background-size: 2px 10px;
+            background-repeat: repeat-y;
+        }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        .ios-face-concealed {
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        .ticket-pass-bg {
+            background: linear-gradient(135deg, #fce8eb 0%, #f7dcd9 50%, #f3d0ce 100%);
+            transition: background 0.5s ease;
+        }
+        .ticket-header-grad {
+            background: linear-gradient(135deg, #c9707e 0%, #d1828e 100%);
+            transition: background 0.5s ease;
+        }
+        .portrait-front-header {
+            background: linear-gradient(135deg, #c9707e 0%, #d1828e 100%);
+            transition: background 0.5s ease;
+        }
+        .portrait-front-soft-bg {
+            background-color: #fdf2f4;
+            transition: background-color 0.5s ease;
+        }
+        #ticketLandscapeBack,
+        #ticketPortraitBack {
+            background: #fdf2f4;
+        }
+
+        /* Dynamic Theme Overrides for Prussian Blue (data-theme="blue") */
+        [data-theme="blue"] {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e1e9f2 50%, #f7fafc 100%);
+            color: #0f1d30;
+        }
+        [data-theme="blue"] .ambient-glow {
+            background: radial-gradient(circle, rgba(27, 54, 93, 0.22) 0%, rgba(150, 185, 220, 0.12) 50%, transparent 70%);
+        }
+        [data-theme="blue"] #ticketLandscape > div.w-2\/3 {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 50%, #e2eaf4 100%) !important;
+        }
+        [data-theme="blue"] .ticket-pass-bg {
+            background: #f0f4f8;
+        }
+        [data-theme="blue"] #ticketLandscapeBack {
+            background: #f0f4f8 !important;
+        }
+        [data-theme="blue"] .ticket-header-grad {
+            background: linear-gradient(135deg, #1b365d 0%, #274b73 100%) !important;
+        }
+        [data-theme="blue"] .portrait-front-header {
+            background: linear-gradient(135deg, #1b365d 0%, #274b73 100%) !important;
+        }
+        [data-theme="blue"] .portrait-front-soft-bg {
+            background-color: #f0f4f8 !important;
+        }
+        [data-theme="blue"] #inPassenger:focus,
+        [data-theme="blue"] #inOrigin:focus,
+        [data-theme="blue"] #inDestination:focus,
+        [data-theme="blue"] #inTime:focus,
+        [data-theme="blue"] #inMessage:focus {
+            border-color: #1b365d !important;
+            box-shadow: 0 0 0 1px #1b365d !important;
+        }
+        [data-theme="blue"] .date-picker-shell:focus-within {
+            border-color: #1b365d !important;
+            box-shadow: 0 0 0 1px #1b365d !important;
+        }
+        [data-theme="blue"] .ticket-tear-left,
+        [data-theme="blue"] .ticket-tear-right {
+            background-color: #e1e9f2;
+        }
+        [data-theme="blue"] .text-dyson-rose:not(.keep-pink):not(.keep-pink-rose) {
+            color: #1b365d !important;
+        }
+        [data-theme="blue"] .text-dyson-pink:not(.keep-pink):not(.keep-pink-rose) {
+            color: #1b365d !important;
+        }
+        [data-theme="blue"] .border-dyson-rose:not(.keep-pink) {
+            border-color: #1b365d !important;
+        }
+        [data-theme="blue"] .bg-dyson-rose:not(.keep-pink) {
+            background-color: #1b365d !important;
+        }
+        [data-theme="blue"] .bg-dyson-pink:not(.keep-pink) {
+            background-color: #1b365d !important;
+        }
+        [data-theme="blue"] .bg-gradient-to-r.from-dyson-pink {
+            background-image: none !important;
+            background-color: #1b365d !important;
+        }
+        [data-theme="blue"] .bg-rose-50,
+        [data-theme="blue"] .bg-rose-50\/50,
+        [data-theme="blue"] .bg-rose-50\/70 {
+            background-color: rgba(226, 235, 246, 0.75) !important;
+        }
+        [data-theme="blue"] .bg-rose-100,
+        [data-theme="blue"] .bg-rose-100\/50,
+        [data-theme="blue"] .bg-rose-100\/70,
+        [data-theme="blue"] .bg-rose-100\/60,
+        [data-theme="blue"] .bg-rose-100\/80 {
+            background-color: rgba(200, 218, 238, 0.8) !important;
+        }
+        [data-theme="blue"] .border-rose-100,
+        [data-theme="blue"] .border-rose-100\/80,
+        [data-theme="blue"] .border-rose-100\/90 {
+            border-color: rgba(180, 205, 232, 0.8) !important;
+        }
+        [data-theme="blue"] .border-rose-200,
+        [data-theme="blue"] .border-rose-200\/60,
+        [data-theme="blue"] .border-rose-200\/80 {
+            border-color: rgba(150, 185, 220, 0.8) !important;
+        }
+        [data-theme="blue"] .ticket-action-button {
+            background-color: #e2eaf4 !important;
+            color: #1b365d !important;
+            border-color: rgba(27, 54, 93, 0.6) !important;
+        }
+        [data-theme="blue"] .ticket-action-button:hover {
+            background-color: #d3e0ee !important;
+        }
+        .ticket-action-primary {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #c9707e !important;
+            color: #ffffff !important;
+            border-color: #c9707e !important;
+        }
+        .ticket-action-primary:hover {
+            background-color: #b85f70 !important;
+        }
+        [data-theme="blue"] .ticket-action-primary {
+            background-color: #1b365d !important;
+            color: #ffffff !important;
+            border-color: #1b365d !important;
+        }
+        [data-theme="blue"] .ticket-action-primary:hover {
+            background-color: #112239 !important;
+        }
+
+        /* Portrait Back Dynamic Theme Override */
+        [data-theme="blue"] #ticketPortraitBack {
+            background: #f0f4f8 !important;
+        }
+
+        /* Specific Pink Highlight Keep Classes */
+        .keep-pink-rose {
+            color: #c9707e !important;
+        }
+        .keep-pink-fill {
+            fill: #c9707e !important;
+        }
+        [data-theme="blue"] .keep-pink-rose {
+            color: #a66f3f !important;
+        }
+        [data-theme="blue"] .keep-pink-fill {
+            fill: #a66f3f !important;
+        }
+
+        .choice-button {
+            font-weight: 600 !important;
+        }
+        .choice-button[aria-pressed="true"] {
+            border-width: 1.5px !important;
+        }
+        #btnThemePink[aria-pressed="true"],
+        .preset-button[aria-pressed="true"] {
+            border-color: #c9707e !important;
+        }
+        #btnThemeBlue[aria-pressed="true"],
+        [data-theme="blue"] .preset-button[aria-pressed="true"] {
+            border-color: #1b365d !important;
+        }
+
+        #privacyDialog {
+            width: min(92vw, 640px);
+            max-height: min(84vh, 760px);
+            margin: auto;
+            padding: 0;
+            border: 0;
+            border-radius: 24px;
+            background: #ffffff;
+            color: #2d2a32;
+            box-shadow: 0 24px 80px rgba(45, 42, 50, 0.24);
+        }
+        #privacyDialog::backdrop {
+            background: rgba(24, 20, 25, 0.5);
+            backdrop-filter: blur(3px);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col">
+
+    <!-- Ambient background light -->
+    <div class="ambient-glow -top-20 -left-20"></div>
+    <div class="ambient-glow top-1/2 right-0"></div>
+
+    <!-- Fixed Header across mobile & desktop -->
+    <header class="fixed top-0 left-0 right-0 z-[100] border-b border-rose-100/80 backdrop-blur-md bg-white/85 shadow-sm transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5 sm:space-x-3 shrink-0">
+                <img src="./assets/images/dyson_logo_black.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-6 object-contain" onerror="loadDysonLogoFallback(this);">
+                <span class="h-3.5 sm:h-4 w-px bg-slate-300/80"></span>
+                <img src="./assets/images/dyson_supersonic_travel_black.png" alt="Supersonic Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-5 object-contain" onerror="loadSupersonicLogoFallback(this);">
+            </div>
+            
+            <div class="flex items-center space-x-2 sm:space-x-3 text-xs text-slate-600">
+                <span class="hidden sm:inline font-medium"><i class="fa-solid fa-heart text-dyson-rose mr-1 animate-pulse"></i> 七夕情人節特別限定</span>
+                <button type="button" id="airportAudioButton" aria-pressed="false" aria-label="播放機場廣播" onclick="toggleAirportAnnouncement()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[11px] sm:text-xs">
+                    <i id="airportAudioIcon" class="fa-solid fa-bullhorn text-dyson-rose"></i>
+                    <span id="airportAudioLabel">播放機場廣播</span>
+                </button>
+                <audio id="airportFinalCallAudio" preload="none" class="hidden">
+                    <source src="./assets/audio/dyson_hd19_boading_final_call.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[72px] sm:pt-[88px] pb-4 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Form Controls Panel -->
+        <section class="lg:col-span-5 bg-white border border-rose-100/80 p-6 sm:p-8 rounded-3xl shadow-xl space-y-3.5 sm:space-y-5">
+            <div class="border-b border-rose-100 pb-2.5 px-2 flex justify-between items-center">
+                <h2 class="text-lg sm:text-xl font-bold text-dyson-dark flex items-center gap-2">
+                    <i class="fa-solid fa-ticket text-dyson-rose"></i> 訂製情人節專屬機票
+                </h2>
+            </div>
+
+            <!-- Vertical Stack for Theme & Preset -->
+            <div class="flex flex-col gap-3 px-2">
+                <!-- Theme Selection -->
+                <div class="space-y-1.5">
+                    <span class="text-[10px] font-semibold text-slate-600 flex items-center gap-1 uppercase tracking-wider">
+                        <i class="fa-solid fa-palette text-dyson-rose"></i> 配色主題 Theme
+                    </span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="btnThemePink" aria-pressed="true" onclick="setTheme('pink')" class="choice-button py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #e89da2 !important; border: 1.5px solid #c9707e !important;"></span> 粉霧玫瑰
+                        </button>
+                        <button type="button" id="btnThemeBlue" aria-pressed="false" onclick="setTheme('blue')" class="choice-button py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #1b365d !important; border: 1.5px solid #96b9dc !important;"></span> 普魯士藍
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scenario Preset Option -->
+                <div class="space-y-1.5">
+                    <span class="text-[10px] font-semibold text-slate-600 flex items-center gap-1 uppercase tracking-wider">
+                        <i class="fa-solid fa-wand-magic-sparkles text-dyson-rose"></i> 浪漫情境 VIBES
+                    </span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="btnPresetTogether" aria-pressed="true" onclick="applyModePreset('together')" class="choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[11px] font-semibold rounded-lg border-2 border-dyson-rose flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-heart-circle-bolt text-dyson-rose text-[10px]"></i> 浪漫同行
+                        </button>
+                        <button type="button" id="btnPresetGift" aria-pressed="false" onclick="applyModePreset('gift')" class="choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[11px] font-semibold rounded-lg border border-rose-200/80 flex items-center justify-center gap-1 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-paper-plane text-dyson-rose text-[10px]"></i> 飛向愛人
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Groups -->
+            <form id="ticketForm" class="space-y-3 px-2" onsubmit="event.preventDefault();">
+                
+                <!-- Passenger Name -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-[10px] font-bold text-dyson-rose uppercase tracking-wider">
+                            <i aria-hidden="true" class="fa-solid fa-user mr-1 text-dyson-rose"></i>旅客 / 情侶名稱 PASSENGER
+                        </label>
+                        <span id="charCount" class="text-[10px] text-slate-500 font-sans">8/15</span>
+                    </div>
+                    <input type="text" id="inPassenger" value="YOU & ME" maxlength="15" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-bold text-dyson-dark placeholder-slate-400 focus:outline-none focus:border-dyson-rose focus:ring-1 focus:ring-dyson-rose transition">
+                </div>
+
+                <!-- Flight Route -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+                                <i class="fa-solid fa-plane-departure mr-1 text-dyson-rose"></i> 出發地 FROM
+                            </label>
+                            <span id="charCountOrigin" class="text-[9px] text-slate-400 font-sans">6/12</span>
+                        </div>
+                        <input type="text" id="inOrigin" value="TAIPEI" maxlength="12" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-bold text-dyson-dark focus:outline-none focus:border-dyson-rose transition uppercase">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+                                <i class="fa-solid fa-plane-arrival mr-1 text-dyson-rose"></i> 目的地 TO
+                            </label>
+                            <span id="charCountDest" class="text-[9px] text-slate-400 font-sans">8/12</span>
+                        </div>
+                        <input type="text" id="inDestination" value="ANYWHERE" maxlength="12" class="w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-sm font-bold text-dyson-dark focus:outline-none focus:border-dyson-rose transition uppercase">
+                    </div>
+                </div>
+
+                <!-- Date & Time Controls -->
+                <div class="date-time-row">
+                    <div class="date-time-column">
+                        <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-calendar-days mr-1 text-dyson-rose"></i> 日期 DATE
+                        </label>
+                        <div class="date-picker-shell relative min-w-0 rounded-xl focus-within:ring-1 focus-within:ring-dyson-rose">
+                            <input type="date" id="inDate" value="2026-08-19" aria-label="日期 DATE" class="date-native-input w-full min-w-0 cursor-pointer rounded-xl focus:outline-none">
+                            <span id="inDateDisplay" aria-hidden="true" class="pointer-events-none absolute inset-0 z-[1] flex items-center w-full min-w-0 overflow-hidden rounded-xl px-3 text-xs font-normal font-sans text-dyson-dark whitespace-nowrap">2026/08/19</span>
+                        </div>
+                    </div>
+                    <div class="date-time-column">
+                        <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-clock mr-1 text-dyson-rose"></i> BOARDING
+                        </label>
+                        <input type="text" id="inTime" value="13:14" placeholder="13:14" maxlength="5" class="boarding-time-input h-[34px] w-full bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans text-dyson-dark focus:outline-none focus:border-dyson-rose transition">
+                    </div>
+                </div>
+
+                <!-- Message Control -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-[10px] font-bold text-dyson-rose uppercase tracking-wider">
+                            <i class="fa-solid fa-quote-left mr-1"></i> 情意悄悄話 MESSAGE
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <span id="charCountMsg" class="text-[9px] text-slate-400 font-sans">40/45</span>
+                            <button type="button" onclick="randomizeInspiration()" class="text-[9px] text-dyson-rose bg-rose-100/60 border border-rose-200 px-2 py-0.5 rounded-full transition font-medium">隨機</button>
+                        </div>
+                    </div>
+                    <textarea id="inMessage" rows="2" maxlength="45" class="w-full h-[58px] resize-none bg-slate-50/30 border border-slate-200/80 rounded-xl px-3 py-2 text-xs font-normal font-sans leading-relaxed text-dyson-dark focus:outline-none focus:border-dyson-rose transition">YOU ARE MY DESTINATION, ALWAYS.</textarea>
+                </div>
+
+                <!-- Format Controls -->
+                <div class="pt-1">
+                    <label class="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider mb-2">預覽格式 VIEW FORMAT</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="btnModePortrait" onclick="switchMode('portrait')" class="py-2 px-3 rounded-xl border border-dyson-rose bg-rose-100/70 text-dyson-dark font-semibold text-[11px] flex items-center justify-center gap-2 transition shadow-sm">
+                            <i class="fa-solid fa-mobile-screen-button text-dyson-rose"></i> 手機版
+                        </button>
+                        <button type="button" id="btnModeLandscape" onclick="switchMode('landscape')" class="py-2 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-[11px] flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-desktop"></i> 電腦版
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col items-center justify-center w-full min-h-[500px]">
+            
+            <div class="w-full flex justify-between items-center mb-4 px-2">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    Live Boarding Pass Preview
+                </span>
+                <button type="button" onclick="toggleCardFlip()" class="text-xs text-dyson-rose hover:text-dyson-dark bg-white/80 hover:bg-rose-50 border border-rose-200 px-3 py-1 rounded-full font-semibold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-rotate text-dyson-rose"></i> 檢視卡片
+                </button>
+            </div>
+
+            <!-- Landscape Boarding Pass Container (672x320) -->
+            <div id="wrapperLandscape" class="hidden w-full flex flex-col items-center justify-center transition-all duration-300 perspective-1000">
+                <div id="cardInnerLandscape" onclick="toggleCardFlip()" class="transform-style-3d w-full max-w-2xl h-[320px] relative cursor-pointer group">
+                    
+                    <!-- LANDSCAPE FRONT SIDE -->
+                    <div id="ticketLandscape" class="backface-hidden ticket-pass-bg w-full h-full rounded-3xl shadow-2xl text-slate-800 overflow-hidden relative border border-white/80 flex absolute inset-0">
+                        <div class="ticket-tear-left shadow-inner"></div>
+                        
+                        <div class="w-2/3 p-5 flex flex-col justify-between relative bg-gradient-to-br from-white via-[#fdf2f4] to-[#fce8eb] overflow-hidden">
+                            <div class="flex justify-between items-start relative z-10 shrink-0">
+                                <div class="min-w-0 flex-1 pr-2">
+                                    <div class="flex items-center space-x-2">
+                                        <img src="./assets/images/dyson_logo_black.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_supersonic_travel_black.png" alt="Category Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-4 object-contain" onerror="loadSupersonicLogoFallback(this);">
+                                    </div>
+                                    <p class="text-[8px] sm:text-[9px] text-dyson-rose font-bold tracking-tight mt-0.5 whitespace-nowrap">DYSON AIRWAYS • FLIGHT HD19 • VALENTINE SPECIAL</p>
+                                </div>
+                                <span class="text-xs font-extrabold text-slate-500 tracking-wider font-serif whitespace-nowrap shrink-0 ml-2 text-right">BOARDING PASS</span>
+                            </div>
+
+                            <div class="mt-4 mb-1 relative z-10 shrink-0">
+                                <div class="flex items-center justify-between px-1 min-h-[48px]">
+                                    <div class="text-left w-[42%] min-w-0 pr-1 flex flex-col justify-center">
+                                        <p id="outOriginCodeL" class="text-2xl sm:text-3xl font-black text-slate-800 tracking-wider font-sans leading-none">TPE</p>
+                                        <p id="outOriginL" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1 break-words">TAIPEI</p>
+                                    </div>
+
+                                    <div class="w-16 sm:w-20 px-1 flex flex-col items-center justify-center shrink-0">
+                                        <div class="w-full relative flex items-center justify-center h-6">
+                                            <div class="w-full border-t-2 border-dashed border-dyson-rose/60"></div>
+                                            <div class="absolute w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 border border-white/80 shadow-sm flex items-center justify-center">
+                                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-dyson-rose fill-current keep-pink-fill" viewBox="0 0 24 24">
+                                                    <g transform="rotate(90 12 12)">
+                                                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span class="text-[8px] font-bold text-dyson-rose/80 keep-pink-rose uppercase tracking-widest text-center mt-1">FLIGHT HD19</span>
+                                    </div>
+
+                                    <div class="text-right w-[42%] min-w-0 pl-1 flex flex-col justify-center">
+                                        <p id="outDestCodeL" class="text-2xl sm:text-3xl font-black text-dyson-rose keep-pink-rose tracking-wider font-sans leading-none">ANY</p>
+                                        <p id="outDestinationL" class="text-[10px] font-bold text-dyson-rose/80 keep-pink-rose uppercase tracking-wider mt-1 break-words">ANYWHERE</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/80 relative z-10 shrink-0">
+                                <div class="pr-2 flex-1 min-w-0 flex flex-col justify-center">
+                                    <div class="h-[54px] flex items-center justify-start min-w-0">
+                                        <p id="outMessageL" class="keep-pink-rose text-xs sm:text-sm text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY DESTINATION, ALWAYS."</p>
+                                    </div>
+                                    <p class="text-[9px] text-slate-500 font-medium mt-2 leading-relaxed">七夕情人節限定 x 輕巧登機 x 完美造型<br>Supersonic™ Travel HD19 國際電壓隨行吹風機</p>
+                                </div>
+
+                                <div class="flex flex-col items-center shrink-0">
+                                    <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-0.5 dashed-tear relative"></div>
+
+                        <!-- Right Stub Area -->
+                        <div class="w-1/3 p-5 bg-white flex flex-col justify-between relative overflow-hidden shrink-0">
+                            <div class="ticket-tear-right shadow-inner"></div>
+
+                            <div class="flex justify-between items-center shrink-0 pb-1 border-b border-slate-100">
+                                <span class="font-extrabold text-slate-500 text-[10px] tracking-widest uppercase font-serif">PASSENGER COUPON</span>
+                                <i class="fa-solid fa-heart text-dyson-rose text-xs"></i>
+                            </div>
+
+                            <div class="space-y-1.5 py-1 text-xs min-w-0 flex-1 flex flex-col justify-center">
+                                <div class="pb-0.5">
+                                    <p class="text-[8px] font-medium text-slate-500 uppercase tracking-widest">PASSENGER</p>
+                                    <div class="h-[48px] flex items-start justify-start min-w-0">
+                                        <p id="outPassengerStub" class="font-black text-dyson-rose text-[20px] leading-tight break-words keep-pink-rose">YOU & ME</p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-[8px] font-medium text-slate-500 uppercase tracking-wider">CLASS</p>
+                                    <div id="outClassStub" class="font-extrabold text-slate-800 text-xs leading-snug">
+                                        First Class<br><span class="text-[9px] font-medium text-slate-500">頭等艙</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-[8px] font-medium text-slate-500 uppercase tracking-wider">DATE</p>
+                                        <p id="outDateStub" class="font-extrabold text-slate-800 text-xs">2026/08/19</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[8px] font-medium text-slate-500 uppercase tracking-wider">BOARDING TIME</p>
+                                        <p id="outTimeStub" class="font-extrabold text-slate-800 text-xs">13:14</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-[8px] font-medium text-slate-500 uppercase tracking-wider">GATE</p>
+                                        <p id="outGateStub" class="font-extrabold text-slate-900 text-xs">19</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[8px] font-medium text-slate-500 uppercase tracking-wider">SEAT</p>
+                                        <p id="outSeatStub" class="font-extrabold text-slate-900 text-xs">52O</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
+                                <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
+                                <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mt-1">領取$500優惠</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANDSCAPE BACK SIDE -->
+                    <div id="ticketLandscapeBack" class="backface-hidden rotate-y-180 ticket-pass-bg text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-white/80 flex flex-col justify-between absolute inset-0 overflow-hidden">
+                        
+                        <div class="flex justify-between items-center border-b border-rose-200/80 pb-2.5 shrink-0">
+                            <div class="flex items-center space-x-2">
+                                <img src="./assets/images/dyson_logo_black.png" alt="dyson" referrerpolicy="no-referrer" class="h-4 sm:h-5 object-contain" onerror="loadDysonLogoFallback(this);">
+                                <span class="text-xs font-bold text-dyson-rose">Supersonic™ Travel HD19</span>
+                            </div>
+                            <span class="inline-flex items-center justify-center text-[10px] bg-rose-100/80 text-dyson-rose border border-rose-200 px-3 py-1 rounded-full font-semibold uppercase leading-none text-center">TRAVEL ESSENTIALS</span>
+                        </div>
+
+                        <div class="flex-1 grid grid-cols-12 gap-3 items-center py-1.5 min-h-0">
+                            <div class="col-span-4 h-[180px] w-full bg-white/80 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden mx-auto">
+                                <img src="./assets/images/dyson_product_hd19.png" alt="Dyson Product Back" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="loadOriginalImage(this, 'https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png');">
+                            </div>
+
+                            <div class="col-span-8 flex flex-col justify-center space-y-2">
+                                <div class="bg-white/80 border border-rose-100/90 rounded-xl p-2.5 flex items-center gap-3 shadow-sm hover:border-dyson-rose/40 transition">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
+                                        <img src="https://img2.91mai.com/o2o/image/8f7026ab-fa75-439f-95ae-bcc5d3b6d994.png" alt="Worldwide Voltage" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">國際電壓</div>
+                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">100-240V．全球適用</div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white/80 border border-rose-100/90 rounded-xl p-2.5 flex items-center gap-3 shadow-sm hover:border-dyson-rose/40 transition">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
+                                        <img src="https://img2.91mai.com/o2o/image/e4fdaf70-c264-42d4-ad0b-6b615005d1e7.png" alt="Travel Ready" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">旅行好夥伴</div>
+                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">輕巧好收納．輕鬆好攜帶</div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white/80 border border-rose-100/90 rounded-xl p-2.5 flex items-center gap-3 shadow-sm hover:border-dyson-rose/40 transition">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
+                                        <img src="https://img2.91mai.com/o2o/image/7317e915-5215-4653-870d-5e32b76fab4e.png" alt="Smart Temp Control" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">智慧控溫</div>
+                                        <div class="text-[10px] font-semibold text-slate-600 leading-normal">每秒智慧監測100次．秀髮零熱損傷</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center border-t border-rose-200/80 pt-1.5 text-[10px] text-slate-500 shrink-0">
+                            <span>智慧護髮黑科技 • 隨行寵愛首選</span>
+                            <span class="text-dyson-rose font-bold flex items-center gap-1"><i class="fa-solid fa-plane-departure"></i> Ready To Take Off</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Action Buttons directly underneath Landscape Card -->
+                <div class="w-full max-w-2xl mt-5 px-2 flex flex-col items-center">
+                    <p class="text-xs font-bold text-dyson-rose tracking-wider uppercase mb-2.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
+                    </p>
+                    <div class="w-full grid grid-cols-3 gap-3">
+                        <button type="button" onclick="shareBoardingPass()" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
+                        </button>
+                        <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
+                        </button>
+                        <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'landscape' })" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portrait Boarding Pass Container (320x580) -->
+            <div id="wrapperPortrait" class="w-full flex flex-col items-center justify-center transition-all duration-300 perspective-1000">
+                <div class="flex flex-col sm:flex-row items-start justify-center gap-5 w-full">
+                    
+                    <div id="cardInnerPortrait" onclick="toggleCardFlip()" class="transform-style-3d w-[320px] h-[580px] relative cursor-pointer group shrink-0">
+                        
+                        <!-- PORTRAIT FRONT SIDE -->
+                        <div id="ticketPortrait" class="backface-hidden w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden relative text-slate-800 flex flex-col justify-between absolute inset-0 border border-rose-100">
+
+                            <!-- Header -->
+                            <div class="portrait-front-header px-3.5 py-3 text-white relative overflow-hidden shrink-0">
+                                <div class="flex justify-between items-center relative z-10">
+                                    <div class="flex items-center space-x-2">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-is-dark="true" data-logo-tone="white" referrerpolicy="no-referrer" class="h-4 object-contain" style="filter: brightness(0) invert(1);" onerror="loadDysonLogoFallback(this);">
+                                        <img src="./assets/images/dyson_supersonic_travel_white.png" alt="Category Logo" data-is-dark="true" data-logo-tone="white" referrerpolicy="no-referrer" class="h-3.5 object-contain" style="filter: brightness(0) invert(1);" onerror="loadSupersonicLogoFallback(this);">
+                                    </div>
+                                    <span class="text-xs font-black tracking-widest uppercase font-serif">BOARDING PASS</span>
+                                </div>
+                                <p class="text-[8.5px] tracking-tight uppercase mt-1 text-white/90 font-bold leading-normal block">DYSON AIRWAYS • FLIGHT HD19 • VALENTINE SPECIAL</p>
+                            </div>
+
+                            <!-- TOP SECTION (ABOVE TEAR LINE) - FAINT SOFT PINK BG -->
+                            <div class="portrait-front-soft-bg px-4 pt-2 pb-1 flex flex-col justify-between shrink-0">
+                            
+                                <!-- Product Image & QR Code Side-by-Side -->
+                                <div class="pb-1 relative flex items-center justify-between px-1 shrink-0">
+                                    <div class="flex items-center justify-center flex-1 pr-2">
+                                        <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
+                                        <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mb-1">領取$500優惠</span>
+                                        <img id="qrCodePortrait" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
+                                    </div>
+                                </div>
+
+                                <!-- PASSENGER, CLASS AND MESSAGE GROUP -->
+                                <div class="pt-1.5 pb-1 shrink-0 bg-transparent space-y-1">
+                                    <div class="flex justify-between items-start shrink-0 px-0.5">
+                                        <div class="flex flex-col text-left min-w-0 flex-1 pr-2">
+                                            <span class="text-[8px] font-medium text-slate-500 uppercase tracking-widest mb-0.5">PASSENGER</span>
+                                            <div class="h-[48px] flex items-start justify-start min-w-0">
+                                        <span id="outPassengerP" class="font-black text-dyson-rose text-[20px] leading-tight block break-words keep-pink-rose">YOU & ME</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col text-right shrink-0 pl-2">
+                                            <span class="text-[8px] font-medium text-slate-500 uppercase tracking-widest mb-0.5">CLASS</span>
+                                            <div class="h-[48px] flex flex-col items-end justify-start min-w-0">
+                                                <div id="outClassP" class="font-extrabold text-slate-900 text-xs leading-tight text-right pt-[3px]">
+                                                    First Class<br><span class="text-[9px] font-medium text-slate-500">頭等艙</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- MESSAGE -->
+                                    <div class="h-[54px] py-1 flex flex-col items-center justify-center text-center shrink-0 min-w-0 bg-transparent">
+                                        <p id="outMessageP" class="keep-pink-rose text-xs sm:text-sm font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY DESTINATION, ALWAYS."</p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- DASHED TEAR LINE CONNECTED WITH SIDE NOTCHES -->
+                            <div class="relative flex items-center justify-center shrink-0 h-5">
+                                <div class="portrait-front-soft-bg absolute inset-x-0 top-0 h-1/2"></div>
+                                <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white"></div>
+                                <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[#f4ecee] rounded-full z-10 shadow-inner ticket-tear-left"></div>
+                                <div class="w-full border-t-2 border-dashed border-slate-200/80 relative z-10"></div>
+                                <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[#f4ecee] rounded-full z-10 shadow-inner ticket-tear-right"></div>
+                            </div>
+
+                            <!-- BOTTOM SECTION (BELOW TEAR LINE) - WHITE BG -->
+                            <div class="px-4 py-0 flex-1 flex flex-col justify-start bg-white overflow-hidden">
+
+                                <!-- ROUTE TPE ANY (OPTION 1 VERTICALLY CENTERED: py-4) -->
+                                <div class="py-4 shrink-0 flex flex-col items-center justify-center">
+                                    <div class="flex items-center justify-between w-full px-1">
+                                        <span id="outOriginCodeP" class="text-3xl font-black text-slate-800 tracking-wider leading-none">TPE</span>
+                                        <div class="flex flex-col items-center justify-center shrink-0 px-1">
+                                            <svg class="w-6 h-6 text-dyson-rose fill-current keep-pink-fill shrink-0" viewBox="0 0 24 24">
+                                                <g transform="rotate(90 12 12)">
+                                                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                                </g>
+                                            </svg>
+                                            <span class="text-[8px] font-bold text-dyson-rose/80 keep-pink-rose uppercase tracking-widest text-center mt-1">FLIGHT HD19</span>
+                                        </div>
+                                        <span id="outDestCodeP" class="text-3xl font-black text-dyson-rose keep-pink-rose tracking-wider leading-none">ANY</span>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center w-full px-1 mt-1 text-[10px] font-bold">
+                                        <span id="outOriginP" class="text-slate-500 uppercase tracking-wider text-left break-words max-w-[45%] leading-none">TAIPEI</span>
+                                        <span id="outDestinationP" class="text-dyson-rose/80 keep-pink-rose uppercase tracking-wider text-right break-words max-w-[45%] leading-none">ANYWHERE</span>
+                                    </div>
+                                </div>
+
+                                <!-- LOWER CONTAINER FOR DETAILS & BAGGAGE WITH NATURAL FLEX FILL -->
+                                <div class="flex-1 flex flex-col justify-start">
+                                    <!-- GRAY DIVIDER LINE BETWEEN TAIPEI AND DATE -->
+                                    <div class="w-full border-t border-slate-200/80 mb-3 shrink-0"></div>
+
+                                    <!-- FLIGHT DETAILS GRID -->
+                                    <div class="pb-3 shrink-0 bg-white">
+                                        <div class="grid grid-cols-4 gap-1 text-center bg-transparent items-start">
+                                            <div class="px-0.5 min-w-0">
+                                                <div class="text-[8px] font-medium text-slate-500 uppercase tracking-tight leading-normal mb-1">DATE</div>
+                                                <div id="outDateP" class="font-extrabold text-slate-800 text-xs leading-normal">2026/08/19</div>
+                                            </div>
+                                            <div class="px-0.5 min-w-0">
+                                                <div class="text-[8px] font-medium text-slate-500 uppercase tracking-tighter leading-normal mb-1">BOARDING</div>
+                                                <div id="outTimeP" class="font-extrabold text-slate-800 text-xs leading-normal">13:14</div>
+                                            </div>
+                                            <div class="px-0.5 min-w-0">
+                                                <div class="text-[8px] font-medium text-slate-500 uppercase tracking-tight leading-normal mb-1">GATE</div>
+                                                <div id="outGateP" class="font-extrabold text-slate-900 text-xs leading-normal">19</div>
+                                            </div>
+                                            <div class="px-0.5 min-w-0">
+                                                <div class="text-[8px] font-medium text-slate-500 uppercase tracking-tight leading-normal mb-1">SEAT</div>
+                                                <div id="outSeatP" class="font-extrabold text-slate-900 text-xs leading-normal">52O</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SEAMLESS SOFT PINK CONTAINER FOR BAGGAGE & SUBTEXT WITH TOP BORDER -->
+                                    <div class="portrait-front-soft-bg -mx-4 flex-1 flex flex-col justify-between text-slate-800 border-t border-rose-100/80">
+                                        <!-- BAGGAGE ALLOWANCE SECTION -->
+                                        <div class="px-4 py-3">
+                                            <div class="flex items-center justify-between text-[8px] font-medium text-slate-500 uppercase tracking-wider mb-1">
+                                                <span><i class="fa-solid fa-suitcase-rolling text-dyson-rose text-[10px] mr-1"></i> BAGGAGE</span>
+                                                <span class="text-slate-800 font-bold">INCLUDED</span>
+                                            </div>
+                                            <div class="text-xs font-normal text-slate-700 space-y-0.5">
+                                                <p class="leading-tight">1 x 330g HD19 國際電壓隨行吹風機</p>
+                                                <p class="leading-tight">1 x 七夕情人節限定專屬優惠券</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- DYSON PRODUCT SUBTEXT -->
+                                        <div class="px-2 text-center border-t border-rose-100/80 h-[45px] flex flex-col justify-center shrink-0">
+                                            <p class="text-[9px] text-slate-500 font-medium leading-tight">七夕情人節限定 x 輕巧登機 x 完美造型<br>Supersonic™ Travel HD19 國際電壓隨行吹風機</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- PORTRAIT BACK SIDE -->
+                        <div id="ticketPortraitBack" class="backface-hidden rotate-y-180 bg-gradient-to-br from-white via-rose-50/90 to-amber-50/50 text-slate-800 w-full h-full rounded-3xl shadow-2xl p-5 border border-rose-100 flex flex-col justify-between absolute inset-0 overflow-hidden">
+                            
+                            <div class="ticket-header-grad p-3 text-white relative -m-5 mb-1 shrink-0">
+                                <div class="flex justify-between items-center px-1">
+                                    <div class="flex items-center space-x-2">
+                                        <img src="./assets/images/dyson_logo_white.png" alt="dyson" data-logo-tone="white" referrerpolicy="no-referrer" class="h-4 object-contain" style="filter: brightness(0) invert(1);" onerror="loadDysonLogoFallback(this);">
+                                    </div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider">TRAVEL SPECIFICATIONS</span>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 min-h-0 flex flex-col justify-start space-y-2 pt-1">
+                                <div class="w-[140px] h-[140px] bg-white/80 border border-rose-100 shadow-sm rounded-2xl shrink-0 mx-auto relative overflow-hidden">
+                                    <img src="./assets/images/dyson_product_hd19.png" alt="Dyson Product Back" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[100%] w-auto max-w-none max-h-none object-contain filter drop-shadow-md" onerror="loadOriginalImage(this, 'https://img2.91mai.com/o2o/image/8c945b4d-ce18-4ac1-8b0e-08d3f19d287a.png');">
+                                </div>
+
+                                <div class="flex-1 min-h-0 flex flex-col gap-1.5">
+                                    <div class="shrink-0 bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
+                                        <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
+                                            <img src="https://img2.91mai.com/o2o/image/8f7026ab-fa75-439f-95ae-bcc5d3b6d994.png" alt="Worldwide Voltage" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">國際電壓</div>
+                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">100-240V．全球適用</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="shrink-0 bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
+                                        <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
+                                            <img src="https://img2.91mai.com/o2o/image/e4fdaf70-c264-42d4-ad0b-6b615005d1e7.png" alt="Travel Ready" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">旅行好夥伴</div>
+                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">輕巧好收納．輕鬆好攜帶</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="shrink-0 bg-white/80 border border-rose-100 rounded-xl p-2 flex items-center gap-2 shadow-sm">
+                                        <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200/60 flex items-center justify-center shrink-0 p-1">
+                                            <img src="https://img2.91mai.com/o2o/image/7317e915-5215-4653-870d-5e32b76fab4e.png" alt="Smart Temp Control" referrerpolicy="no-referrer" class="h-full object-contain" onerror="this.onerror=null; this.src=getFallbackSvgDataUrl(this);">
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="text-[11px] font-bold text-dyson-rose tracking-wide uppercase leading-normal mb-0.5">智慧控溫</div>
+                                            <div class="text-[10px] font-semibold text-slate-600 leading-normal">每秒智慧監測100次．秀髮零熱損傷</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-1 min-h-[72px] flex flex-col items-center justify-center">
+                                        <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
+                                        <span class="mt-1 text-[10px] font-semibold text-dyson-rose tracking-tight">領取$500優惠</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-rose-200/80 text-center text-[9px] text-slate-500 shrink-0 h-[45px] flex items-center justify-center -mx-5 -mb-5">
+                                <p class="font-medium">Dyson Supersonic™ Travel HD19 隨行護航</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Action Buttons directly on the right side of the Portrait Card (Top Aligned) -->
+                    <div class="flex flex-col items-center sm:items-start justify-start gap-3 shrink-0 pt-0">
+                        <p class="text-xs font-bold text-dyson-rose tracking-wider uppercase flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-heart text-dyson-pink"></i> 立即分享專屬登機證
+                        </p>
+                        <div class="flex flex-col gap-2.5 w-36 sm:w-40">
+                            <button type="button" onclick="shareBoardingPass()" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-image w-4 text-center"></i> 分享圖片
+                            </button>
+                            <button type="button" onclick="downloadBoardingPass(this)" class="ticket-action-button ticket-action-primary w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-file-arrow-down w-4 text-center"></i> 下載圖片
+                            </button>
+                            <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'portrait' })" class="ticket-action-button w-full h-10 px-3 bg-dyson-softBg hover:bg-[#f0dfe2] text-dyson-rose keep-pink font-bold text-xs rounded-xl border-2 border-dyson-rose/60 shadow-sm flex items-center justify-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-ticket w-4 text-center"></i> 領取優惠
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="relative z-10 border-t border-rose-100 px-4 py-2.5 text-center text-[11px] sm:text-xs leading-relaxed text-slate-500">
+        <p>本網站蒐集瀏覽、互動及使用者填寫的出發地與目的地資料，用於活動與行銷成效分析及體驗優化。</p>
+        <p class="mt-1">
+            © 2026 恆隆行 All rights reserved.｜
+            <button type="button" onclick="openPrivacyDialog()" class="underline underline-offset-2 hover:text-dyson-rose focus:outline-none focus-visible:ring-2 focus-visible:ring-dyson-rose rounded-sm transition">
+                隱私權聲明
+            </button>
+        </p>
+    </footer>
+
+    <dialog id="privacyDialog" aria-labelledby="privacyDialogTitle">
+        <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-rose-100 bg-white px-5 sm:px-7 py-4">
+            <h2 id="privacyDialogTitle" class="text-base sm:text-lg font-bold text-dyson-dark">隱私權聲明</h2>
+            <button type="button" onclick="closePrivacyDialog()" aria-label="關閉隱私權聲明" class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-dyson-rose transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="overflow-y-auto px-5 sm:px-7 py-5 text-xs sm:text-sm leading-7 text-slate-600">
+            <p>本活動頁面由恆隆行提供。為分析活動與行銷成效及改善使用體驗，本網站使用 Google Analytics 蒐集網站瀏覽與互動資料。</p>
+
+            <h3 class="mt-5 font-bold text-dyson-dark">一、蒐集的資料</h3>
+            <ul class="mt-2 list-disc space-y-1 pl-5">
+                <li>頁面瀏覽、停留與捲動等使用情形。</li>
+                <li>卡片版型、配色主題及操作行為。</li>
+                <li>下載圖片、分享圖片與優惠連結點擊紀錄。</li>
+                <li>使用者填寫的出發地與目的地。</li>
+                <li>Google Analytics 自動蒐集的裝置、瀏覽器、工作階段及概略地理位置等資訊。</li>
+            </ul>
+            <p class="mt-3">本網站不會主動蒐集姓名、電話、電子郵件或其他可直接識別個人的資料。請勿於自由輸入欄位填寫個人資料。</p>
+
+            <h3 class="mt-5 font-bold text-dyson-dark">二、資料使用目的</h3>
+            <ul class="mt-2 list-disc space-y-1 pl-5">
+                <li>分析活動瀏覽、互動及下載成效。</li>
+                <li>了解卡片主題、版型與路線偏好。</li>
+                <li>進行恆隆行內部行銷分析、活動規劃及內容優化。</li>
+                <li>改善網站功能及使用體驗。</li>
+                <li>製作彙總性活動與行銷分析報告。</li>
+            </ul>
+
+            <h3 class="mt-5 font-bold text-dyson-dark">三、Cookie 與 Google Analytics</h3>
+            <p class="mt-2">本網站使用 Google Analytics，可能透過 Cookie 區分瀏覽器及工作階段。相關資料可能由 Google 依其隱私權政策進行處理。使用者可透過瀏覽器設定封鎖或刪除 Cookie，但部分分析功能可能因此無法正常運作。</p>
+            <div class="mt-2 flex flex-col items-start gap-1">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">Google 隱私權政策</a>
+                <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">Google 如何使用合作夥伴網站提供的資訊</a>
+            </div>
+
+            <h3 class="mt-5 font-bold text-dyson-dark">四、資料保存與第三方服務</h3>
+            <p class="mt-2">相關資料將於達成上述目的所需期間內保存，並依恆隆行及 Google Analytics 的資料保存設定進行管理。</p>
+            <p class="mt-2">恆隆行不會出售或交換本活動所蒐集的資料，亦不會提供其他公司作其獨立行銷使用；但為提供網站分析、系統維運或依法配合主管機關要求，可能由 Google 等必要的技術服務供應商處理相關資料。</p>
+
+            <h3 class="mt-5 font-bold text-dyson-dark">五、聲明更新</h3>
+            <p class="mt-2">本聲明可能因活動內容、網站功能或法令要求調整，更新後將公布於本活動頁面。</p>
+
+            <button type="button" onclick="closePrivacyDialog()" class="mt-6 w-full rounded-xl bg-dyson-rose px-4 py-3 font-bold text-white hover:opacity-90 transition">
+                關閉
+            </button>
+        </div>
+    </dialog>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-dyson-rose/40 flex items-center gap-3 transition-all duration-300">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-dyson-pink text-lg"></i>
+        <span id="toastMsg" class="text-xs font-semibold">登機證資訊已即時更新</span>
+    </div>
+
+    <script>
+        let currentMode = 'portrait';
+        let currentTheme = 'pink';
+        let isFlipped = false;
+        let isFlipAnimating = false;
+        let flipMidpointTimer = null;
+        let flipEndTimer = null;
+        const useIOSFaceGuard = /iPad|iPhone|iPod/.test(navigator.userAgent || '')
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        let currentPreset = 'together';
+        function trackCampaignEvent(eventName, eventParams = {}) {
+            if (typeof window.gtag !== 'function') return;
+            window.gtag('event', eventName, {
+                page_type: 'campaign',
+                campaign_id: 'dyson_hd19_2026_valentine',
+                campaign_name: 'dyson hd19 七夕情人節',
+                brand_name: 'dyson',
+                ...eventParams
+            });
+        }
+
+        function openPrivacyDialog() {
+            const dialog = document.getElementById('privacyDialog');
+            if (dialog && !dialog.open) dialog.showModal();
+        }
+
+        function closePrivacyDialog() {
+            const dialog = document.getElementById('privacyDialog');
+            if (dialog?.open) dialog.close();
+        }
+
+        function getRouteTrackingParams() {
+            const normalizeLocation = (value) => String(value || '')
+                .trim()
+                .toUpperCase()
+                .replace(/[^\p{L}\p{N}\s-]/gu, '')
+                .replace(/\s+/g, ' ')
+                .slice(0, 12);
+
+            return {
+                departure: normalizeLocation(document.getElementById('inOrigin')?.value),
+                destination: normalizeLocation(document.getElementById('inDestination')?.value)
+            };
+        }
+
+        const classOptions = [
+            { en: 'First Class', zh: '頭等艙' },
+            { en: 'Business Class', zh: '商務艙' },
+            { en: 'Premium Economy', zh: '豪經艙' },
+            { en: 'Economy Class', zh: '經濟艙' },
+            { en: 'Love VIP Class', zh: '戀人專屬頭等艙' },
+            { en: 'Dyson VIP Class', zh: 'Dyson限定艙' }
+        ];
+
+        let currentClassObj = classOptions[0];
+
+        window.onload = function() {
+            currentClassObj = getRandomClass();
+            setupEventListeners();
+            syncDateDisplay();
+            initQrCode();
+            updatePass();
+            initializeIOSFaceGuard();
+            preloadAllImagesToDataUrls();
+        };
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            const btnPink = document.getElementById('btnThemePink');
+            const btnBlue = document.getElementById('btnThemeBlue');
+
+            if (theme === 'blue') {
+                document.body.setAttribute('data-theme', 'blue');
+                // Standardized Class names to maintain White Backgrounds
+                if (btnPink) btnPink.className = "choice-button py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnBlue) btnBlue.className = "choice-button py-1.5 px-1 bg-white border-2 border-dyson-navy text-dyson-dark text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnPink) btnPink.setAttribute('aria-pressed', 'false');
+                if (btnBlue) btnBlue.setAttribute('aria-pressed', 'true');
+                showToast("已切換至「普魯士藍 (Prussian Blue)」尊榮主題！", "fa-palette");
+            } else {
+                document.body.removeAttribute('data-theme');
+                if (btnPink) btnPink.className = "choice-button py-1.5 px-1 bg-white border-2 border-dyson-rose text-dyson-dark text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnBlue) btnBlue.className = "choice-button py-1.5 px-1 bg-white border border-slate-300 text-slate-600 hover:text-dyson-dark text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+                if (btnPink) btnPink.setAttribute('aria-pressed', 'true');
+                if (btnBlue) btnBlue.setAttribute('aria-pressed', 'false');
+                showToast("已切換至「粉霧玫瑰」情人節主題！", "fa-palette");
+            }
+
+            initQrCode();
+            preloadAllImagesToDataUrls();
+            trackCampaignEvent('select_theme', {
+                theme_name: theme
+            });
+        }
+
+        async function preloadAllImagesToDataUrls() {
+            const images = document.querySelectorAll('img');
+            for (const img of images) {
+                if (!img.src || img.src.startsWith('data:')) continue;
+                try {
+                    const dataUrl = await imageToDataUrl(img.src, img.alt || img.id || '');
+                    if (dataUrl && dataUrl.startsWith('data:')) {
+                        img.src = dataUrl;
+                    }
+                } catch (e) {
+                    console.log('Preload error for image:', img.src);
+                }
+            }
+        }
+
+        function getRandomClass() {
+            const idx = Math.floor(Math.random() * classOptions.length);
+            return classOptions[idx];
+        }
+
+        function loadOriginalImage(image, originalUrl) {
+            image.onerror = function () {
+                this.onerror = null;
+                this.src = getFallbackSvgDataUrl(this);
+            };
+            image.referrerPolicy = 'no-referrer';
+            image.src = originalUrl;
+        }
+
+        function loadDysonLogoFallback(image) {
+            const blackLogoPath = './assets/images/dyson_logo_black.png';
+            const originalBlackLogo = 'https://img2.91mai.com/o2o/image/b547989b-62c9-47e2-b548-5f00574216ea.png';
+            const renderWhite = image.dataset.logoTone === 'white';
+
+            if (!image.dataset.blackLogoTried && !image.src.includes('dyson_logo_black.png')) {
+                image.dataset.blackLogoTried = 'true';
+                image.src = blackLogoPath;
+                return;
+            }
+
+            if (!image.dataset.originalLogoTried) {
+                image.dataset.originalLogoTried = 'true';
+                image.src = originalBlackLogo;
+                return;
+            }
+
+            image.onerror = null;
+            image.style.filter = 'none';
+            image.src = getFallbackSvgDataUrl('dyson-logo', renderWhite);
+        }
+
+        function loadSupersonicLogoFallback(image) {
+            const blackLogoPath = './assets/images/dyson_supersonic_travel_black.png';
+            const originalLogo = 'https://img2.91mai.com/o2o/image/868ce2a2-8242-44af-a034-4af1b72ea151.png';
+            const renderWhite = image.dataset.logoTone === 'white';
+
+            if (!image.dataset.blackLogoTried && !image.src.includes('dyson_supersonic_travel_black.png')) {
+                image.dataset.blackLogoTried = 'true';
+                image.src = blackLogoPath;
+                return;
+            }
+
+            if (!image.dataset.originalLogoTried) {
+                image.dataset.originalLogoTried = 'true';
+                image.src = originalLogo;
+                return;
+            }
+
+            image.onerror = null;
+            image.style.filter = 'none';
+            image.src = getFallbackSvgDataUrl('supersonic-logo', renderWhite);
+        }
+
+        function loadGeneratedQr(image) {
+            image.onerror = null;
+            image.src = getFallbackSvgDataUrl('qr');
+
+            if (typeof QRCode === 'undefined') return;
+
+            const tempContainer = document.createElement('div');
+            tempContainer.style.display = 'none';
+            document.body.appendChild(tempContainer);
+
+            const cleanup = () => {
+                if (document.body.contains(tempContainer)) {
+                    document.body.removeChild(tempContainer);
+                }
+            };
+
+            try {
+                new QRCode(tempContainer, {
+                    text: 'https://www.dyson.tw/',
+                    width: 160,
+                    height: 160,
+                    colorDark: currentTheme === 'blue' ? '#112239' : '#1e1c24',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+
+                setTimeout(() => {
+                    const generatedImage = tempContainer.querySelector('img');
+                    const generatedCanvas = tempContainer.querySelector('canvas');
+                    const dataUrl = generatedImage?.src?.startsWith('data:')
+                        ? generatedImage.src
+                        : generatedCanvas?.toDataURL('image/png');
+                    if (dataUrl) image.src = dataUrl;
+                    cleanup();
+                }, 100);
+            } catch (error) {
+                cleanup();
+            }
+        }
+
+        function initQrCode() {
+            const qrImagePath = './assets/images/dyson_campaign_coupon_qrcode.png';
+            ['qrCodeLandscape', 'qrCodePortrait', 'qrCodePortraitBack'].forEach(id => {
+                const image = document.getElementById(id);
+                if (!image) return;
+                image.onerror = function () {
+                    loadGeneratedQr(this);
+                };
+                image.src = qrImagePath;
+            });
+        }
+
+        function setupEventListeners() {
+            const inputs = ['inPassenger', 'inOrigin', 'inDestination', 'inDate', 'inTime', 'inMessage'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', (e) => {
+                        if (currentPreset) setScenarioSelection(null);
+                        if (id === 'inTime') {
+                            let raw = el.value.replace(/\D/g, '');
+                            let formatted = '';
+                            
+                            if (raw.length > 0) {
+                                let h = raw.substring(0, 2);
+                                if (h.length === 2 && parseInt(h, 10) > 23) {
+                                    h = '23';
+                                }
+                                formatted = h;
+                                
+                                if (raw.length > 2) {
+                                    let m = raw.substring(2, 4);
+                                    if (m.length === 1 && parseInt(m, 10) > 5) {
+                                        m = '5';
+                                    }
+                                    if (m.length === 2 && parseInt(m, 10) > 59) {
+                                        m = '59';
+                                    }
+                                    formatted += ':' + m;
+                                } else if (raw.length === 2 && e.inputType !== 'deleteContentBackward') {
+                                    formatted += ':';
+                                }
+                            }
+                            el.value = formatted;
+                        }
+                        if (id === 'inDate') syncDateDisplay();
+                        updatePass();
+                        
+                        // Update character counters
+                        if (id === 'inPassenger') setText('charCount', `${el.value.length}/15`);
+                        if (id === 'inOrigin') setText('charCountOrigin', `${el.value.length}/12`);
+                        if (id === 'inDestination') setText('charCountDest', `${el.value.length}/12`);
+                        if (id === 'inMessage') setText('charCountMsg', `${el.value.length}/45`);
+                    });
+                }
+            });
+
+            const timeEl = document.getElementById('inTime');
+            if (timeEl) {
+                timeEl.addEventListener('blur', () => {
+                    let parts = timeEl.value.split(':');
+                    let h = parts[0] || '13';
+                    let m = parts[1] || '14';
+                    
+                    if (h.length === 1) h = '0' + h;
+                    if (h === '' || parseInt(h, 10) > 23) h = '13';
+                    
+                    if (m.length === 1) m = '0' + m;
+                    if (m.length === 0) m = '00';
+                    if (parseInt(m, 10) > 59) m = '59';
+                    
+                    timeEl.value = `${h}:${m}`;
+                    updatePass();
+                });
+            }
+
+            const dateEl = document.getElementById('inDate');
+            if (dateEl) {
+                const openDatePicker = (event) => {
+                    if (typeof dateEl.showPicker !== 'function') return;
+                    try {
+                        event.preventDefault();
+                        dateEl.showPicker();
+                    } catch (error) {
+                        dateEl.focus({ preventScroll: true });
+                    }
+                };
+
+                dateEl.addEventListener('click', openDatePicker);
+                dateEl.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        openDatePicker(event);
+                    }
+                });
+
+                dateEl.addEventListener('change', () => {
+                    if (currentPreset) setScenarioSelection(null);
+                    syncDateDisplay();
+                    updatePass();
+                });
+            }
+        }
+
+        function syncDateDisplay() {
+            const dateInput = document.getElementById('inDate');
+            const dateDisplay = document.getElementById('inDateDisplay');
+            if (!dateDisplay) return;
+            dateDisplay.textContent = (dateInput?.value || '2026-08-19').replace(/-/g, '/');
+        }
+
+        function updatePass() {
+            const passenger = document.getElementById('inPassenger')?.value || 'YOU & ME';
+            const origin = (document.getElementById('inOrigin')?.value || 'TAIPEI').toUpperCase();
+            const destination = (document.getElementById('inDestination')?.value || 'ANYWHERE').toUpperCase();
+            const rawDate = document.getElementById('inDate')?.value || '2026-08-19';
+            const formattedDate = rawDate.replace(/-/g, '/');
+            
+            const time = document.getElementById('inTime')?.value || '13:14';
+
+            const gate = document.getElementById('inGate')?.value || '19';
+            const seat = document.getElementById('inSeat')?.value || '52O';
+            const message = document.getElementById('inMessage')?.value || 'YOU ARE MY DESTINATION, ALWAYS.';
+
+            // Helper for 3-letter airport code calculation
+            function getCode(str, isDest) {
+                const s = (str || '').trim().toUpperCase();
+                if (!isDest) {
+                    if (s === 'TAIPEI' || s === 'TPE') return 'TPE';
+                    if (s === 'ME') return 'ME!';
+                } else {
+                    if (s === 'ANYWHERE' || s === 'ANY') return 'ANY';
+                    if (s === 'YOUR HEART' || s === 'YOU') return 'YOU';
+                }
+                if (s.length === 0) return isDest ? 'ANY' : 'TPE';
+                if (s.length === 1) return s + '!!';
+                if (s.length === 2) return s + '!';
+                return s.substring(0, 3);
+            }
+
+            const origCode = getCode(origin, false);
+            const destCode = getCode(destination, true);
+
+            // Update Character Counters
+            const cntPass = document.getElementById('charCount');
+            if (cntPass) cntPass.innerText = `${passenger.length}/15`;
+
+            const cntOrig = document.getElementById('charCountOrigin');
+            if (cntOrig) cntOrig.innerText = `${origin.length}/12`;
+
+            const cntDest = document.getElementById('charCountDest');
+            if (cntDest) cntDest.innerText = `${destination.length}/12`;
+
+            const cntMsg = document.getElementById('charCountMsg');
+            if (cntMsg) cntMsg.innerText = `${message.length}/45`;
+
+            const classHtmlStub = `${currentClassObj.en}<br><span class="text-[9px] font-medium text-slate-500">${currentClassObj.zh}</span>`;
+
+            // Landscape updates
+            setText('outPassengerStub', passenger);
+            setText('outOriginCodeL', origCode);
+            setText('outOriginL', origin);
+            setText('outDestCodeL', destCode);
+            setText('outDestinationL', destination);
+            setText('outDateStub', formattedDate);
+            setText('outTimeStub', time);
+            setText('outGateStub', gate);
+            setText('outSeatStub', seat);
+            setText('outMessageL', `"${message}"`);
+
+            const elClassStub = document.getElementById('outClassStub');
+            if (elClassStub) elClassStub.innerHTML = classHtmlStub;
+
+            // Portrait updates
+            setText('outPassengerP', passenger);
+            setText('outOriginCodeP', origCode);
+            setText('outOriginP', origin);
+            setText('outDestCodeP', destCode);
+            setText('outDestinationP', destination);
+            setText('outDateP', formattedDate);
+            setText('outTimeP', time);
+            setText('outGateP', gate);
+            setText('outSeatP', seat);
+            setText('outMessageP', `"${message}"`);
+
+            const elClassP = document.getElementById('outClassP');
+            if (elClassP) elClassP.innerHTML = classHtmlStub;
+        }
+
+        function setText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = value;
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const wrapL = document.getElementById('wrapperLandscape');
+            const wrapP = document.getElementById('wrapperPortrait');
+            const btnL = document.getElementById('btnModeLandscape');
+            const btnP = document.getElementById('btnModePortrait');
+
+            if (mode === 'landscape') {
+                wrapL.classList.remove('hidden');
+                wrapP.classList.add('hidden');
+                btnL.className = "py-2.5 px-3 rounded-xl border border-dyson-rose bg-rose-100/70 text-dyson-dark font-semibold text-[11px] flex items-center justify-center gap-2 transition shadow-sm";
+                btnP.className = "py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:text-dyson-dark font-semibold text-[11px] flex items-center justify-center gap-2 transition";
+            } else {
+                wrapL.classList.add('hidden');
+                wrapP.classList.remove('hidden');
+                btnP.className = "py-2.5 px-3 rounded-xl border border-dyson-rose bg-rose-100/70 text-dyson-dark font-semibold text-[11px] flex items-center justify-center gap-2 transition shadow-sm";
+                btnL.className = "py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:text-dyson-dark font-semibold text-[11px] flex items-center justify-center gap-2 transition";
+            }
+
+            if (isFlipped) {
+                isFlipped = false;
+                resetFlipVisuals();
+            }
+            trackCampaignEvent('select_card_format', {
+                card_format: mode
+            });
+        }
+
+        function toggleCardFlip() {
+            if (useIOSFaceGuard && isFlipAnimating) return;
+
+            const nextFlipped = !isFlipped;
+            isFlipped = nextFlipped;
+            const modeAtFlip = currentMode;
+            const targetId = currentMode === 'landscape' ? 'cardInnerLandscape' : 'cardInnerPortrait';
+            const card = document.getElementById(targetId);
+            if (!card) return;
+
+            card.classList.toggle('rotate-y-180', nextFlipped);
+            trackCampaignEvent('flip_card', {
+                card_format: modeAtFlip,
+                card_side: nextFlipped ? 'back' : 'front'
+            });
+
+            if (useIOSFaceGuard) {
+                clearIOSFlipTimers();
+                isFlipAnimating = true;
+
+                flipMidpointTimer = setTimeout(() => {
+                    if (currentMode === modeAtFlip) {
+                        setIOSVisibleFace(modeAtFlip, nextFlipped);
+                    }
+                    flipMidpointTimer = null;
+                }, 400);
+
+                flipEndTimer = setTimeout(() => {
+                    isFlipAnimating = false;
+                    flipEndTimer = null;
+                }, 850);
+            }
+        }
+
+        function resetFlipVisuals() {
+            clearIOSFlipTimers();
+            const cardL = document.getElementById('cardInnerLandscape');
+            const cardP = document.getElementById('cardInnerPortrait');
+            if (cardL) cardL.classList.remove('rotate-y-180');
+            if (cardP) cardP.classList.remove('rotate-y-180');
+            initializeIOSFaceGuard();
+        }
+
+        function clearIOSFlipTimers() {
+            if (flipMidpointTimer) {
+                clearTimeout(flipMidpointTimer);
+                flipMidpointTimer = null;
+            }
+            if (flipEndTimer) {
+                clearTimeout(flipEndTimer);
+                flipEndTimer = null;
+            }
+            isFlipAnimating = false;
+        }
+
+        function getCardFaces(mode) {
+            if (mode === 'landscape') {
+                return {
+                    front: document.getElementById('ticketLandscape'),
+                    back: document.getElementById('ticketLandscapeBack')
+                };
+            }
+            return {
+                front: document.getElementById('ticketPortrait'),
+                back: document.getElementById('ticketPortraitBack')
+            };
+        }
+
+        function setIOSVisibleFace(mode, showBack) {
+            if (!useIOSFaceGuard) return;
+            const { front, back } = getCardFaces(mode);
+            if (!front || !back) return;
+
+            front.classList.toggle('ios-face-concealed', showBack);
+            back.classList.toggle('ios-face-concealed', !showBack);
+            front.setAttribute('aria-hidden', showBack ? 'true' : 'false');
+            back.setAttribute('aria-hidden', showBack ? 'false' : 'true');
+        }
+
+        function initializeIOSFaceGuard() {
+            if (!useIOSFaceGuard) return;
+            setIOSVisibleFace('landscape', false);
+            setIOSVisibleFace('portrait', false);
+        }
+
+        function setScenarioSelection(preset) {
+            currentPreset = preset;
+            const btnTogether = document.getElementById('btnPresetTogether');
+            const btnGift = document.getElementById('btnPresetGift');
+            const selectedClass = "choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[11px] font-semibold rounded-lg border-2 border-dyson-rose flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+            const unselectedClass = "choice-button preset-button py-1.5 px-1 bg-white text-dyson-dark text-[11px] font-semibold rounded-lg border border-rose-200/80 flex items-center justify-center gap-1 transition shadow-sm active:scale-95";
+
+            if (btnTogether) {
+                btnTogether.className = preset === 'together' ? selectedClass : unselectedClass;
+                btnTogether.setAttribute('aria-pressed', preset === 'together' ? 'true' : 'false');
+            }
+            if (btnGift) {
+                btnGift.className = preset === 'gift' ? selectedClass : unselectedClass;
+                btnGift.setAttribute('aria-pressed', preset === 'gift' ? 'true' : 'false');
+            }
+        }
+
+        function applyModePreset(preset) {
+            const elPass = document.getElementById('inPassenger');
+            const elOrig = document.getElementById('inOrigin');
+            const elDest = document.getElementById('inDestination');
+            const elMsg = document.getElementById('inMessage');
+
+            currentClassObj = getRandomClass();
+            setScenarioSelection(preset);
+
+            if (preset === 'gift') {
+                if (elPass) elPass.value = 'Dyson';
+                if (elOrig) elOrig.value = 'ME';
+                if (elDest) elDest.value = 'YOUR HEART';
+                if (elMsg) elMsg.value = 'YOU ARE MY DESTINATION, ALWAYS.';
+                showToast("已載入「飛向愛人」浪漫設定！");
+            } else if (preset === 'together') {
+                if (elPass) elPass.value = 'YOU & ME';
+                if (elOrig) elOrig.value = 'TAIPEI';
+                if (elDest) elDest.value = 'ANYWHERE';
+                if (elMsg) elMsg.value = 'YOU ARE MY DESTINATION, ALWAYS.';
+                showToast("已載入「浪漫同行」專屬設定！");
+            }
+            updatePass();
+            trackCampaignEvent('select_vibe', {
+                vibe_name: preset
+            });
+        }
+
+        function randomizeInspiration() {
+            const messages = [
+                "歡迎搭乘 Dyson HD19 航班！本航班售出不退票，你的人生我全包！",
+                "七夕情人節快樂！❤️",
+                "搭乘 Dyson HD19 航班：風速最高，甜度超標，一生一世不逃票！",
+                "每秒100次智慧控溫，就像我對你的愛永不降溫。",
+                "登機證已入手，立刻把你跟HD19打包走！",
+                "直飛你的內心深處；你，就是我人生最終的降落處。",
+                "下一站，全世界！快跟我一起去探索與體驗這世界。",
+                "YOU ARE MY DESTINATION, ALWAYS.",
+                "FLY ME TO YOUR HEART.",
+                "LOVE IS IN THE AIR, ALWAYS WITH YOU.",
+                "100% LOVE, ZERO DAMAGE.",
+                "READY FOR OUR NEXT CHAPTER.",
+                "EVERY MOMENT WITH YOU IS MAGICAL."
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            const elMsg = document.getElementById('inMessage');
+            if (elMsg) elMsg.value = randomMsg;
+            currentClassObj = getRandomClass();
+            setScenarioSelection(null);
+            trackCampaignEvent('randomize_message');
+            updatePass();
+            showToast("已隨機套用浪漫靈感與機票艙等！");
+        }
+
+        function showToast(msg, iconClass = "fa-circle-check", duration = 2500) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+            if (!toast) return;
+
+            toastMsg.innerText = msg;
+            toastIcon.className = `fa-solid ${iconClass} text-dyson-pink text-lg`;
+
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            }, duration);
+        }
+
+        function playAirportChime() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+
+                const now = ctx.currentTime;
+                
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(698.46, now);
+                gain1.gain.setValueAtTime(0, now);
+                gain1.gain.linearRampToValueAtTime(0.3, now + 0.05);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.8);
+
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(523.25, now + 0.35);
+                gain2.gain.setValueAtTime(0, now + 0.35);
+                gain2.gain.linearRampToValueAtTime(0.35, now + 0.4);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.35);
+                osc2.stop(now + 1.2);
+            } catch (e) {
+                console.log("Audio not supported or blocked");
+            }
+        }
+
+        function resetAirportAnnouncementButton() {
+            const button = document.getElementById('airportAudioButton');
+            const icon = document.getElementById('airportAudioIcon');
+            const label = document.getElementById('airportAudioLabel');
+
+            if (button) {
+                button.setAttribute('aria-pressed', 'false');
+                button.setAttribute('aria-label', '播放機場廣播');
+            }
+            if (icon) icon.className = 'fa-solid fa-bullhorn text-dyson-rose';
+            if (label) label.textContent = '播放機場廣播';
+        }
+
+        async function toggleAirportAnnouncement() {
+            const audio = document.getElementById('airportFinalCallAudio');
+            const button = document.getElementById('airportAudioButton');
+            const icon = document.getElementById('airportAudioIcon');
+            const label = document.getElementById('airportAudioLabel');
+
+            if (!audio) return;
+
+            if (!audio.paused) {
+                audio.pause();
+                audio.currentTime = 0;
+                resetAirportAnnouncementButton();
+                showToast('已停止機場廣播', 'fa-volume-xmark');
+                return;
+            }
+
+            try {
+                audio.currentTime = 0;
+                await audio.play();
+                if (button) {
+                    button.setAttribute('aria-pressed', 'true');
+                    button.setAttribute('aria-label', '停止機場廣播');
+                }
+                if (icon) icon.className = 'fa-solid fa-stop text-dyson-rose';
+                if (label) label.textContent = '停止機場廣播';
+                trackCampaignEvent('play_airport_audio');
+            } catch (error) {
+                resetAirportAnnouncementButton();
+                showToast('找不到廣播音檔，請確認 assets/audio 中的 MP3 檔案', 'fa-circle-exclamation');
+            }
+        }
+
+        document.getElementById('airportFinalCallAudio')?.addEventListener('ended', resetAirportAnnouncementButton);
+
+        function getFallbackSvgDataUrl(imgOrType, isDark = false) {
+            let type = '';
+            if (typeof imgOrType === 'string') {
+                type = imgOrType.toLowerCase();
+            } else if (typeof imgOrType === 'object' && imgOrType !== null) {
+                const alt = (imgOrType.alt || '').toLowerCase();
+                const src = (imgOrType.src || '').toLowerCase();
+                const id = (imgOrType.id || '').toLowerCase();
+                type = alt + ' ' + src + ' ' + id;
+            }
+
+            const isBlue = currentTheme === 'blue';
+            const primaryAccent = isBlue ? '#1b365d' : '#d1828e';
+            const secondaryAccent = isBlue ? '#c88b58' : '#f4b8be';
+            const logoColor = isDark ? '#ffffff' : (isBlue ? '#112239' : '#1e1c24');
+            let svg = '';
+
+            if (type.includes('qr') || type.includes('384e9d67') || type.includes('dce7f5e3')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ffffff" rx="0"/><rect x="8" y="8" width="28" height="28" rx="0" fill="${logoColor}"/><rect x="13" y="13" width="18" height="18" rx="0" fill="#ffffff"/><rect x="17" y="17" width="10" height="10" rx="0" fill="${primaryAccent}"/><rect x="64" y="8" width="28" height="28" rx="0" fill="${logoColor}"/><rect x="69" y="13" width="18" height="18" rx="0" fill="#ffffff"/><rect x="73" y="17" width="10" height="10" rx="0" fill="${primaryAccent}"/><rect x="8" y="64" width="28" height="28" rx="0" fill="${logoColor}"/><rect x="13" y="69" width="18" height="18" rx="0" fill="#ffffff"/><rect x="17" y="73" width="10" height="10" rx="0" fill="${primaryAccent}"/><rect x="68" y="68" width="14" height="14" rx="0" fill="${logoColor}"/><rect x="71" y="71" width="8" height="8" rx="0" fill="#ffffff"/><rect x="73" y="73" width="4" height="4" rx="0" fill="${primaryAccent}"/><g fill="${logoColor}"><rect x="42" y="10" width="5" height="5"/><rect x="50" y="10" width="5" height="5"/><rect x="42" y="18" width="5" height="5"/><rect x="50" y="26" width="5" height="5"/><rect x="10" y="42" width="5" height="5"/><rect x="18" y="42" width="5" height="5"/><rect x="26" y="42" width="5" height="5"/><rect x="34" y="42" width="5" height="5"/><rect x="42" y="42" width="5" height="5"/><rect x="50" y="42" width="5" height="5"/><rect x="58" y="42" width="5" height="5"/><rect x="66" y="42" width="5" height="5"/><rect x="74" y="42" width="5" height="5"/><rect x="82" y="42" width="5" height="5"/><rect x="42" y="50" width="5" height="5"/><rect x="50" y="50" width="5" height="5"/><rect x="58" y="50" width="5" height="5"/><rect x="42" y="58" width="5" height="5"/><rect x="58" y="58" width="5" height="5"/><rect x="82" y="50" width="5" height="5"/><rect x="82" y="58" width="5" height="5"/><rect x="10" y="50" width="5" height="5"/><rect x="26" y="50" width="5" height="5"/><rect x="34" y="58" width="5" height="5"/><rect x="42" y="66" width="5" height="5"/><rect x="50" y="66" width="5" height="5"/><rect x="42" y="74" width="5" height="5"/><rect x="58" y="74" width="5" height="5"/><rect x="50" y="82" width="5" height="5"/><rect x="58" y="82" width="5" height="5"/><rect x="82" y="82" width="5" height="5"/></g><g fill="${primaryAccent}"><rect x="50" y="18" width="5" height="5"/><rect x="42" y="26" width="5" height="5"/><rect x="50" y="34" width="5" height="5"/><rect x="58" y="34" width="5" height="5"/><rect x="50" y="58" width="5" height="5"/><rect x="66" y="50" width="5" height="5"/><rect x="74" y="58" width="5" height="5"/><rect x="18" y="50" width="5" height="5"/><rect x="18" y="58" width="5" height="5"/><rect x="50" y="74" width="5" height="5"/><rect x="42" y="82" width="5" height="5"/></g></svg>`;
+            } else if (type.includes('dyson_back') || type.includes('8c945b4d')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><rect width="240" height="240" rx="20" fill="${isBlue ? '#eaf1f8' : '#fdf2f4'}" stroke="${isBlue ? 'rgba(27,54,93,0.3)' : 'rgba(209,130,142,0.3)'}" stroke-width="2"/><defs><linearGradient id="pGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${isBlue ? '#d5e2f2' : '#fce8eb'}"/><stop offset="100%" stop-color="${primaryAccent}"/></linearGradient><linearGradient id="bGrad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#e0a96d"/><stop offset="100%" stop-color="#b86b72"/></linearGradient></defs><g transform="translate(18, 15)"><circle cx="45" cy="55" r="32" fill="none" stroke="url(#pGrad1)" stroke-width="14"/><circle cx="45" cy="55" r="22" fill="${logoColor}"/><circle cx="45" cy="55" r="12" fill="url(#bGrad1)"/><circle cx="45" cy="55" r="5" fill="#ffffff" opacity="0.9"/><rect x="38" y="86" width="14" height="95" rx="7" fill="url(#pGrad1)"/><rect x="38" y="145" width="14" height="32" rx="4" fill="#17121b"/></g><g transform="translate(115, 15)"><rect x="10" y="32" width="65" height="46" rx="8" fill="url(#pGrad1)"/><rect x="5" y="30" width="12" height="50" rx="4" fill="${logoColor}"/><rect x="62" y="35" width="15" height="40" rx="4" fill="url(#bGrad1)"/><rect x="35" y="78" width="14" height="103" rx="7" fill="url(#pGrad1)"/><rect x="35" y="145" width="14" height="32" rx="4" fill="#17121b"/></g></svg>`;
+            } else if (type.includes('hd19') || type.includes('639202210906470000')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" rx="20" fill="none"/><defs><linearGradient id="pGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${isBlue ? '#d5e2f2' : '#fce8eb'}"/><stop offset="50%" stop-color="${secondaryAccent}"/><stop offset="100%" stop-color="${primaryAccent}"/></linearGradient><linearGradient id="bGrad2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e0a96d"/><stop offset="100%" stop-color="#b86b72"/></linearGradient></defs><circle cx="90" cy="62" r="38" fill="none" stroke="url(#pGrad2)" stroke-width="16"/><circle cx="90" cy="62" r="26" fill="${logoColor}"/><circle cx="90" cy="62" r="14" fill="url(#bGrad2)"/><circle cx="90" cy="62" r="6" fill="#ffffff" opacity="0.95"/><rect x="82" y="98" width="16" height="68" rx="8" fill="url(#pGrad2)"/><rect x="82" y="142" width="16" height="22" rx="4" fill="#2d2230"/></svg>`;
+            } else if (type.includes('supersonic')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 44"><text x="2" y="30" fill="${logoColor}" font-family="Montserrat,Arial,sans-serif" font-size="27" font-weight="600" letter-spacing="-1">supersonic™</text><text x="190" y="29" fill="${logoColor}" font-family="Montserrat,Arial,sans-serif" font-size="10" font-weight="600" letter-spacing="1">TRAVEL</text></svg>`;
+            } else if (type.includes('dyson') || type.includes('b547989b')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44"><g fill="${logoColor}"><path d="M26,6 h7 v32 h-7 v-3.5 C24,37 21,39 16.5,39 C8.5,39 2,32 2,23 C2,14 8.5,7 16.5,7 C21,7 24,9 26,11.5 Z M18,13.5 C12.5,13.5 8.5,17.5 8.5,23 C8.5,28.5 12.5,32.5 18,32.5 C23.5,32.5 27.5,28.5 27.5,23 C27.5,17.5 23.5,13.5 18,13.5 Z"/><path d="M38,14 h7.5 l5.5,14 l5.5,-14 h7.5 l-9.5,22 c-2.5,6 -5.5,8.5 -11.5,8.5 h-3 v-6 h2 c3,0 4.5,-1 6,-5 Z"/><path d="M85,14 v6 c-2,-1.5 -4.5,-2.5 -7.5,-2.5 c-3.5,0 -5.5,1.5 -5.5,3.5 c0,2.5 3,3.5 7.5,5 c6,2 10.5,4.5 10.5,10.5 C90,43 82.5,46 75,46 C70.5,46 66.5,44.5 63.5,42 v-6.5 c2.5,2 5.5,3.5 9,3.5 c4,0 6,-1.5 6,-4 c0,-2.5 -2.5,-3.5 -7.5,-5 C65,28 60.5,25.5 60.5,19.5 C60.5,13.5 67,11 74.5,11 C78.5,11 82,12 85,14 Z"/><path d="M109,11 C118,11 125,18 125,27 C125,36 118,43 109,43 C100,43 93,36 93,27 C93,18 100,11 109,11 Z M109,17.5 C103.5,17.5 99.5,21.5 99.5,27 C99.5,32.5 103.5,36.5 109,36.5 C114.5,36.5 118.5,32.5 118.5,27 C118.5,21.5 114.5,17.5 109,17.5 Z"/><path d="M131,14 h6.5 v3.5 c2,-2.5 5.5,-4 9.5,-4 c7,0 11,4.5 11,12 v13 h-7 v-12 c0,-4.5 -2,-7 -6,-7 c-4,0 -7,2.5 -7,7 v12 h-7 Z"/></g></svg>`;
+            } else if (type.includes('voltage') || type.includes('8f7026ab')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" fill="${primaryAccent}" fill-opacity="0.2" stroke="${secondaryAccent}" stroke-width="2"/><path d="M32 12 L18 32 L28 32 L26 48 L42 28 L32 28 Z" fill="${secondaryAccent}"/></svg>`;
+            } else if (type.includes('travel') || type.includes('e4fdaf70')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" fill="${primaryAccent}" fill-opacity="0.2" stroke="${secondaryAccent}" stroke-width="2"/><rect x="18" y="22" width="24" height="24" rx="4" fill="none" stroke="${secondaryAccent}" stroke-width="3"/><path d="M24 22 V16 A4 4 0 0 1 36 16 V22" fill="none" stroke="${secondaryAccent}" stroke-width="3"/><line x1="24" y1="46" x2="24" y2="50" stroke="${secondaryAccent}" stroke-width="3"/><line x1="36" y1="46" x2="36" y2="50" stroke="${secondaryAccent}" stroke-width="3"/></svg>`;
+            } else if (type.includes('temp') || type.includes('7317e915')) {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" fill="${primaryAccent}" fill-opacity="0.2" stroke="${secondaryAccent}" stroke-width="2"/><path d="M30 14 v20 a6 6 0 1 0 0 12 a6 6 0 0 0 0 -12 v-20" fill="none" stroke="${secondaryAccent}" stroke-width="3"/><circle cx="30" cy="40" r="4" fill="${secondaryAccent}"/></svg>`;
+            } else {
+                svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30"><rect width="100" height="30" rx="6" fill="${isBlue ? '#e2eaf4' : '#fce8eb'}"/><circle cx="15" cy="15" r="6" fill="${primaryAccent}"/></svg>`;
+            }
+
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+
+        async function fetchImageAsDataUrl(url, timeoutMs) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(url, { mode: 'cors', signal: controller.signal });
+                if (!res.ok) return null;
+                const blob = await res.blob();
+                return await blobToDataUrl(blob);
+            } catch (error) {
+                return null;
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
+
+        async function imageToDataUrl(url, alt) {
+            if (!url || url.startsWith('data:')) return url;
+
+            const directDataUrl = await fetchImageAsDataUrl(url, 2500);
+            if (directDataUrl) return directDataUrl;
+
+            const proxies = [
+                `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+            ];
+
+            const proxyResults = await Promise.all(
+                proxies.map(proxyUrl => fetchImageAsDataUrl(proxyUrl, 3500))
+            );
+            const proxyDataUrl = proxyResults.find(Boolean);
+            if (proxyDataUrl) return proxyDataUrl;
+
+            return getFallbackSvgDataUrl(alt);
+        }
+
+        function blobToDataUrl(blob) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        async function generateBoardingPassCanvas() {
+            showToast("正在生成專屬登機證...", "fa-spinner fa-spin");
+            playAirportChime();
+
+            if (document.fonts && document.fonts.ready) {
+                await Promise.race([
+                    document.fonts.ready,
+                    new Promise(resolve => setTimeout(resolve, 2500))
+                ]);
+            }
+
+            let targetId = '';
+            if (currentMode === 'landscape') {
+                targetId = isFlipped ? 'ticketLandscapeBack' : 'ticketLandscape';
+            } else {
+                targetId = isFlipped ? 'ticketPortraitBack' : 'ticketPortrait';
+            }
+
+            const sourceEl = document.getElementById(targetId);
+            if (!sourceEl) {
+                throw new Error("無法找到卡片畫面");
+            }
+
+            const width = currentMode === 'landscape' ? 672 : 320;
+            const targetHeight = currentMode === 'landscape' ? 320 : 580;
+
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.left = '-9999px';
+            tempContainer.style.top = '0';
+            tempContainer.style.width = width + 'px';
+            tempContainer.style.height = targetHeight + 'px';
+            tempContainer.style.zIndex = '-9999';
+            tempContainer.style.transform = 'none';
+            tempContainer.style.perspective = 'none';
+
+            const clonedEl = sourceEl.cloneNode(true);
+            clonedEl.style.transform = 'none';
+            clonedEl.style.webkitTransform = 'none';
+            clonedEl.style.position = 'relative';
+            clonedEl.style.top = '0';
+            clonedEl.style.left = '0';
+            clonedEl.style.width = width + 'px';
+            clonedEl.style.height = targetHeight + 'px';
+            clonedEl.classList.remove('rotate-y-180', 'backface-hidden', 'ios-face-concealed');
+            clonedEl.removeAttribute('aria-hidden');
+
+            const imgs = Array.from(clonedEl.querySelectorAll('img'));
+            await Promise.all(imgs.map(async (img) => {
+                try {
+                    if (img.src && img.src.startsWith('data:')) return;
+                    const dataUrl = await imageToDataUrl(img.src, img.alt || img.id || '');
+                    if (dataUrl) {
+                        img.src = dataUrl;
+                    } else {
+                        img.src = getFallbackSvgDataUrl(img);
+                    }
+                } catch (e) {
+                    img.src = getFallbackSvgDataUrl(img);
+                }
+            }));
+
+            tempContainer.appendChild(clonedEl);
+            document.body.appendChild(tempContainer);
+
+            try {
+                if (typeof html2canvas !== 'function') {
+                    throw new Error('圖片產生工具尚未載入');
+                }
+
+                const canvas = await html2canvas(clonedEl, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: null,
+                    width: width,
+                    height: targetHeight,
+                    windowWidth: width,
+                    windowHeight: targetHeight,
+                    imageTimeout: 5000,
+                    logging: false,
+                    onclone: (clonedDoc) => {
+                        const target = clonedDoc.getElementById(targetId);
+                        if (target) {
+                            target.classList.add('export-mode');
+                        }
+                    }
+                });
+
+                document.body.removeChild(tempContainer);
+
+                const passenger = document.getElementById('inPassenger')?.value || 'YOU_AND_ME';
+                const sideLabel = isFlipped ? 'Back' : 'Front';
+                const themeLabel = currentTheme === 'blue' ? 'PrussianBlue' : 'RosePink';
+                const fileName = `Dyson_HD19_${themeLabel}_${currentMode}_${sideLabel}_${passenger.replace(/\s+/g, '_')}.png`;
+
+                return { canvas, fileName };
+            } catch (err) {
+                if (document.body.contains(tempContainer)) {
+                    document.body.removeChild(tempContainer);
+                }
+                throw err;
+            }
+        }
+
+        function setDownloadButtonBusy(button, isBusy) {
+            if (!button) return;
+
+            if (isBusy) {
+                button.dataset.originalHtml = button.innerHTML;
+                button.disabled = true;
+                button.setAttribute('aria-busy', 'true');
+                button.classList.add('opacity-70', 'cursor-wait');
+                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 text-center"></i> 產生中';
+            } else {
+                button.disabled = false;
+                button.removeAttribute('aria-busy');
+                button.classList.remove('opacity-70', 'cursor-wait');
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                    delete button.dataset.originalHtml;
+                }
+            }
+        }
+
+        function canvasToPngBlob(canvas) {
+            return new Promise((resolve) => {
+                canvas.toBlob(resolve, 'image/png');
+            });
+        }
+
+        function triggerBlobDownload(blob, fileName) {
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = fileName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+        }
+
+        function isLineInAppBrowser() {
+            return /Line\//i.test(navigator.userAgent || '');
+        }
+
+        function openCurrentPageInExternalBrowser() {
+            const externalUrl = new URL(window.location.href);
+            externalUrl.searchParams.set('openExternalBrowser', '1');
+            externalUrl.searchParams.set('from', 'line-download');
+
+            const link = document.createElement('a');
+            link.href = externalUrl.toString();
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        async function downloadBoardingPass(button) {
+            if (isLineInAppBrowser()) {
+                showToast("正在改用外部瀏覽器開啟…", "fa-arrow-up-right-from-square");
+                openCurrentPageInExternalBrowser();
+                return;
+            }
+
+            setDownloadButtonBusy(button, true);
+            try {
+                const { canvas, fileName } = await generateBoardingPassCanvas();
+                const blob = await canvasToPngBlob(canvas);
+                if (!blob) throw new Error('無法建立下載圖片');
+                triggerBlobDownload(blob, fileName);
+                trackCampaignEvent('download_boarding_pass', {
+                    card_format: currentMode,
+                    theme_name: currentTheme,
+                    card_side: isFlipped ? 'back' : 'front',
+                    ...getRouteTrackingParams()
+                });
+                showToast("已成功下載專屬登機證！", "fa-circle-check");
+            } catch (err) {
+                console.error('下載失敗:', err);
+                showToast("下載失敗，請重新整理後再試一次", "fa-circle-exclamation");
+            } finally {
+                setDownloadButtonBusy(button, false);
+            }
+        }
+
+        function copyShareTextToClipboard() {
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證🎟️\nhttps://hlh.tw/dyson-hd19-boarding-pass";
+            try {
+                const tempInput = document.createElement('textarea');
+                tempInput.value = shareText;
+                tempInput.style.position = 'fixed';
+                tempInput.style.left = '-9999px';
+                tempInput.style.top = '0';
+                document.body.appendChild(tempInput);
+                tempInput.focus();
+                tempInput.select();
+                tempInput.setSelectionRange(0, 99999);
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                return successful;
+            } catch (clipErr) {
+                console.log('Clipboard copy failed', clipErr);
+                return false;
+            }
+        }
+
+        async function shareBoardingPass() {
+            const shareText = "✈️ Dyson Airways HD19 航班即將起飛！快來領取專屬七夕登機證🎟️\nhttps://hlh.tw/dyson-hd19-boarding-pass";
+            trackCampaignEvent('share_boarding_pass', {
+                card_format: currentMode,
+                theme_name: currentTheme,
+                card_side: isFlipped ? 'back' : 'front',
+                ...getRouteTrackingParams()
+            });
+
+            // Execute mobile-compatible clipboard copy IMMEDIATELY on user click gesture
+            copyShareTextToClipboard();
+
+            try {
+                const { canvas, fileName } = await generateBoardingPassCanvas();
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        showToast("生成圖片失敗，請再試一次", "fa-circle-exclamation");
+                        return;
+                    }
+
+                    const file = new File([blob], fileName, { type: 'image/png' });
+
+                    const shareData = {
+                        title: "Dyson HD19 專屬登機證",
+                        text: shareText,
+                        files: [file]
+                    };
+
+                    // Try Native Web Share API
+                    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                        try {
+                            await navigator.share(shareData);
+                            showToast("圖片分享完成！別忘了貼上已複製的遊戲連結，分享情人節遊戲！", "fa-circle-check", 10000);
+                            return;
+                        } catch (shareErr) {
+                            if (shareErr.name === 'AbortError') {
+                                showToast("取消分享", "fa-circle-info");
+                                return;
+                            }
+                        }
+                    }
+
+                    // Fallback for Desktop or unsupported devices
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+
+                    showToast("圖片與遊戲連結已複製！", "fa-circle-check");
+                }, 'image/png');
+
+            } catch (err) {
+                console.error('導出失敗:', err);
+                showToast("生成失敗，請再試一次", "fa-circle-exclamation");
+            }
+        }
+    </script>
+</body>
+</html>
