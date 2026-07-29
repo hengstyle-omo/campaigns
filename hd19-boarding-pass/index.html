@@ -225,17 +225,6 @@
             pointer-events: none !important;
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.03);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(201, 112, 126, 0.4);
-            border-radius: 3px;
-        }
-
         .ticket-pass-bg {
             background: linear-gradient(135deg, #fce8eb 0%, #f7dcd9 50%, #f3d0ce 100%);
             transition: background 0.5s ease;
@@ -418,7 +407,7 @@
         }
     </style>
 </head>
-<body class="relative min-h-screen flex flex-col justify-between">
+<body class="relative min-h-screen flex flex-col">
 
     <!-- Ambient background light -->
     <div class="ambient-glow -top-20 -left-20"></div>
@@ -446,7 +435,7 @@
         </div>
     </header>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[72px] sm:pt-[88px] pb-4 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <!-- Form Controls Panel -->
         <section class="lg:col-span-5 bg-white border border-rose-100/80 p-6 sm:p-8 rounded-3xl shadow-xl space-y-3.5 sm:space-y-5">
             <div class="border-b border-rose-100 pb-2.5 px-2 flex justify-between items-center">
@@ -697,7 +686,7 @@
                             </div>
 
                             <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
-                                <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
+                                <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
                                 <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mt-1">領取$500優惠</span>
                             </div>
                         </div>
@@ -811,7 +800,7 @@
                                     </div>
                                     <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
                                         <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mb-1">領取$500優惠</span>
-                                        <img id="qrCodePortrait" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
+                                        <img id="qrCodePortrait" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
                                     </div>
                                 </div>
 
@@ -975,7 +964,7 @@
                                     </div>
 
                                     <div class="flex-1 min-h-[72px] flex flex-col items-center justify-center">
-                                        <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
+                                        <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
                                         <span class="mt-1 text-[10px] font-semibold text-dyson-rose tracking-tight">領取$500優惠</span>
                                     </div>
                                 </div>
@@ -1013,7 +1002,7 @@
 
     </main>
 
-    <footer class="relative z-10 border-t border-rose-100 px-4 py-4 text-center text-[11px] sm:text-xs leading-relaxed text-slate-500">
+    <footer class="relative z-10 border-t border-rose-100 px-4 py-2.5 text-center text-[11px] sm:text-xs leading-relaxed text-slate-500">
         <p>本網站蒐集瀏覽、互動及使用者填寫的出發地與目的地資料，用於活動與行銷成效分析及體驗優化。</p>
         <p class="mt-1">
             © 2026 恆隆行 All rights reserved.｜
@@ -1287,7 +1276,7 @@
         }
 
         function initQrCode() {
-            const qrImagePath = './assets/images/dyson_campaign_qrcode.png';
+            const qrImagePath = './assets/images/dyson_campaign_coupon_qrcode.png';
             ['qrCodeLandscape', 'qrCodePortrait', 'qrCodePortraitBack'].forEach(id => {
                 const image = document.getElementById(id);
                 if (!image) return;
@@ -1663,7 +1652,7 @@
             showToast("已隨機套用浪漫靈感與機票艙等！");
         }
 
-        function showToast(msg, iconClass = "fa-circle-check") {
+        function showToast(msg, iconClass = "fa-circle-check", duration = 2500) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
             const toastIcon = document.getElementById('toastIcon');
@@ -1678,7 +1667,7 @@
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
-            }, 2500);
+            }, duration);
         }
 
         function playAirportChime() {
@@ -2093,7 +2082,7 @@
                     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                         try {
                             await navigator.share(shareData);
-                            showToast("圖片分享完成！別忘了貼上已複製的遊戲連結，分享情人節遊戲！", "fa-circle-check");
+                            showToast("圖片分享完成！別忘了貼上已複製的遊戲連結，分享情人節遊戲！", "fa-circle-check", 6000);
                             return;
                         } catch (shareErr) {
                             if (shareErr.name === 'AbortError') {
