@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260730-75">
+    <meta name="app-version" content="20260730-78">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <meta name="description" content="七夕限定，打造專屬登機證，帶上 Dyson HD19，一起規劃屬於你們的下一段旅程。▼ 立即開始">
     <meta property="og:type" content="website">
@@ -485,9 +485,9 @@
             </div>
             
             <div class="flex items-center space-x-1.5 sm:space-x-3 text-xs text-slate-600">
-                <button type="button" aria-haspopup="dialog" aria-controls="offerDialog" onclick="openOfferDialog()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 border border-rose-200/80 shadow-sm active:scale-95 text-[10px] sm:text-xs font-semibold whitespace-nowrap">
+                <button type="button" aria-haspopup="dialog" aria-controls="offerDialog" onclick="openOfferDialog()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 border border-rose-200/80 shadow-sm active:scale-95 text-[10px] sm:text-xs whitespace-nowrap">
                     <i class="fa-solid fa-ticket text-dyson-rose"></i>
-                    <span>七夕專屬優惠</span>
+                    <span>百貨七夕優惠</span>
                 </button>
                 <button type="button" id="airportAudioButton" aria-pressed="false" aria-label="播放機場廣播" onclick="toggleAirportAnnouncement()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[10px] sm:text-xs whitespace-nowrap">
                     <i id="airportAudioIcon" class="fa-solid fa-bullhorn text-dyson-rose"></i>
@@ -1091,10 +1091,9 @@
     <dialog id="offerDialog" aria-labelledby="offerDialogTitle" onclick="if (event.target === this) closeOfferDialog()">
         <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-rose-100 bg-white px-5 sm:px-7 py-4">
             <div>
-                <h2 id="offerDialogTitle" class="text-base sm:text-lg font-bold text-dyson-dark">七夕專屬優惠</h2>
-                <p class="mt-0.5 text-[11px] text-slate-500">Dyson HD19 粉霧玫瑰限定</p>
+                <h2 id="offerDialogTitle" class="text-base sm:text-lg font-bold leading-snug text-dyson-dark">百貨七夕限定 | 憑活動頁面購買 Dyson HD19 現折 $500</h2>
             </div>
-            <button type="button" onclick="closeOfferDialog()" aria-label="關閉七夕專屬優惠" class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-dyson-rose transition">
+            <button type="button" onclick="closeOfferDialog()" aria-label="關閉百貨七夕限定優惠" class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-dyson-rose transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -1107,7 +1106,7 @@
 
                 <div class="text-center sm:text-left">
                     <p class="text-3xl font-black text-dyson-dark">NT$500</p>
-                    <h3 class="mt-1 text-base font-bold text-dyson-dark">Dyson HD19 專屬折價券</h3>
+                    <h3 class="mt-1 text-base font-bold text-dyson-dark">Dyson HD19 百貨專屬優惠券</h3>
                     <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'header_dialog_button' })" class="ticket-action-primary mt-4 inline-flex min-h-11 w-full sm:w-auto items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-bold shadow-sm transition active:scale-95">
                         <i class="fa-solid fa-ticket"></i>
                         立即領取 $500 優惠券
@@ -1121,7 +1120,7 @@
                     <i class="fa-solid fa-circle-info text-dyson-rose"></i>
                     使用門檻及注意事項
                 </h3>
-                <ul class="mt-3 list-disc space-y-2 pl-5 text-xs leading-6 text-slate-600">
+                <ul class="mt-3 list-disc space-y-1 pl-5 text-xs leading-5 text-slate-600">
                     <li>每位會員限使用乙次，可折抵 NT$500，限購買 Dyson HD19 隨行吹風機 粉霧玫瑰 機型使用。</li>
                     <li>折價券一經使用，恕不得退還、補發或折換現金，亦不得更換其他品項。</li>
                     <li>折價券使用期限為即日起至 2026/08/31，逾期自動失效，恕不補發。</li>
