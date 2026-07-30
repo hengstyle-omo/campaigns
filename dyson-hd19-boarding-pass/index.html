@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260730-74">
+    <meta name="app-version" content="20260730-75">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <meta name="description" content="七夕限定，打造專屬登機證，帶上 Dyson HD19，一起規劃屬於你們的下一段旅程。▼ 立即開始">
     <meta property="og:type" content="website">
@@ -489,8 +489,9 @@
                     <i class="fa-solid fa-ticket text-dyson-rose"></i>
                     <span>七夕專屬優惠</span>
                 </button>
-                <button type="button" id="airportAudioButton" aria-pressed="false" aria-label="播放機場廣播" onclick="toggleAirportAnnouncement()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[11px] sm:text-xs">
+                <button type="button" id="airportAudioButton" aria-pressed="false" aria-label="播放機場廣播" onclick="toggleAirportAnnouncement()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[10px] sm:text-xs whitespace-nowrap">
                     <i id="airportAudioIcon" class="fa-solid fa-bullhorn text-dyson-rose"></i>
+                    <span class="sm:hidden">機場廣播</span>
                     <span id="airportAudioLabel" class="hidden sm:inline">播放機場廣播</span>
                 </button>
                 <audio id="airportFinalCallAudio" preload="none" class="hidden">
@@ -1105,10 +1106,8 @@
                 </a>
 
                 <div class="text-center sm:text-left">
-                    <p class="text-[11px] font-semibold uppercase tracking-widest text-dyson-rose">QIXI EXCLUSIVE OFFER</p>
-                    <p class="mt-1 text-3xl font-black text-dyson-dark">NT$500</p>
+                    <p class="text-3xl font-black text-dyson-dark">NT$500</p>
                     <h3 class="mt-1 text-base font-bold text-dyson-dark">Dyson HD19 專屬折價券</h3>
-                    <p class="mt-2 text-xs leading-5 text-slate-600">適用 Dyson HD19 隨行吹風機「粉霧玫瑰」機型，使用期限至 2026/08/31。</p>
                     <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'header_dialog_button' })" class="ticket-action-primary mt-4 inline-flex min-h-11 w-full sm:w-auto items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-bold shadow-sm transition active:scale-95">
                         <i class="fa-solid fa-ticket"></i>
                         立即領取 $500 優惠券
