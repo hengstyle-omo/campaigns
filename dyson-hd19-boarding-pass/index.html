@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260730-72">
+    <meta name="app-version" content="20260730-74">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <meta name="description" content="七夕限定，打造專屬登機證，帶上 Dyson HD19，一起規劃屬於你們的下一段旅程。▼ 立即開始">
     <meta property="og:type" content="website">
@@ -12,7 +12,7 @@
     <meta property="og:title" content="Dyson Supersonic™ Travel HD19｜情人節專屬登機證">
     <meta property="og:description" content="七夕限定，打造專屬登機證，帶上 Dyson HD19，一起規劃屬於你們的下一段旅程。▼ 立即開始">
     <meta property="og:url" content="https://hlh.tw/dyson-hd19-boarding-pass">
-    <meta property="og:image" content="https://hlh.tw/dyson-hd19-boarding-pass/assets/images/dyson_product_hd19_airplane.jpeg">
+    <meta property="og:image" content="https://github.com/hengstyle-omo/campaigns/blob/main/dyson-hd19-boarding-pass/assets/images/dyson_hd19_2026_qixi_festival_banner.jpg?raw=true">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Dyson HD19 七夕情人節專屬登機證">
@@ -440,6 +440,28 @@
             background: rgba(24, 20, 25, 0.56);
             backdrop-filter: blur(4px);
         }
+        #offerDialog {
+            width: min(92vw, 680px);
+            max-height: min(90vh, 820px);
+            margin: auto;
+            padding: 0;
+            border: 0;
+            border-radius: 24px;
+            background: #ffffff;
+            color: #2d2a32;
+            box-shadow: 0 24px 80px rgba(45, 42, 50, 0.28);
+        }
+        #offerDialog[open] {
+            display: flex;
+            flex-direction: column;
+        }
+        #offerDialog::backdrop {
+            background: rgba(24, 20, 25, 0.56);
+            backdrop-filter: blur(4px);
+        }
+        .offer-dialog-body {
+            overflow-y: auto;
+        }
         @media (prefers-reduced-motion: reduce) {
             #mobilePreviewCue .animate-bounce {
                 animation: none !important;
@@ -462,11 +484,14 @@
                 <img src="./assets/images/dyson_supersonic_travel_black.png" alt="Supersonic Logo" referrerpolicy="no-referrer" class="h-3.5 sm:h-5 object-contain" onerror="loadSupersonicLogoFallback(this);">
             </div>
             
-            <div class="flex items-center space-x-2 sm:space-x-3 text-xs text-slate-600">
-                <span class="hidden sm:inline font-medium"><i class="fa-solid fa-heart text-dyson-rose mr-1 animate-pulse"></i> 七夕情人節特別限定</span>
+            <div class="flex items-center space-x-1.5 sm:space-x-3 text-xs text-slate-600">
+                <button type="button" aria-haspopup="dialog" aria-controls="offerDialog" onclick="openOfferDialog()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 border border-rose-200/80 shadow-sm active:scale-95 text-[10px] sm:text-xs font-semibold whitespace-nowrap">
+                    <i class="fa-solid fa-ticket text-dyson-rose"></i>
+                    <span>七夕專屬優惠</span>
+                </button>
                 <button type="button" id="airportAudioButton" aria-pressed="false" aria-label="播放機場廣播" onclick="toggleAirportAnnouncement()" class="bg-rose-50 hover:bg-rose-100 text-dyson-dark px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full transition flex items-center gap-1.5 sm:gap-2 border border-rose-200/80 shadow-sm active:scale-95 text-[11px] sm:text-xs">
                     <i id="airportAudioIcon" class="fa-solid fa-bullhorn text-dyson-rose"></i>
-                    <span id="airportAudioLabel">播放機場廣播</span>
+                    <span id="airportAudioLabel" class="hidden sm:inline">播放機場廣播</span>
                 </button>
                 <audio id="airportFinalCallAudio" preload="none" class="hidden">
                     <source src="./assets/audio/dyson_hd19_boading_final_call.mp3" type="audio/mpeg">
@@ -941,7 +966,7 @@
                                             </div>
                                             <div class="text-xs font-normal text-slate-700 space-y-0.5">
                                                 <p class="leading-tight">1 x 僅330g HD19 國際電壓隨行吹風機</p>
-                                                <p class="leading-tight">1 x 七夕情人節限定專屬 $300 券 (08/10~08/31)</p>
+                                                <p class="leading-tight">1 x 七夕情人節限定專屬 $500 券 (08/10~08/31)</p>
                                             </div>
                                         </div>
 
@@ -1061,6 +1086,57 @@
         </p>
         <p class="mt-1">© 2026 恆隆行 All rights reserved.</p>
     </footer>
+
+    <dialog id="offerDialog" aria-labelledby="offerDialogTitle" onclick="if (event.target === this) closeOfferDialog()">
+        <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-rose-100 bg-white px-5 sm:px-7 py-4">
+            <div>
+                <h2 id="offerDialogTitle" class="text-base sm:text-lg font-bold text-dyson-dark">七夕專屬優惠</h2>
+                <p class="mt-0.5 text-[11px] text-slate-500">Dyson HD19 粉霧玫瑰限定</p>
+            </div>
+            <button type="button" onclick="closeOfferDialog()" aria-label="關閉七夕專屬優惠" class="w-9 h-9 shrink-0 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-dyson-rose transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="offer-dialog-body px-5 sm:px-7 py-5">
+            <div class="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-5 items-center rounded-2xl border border-rose-100 bg-rose-50/50 p-4 sm:p-5">
+                <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'header_dialog_qr' })" class="mx-auto block rounded-xl bg-white p-3 shadow-sm transition hover:shadow-md" aria-label="前往領取 Dyson HD19 500 元優惠券">
+                    <img id="offerDialogQrCode" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="Dyson HD19 500 元優惠券 QR Code" class="h-36 w-36 object-contain rounded-none" onerror="loadGeneratedQr(this);">
+                </a>
+
+                <div class="text-center sm:text-left">
+                    <p class="text-[11px] font-semibold uppercase tracking-widest text-dyson-rose">QIXI EXCLUSIVE OFFER</p>
+                    <p class="mt-1 text-3xl font-black text-dyson-dark">NT$500</p>
+                    <h3 class="mt-1 text-base font-bold text-dyson-dark">Dyson HD19 專屬折價券</h3>
+                    <p class="mt-2 text-xs leading-5 text-slate-600">適用 Dyson HD19 隨行吹風機「粉霧玫瑰」機型，使用期限至 2026/08/31。</p>
+                    <a href="https://bmai.app/c11cc124" target="_blank" rel="noopener noreferrer" onclick="trackCampaignEvent('click_offer', { offer_name: 'hd19_500', placement: 'header_dialog_button' })" class="ticket-action-primary mt-4 inline-flex min-h-11 w-full sm:w-auto items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-bold shadow-sm transition active:scale-95">
+                        <i class="fa-solid fa-ticket"></i>
+                        立即領取 $500 優惠券
+                    </a>
+                    <p class="mt-2 text-[10px] leading-4 text-slate-500">手機請直接點擊按鈕；電腦可掃描 QR Code。</p>
+                </div>
+            </div>
+
+            <section class="mt-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                <h3 class="flex items-center gap-2 text-sm font-bold text-dyson-dark">
+                    <i class="fa-solid fa-circle-info text-dyson-rose"></i>
+                    使用門檻及注意事項
+                </h3>
+                <ul class="mt-3 list-disc space-y-2 pl-5 text-xs leading-6 text-slate-600">
+                    <li>每位會員限使用乙次，可折抵 NT$500，限購買 Dyson HD19 隨行吹風機 粉霧玫瑰 機型使用。</li>
+                    <li>折價券一經使用，恕不得退還、補發或折換現金，亦不得更換其他品項。</li>
+                    <li>折價券使用期限為即日起至 2026/08/31，逾期自動失效，恕不補發。</li>
+                    <li>活動詳情及適用商品請依官網公告為準，部分活動及商品恕不適用。</li>
+                    <li>恆隆行超市櫃、WMF 專櫃、Kitchenware 專櫃及華泰 OUTLET 不適用本活動。</li>
+                    <li>恆隆行保有隨時調整、修改、暫停或終止本活動內容及最終解釋權。</li>
+                </ul>
+            </section>
+
+            <button type="button" onclick="closeOfferDialog()" class="mt-5 w-full rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-200 transition">
+                關閉
+            </button>
+        </div>
+    </dialog>
 
     <dialog id="privacyDialog" aria-labelledby="privacyDialogTitle">
         <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-rose-100 bg-white px-5 sm:px-7 py-4">
@@ -1217,6 +1293,20 @@
 
         function closePrivacyDialog() {
             const dialog = document.getElementById('privacyDialog');
+            if (dialog?.open) dialog.close();
+        }
+
+        function openOfferDialog() {
+            const dialog = document.getElementById('offerDialog');
+            trackCampaignEvent('open_offer_dialog', {
+                offer_name: 'hd19_500',
+                placement: 'header'
+            });
+            if (dialog && !dialog.open) dialog.showModal();
+        }
+
+        function closeOfferDialog() {
+            const dialog = document.getElementById('offerDialog');
             if (dialog?.open) dialog.close();
         }
 
@@ -1448,7 +1538,7 @@
 
         function initQrCode() {
             const qrImagePath = './assets/images/dyson_campaign_coupon_qrcode.png';
-            ['qrCodeLandscape', 'qrCodePortrait', 'qrCodePortraitBack'].forEach(id => {
+            ['qrCodeLandscape', 'qrCodePortrait', 'qrCodePortraitBack', 'offerDialogQrCode'].forEach(id => {
                 const image = document.getElementById(id);
                 if (!image) return;
                 image.onerror = function () {
