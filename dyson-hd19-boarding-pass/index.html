@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260730-68">
+    <meta name="app-version" content="20260730-70">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
+    <meta name="description" content="七夕限定，打造專屬登機證，帶上 Dyson HD19，一起規劃屬於你們的下一段旅程。▼ 立即開始">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:site_name" content="恆隆行">
+    <meta property="og:title" content="Dyson Supersonic™ Travel HD19｜情人節專屬登機證">
+    <meta property="og:description" content="七夕限定，打造專屬登機證，帶上 Dyson HD19，一起規劃屬於你們的下一段旅程。▼ 立即開始">
+    <meta property="og:url" content="https://hlh.tw/dyson-hd19-boarding-pass">
+    <meta property="og:image" content="https://hlh.tw/dyson-hd19-boarding-pass/assets/images/dyson_product_hd19_airplane.jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Dyson HD19 七夕情人節專屬登機證">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QF125DEKNR"></script>
     <script>
@@ -1176,6 +1187,7 @@
                 activity_id: 'dyson_hd19_2026_qixi_festival_boarding_pass',
                 activity_name: 'dyson hd19 2026 七夕情人節登機證',
                 brand_name: 'dyson',
+                cabin_class: currentClassObj?.id || 'unknown',
                 ...eventParams
             });
         }
@@ -1205,12 +1217,12 @@
         }
 
         const classOptions = [
-            { en: 'First Class', zh: '頭等艙' },
-            { en: 'Business Class', zh: '商務艙' },
-            { en: 'Premium Economy', zh: '豪經艙' },
-            { en: 'Economy Class', zh: '經濟艙' },
-            { en: 'Love VIP Class', zh: '戀人專屬頭等艙' },
-            { en: 'Dyson VIP Class', zh: 'Dyson限定艙' }
+            { id: 'first_class', en: 'First Class', zh: '頭等艙' },
+            { id: 'business_class', en: 'Business Class', zh: '商務艙' },
+            { id: 'premium_economy', en: 'Premium Economy', zh: '豪經艙' },
+            { id: 'economy_class', en: 'Economy Class', zh: '經濟艙' },
+            { id: 'love_vip_class', en: 'Love VIP Class', zh: '戀人專屬頭等艙' },
+            { id: 'dyson_vip_class', en: 'Dyson VIP Class', zh: 'Dyson限定艙' }
         ];
 
         let currentClassObj = classOptions[0];
