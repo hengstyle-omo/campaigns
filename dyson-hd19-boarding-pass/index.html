@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="app-version" content="20260729-61">
+    <meta name="app-version" content="20260730-68">
     <title>Dyson Supersonic™ Travel HD19 | 情人節專屬登機證</title>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QF125DEKNR"></script>
@@ -15,8 +15,8 @@
         gtag('js', new Date());
         gtag('set', {
             page_type: 'campaign',
-            campaign_id: 'dyson_hd19_2026_valentine',
-            campaign_name: 'dyson hd19 七夕情人節',
+            activity_id: 'dyson_hd19_2026_qixi_festival_boarding_pass',
+            activity_name: 'dyson hd19 2026 七夕情人節登機證',
             brand_name: 'dyson'
         });
         gtag('config', 'G-QF125DEKNR');
@@ -358,6 +358,12 @@
         [data-theme="blue"] #ticketLandscape .landscape-route-line {
             border-color: #c88b58 !important;
         }
+        .coupon-offer-label {
+            color: #c9707e !important;
+        }
+        [data-theme="blue"] .coupon-offer-label {
+            color: #c88b58 !important;
+        }
 
         /* Portrait Back Dynamic Theme Override */
         [data-theme="blue"] #ticketPortraitBack {
@@ -643,7 +649,7 @@
                             <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/80 relative z-10 shrink-0">
                                 <div class="pr-2 flex-1 min-w-0 flex flex-col justify-center">
                                     <div class="h-[54px] flex items-center justify-start min-w-0">
-                                        <p id="outMessageL" class="keep-pink-rose text-xs sm:text-sm text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY DESTINATION, ALWAYS."</p>
+                                        <p id="outMessageL" class="keep-pink-rose text-[13px] text-dyson-rose font-bold tracking-wide leading-snug break-words">"YOU ARE MY DESTINATION, ALWAYS."</p>
                                     </div>
                                     <p class="text-[9px] text-slate-500 font-medium mt-2 leading-relaxed">七夕情人節限定 x 輕巧登機 x 完美造型<br>Supersonic™ Travel HD19 國際電壓隨行吹風機</p>
                                 </div>
@@ -705,7 +711,7 @@
 
                             <div class="shrink-0 pt-1 flex flex-col items-center justify-center">
                                 <img id="qrCodeLandscape" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mt-1">領取 $500 優惠</span>
+                                <span class="coupon-offer-label text-[10px] font-semibold tracking-tight mt-1">領取 $500 優惠</span>
                             </div>
                         </div>
                     </div>
@@ -817,7 +823,7 @@
                                         <img src="./assets/images/dyson_product_hd19_airplane.jpeg" alt="Dyson HD19" class="w-24 h-24 object-contain rounded-2xl overflow-hidden" onerror="loadOriginalImage(this, 'https://img.91app.com/webapi/imagesV3/Original/SalePage/11670106/2/639202210906470000?v=1');">
                                     </div>
                                     <div class="flex flex-col items-center justify-center shrink-0 pl-3 border-l border-dashed border-rose-200">
-                                        <span class="text-[10px] font-semibold text-dyson-rose tracking-tight mb-1">領取 $500 優惠</span>
+                                        <span class="coupon-offer-label text-[10px] font-semibold tracking-tight mb-1">領取 $500 優惠</span>
                                         <img id="qrCodePortrait" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-11 w-11 object-contain rounded-none shadow-sm" onerror="loadGeneratedQr(this);">
                                     </div>
                                 </div>
@@ -843,7 +849,7 @@
 
                                     <!-- MESSAGE -->
                                     <div class="h-[54px] py-1 flex flex-col items-center justify-center text-center shrink-0 min-w-0 bg-transparent">
-                                        <p id="outMessageP" class="keep-pink-rose text-xs sm:text-sm font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY DESTINATION, ALWAYS."</p>
+                                        <p id="outMessageP" class="keep-pink-rose text-[13px] font-bold text-dyson-rose leading-normal break-words px-1">"YOU ARE MY DESTINATION, ALWAYS."</p>
                                     </div>
                                 </div>
 
@@ -983,7 +989,7 @@
 
                                     <div class="flex-1 min-h-[72px] flex flex-col items-center justify-center">
                                         <img id="qrCodePortraitBack" src="./assets/images/dyson_campaign_coupon_qrcode.png" alt="QR Code" class="h-14 w-14 object-contain rounded-none" onerror="loadGeneratedQr(this);">
-                                        <span class="mt-1 text-[10px] font-semibold text-dyson-rose tracking-tight">領取 $500 優惠</span>
+                                        <span class="coupon-offer-label mt-1 text-[10px] font-semibold tracking-tight">領取 $500 優惠</span>
                                     </div>
                                 </div>
                             </div>
@@ -1021,13 +1027,10 @@
     </main>
 
     <footer class="relative z-10 border-t border-rose-100 px-4 py-2.5 text-center text-[11px] sm:text-xs leading-relaxed text-slate-500">
-        <p>本網站蒐集瀏覽、互動及使用者填寫的出發地與目的地資料，用於活動與行銷成效分析及體驗優化。</p>
-        <p class="mt-1">
-            © 2026 恆隆行 All rights reserved.｜
-            <button type="button" onclick="openPrivacyDialog()" class="underline underline-offset-2 hover:text-dyson-rose focus:outline-none focus-visible:ring-2 focus-visible:ring-dyson-rose rounded-sm transition">
-                隱私權聲明
-            </button>
+        <p>
+            本網站蒐集您填寫的內容及網站瀏覽與互動資料，用於活動與行銷成效分析及體驗優化；詳情請參閱「<button type="button" onclick="openPrivacyDialog()" class="underline underline-offset-2 hover:text-dyson-rose focus:outline-none focus-visible:ring-2 focus-visible:ring-dyson-rose rounded-sm transition">隱私權聲明</button>」。
         </p>
+        <p class="mt-1">© 2026 恆隆行 All rights reserved.</p>
     </footer>
 
     <dialog id="privacyDialog" aria-labelledby="privacyDialogTitle">
@@ -1038,40 +1041,64 @@
             </button>
         </div>
         <div class="overflow-y-auto px-5 sm:px-7 py-5 text-xs sm:text-sm leading-7 text-slate-600">
-            <p>本活動頁面由恆隆行提供。為分析活動與行銷成效及改善使用體驗，本網站使用 Google Analytics 蒐集網站瀏覽與互動資料。</p>
+            <p>恆隆行貿易股份有限公司（以下簡稱「本公司」）為提供個人化登機證製作功能、進行活動與行銷成效分析、改善使用體驗及維護網站安全，依個人資料保護法向您說明下列事項。</p>
 
             <h3 class="mt-5 font-bold text-dyson-dark">一、蒐集的資料</h3>
-            <ul class="mt-2 list-disc space-y-1 pl-5">
-                <li>頁面瀏覽、停留與捲動等使用情形。</li>
-                <li>卡片版型、配色主題及操作行為。</li>
-                <li>下載圖片、分享圖片與優惠連結點擊紀錄。</li>
-                <li>使用者填寫的出發地與目的地。</li>
-                <li>Google Analytics 自動蒐集的裝置、瀏覽器、工作階段及概略地理位置等資訊。</li>
-            </ul>
-            <p class="mt-3">本網站不會主動蒐集姓名、電話、電子郵件或其他可直接識別個人的資料。請勿於自由輸入欄位填寫個人資料。</p>
+            <p class="mt-2">本活動頁可能蒐集或處理下列資料：</p>
+            <ol class="mt-2 list-decimal space-y-1 pl-5">
+                <li><span class="font-medium text-dyson-dark">網站瀏覽及互動資料：</span>例如頁面瀏覽、工作階段、選擇的主題與登機證格式、翻面、隨機文字、音效、下載、分享及優惠連結點擊等紀錄。</li>
+                <li><span class="font-medium text-dyson-dark">您填寫的出發地與目的地：</span>在下載或分享登機證時，相關內容可能經過長度限制及字元處理後，傳送至 Google Analytics，作為活動與行銷成效分析之用。</li>
+                <li><span class="font-medium text-dyson-dark">裝置及技術資料：</span>例如瀏覽器類型、裝置類型、作業系統、網路識別資訊、工作階段、概略位置及 Cookie 等資料。</li>
+                <li><span class="font-medium text-dyson-dark">旅客 / 情侶名稱、日期、時間及 MESSAGE 等登機證內容：</span>原則上僅於您的瀏覽器中處理及產生圖片，本公司不會主動將上述內容傳送至本公司伺服器或 Google Analytics。</li>
+                <li>當您下載圖片或透過其他應用程式分享圖片時，圖片內的文字內容將依您選擇的裝置、應用程式或服務之功能進行儲存或傳送，並可能受該服務提供者的隱私權政策約束。</li>
+            </ol>
+            <p class="mt-3">※ 請勿於登機證欄位填寫手機號碼、電子郵件地址、身分證字號、住址、密碼或其他敏感及可直接識別個人身分的資料。</p>
 
-            <h3 class="mt-5 font-bold text-dyson-dark">二、資料使用目的</h3>
-            <ul class="mt-2 list-disc space-y-1 pl-5">
-                <li>分析活動瀏覽、互動及下載成效。</li>
-                <li>了解卡片主題、版型與路線偏好。</li>
-                <li>進行恆隆行內部行銷分析、活動規劃及內容優化。</li>
-                <li>改善網站功能及使用體驗。</li>
-                <li>製作彙總性活動與行銷分析報告。</li>
-            </ul>
+            <h3 class="mt-5 font-bold text-dyson-dark">二、蒐集、處理及利用目的</h3>
+            <p class="mt-2">上述資料將用於：</p>
+            <ol class="mt-2 list-decimal space-y-1 pl-5">
+                <li>提供個人化登機證製作、預覽、下載及分享功能。</li>
+                <li>分析網站瀏覽、互動、下載、分享及優惠連結點擊情形。</li>
+                <li>瞭解活動參與情形、使用偏好及行銷成效。</li>
+                <li>改善網站功能、操作流程及使用者體驗。</li>
+                <li>維護網站及資訊系統安全。</li>
+            </ol>
+            <p class="mt-3">本公司不會出售或交換您的個人資料，也不會提供第三方作為其獨立行銷使用。</p>
 
-            <h3 class="mt-5 font-bold text-dyson-dark">三、Cookie 與 Google Analytics</h3>
-            <p class="mt-2">本網站使用 Google Analytics，可能透過 Cookie 區分瀏覽器及工作階段。相關資料可能由 Google 依其隱私權政策進行處理。使用者可透過瀏覽器設定封鎖或刪除 Cookie，但部分分析功能可能因此無法正常運作。</p>
-            <div class="mt-2 flex flex-col items-start gap-1">
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">Google 隱私權政策</a>
-                <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">Google 如何使用合作夥伴網站提供的資訊</a>
+            <h3 class="mt-5 font-bold text-dyson-dark">三、資料利用期間、地區、對象及方式</h3>
+            <div class="mt-2 space-y-1">
+                <p><span class="font-medium text-dyson-dark">利用期間：</span>相關使用者及事件層級資料自蒐集日起，於 Google Analytics 系統中保存最長 14 個月；若經去識別化匯入本公司數據系統，保存最長 36 個月。法令另有規定或因爭議處理而有保存必要者，從其規定。無法直接或間接識別特定個人的彙總統計資料，不受前述期間限制。</p>
+                <p><span class="font-medium text-dyson-dark">利用地區：</span>中華民國境內，以及 Google 或其他必要服務供應商提供服務及儲存、處理資料的地區。</p>
+                <p><span class="font-medium text-dyson-dark">利用對象：</span>本公司及為完成上述目的所必要的服務供應商，包括 Google。</p>
+                <p><span class="font-medium text-dyson-dark">利用方式：</span>以自動化或非自動化方式進行紀錄、儲存、統計、分析、傳輸及彙整。</p>
             </div>
 
-            <h3 class="mt-5 font-bold text-dyson-dark">四、資料保存與第三方服務</h3>
-            <p class="mt-2">相關資料將於達成上述目的所需期間內保存，並依恆隆行及 Google Analytics 的資料保存設定進行管理。</p>
-            <p class="mt-2">恆隆行不會出售或交換本活動所蒐集的資料，亦不會提供其他公司作其獨立行銷使用；但為提供網站分析、系統維運或依法配合主管機關要求，可能由 Google 等必要的技術服務供應商處理相關資料。</p>
+            <h3 class="mt-5 font-bold text-dyson-dark">四、Cookie 與 Google Analytics</h3>
+            <p class="mt-2">本活動頁使用 Google Analytics 分析網站使用及活動成效。Google Analytics 可能透過 Cookie 或類似技術蒐集裝置、瀏覽及互動資訊。</p>
+            <p class="mt-2">Google 如何處理資料，請參閱：</p>
+            <ul class="mt-2 list-disc space-y-1 pl-5">
+                <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">Google 隱私權政策</a></li>
+                <li><a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">Google 使用合作夥伴網站或應用程式資料的方式</a></li>
+            </ul>
+            <p class="mt-3">您可透過瀏覽器設定封鎖或刪除 Cookie。停用 Cookie 後，登機證的基本製作功能原則上仍可使用，但部分網站分析或相關功能可能無法正常運作。</p>
 
-            <h3 class="mt-5 font-bold text-dyson-dark">五、聲明更新</h3>
-            <p class="mt-2">本聲明可能因活動內容、網站功能或法令要求調整，更新後將公布於本活動頁面。</p>
+            <h3 class="mt-5 font-bold text-dyson-dark">五、使用者權利及聯絡方式</h3>
+            <p class="mt-2">依個人資料保護法，您得就本公司所保有的個人資料行使下列權利：</p>
+            <ol class="mt-2 list-decimal space-y-1 pl-5">
+                <li>查詢或請求閱覽。</li>
+                <li>請求製給複製本。</li>
+                <li>請求補充或更正。</li>
+                <li>請求停止蒐集、處理或利用。</li>
+                <li>請求刪除。</li>
+            </ol>
+            <p class="mt-3">如欲行使上述權利或詢問個人資料相關事項，請聯絡：</p>
+            <ul class="mt-2 list-disc space-y-1 pl-5">
+                <li>電子郵件：<a href="mailto:service@hlh.com.tw" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">service@hlh.com.tw</a></li>
+                <li>聯絡專線：<a href="tel:0800251209" class="text-dyson-rose underline underline-offset-2 hover:opacity-80">0800-251-209</a></li>
+            </ul>
+
+            <h3 class="mt-5 font-bold text-dyson-dark">六、自由選擇提供資料及不提供的影響</h3>
+            <p class="mt-2">使用者可自由選擇是否填寫登機證內容。不填寫相關資料時，仍可瀏覽本活動頁並使用預設內容，但可能無法製作符合個人需求的登機證。</p>
 
             <button type="button" onclick="closePrivacyDialog()" class="mt-6 w-full rounded-xl bg-dyson-rose px-4 py-3 font-bold text-white hover:opacity-90 transition">
                 關閉
@@ -1146,8 +1173,8 @@
             if (typeof window.gtag !== 'function') return;
             window.gtag('event', eventName, {
                 page_type: 'campaign',
-                campaign_id: 'dyson_hd19_2026_valentine',
-                campaign_name: 'dyson hd19 七夕情人節',
+                activity_id: 'dyson_hd19_2026_qixi_festival_boarding_pass',
+                activity_name: 'dyson hd19 2026 七夕情人節登機證',
                 brand_name: 'dyson',
                 ...eventParams
             });
@@ -1192,11 +1219,19 @@
             currentClassObj = getRandomClass();
             setupEventListeners();
             syncDateDisplay();
+            syncCouponOfferLabelColor(currentTheme);
             initQrCode();
             updatePass();
             initializeIOSFaceGuard();
             preloadAllImagesToDataUrls();
         };
+
+        function syncCouponOfferLabelColor(theme) {
+            const color = theme === 'blue' ? '#c88b58' : '#c9707e';
+            document.querySelectorAll('.coupon-offer-label').forEach(label => {
+                label.style.setProperty('color', color, 'important');
+            });
+        }
 
         function setTheme(theme) {
             currentTheme = theme;
@@ -1220,6 +1255,7 @@
                 showToast("已切換至「粉霧玫瑰」情人節主題！", "fa-palette");
             }
 
+            syncCouponOfferLabelColor(theme);
             initQrCode();
             preloadAllImagesToDataUrls();
             trackCampaignEvent('select_theme', {
