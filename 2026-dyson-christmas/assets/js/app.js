@@ -47,7 +47,7 @@ const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value)
 // Email identifies this lightweight activity record; it is deliberately unverified.
 const ADMIN_PREVIEW_EMAIL='hengstyle.data@gmail.com';
 const CLOUD_CONFIG=window.DYSON_CLOUD_CONFIG;
-const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:'',ready:false,loading:false,canPreview:false,consent:false,synced:Core.freshState(),offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map()};
+const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:'',ready:false,loading:false,canPreview:false,consent:false,synced:Core.freshState(),offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null}};
 const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{});
 cloud.email=typeof savedCloudProfile.email==='string'?savedCloudProfile.email:'';
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
@@ -72,7 +72,43 @@ function cloudApply(state,changes){
   }
   return Core.normaliseState(state);
 }
-function cloudCache(){if(cloud.ready&&cloudEnabled())safeWrite(cloudCacheKey(cloud.email),{state:live,pending:cloudDiff(live,cloud.synced)});}
+const previewCacheKey=email=>STORAGE_PREFIX+'cloud-preview:'+cloud.endpoint+':'+email;
+function previewNormalise(raw){
+  const state=Core.normaliseState(raw?.state);
+  for(const claim of Object.values(state.claimed))if(Number.isFinite(Date.parse(claim.at)))claim.at=new Date(claim.at).toISOString();
+  const date=typeof raw?.date==='string'?raw.date:null;
+  const days=date&&Array.isArray(raw?.days)?[...new Set(raw.days.filter(d=>Number.isInteger(d)&&d>=1&&d<=25))].sort((a,b)=>a-b):null;
+  return {state,date,days};
+}
+function previewSnapshot(){return previewNormalise({state:preview,date:previewDate,days:previewDays===null?null:[...previewDays]});}
+function previewDiff(current,previous){
+  const items={},entry=(s,d)=>s.claimed[d]?{at:s.claimed[d].at,placement:s.placement[d]===true,layout:s.layouts[d]||null}:null;
+  for(let d=1;d<=25;d++){const a=entry(current.state,d),b=entry(previous.state,d);if(JSON.stringify(a)!==JSON.stringify(b))items[d]=a;}
+  const changes={};if(Object.keys(items).length)changes.items=items;
+  if(current.date!==previous.date||JSON.stringify(current.days)!==JSON.stringify(previous.days))changes.view={date:current.date,days:current.days};
+  return changes;
+}
+function previewApply(snapshot,changes){
+  const next=previewNormalise(snapshot);
+  for(const [d,value] of Object.entries(changes?.items||{})){
+    if(value===null){delete next.state.claimed[d];delete next.state.placement[d];delete next.state.layouts[d];}
+    else{next.state.claimed[d]={at:value.at};next.state.placement[d]=value.placement===true;if(value.layout)next.state.layouts[d]=value.layout;else delete next.state.layouts[d];}
+  }
+  if(changes?.view){next.date=changes.view.date;next.days=changes.view.days;}
+  return previewNormalise(next);
+}
+function previewRestore(snapshot){
+  const next=previewNormalise(snapshot);preview=next.state;previewDate=next.date;previewDays=next.days===null?null:new Set(next.days);
+  if(previewDate)$('preview-date').value=previewDate;
+  safeWrite(STORAGE_PREFIX+'preview',preview);
+}
+function previewPending(){return canPreview()&&cloud.previewLoaded?previewDiff(previewSnapshot(),cloud.previewSynced):{};}
+function cloudCache(){
+  if(!cloud.ready||!cloudEnabled())return;
+  safeWrite(cloudCacheKey(cloud.email),{state:live,pending:cloudDiff(live,cloud.synced)});
+  if(canPreview()&&cloud.previewLoaded)safeWrite(previewCacheKey(cloud.email),{pending:previewPending()});
+}
+function previewPersist(){safeWrite(STORAGE_PREFIX+'preview',preview);cloudScheduleSave();}
 function renderCloud(){
   const active=cloudEnabled(),previewAllowed=canPreview(),busy=cloud.loading||!!cloud.saving;
   $('progress-open').textContent=cloud.ready?(cloud.error?'進度待同步':'我的進度'):'保存進度';
@@ -81,7 +117,7 @@ function renderCloud(){
   $('progress-current').hidden=!cloud.ready;$('progress-submit').disabled=busy;$('progress-switch').disabled=busy;
   $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;
   $('progress-retry').hidden=!cloud.error||!cloud.ready||!active;
-  $('progress-message').textContent=cloud.error||(cloud.loading?'正在載入你的收藏…':cloud.saving?'正在保存擺放…':cloud.ready?(active?'收藏已連接 Google Sheet。':'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
+  $('progress-message').textContent=cloud.error||(cloud.loading?'正在載入你的收藏…':cloud.saving?'正在保存擺放…':cloud.ready?(active?(previewAllowed?(cloud.previewLoaded?'正式與模擬進度皆已連接 Google Sheet。':'正式進度已連接；請更新 Apps Script 以啟用模擬同步。'):'收藏已連接 Google Sheet。'):'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
   for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!previewAllowed;
   if(!previewAllowed){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
   $('cloud-settings').hidden=!previewAllowed;
@@ -122,13 +158,25 @@ async function cloudConnect(email,consent){
   try{
     if(!cloudEnabled()){
       if(email!==ADMIN_PREVIEW_EMAIL)throw new Error('活動進度尚未啟用，請稍後再回來。');
-      cloud.email=email;cloud.ready=true;cloud.canPreview=true;cloud.consent=consent===true;live=Core.freshState();cloud.synced=Core.freshState();
+      cloud.email=email;cloud.ready=true;cloud.canPreview=true;cloud.consent=consent===true;live=Core.freshState();cloud.synced=Core.freshState();cloud.previewLoaded=false;
     }else{
       const payload={action:'connect',email};if(typeof consent==='boolean')payload.marketingConsent=consent;
       const result=await cloudSend(payload);cloudAcceptClock(result);
       const cached=safeRead(cloudCacheKey(email),{}),server=Core.normaliseState(result.state);
       cloud.email=email;cloud.synced=server;live=cloudApply(Core.normaliseState(server),cached.pending);
       cloud.ready=true;cloud.canPreview=result.canPreview===true;cloud.consent=result.marketingConsent===true;
+      cloud.previewLoaded=canPreview()&&result.previewSync===true;
+      if(cloud.previewLoaded){
+        const serverPreview=previewNormalise(result.preview),cachedPreview=safeRead(previewCacheKey(email),{});
+        cloud.previewSynced=serverPreview;
+        let pending=cachedPreview.pending;
+        // Import a pre-sync local test only when the test sheet has no row yet.
+        if(result.preview===null&&!pending){
+          const legacy=Core.normaliseState(safeRead(STORAGE_PREFIX+'preview',null)),days=Object.keys(legacy.claimed).map(Number);
+          if(days.length)pending=previewDiff(previewNormalise({state:legacy,date:`${YEAR}-12-${String(Math.max(...days)).padStart(2,'0')}`,days}),serverPreview);
+        }
+        previewRestore(previewApply(serverPreview,pending));
+      }else if(!canPreview())previewRestore(null);
     }
     safeWrite(STORAGE_PREFIX+'cloud-profile',{email:cloud.email});
     if(previewDate&&!canPreview())exitPreview();selectedDay=null;stopShow(false);pauseMusic(true);closeDialog('item-dialog');
@@ -138,13 +186,13 @@ async function cloudConnect(email,consent){
 }
 function cloudScheduleSave(){
   if(!cloudEnabled()||!cloud.ready)return;cloudCache();clearTimeout(cloud.timer);
-  if(!Object.keys(cloudDiff(live,cloud.synced)).length)return;
+  if(!Object.keys(cloudDiff(live,cloud.synced)).length&&!Object.keys(previewPending()).length)return;
   cloud.timer=setTimeout(()=>cloudFlush(),650);
 }
 async function cloudFlush(){
   clearTimeout(cloud.timer);if(!cloud.ready||!cloudEnabled())return true;
   if(cloud.saving)return cloud.saving;
-  if(!Object.keys(cloudDiff(live,cloud.synced)).length)return true;
+  if(!Object.keys(cloudDiff(live,cloud.synced)).length&&!Object.keys(previewPending()).length)return true;
   const email=cloud.email;
   cloud.saving=(async()=>{
     try{
@@ -154,6 +202,13 @@ async function cloudFlush(){
         const later=cloudDiff(live,before),oldClaims=Object.keys(live.claimed).join(',');cloud.synced=Core.normaliseState(result.state);
         live=cloudApply(Core.normaliseState(cloud.synced),later);cloud.error='';cloudCache();
         if(!previewDate){if(oldClaims!==Object.keys(live.claimed).join(','))renderUI();else{for(const d of Object.keys(live.claimed))updatePlacementUI(Number(d));updateSelection();drawFrame(0,performance.now());}}
+      }
+      while(canPreview()&&cloud.previewLoaded){
+        const before=previewSnapshot(),changes=previewDiff(before,cloud.previewSynced);if(!Object.keys(changes).length)break;
+        const result=await cloudSend({action:'previewSave',email,changes});cloudAcceptClock(result);
+        const later=previewDiff(previewSnapshot(),before);cloud.previewSynced=previewNormalise(result.preview);
+        previewRestore(previewApply(cloud.previewSynced,later));cloud.error='';cloudCache();renderUI();
+        if($('item-dialog').open)renderItemDialog();drawFrame(0,performance.now());
       }
       return true;
     }catch(error){cloud.error=error.message;cloudCache();return false;}
@@ -180,7 +235,7 @@ $('progress-form').addEventListener('submit',async event=>{
 $('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect(cloud.email);}catch{}}else await cloudFlush();renderCloud();});
 $('progress-switch').addEventListener('click',async()=>{
   if(!(await cloudFlush()))return;
-  cloud.ready=false;cloud.canPreview=false;cloud.email='';cloud.consent=false;cloud.pendingDay=null;cloud.error='';cloud.hasClock=false;
+  cloud.ready=false;cloud.canPreview=false;cloud.previewLoaded=false;previewRestore(null);cloud.email='';cloud.consent=false;cloud.pendingDay=null;cloud.error='';cloud.hasClock=false;
   clearTimeout(cloud.timer);safeWrite(STORAGE_PREFIX+'cloud-profile',{});live=Core.freshState();cloud.synced=Core.freshState();
   if(previewDate)exitPreview();stopShow(false);pauseMusic(true);selectedDay=null;closeDialog('studio-dialog');closeDialog('item-dialog');renderUI();drawFrame(0,performance.now());openProgress();
 });
@@ -188,7 +243,7 @@ $('cloud-save-export').addEventListener('click',async()=>{
   if(!canPreview())return;const value=$('cloud-endpoint').value.trim();
   if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(value)){$('cloud-settings-status').textContent='請貼上以 https://script.google.com/macros/s/ 開頭、/exec 結尾的部署網址。';return;}
   if(!(await cloudFlush()))return;
-  cloud.endpoint=value;safeWrite(STORAGE_PREFIX+'cloud-endpoint',value);cloud.ready=false;cloud.canPreview=false;cloud.hasClock=false;live=Core.freshState();
+  cloud.endpoint=value;safeWrite(STORAGE_PREFIX+'cloud-endpoint',value);cloud.ready=false;cloud.canPreview=false;cloud.previewLoaded=false;previewRestore(null);cloud.hasClock=false;live=Core.freshState();
   if(!(await exportConfig()))return;closeDialog('studio-dialog');if(previewDate)exitPreview();renderUI();
   status('已下載含進度服務網址的 config.js。請取代網站 assets/js/config.js，再以 GitHub Pages 的 HTTPS 網址開啟。');
 });
@@ -269,7 +324,7 @@ const multiPreview=()=>!!previewDate&&previewDays!==null;
 const dayState=d=>multiPreview()?(previewDays.has(Number(d))?(Object.hasOwn(preview.claimed,String(d))?'owned':'current'):'future'):Core.dayState(d,today(),state().claimed);
 const ownedDays=()=>{const t=today();return Object.keys(state().claimed).map(Number).filter(d=>multiPreview()?previewDays.has(d):d<=t).sort((a,b)=>a-b);};
 const isPlaced=d=>state().placement[d]===true&&Object.hasOwn(state().claimed,String(d))&&(multiPreview()?previewDays.has(Number(d)):Number(d)<=today());
-function persist(){if(previewDate)safeWrite(STORAGE_PREFIX+'preview',preview);else{cloudCache();cloudScheduleSave();}}
+function persist(){if(previewDate)previewPersist();else{cloudCache();cloudScheduleSave();}}
 function status(message){$('status').textContent=message;}
 function closeDialog(id){const d=$(id);if(d.open)d.close();}
 function showDialog(id){const d=$(id);if(!d.open)d.showModal();}
@@ -302,11 +357,11 @@ function togglePlacement(d,{fromCollection=false}={}){
 }
 function setPreview(iso){if(!canPreview()){status('日期模擬僅供管理測試帳號使用。');return false;}
   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)||iso<`${YEAR}-11-30`||iso>`${YEAR}-12-26`)throw new Error('請選擇活動前一天至活動後一天的日期。');
-  previewDate=iso;previewDays=null;$('preview-date').value=iso;selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');closeDialog('studio-dialog');renderUI();status(`正在預覽 ${iso}，本次領取只會寫入測試紀錄。`);
+  previewDate=iso;previewDays=null;previewPersist();$('preview-date').value=iso;selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');closeDialog('studio-dialog');renderUI();status(`正在預覽 ${iso}，本次領取只會寫入測試紀錄。`);
 }
 function setPreviewDays(days){if(!canPreview()){status('日期模擬僅供管理測試帳號使用。');return false;}
   previewDays=new Set([...days].map(Number).filter(d=>Number.isInteger(d)&&d>=1&&d<=25));
-  previewDate=`${YEAR}-12-${String(Math.max(1,...previewDays)).padStart(2,'0')}`;
+  previewDate=`${YEAR}-12-${String(Math.max(1,...previewDays)).padStart(2,'0')}`;previewPersist();
   $('preview-date').value=previewDate;$('quick-sim-panel').hidden=false;selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');closeDialog('studio-dialog');renderUI();
   status(previewDays.size?`已勾選 ${previewDays.size} 天，進度只計算其中已開啟的禮物。點選日期查看，再按「放入水晶球內」。`:'尚未勾選日期。請勾選要模擬的日子。');
 }
@@ -315,9 +370,9 @@ function selectAllPreview(){if(!canPreview()){status('日期模擬僅供管理�
   setPreviewDays(Array.from({length:25},(_,k)=>k+1));persist();drawFrame(0,performance.now());
   status('已全選 25 天並清空球內測試擺放。已開啟收藏與位置設定保留，請逐件按「放入水晶球內」。');
 }
-function exitPreview(){previewDate=null;previewDays=null;selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');$('quick-sim-panel').hidden=true;renderUI();status('已回到正式日期。正式收藏與測試紀錄分開保存。');}
+function exitPreview(){previewDate=null;previewDays=null;previewPersist();selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');$('quick-sim-panel').hidden=true;renderUI();status('已回到正式日期。正式收藏與測試紀錄分開保存。');}
 function fillPreviewTo(iso){if(!canPreview()){status('日期模擬僅供管理測試帳號使用。');return false;}setPreview(iso);const n=Math.min(25,today());for(let d=1;d<=n;d++){if(!preview.claimed[d]){preview.claimed[d]={at:`${YEAR}-12-${String(d).padStart(2,'0')}T04:00:00.000Z`};preview.placement[d]=false;}}persist();renderUI();status(n?`已準備至 12/${n} 的測試收藏。新收藏不會自動放入，請逐件按「放入水晶球內」。`:'活動前的模擬畫面尚無收藏。');}
-function clearPreview(){if(!canPreview()){status('日期模擬僅供管理測試帳號使用。');return false;}closeDialog('item-dialog');selectedDay=null;stopShow(false);pauseMusic(true);preview=Core.freshState();safeWrite(STORAGE_PREFIX+'preview',preview);renderUI();$('config-status').textContent='已清空測試收藏。正式紀錄與素材保留。';if(previewDate)status('模擬收藏已清空，可重新開啟模擬日期的禮盒。');}
+function clearPreview(){if(!canPreview()){status('日期模擬僅供管理測試帳號使用。');return false;}closeDialog('item-dialog');selectedDay=null;stopShow(false);pauseMusic(true);preview=Core.freshState();previewPersist();renderUI();$('config-status').textContent='已清空測試收藏。正式紀錄與素材保留。';if(previewDate)status('模擬收藏已清空，可重新開啟模擬日期的禮盒。');}
 function renderQuickSimulation(){
   const active=!!previewDate;
   $('quick-sim-toggle').textContent=multiPreview()?`模擬中：已選 ${previewDays.size} 天`:active?'模擬中':'模擬日期';
@@ -1277,6 +1332,6 @@ document.addEventListener('visibilitychange',()=>{
   else if(showPausedAt!==null){const delay=performance.now()-showPausedAt;showStarted+=delay;showUntil+=delay;showPausedAt=null;}
 });
 
-window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving})},Core,claimDay,openDay,setPreview,setPreviewDays,exitPreview,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
+window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0})},Core,claimDay,openDay,setPreview,setPreviewDays,exitPreview,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
 initialise();
 })();
