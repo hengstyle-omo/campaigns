@@ -3,7 +3,7 @@
  * 所有素材路徑以 index.html 所在位置為基準。
  */
 window.DYSON_CLOUD_CONFIG = {
-  "endpoint": ""
+  "endpoint": "https://script.google.com/macros/s/AKfycbyNiw73qY4Q_jBwMO9J5KBxrJsWbLrm_aNJ53MBRXyNcxLq8WHcGHPPr4HLs-jA8DqvBg/exec"
 };
 
 window.DYSON_GAME_CONFIG = {
