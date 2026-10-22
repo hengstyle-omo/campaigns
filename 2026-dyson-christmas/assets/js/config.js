@@ -7,7 +7,9 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 20,
+  "version": 21,
+  "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
+  "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
   "scheduleRevision": "20261021-four-products-v2",
   "year": 2026,
@@ -568,7 +570,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "冬日放空中",
       "animal": "水豚",
-      "description": "泡在小木桶裡，頭頂橘子，一臉放空。",
+      "description": "泡在冒著薄薄熱氣的小木桶裡，頭頂雪球，一臉放空。",
       "layout": {
         "x": 820,
         "y": 875,
@@ -624,7 +626,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "今天吃大餐",
       "animal": "海獺",
-      "description": "灰色毛茸茸的海獺，抱著貝殼，用小石頭開心地敲呀敲。",
+      "description": "灰色毛茸茸的海獺，懷抱閃亮金幣，用小石頭開心地敲呀敲。",
       "layout": {
         "x": 755,
         "y": 900,
@@ -5839,15 +5841,15 @@ window.DYSON_ASSETS = {
     "black": "./assets/images/brand/dyson-logo-black.png"
   },
   "bonusSprites": {
-    "101": "./assets/images/bonus/bonus-golden-dance.png?v=20261022-natural-v1",
+    "101": "./assets/images/bonus/bonus-golden-dance.png?v=20261022-v21",
     "102": "./assets/images/bonus/bonus-shiba-business.png?v=20261022-natural-v1",
     "103": "./assets/images/bonus/bonus-polar-bear-samoyed.png?v=20261022-natural-v1",
     "104": "./assets/images/bonus/bonus-cat-gift-box.png?v=20261022-natural-v1",
-    "105": "./assets/images/bonus/bonus-capybara-bath.png?v=20261022-natural-v1",
+    "105": "./assets/images/bonus/bonus-capybara-bath.png?v=20261022-v21",
     "106": "./assets/images/bonus/bonus-penguin-slide.png?v=20261022-natural-v1",
     "107": "./assets/images/bonus/bonus-white-sea-lion.png?v=20261022-white-pup-v1",
     "108": "./assets/images/bonus/bonus-red-panda-tree.png?v=20261022-natural-v1",
-    "109": "./assets/images/bonus/bonus-otter-shell.png?v=20261022-natural-v1",
+    "109": "./assets/images/bonus/bonus-otter-shell.png?v=20261022-v21",
     "110": "./assets/images/bonus/bonus-fox-snow-dive.png?v=20261022-natural-v1"
   }
 };

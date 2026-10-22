@@ -315,3 +315,6 @@ button,input,textarea,select{line-height:1.5}
 .participation-history summary{cursor:pointer;color:var(--gold)}
 .participation-history p{margin-top:6px;overflow-wrap:anywhere}
 @media(max-width:420px){.participation{padding:14px 12px}.participation-grid{gap:6px}.participation-cell{min-height:68px}.participation-date{font-size:12px}.participation-heading h3{font-size:18px}.sim-date-label{flex-wrap:wrap}.sim-date-label input{flex:1}}
+
+/* English finale fits the glass on desktop and mobile. */
+.show-greeting{font-family:Georgia,serif;font-style:italic;font-size:clamp(17px,2.3vw,30px);letter-spacing:.025em;max-width:82%;text-align:center}

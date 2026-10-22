@@ -16,6 +16,10 @@ const Core = {
     if(Object.hasOwn(claimed,String(day)))return 'owned';
     return today>=1&&today<=25&&day<=today?'current':'missed';
   },
+  taipeiTimestamp(date=new Date()){
+    const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date).filter(v=>v.type!=='literal').map(v=>[v.type,v.value]));
+    return `${p.year}/${p.month}/${p.day} ${p.hour}:${p.minute}`;
+  },
   participationDates(visits,throughDate,year=2026){
     const valid=new RegExp('^'+year+'-12-(?:0[1-9]|1[0-9]|2[0-5])$');
     return Object.keys(visits||{}).filter(date=>valid.test(date)&&visits[date]===true&&date<=throughDate).sort();
@@ -57,7 +61,7 @@ const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value)
 const ADMIN_PREVIEW_EMAIL='hengstyle.data@gmail.com';
 const BONUS_IDS=[101,102,103,104,105,106,107,108,109,110],bonusCatalog=BASE_CONFIG.bonusItems||[];
 const CLOUD_CONFIG=window.DYSON_CLOUD_CONFIG;
-const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:'',ready:false,loading:false,canPreview:false,bonusIds:[],consent:false,marketingDirty:false,synced:Core.freshState(),offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null}};
+const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:'',ready:false,loading:false,canPreview:false,bonusIds:[],consent:false,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null}};
 const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{});
 cloud.email=typeof savedCloudProfile.email==='string'?savedCloudProfile.email:'';
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
@@ -124,16 +128,16 @@ function cloudCache(){
 }
 function previewPersist(){safeWrite(STORAGE_PREFIX+'preview',preview);cloudScheduleSave();}
 function renderCloud(){
-  const active=cloudEnabled(),previewAllowed=canPreview(),busy=cloud.loading||!!cloud.saving;
+  const active=cloudEnabled(),previewAllowed=canPreview(),busy=cloud.loading||!!cloud.saving||!!cloud.marketingSaving;
   const pending=cloud.ready&&(Object.keys(cloudDiff(live,cloud.synced)).length>0||Object.keys(previewPending()).length>0);
-  $('progress-open').textContent=cloud.ready?(cloud.error?'進度待同步':cloud.saving||pending?'進度保存中':'我的進度'):'保存進度';
+  $('progress-open').textContent=cloud.ready?(cloud.error?'進度待同步':cloud.saving||cloud.marketingSaving||pending?'進度保存中':'我的進度'):'保存進度';
   $('progress-open').setAttribute('aria-label',cloud.ready?'查看 Email 與收藏進度':'填 Email 保存收藏進度');
   $('progress-email-label').textContent=cloud.ready?cloud.email:'';
   $('progress-current').hidden=!cloud.ready;$('progress-submit').disabled=busy;$('progress-switch').disabled=busy;
   $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;
-  if(!cloud.marketingDirty)$('progress-marketing').checked=cloud.consent;
+  $('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
   $('progress-retry').hidden=!cloud.error||!cloud.ready||!active;
-  $('progress-message').textContent=cloud.error||(cloud.loading?'正在載入你的收藏…':cloud.saving||pending?'正在保存進度，請稍候…':cloud.ready?(active?(previewAllowed?(cloud.previewLoaded?`正式已收藏 ${Object.keys(live.claimed).length}／25；模擬已收藏 ${Object.keys(cloud.previewSynced.state.claimed).length}／25，已保存至 Preview_${YEAR}。`:'正式進度已連接；請更新 Apps Script 以啟用模擬同步。'):'收藏已連接 Google Sheet。'):'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
+  $('progress-message').textContent=cloud.error||(cloud.loading?'正在載入你的收藏…':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus?cloud.consentStatus:cloud.saving||pending?'正在保存進度，請稍候…':cloud.ready?(active?(previewAllowed?(cloud.previewLoaded?`正式已收藏 ${Object.keys(live.claimed).length}／25；模擬已收藏 ${Object.keys(cloud.previewSynced.state.claimed).length}／25，已保存至 Preview_${YEAR}。`:'正式進度已連接；請更新 Apps Script 以啟用模擬同步。'):'收藏已連接 Google Sheet。'):'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
   for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!previewAllowed;
   if(!previewAllowed){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
   $('cloud-settings').hidden=!previewAllowed;
@@ -141,7 +145,7 @@ function renderCloud(){
   $('cloud-summary').textContent=active?'已設定進度服務；正式領取依後端台灣日期判斷。':'尚未連接 Google Sheet，目前僅供管理者本機測試。';
 }
 function openProgress(){
-  cloud.marketingDirty=false;$('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.consent;
+  $('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
   renderCloud();showDialog('progress-dialog');
 }
 function cloudTransport(payload){
@@ -168,7 +172,9 @@ function cloudSend(payload){const request=cloud.queue.then(()=>cloudTransport(pa
 function cloudAcceptClock(result){if(Array.isArray(result.bonusIds))cloud.bonusIds=result.bonusIds.filter(d=>BONUS_IDS.includes(d));if(result.rulesVersion!==2)throw new Error('請先更新並重新部署新版 DysonProgress.gs，以啟用補領與參與天數禮遇。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同，請管理者檢查 .gs 設定。');if(Number.isFinite(Date.parse(result.serverTime))){cloud.offset=Date.parse(result.serverTime)-Date.now();cloud.hasClock=true;}}
 async function cloudConnect(email,consent){
   email=cloudEmail(email);if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('請填寫有效的 Email。');
+  if(cloud.marketingSaving)await cloud.marketingSaving;
   if(cloud.loading)return false;
+  const preserveConsentDraft=cloud.ready&&email===cloud.email&&cloud.marketingDirty&&typeof consent!=='boolean';
   if(cloud.ready&&cloudEnabled()&&!(await cloudFlush()))throw new Error('目前進度尚未保存，請先按重試。');
   cloud.loading=true;cloud.error='';renderCloud();
   try{
@@ -178,6 +184,7 @@ async function cloudConnect(email,consent){
     }else{
       const payload={action:'connect',email};if(typeof consent==='boolean')payload.marketingConsent=consent;
       const result=await cloudSend(payload);cloudAcceptClock(result);
+      if(typeof consent==='boolean'&&result.marketingConsent!==consent)throw new Error('行銷意願尚未確認保存，請重試或更新 Apps Script 部署。');
       const cached=safeRead(cloudCacheKey(email),{}),server=Core.normaliseState(result.state);
       if(cached.pending)for(const d of BONUS_IDS)if(!cloud.bonusIds.includes(d))delete cached.pending[d];
       if(cached.catalogRevision!==BASE_CONFIG.scheduleRevision&&cached.pending)for(const d of [10,16,20])delete cached.pending[d];
@@ -199,7 +206,9 @@ async function cloudConnect(email,consent){
       }else if(!canPreview())previewRestore(null);
     }
     await loadBonusAssets();
-    cloud.marketingDirty=false;$('progress-marketing').checked=cloud.consent;
+    if(!preserveConsentDraft){cloud.marketingDirty=false;cloud.marketingDraft=null;}
+    if(preserveConsentDraft)cloud.error='行銷意願尚未保存，請按重試同步。';
+    cloud.consentStatus=preserveConsentDraft?'行銷意願尚未保存，請按重試同步。':typeof consent==='boolean'?'行銷意願已保存至 Google Sheet。':'';$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
     safeWrite(STORAGE_PREFIX+'cloud-profile',{email:cloud.email});
     if(previewDate&&!canPreview())exitPreview();selectedDay=null;stopShow(false);pauseMusic(true);closeDialog('item-dialog');
     cloudCache();renderUI();drawFrame(0,performance.now());if(cloudEnabled())cloudScheduleSave();return true;
@@ -250,14 +259,35 @@ async function claimCloud(d){
   }catch(error){cloud.error=error.message;status(error.message);return false;}
   finally{cloud.loading=false;renderCloud();}
 }
+async function saveMarketingConsent(){
+  if(!cloud.ready||cloudEmail($('progress-email').value)!==cloud.email)return false;
+  if(cloud.marketingSaving)return cloud.marketingSaving;
+  if(!cloud.marketingDirty)return true;
+  const email=cloud.email,desired=cloud.marketingDraft===true;
+  if(!cloudEnabled()){cloud.error='目前為本機測試，行銷意願尚未寫入 Google Sheet。';renderCloud();return false;}
+  cloud.error='';cloud.consentStatus='';
+  cloud.marketingSaving=(async()=>{
+    try{
+      const result=await cloudSend({action:'consent',email,marketingConsent:desired});cloudAcceptClock(result);
+      if(result.consentSaved!==true||result.marketingConsent!==desired)throw new Error('尚未收到 Google Sheet 的行銷意願保存確認，請更新 Apps Script 部署後重試。');
+      if(cloud.email!==email)return false;
+      const pending=cloudDiff(live,cloud.synced);cloud.synced=Core.normaliseState(result.state);live=cloudApply(Core.normaliseState(cloud.synced),pending);cloudCache();
+      cloud.consent=desired;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='行銷意願已保存至 Google Sheet。';cloud.error='';if(!previewDate)renderUI();return true;
+    }catch(error){cloud.error=`行銷意願尚未保存：${error.message}`;return false;}
+    finally{cloud.marketingSaving=null;renderCloud();}
+  })();
+  renderCloud();return cloud.marketingSaving;
+}
 $('progress-open').addEventListener('click',openProgress);
-$('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;});
+$('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();else{cloud.consentStatus='行銷選擇尚未保存，請填寫 Email 後按「保存並接續收藏」。';renderCloud();}});
 $('progress-form').addEventListener('submit',async event=>{
-  event.preventDefault();try{if(await cloudConnect($('progress-email').value,cloud.marketingDirty?$('progress-marketing').checked:undefined)){const day=cloud.pendingDay;cloud.pendingDay=null;closeDialog('progress-dialog');if(day&&!previewDate)await openDay(day);}}catch(error){$('progress-message').textContent=error.message;}
+  event.preventDefault();try{if(await cloudConnect($('progress-email').value,cloud.marketingDirty?cloud.marketingDraft:undefined)){const day=cloud.pendingDay;cloud.pendingDay=null;closeDialog('progress-dialog');if(day&&!previewDate)await openDay(day);}}catch(error){$('progress-message').textContent=error.message;}
 });
-$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect(cloud.email);}catch{}}else await cloudFlush();renderCloud();});
+$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect(cloud.email);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();renderCloud();});
 $('progress-switch').addEventListener('click',async()=>{
+  if(cloud.marketingSaving&&!(await cloud.marketingSaving))return;
   if(!(await cloudFlush()))return;
+  cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='';
   cloud.ready=false;cloud.canPreview=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.email='';cloud.consent=false;cloud.pendingDay=null;cloud.error='';cloud.hasClock=false;
   clearTimeout(cloud.timer);safeWrite(STORAGE_PREFIX+'cloud-profile',{});live=Core.freshState();cloud.synced=Core.freshState();
   if(previewDate)exitPreview();stopShow(false);pauseMusic(true);selectedDay=null;closeDialog('studio-dialog');closeDialog('item-dialog');renderUI();drawFrame(0,performance.now());openProgress();
@@ -679,6 +709,27 @@ function drawSnowLayer(pool,count,dt,time,show=false){
     if(!p.gold&&k%27===0){ctx.save();ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(p.x-3,p.y);ctx.lineTo(p.x+3,p.y);ctx.moveTo(p.x,p.y-3);ctx.lineTo(p.x,p.y+3);ctx.stroke();ctx.restore();}
   }
 }
+function drawChristmasTree(progress,time,target=ctx,opacity=1){
+  if(progress<=0||opacity<=0)return;
+  const points=[[625,355],[590,425],[607,425],[558,492],[580,492],[518,564],[549,564],[478,642],[523,642],[438,730],[600,730],[600,779],[650,779],[650,730],[812,730],[727,642],[772,642],[701,564],[732,564],[670,492],[692,492],[643,425],[660,425],[625,355]];
+  const segments=points.slice(1).map((p,i)=>({a:points[i],b:p,length:Math.hypot(p[0]-points[i][0],p[1]-points[i][1])}));
+  let remaining=segments.reduce((n,p)=>n+p.length,0)*Math.min(1,progress),head=points[0];
+  target.save();target.globalAlpha*=opacity;target.strokeStyle='#ffe5aa';target.lineWidth=4;target.lineCap='round';target.lineJoin='round';target.shadowColor='#ffc66c';target.shadowBlur=15;
+  target.beginPath();target.moveTo(...points[0]);
+  for(const segment of segments){const f=Math.max(0,Math.min(1,remaining/segment.length));if(!f)break;head=[segment.a[0]+(segment.b[0]-segment.a[0])*f,segment.a[1]+(segment.b[1]-segment.a[1])*f];target.lineTo(...head);remaining-=segment.length;if(f<1)break;}
+  target.stroke();starShape(target,...head,8,.96,time*.2);
+  if(progress>.7){target.globalAlpha*=Math.min(1,(progress-.7)/.3);for(let k=0;k<13;k++){const y=445+k*21,spread=(y-355)*.35,x=625+Math.sin(k*2.4)*spread;starShape(target,x,y,k%3===0?8:5,.85+.12*Math.sin(time*3+k),time*.12);}starShape(target,625,345,30,.98);}
+  target.restore();
+}
+function drawMerryChristmas(target,alpha=1,time=0){
+  if(alpha<=0)return;
+  target.save();target.globalAlpha*=Math.min(1,alpha);
+  const glow=target.createRadialGradient(625,505,30,625,505,330);glow.addColorStop(0,'rgba(9,17,31,.85)');glow.addColorStop(1,'rgba(9,17,31,0)');target.fillStyle=glow;target.fillRect(295,175,660,660);
+  target.font='italic 600 64px Georgia, serif';target.textAlign='center';target.textBaseline='middle';target.fillStyle='#fff1cd';target.shadowColor='#eac47a';target.shadowBlur=16;
+  target.fillText('Merry Christmas',625,505,650);
+  for(let k=0;k<8;k++){const a=k*Math.PI/4;starShape(target,625+Math.cos(a)*335,505+Math.sin(a)*100,k%2?5:8,.6+.3*Math.sin(time*2+k)**2,a);}
+  target.restore();
+}
 function drawStarShow(elapsed,time){
   const staticShow=!motion,fade=staticShow?1:Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2));
   ctx.save();ctx.globalAlpha=fade;
@@ -706,6 +757,7 @@ function drawStarShow(elapsed,time){
       else if(p.k%2===0){ctx.fillStyle=ribbon?'#f1f8ff':'#ffe4b2';ctx.beginPath();ctx.arc(p.x,p.y,2.1,0,Math.PI*2);ctx.fill();}
     }
   }
+  drawChristmasTree(staticShow?1:Math.max(0,Math.min(1,(elapsed-.8)/5)),time,ctx,staticShow?.7:Math.max(0,Math.min(1,(10-elapsed)/1.2)));
   // Larger flakes provide a visible foreground without covering the products.
   for(let k=0;k<30;k++){
     const x=315+(k*137%630),y=235+((k*83+(staticShow?0:elapsed*(18+k%5*4)))%590);
@@ -899,7 +951,7 @@ const cardSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('zh-Ha
 const cardGraphemes=text=>cardSegmenter?[...cardSegmenter.segment(text)].map(s=>s.segment):Array.from(text);
 const cardCount=text=>cardGraphemes(text.replace(/\r\n?/g,'\n').replace(/\n/g,'')).length;
 const CARD_PRESETS={warm:'願這顆小小的水晶球，為你留住冬日的溫暖。聖誕快樂，願你每天都有值得期待的小美好。',thanks:'謝謝你今年的陪伴，讓平凡的日子多了好多光。把這片親手布置的雪境送給你，聖誕快樂！',wish:'願新的一年，有喜歡的日常、勇敢的開始，還有一起分享快樂的人。聖誕快樂，明年也一起創造美好回憶！'};
-let cardSnapshot=null,cardBackground=null,cardCapturing=false,cardBlob=null,cardFile=null,cardRenderToken=0,cardSaving=false,cardTouched=false;
+let cardCapturedAt=null,cardSnapshot=null,cardBackground=null,cardCapturing=false,cardBlob=null,cardFile=null,cardRenderToken=0,cardSaving=false,cardTouched=false;
 function wrapCardText(context,text,maxWidth){
   const lines=[];
   for(const paragraph of text.replace(/\r\n?/g,'\n').split('\n')){
@@ -946,7 +998,9 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
   const lines=messageValid?data.layout.lines:[data.message.trim()?'內容超出卡片範圍，請調整後再製作。':'把想說的話，留在這片聖誕雪境裡。'];
   lines.forEach((line,k)=>cx.fillText(line,110,1530+k*(messageValid?data.layout.lineHeight:52)));
   if(data.signature.trim()&&!data.errors.signature){cx.textAlign='right';cx.textBaseline='middle';cx.font=`400 40px ${CARD_FONT}`;cx.fillStyle='#e8c58f';cx.fillText(`— ${data.signature}`,1090,1890);}
-  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#b9a488';cx.font='400 21px Georgia,serif';cx.fillText('dyson  ·  A LITTLE WONDER, EVERY DAY',600,1935);
+  cx.textAlign='center';cx.textBaseline='middle';
+  if(cardCapturedAt){cx.fillStyle='#b8b8b6';cx.font=`400 20px ${CARD_FONT}`;cx.fillText(`${cardCapturedAt} · 台灣時間`,600,1920);}
+  cx.fillStyle='#b9a488';cx.font='400 18px Georgia,serif';cx.fillText('dyson  ·  A LITTLE WONDER, EVERY DAY',600,1947);
   c.setAttribute('aria-label',data.valid?`聖誕卡片預覽，送給 ${data.recipient}。${data.message}${data.signature.trim()?`，署名 ${data.signature}`:''}`:'聖誕卡片預覽，請完成欄位或調整超出限制的內容。');
 }
 function updateCardButtons(){
@@ -983,8 +1037,8 @@ async function captureCardScene(){
       editMode=false;drawFrame(0,performance.now());
       cx.save();cx.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);cx.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);cx.translate(-SCENE_W*.5,-SCENE_H*.5);
       cx.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);cx.drawImage(canvas,0,0,SCENE_W,SCENE_H);cx.restore();
-      if(!$('show-greeting').hidden){cx.save();cx.globalAlpha=Number($('show-greeting').style.opacity)||1;cx.fillStyle='#fff2d0';cx.shadowColor='#080e1d';cx.shadowBlur=15;cx.font=`600 52px ${CARD_FONT}`;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('聖誕快樂',SCENE_W*.5,SCENE_H*parseFloat($('show-greeting').style.top)/100);cx.restore();}
-      if(cardSnapshot){cardSnapshot.width=1;cardSnapshot.height=1;}cardSnapshot=snapshot;captureCardMotionBase();
+      if(!$('show-greeting').hidden){cx.save();cx.globalAlpha=Number($('show-greeting').style.opacity)||1;cx.fillStyle='#fff2d0';cx.shadowColor='#080e1d';cx.shadowBlur=15;cx.font=`600 52px ${CARD_FONT}`;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('Merry Christmas',SCENE_W*.5,SCENE_H*parseFloat($('show-greeting').style.top)/100);cx.restore();}
+      if(cardSnapshot){cardSnapshot.width=1;cardSnapshot.height=1;}cardSnapshot=snapshot;cardCapturedAt=Core.taipeiTimestamp(new Date(Date.now()+(cloud.hasClock?cloud.offset:0)));captureCardMotionBase();
     }finally{editMode=editing;drawFrame(0,performance.now());}
     cardCapturing=false;renderChristmasCard();return true;
   }catch(err){$('card-status').textContent='暫時無法拍下水晶球，請重新開啟檔案後再試。';status('聖誕卡片照片製作失敗，請稍後再試。');return false;}
@@ -999,13 +1053,16 @@ function downloadChristmasCard(){
   const url=URL.createObjectURL(blob),link=el('a');link.href=url;link.download=`dyson-christmas-card.${cardFormat()}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
   $('card-status').textContent='已準備下載卡片檔案。可將檔案傳給想祝福的人。';return true;
 }
+function cardShareMetadata(){
+  return {title:'把一點星光，送到你身邊',text:`${BASE_CONFIG.cardShareText||'我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。'}\n${BASE_CONFIG.cardShareUrl||'https://hlh.tw/2026-dyson-christmas'}`};
+}
 async function shareChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardSaving||cardExportBusy)return;
   const file=typeof File==='function'?new File([blob],`dyson-christmas-card.${cardFormat()}`,{type:blob.type}):null;
   let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.({files:[file]}));}catch{}
   if(!supported){downloadChristmasCard();$('card-status').textContent='此裝置未提供此格式的檔案分享，已準備下載。儲存後即可透過 LINE 等應用程式傳送。';return;}
   cardSaving=true;updateCardButtons();
-  try{await navigator.share({files:[file],title:'送給你的聖誕心意'});$('card-status').textContent='已交由裝置的分享功能處理。';}
+  try{await navigator.share({files:[file],...cardShareMetadata()});$('card-status').textContent='已交由裝置的分享功能處理。';}
   catch(err){if(err.name==='AbortError')$('card-status').textContent='已取消分享，卡片仍可下載或再次分享。';else {downloadChristmasCard();$('card-status').textContent='目前無法開啟分享，已準備下載卡片檔案。';}}
   finally{cardSaving=false;updateCardButtons();}
 }
@@ -1083,7 +1140,7 @@ function captureCardMotionBase(){
 }
 function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=600){
   const poster=el('canvas');paintChristmasCard(validateCard(),poster,cardMotionBase,{width,height});
-  if(withMusicCredit){const c=poster.getContext('2d');c.font='16px sans-serif';c.textAlign='center';c.fillStyle='#c3b195';c.fillText('Jingle Bells — Kevin MacLeod / incompetech.com · CC BY 4.0: creativecommons.org/licenses/by/4.0 · 5s excerpt',600,1960);}
+  if(withMusicCredit){const c=poster.getContext('2d');c.font='16px sans-serif';c.textAlign='center';c.fillStyle='#c3b195';c.fillText('Jingle Bells — Kevin MacLeod / incompetech.com · CC BY 4.0: creativecommons.org/licenses/by/4.0 · 5s excerpt',600,1980);}
   const frame=el('canvas');frame.width=width;frame.height=height;const output=frame.getContext('2d',{willReadFrequently:true}),flags={...cardMotionFlags};
   const scene=el('canvas');scene.width=Math.min(imageWidth,Math.round(width*.9));scene.height=Math.round(scene.width*SCENE_H/SCENE_W);const x=scene.getContext('2d',{willReadFrequently:true});
   return {canvas:frame,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
@@ -1093,17 +1150,18 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
       const g=x.createRadialGradient(625,680,30,625,680,410);g.addColorStop(0,`rgba(255,214,137,${.24+.07*Math.sin(t*Math.PI*2/5)})`);g.addColorStop(1,'rgba(255,179,74,0)');x.fillStyle=g;x.fillRect(215,270,820,820);
       for(let k=0;k<22;k++)starShape(x,300+k*137%640,255+k*83%560,k%5===0?7:3,.4+.4*(1+Math.sin(t*Math.PI*2/5+k))/2);
     }
-    for(const [enabled,count,gold] of [[flags.white,110,false],[flags.gold,120,true]])if(enabled){
+    for(const [enabled,count,gold] of [[flags.white||flags.show,flags.show?160:110,false],[flags.gold||flags.show,120,true]])if(enabled){
       for(let k=0;k<count;k++){
         const phase=k*1.618,depth=k%3+1,px=270+k*137%730+Math.sin(t*Math.PI*2/5+phase)*9,py=210+((k*71+t*130*(depth===3?2:1))%650);
         x.fillStyle=gold?'#ffe0a4cc':'#fffdf4c9';x.beginPath();x.arc(px,py,1.6+k%3,0,Math.PI*2);x.fill();if(gold&&k%14===0)starShape(x,px,py,6,.8,phase);
       }
     }
     if(flags.show){
-      const g=x.createRadialGradient(625,470,10,625,470,245);g.addColorStop(0,'#101828bb');g.addColorStop(1,'#10182800');x.fillStyle=g;x.fillRect(380,225,490,490);
-      starShape(x,625,335,32+Math.sin(t*Math.PI*2/5)*4,.96);
-      for(let k=0;k<22;k++){const a=k*Math.PI*2/22+t*Math.PI*2/5;starShape(x,625+Math.cos(a)*265,585+Math.sin(a)*245,k%4===0?9:5,.8,a);}
-      drawDysonSignature(10+Math.min(5.5,Math.max(0,(t-.3)/3.2)*5.5), x, true);
+      // A deterministic five-second greeting, independent of live show position.
+      const treeProgress=Math.max(0,Math.min(1,t/2)),treeOpacity=t<=2?1:Math.max(.12,1-(t-2)/.65);
+      drawChristmasTree(treeProgress,t,x,treeOpacity);
+      const greetingAlpha=Math.max(0,Math.min(1,(t-2)/.65));
+      drawMerryChristmas(x,greetingAlpha,t);
     }
     x.restore();output.setTransform(1,0,0,1,0,0);output.drawImage(poster,0,0);output.save();output.scale(width/1200,height/2000);cardRoundedRect(output,60,162,1080,1245,16);output.clip();output.drawImage(scene,60,162,1080,1245);output.restore();return frame;
   }};
@@ -1436,6 +1494,6 @@ document.addEventListener('visibilitychange',()=>{
   else if(showPausedAt!==null){const delay=performance.now()-showPausedAt;showStarted+=delay;showUntil+=delay;showPausedAt=null;}
 });
 
-window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0})},Core,claimDay,openDay,setPreview,exitPreview,participationDates,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
+window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,marketingSaving:!!cloud.marketingSaving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0})},Core,claimDay,openDay,setPreview,exitPreview,participationDates,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,capturedAt:()=>cardCapturedAt,shareMetadata:cardShareMetadata,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
 initialise();
 })();
