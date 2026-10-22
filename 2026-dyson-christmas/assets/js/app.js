@@ -368,6 +368,17 @@ if(!safeRead(catalogRulesKey,false)){
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(STORAGE_PREFIX+'preview',preview);safeWrite(STORAGE_PREFIX+'rewards-v2',rewardSettings);safeWrite(catalogRulesKey,true);
 }
 
+// Refresh the approved product copy while retaining participant state and layouts.
+const productCopyKey=STORAGE_PREFIX+'product-copy-20261022-v25';
+if(!safeRead(productCopyKey,false)){
+  for(const d of [5,10,15,20]){
+    if(!settings[d])continue;
+    for(const key of ['name','description','calendarName'])delete settings[d][key];
+    if(settings[d].product){for(const key of ['model','color','intro','features','tagline'])delete settings[d].product[key];if(d===20)delete settings[d].product.url;}
+  }
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(productCopyKey,true);
+}
+
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
@@ -382,7 +393,7 @@ const dateISO=()=>previewDate||Core.taipeiDate(new Date(Date.now()+(cloud.hasClo
 const today=()=>Core.campaignDay(dateISO(),YEAR);
 const itemByDay=d=>BASE_CONFIG.items.find(i=>i.day===Number(d))||bonusCatalog.find(i=>i.day===Number(d));
 const bonusDays=()=>cloud.ready?cloud.bonusIds.filter(d=>bonusCatalog.some(i=>i.day===d)):[];
-const calendarName=d=>item(d).name;
+const calendarName=d=>{const i=item(d);return i.teaser?i.name:i.calendarName||i.name;};
 const calendarMusic=d=>({7:'Jingle Bells · 輕快版',24:'Jingle Bells · 冬日慢版',25:'聖誕祝福旋律'})[d]||'';
 function configuredItem(d){const source=itemByDay(d);return {...source,...settings[d],day:source.day,benefit:null,product:source.product?{...source.product,...settings[d]?.product}:null};}
 function item(d){

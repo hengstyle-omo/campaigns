@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 22,
+  "version": 25,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -77,7 +77,7 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 5,
       "type": "Dyson 產品",
-      "name": "HD19 旅行吹風機",
+      "name": "HD19 隨行吹風機",
       "description": "把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。",
       "benefit": null,
       "assetNeed": "HD19 微立體透明 PNG，保留產品輪廓與配色",
@@ -170,8 +170,8 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 10,
       "type": "Dyson 產品",
-      "name": "SV50 筆型吸塵器",
-      "description": "纖細的 PencilVac™ Fluffycones SV50 加入雪境，完整保留長管與四錐吸頭。",
+      "name": "PencilVac鉛筆吸塵器",
+      "description": "輕巧・靈活・極纖細\nDyson PencilVac™ Fluffycones SV50 鉛筆吸塵器\n\n搭載創新四錐全向吸頭，360° 靈活轉向，輕鬆穿梭居家角落，讓清潔更自由、更俐落。",
       "benefit": null,
       "assetNeed": "SV50 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -191,7 +191,7 @@ window.DYSON_GAME_CONFIG = {
           "靈活全向清潔"
         ],
         "url": "https://shop.hengstyle.com/site/dyson/index/fc_pencil",
-        "tagline": "纖細筆型，靈活穿梭日常空間。"
+        "tagline": "輕巧・靈活・極纖細"
       },
       "sourceDay": 10
     },
@@ -258,7 +258,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 15,
       "type": "Dyson 產品",
       "name": "HJ10 噴射氣流空氣清淨機",
-      "description": "冰川藍的 HushJet™ HJ10，以星形噴嘴與精巧圓筒造型，為雪境添上一件清新科技收藏。",
+      "description": "冰川藍的 HushJet™ HJ10，精巧設計，節省空間卻不減性能，為雪境添上一件清新科技收藏。",
       "benefit": null,
       "assetNeed": "HJ10 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -271,14 +271,14 @@ window.DYSON_GAME_CONFIG = {
       "product": {
         "model": "HJ10 · HushJet™ Purifier Compact",
         "color": "冰川藍",
-        "intro": "靈感源自航空噴射引擎，以獨特星形噴嘴吹送集中的淨化氣流，搭配精巧的圓筒機身。",
+        "intro": "靈感源自航空噴射引擎，以獨特星形噴嘴吹送集中的淨化氣流，每秒輸出空氣380升強勁氣流。",
         "features": [
           "HushJet™ 氣流噴射技術",
           "獨特星形噴嘴設計",
-          "精巧圓筒機身"
+          "有效分解甲醛、去除H1N1病毒"
         ],
         "url": "https://shop.hengstyle.com/site/dyson/index/ec_hj10",
-        "tagline": "星形噴嘴與精巧機身，吹送淨化氣流。"
+        "tagline": "精巧設計，節省空間卻不減性能。"
       },
       "sourceDay": 15
     },
@@ -343,8 +343,8 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 20,
       "type": "Dyson 產品",
-      "name": "BP10 空氣清淨機",
-      "description": "把深紫與銅色的 BP10 空氣清淨機放進聖誕雪境。",
+      "name": "DYSON BP10 航空噴射空氣清淨機 星曜紫",
+      "description": "運用航空聲學原理搭配獨創星形噴嘴90秒淨化。",
       "benefit": null,
       "assetNeed": "BP10 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -357,16 +357,17 @@ window.DYSON_GAME_CONFIG = {
       "product": {
         "model": "BP10",
         "color": "",
-        "intro": "深紫色圓筒機身搭配銅色星形出風口，保留頂部網罩與細緻孔洞，為聖誕雪境增添一件科技收藏。",
+        "intro": "融合航空科技與 Dyson 創新氣流技術，打造新一代高效能空氣清淨機，結合強勁送風與高效空氣淨化，為居家空間帶來清新舒適的空氣體驗。",
         "features": [
-          "圓筒造型機身",
-          "銅色星形出風口",
-          "深紫與銅色搭配"
+          "每秒送風量高達 1,300 公升",
+          "350° 環繞式機身設計，搭配可旋轉風嘴和星形出風口",
+          "UV紫外線+負離子功能"
         ],
         "url": "",
-        "tagline": "深紫與銅色，收藏獨特星形設計。"
+        "tagline": "運用航空聲學原理搭配獨創星形噴嘴90秒淨化。"
       },
-      "sourceDay": 18
+      "sourceDay": 18,
+      "calendarName": "BP10 空氣清淨機"
     },
     {
       "day": 21,

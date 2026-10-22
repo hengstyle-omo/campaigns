@@ -355,3 +355,10 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:480px){.welcome-dialog{padding:16px}.welcome-steps{gap:10px;font-size:11px}.welcome-media{width:min(100%,46dvh)}.welcome-dialog h2{margin-top:10px}}
 @media(prefers-reduced-motion:reduce){.is-busy::before,.mini-globe::after,.mini-globe i{animation:none}.mini-globe i{top:24px}.mini-globe i:nth-child(even){top:48px}}
 [hidden]{display:none!important}
+
+/* Make the coupon benefit visible alongside play and sharing. */
+#welcome-description strong,.intro>p strong{color:#f0cd95;font-weight:700}
+.welcome-steps .welcome-coupon{color:#f0cd95;font-weight:700}
+
+/* Preserve the supplied product introduction paragraphs. */
+#item-description{white-space:pre-line}
