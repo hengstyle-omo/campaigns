@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 25,
+  "version": 26,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -19,7 +19,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 1,
       "type": "雪境光效",
       "name": "第一場雪",
-      "description": "放入後解鎖豐富的白雪飄落，遠近雪片以不同速度落下，球底仍保留薄雪。",
+      "description": "放入後飄起豐富白雪，雪花落地會逐漸累積成柔軟薄雪；開啟氣流或搖晃可揚起表面細雪。移除後恢復原本薄雪底。",
       "benefit": null,
       "assetNeed": "粒子效果，不需產品圖片",
       "effect": "snow",
@@ -136,20 +136,17 @@ window.DYSON_GAME_CONFIG = {
     },
     {
       "day": 8,
-      "type": "雪境光效",
-      "name": "蓬鬆雪丘",
-      "description": "球底增加局部雪丘與細緻積雪，不遮蔽產品主體。",
+      "type": "角色小物",
+      "name": "飛躍馴鹿",
+      "description": "披著深藍金紋圍巾的馴鹿躍進雪境，可自由移往球內上方，與站立的小麋鹿一起迎接聖誕。",
       "benefit": null,
-      "assetNeed": "寫實雪丘透明疊圖，需配合球底弧度",
+      "assetNeed": "微立體紙雕飛躍馴鹿透明圖",
       "layout": {
-        "x": 620,
-        "y": 915,
-        "h": 75
+        "x": 650,
+        "y": 525,
+        "h": 205
       },
-      "atlas": 5,
-      "fixed": false,
-      "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
-      "sourceDay": 8
+      "hint": "今天有一位輕盈的小夥伴，準備躍入你的聖誕世界。"
     },
     {
       "day": 9,
@@ -230,12 +227,12 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 13,
       "type": "雪境光效",
-      "name": "金色雪花",
-      "description": "放入後出現密集金色雪花與閃耀亮點，可和第一場白雪同時展示。",
+      "name": "金色雪花＋星光暖暈",
+      "description": "放入後同時點亮金色雪花、柔和呼吸暖光與閃爍星芒，可和第一場白雪一起展示。",
       "benefit": null,
-      "assetNeed": "獨立金色雪花粒子，不需產品圖片",
+      "assetNeed": "金色雪花粒子與暖光、星芒組合效果",
       "effect": "goldSnow",
-      "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
+      "hint": "今天把金色雪花與溫暖星光，一起收藏進雪境。",
       "sourceDay": 13
     },
     {
@@ -285,17 +282,16 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 16,
       "type": "聖誕造景",
-      "name": "聖誕心意禮盒",
-      "description": "把一份繫著金色緞帶的聖誕心意放進雪境，留下溫暖的小驚喜。",
+      "name": "聖誕襪子",
+      "description": "把奶油白襪口、香檳金紋樣的紅色聖誕襪掛進雪境，自由擺到球內喜歡的位置。",
       "benefit": null,
-      "assetNeed": "沿用金色緞帶禮盒透明造景",
+      "assetNeed": "微立體紙雕紅白聖誕襪透明圖",
       "layout": {
-        "x": 900,
-        "y": 895,
-        "h": 145
+        "x": 845,
+        "y": 680,
+        "h": 165
       },
-      "atlas": 1,
-      "hint": "今天有一份小小心意，等待你放進雪境。"
+      "hint": "一隻盛裝期待的聖誕襪，等你掛進自己的冬日世界。"
     },
     {
       "day": 17,
@@ -331,14 +327,18 @@ window.DYSON_GAME_CONFIG = {
     },
     {
       "day": 19,
-      "type": "雪境光效",
-      "name": "星光暖暈",
-      "description": "放入後點亮呼吸暖光與清晰星芒，獨立於街燈、樹木及產品運作。",
+      "type": "聖誕造景",
+      "name": "拐杖糖＋糖果雨",
+      "description": "放入紅白拐杖糖，小糖果與迷你拐杖糖就會從球頂繽紛飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
       "benefit": null,
-      "assetNeed": "暖光與閃爍效果，不需產品圖片",
-      "effect": "warmth",
-      "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
-      "sourceDay": 19
+      "assetNeed": "微立體紙雕拐杖糖透明圖及糖果雨粒子",
+      "hint": "今天有一場甜甜的聖誕糖果雨，等待你親手開啟。",
+      "ambient": "candyRain",
+      "layout": {
+        "x": 430,
+        "y": 835,
+        "h": 225
+      }
     },
     {
       "day": 20,
@@ -649,7 +649,8 @@ window.DYSON_GAME_CONFIG = {
       },
       "hint": "送給你的限定小驚喜。"
     }
-  ]
+  ],
+  "sceneRevision": "20261022-snow-candy-v26"
 };
 
 window.DYSON_ASSETS = {
@@ -660,14 +661,14 @@ window.DYSON_ASSETS = {
     "5": "./assets/images/products/hd19-snowglobe.png",
     "20": "./assets/images/products/bp10-snowglobe.png",
     "15": "./assets/images/products/hj10-snowglobe.png",
-    "16": "./assets/images/scene/day-03-ribbon-gift.webp",
+    "16": "./assets/images/scene/day-16-christmas-stocking.webp",
     "10": "./assets/images/products/sv50-snowglobe.png",
     "2": "./assets/images/scene/day-02-fir-tree.webp",
     "3": "./assets/images/scene/day-03-ribbon-gift.webp",
     "4": "./assets/images/scene/day-04-christmas-house.webp",
     "6": "./assets/images/scene/day-06-snowman.webp",
     "7": "./assets/images/scene/day-07-christmas-bauble.webp",
-    "8": "./assets/images/scene/day-08-snow-mound.webp",
+    "8": "./assets/images/scene/day-08-leaping-reindeer.webp",
     "9": "./assets/images/scene/day-09-street-lamp.webp",
     "11": "./assets/images/scene/day-11-reindeer.webp",
     "12": "./assets/images/scene/day-12-christmas-tree.webp",
@@ -677,7 +678,8 @@ window.DYSON_ASSETS = {
     "21": "./assets/images/scene/day-21-christmas-post-office.webp",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp",
     "23": "./assets/images/scene/day-23-santa-claus.webp",
-    "24": "./assets/images/scene/day-24-christmas-star.webp"
+    "24": "./assets/images/scene/day-24-christmas-star.webp",
+    "19": "./assets/images/scene/day-19-candy-cane.webp"
   },
   "artDirection": {
     "mode": "Built-in image_gen",
@@ -5852,5 +5854,6 @@ window.DYSON_ASSETS = {
     "108": "./assets/images/bonus/bonus-red-panda-tree.png?v=20261022-natural-v1",
     "109": "./assets/images/bonus/bonus-otter-shell.png?v=20261022-v21",
     "110": "./assets/images/bonus/bonus-fox-snow-dive.png?v=20261022-natural-v1"
-  }
+  },
+  "sceneRevision": "20261022-snow-candy-v26"
 };

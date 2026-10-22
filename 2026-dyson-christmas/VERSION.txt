@@ -1,15 +1,14 @@
 2026 Dyson 聖誕收藏
-活動設定版本：25
-Apps Script：DysonProgress.gs v6（已部署第 6 版者本次不需重部署）
-完整包：20261022-v25
+活動設定版本：26
+Apps Script：DysonProgress.gs v6（本次不需更新部署）
+完整包：20261022-v26
 資料夾：2026-dyson-christmas
-本次更新：補齊 HJ10 文案，四款產品名稱、介紹與特色同步
-限定收藏圖片：assets/images/bonus/
-開場影片：assets/video/welcome.mp4（6 秒、保留畫質並啟用 fast start）
-分享網址：https://hlh.tw/2026-dyson-christmas
+本次更新：漸進積雪與揚雪、金雪暖暈合併、飛躍馴鹿、聖誕襪與拐杖糖雨
+新增場景素材：assets/images/scene/
+素材提示：scene-prompts.md
 
 核心檔案 SHA-256：
-index.html 05c7f6cae499d3ef58d3190efd623b6845323e4d73d69c7f6402005f808b9a0a
-assets/js/config.js 3d1c25b814360b19fd8d2bee6752ab698430d20961ac9c96751484fd771fbab1
-assets/js/app.js 2647bfb72146f99c59208a150cabc1c4ae99bb2a12474d70ee50317c68470f12
+index.html e4aa50dda82e601bf7b636b1e1ed7c4810fd614fe65f46835d4e89413325c421
+assets/js/config.js f08341cb9ae1f82f5f1495d50cb1469cec1f90b00721e4a2cf4bc3de4468ddb5
+assets/js/app.js f4c028055f041a043b8355b00e11e5b8433aef13afddf3d0764735d1fce9fb94
 assets/css/style.css 1399fa985bab3a4a6c4bee85673055df124e219fc785684a703552fa046a46be
