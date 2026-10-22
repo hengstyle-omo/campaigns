@@ -386,6 +386,8 @@ if(!safeRead(sceneCopyKey,false)){
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(sceneCopyKey,true);
 }
 
+const stockingCopyKey=STORAGE_PREFIX+'stocking-row-v27';
+if(!safeRead(stockingCopyKey,false)){delete settings[16];safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(stockingCopyKey,true);}
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
@@ -486,7 +488,7 @@ function togglePlacement(d,{fromCollection=false}={}){
   const placed=!isPlaced(d);state().placement[d]=placed;
   if(!placed&&selectedDay===d)selectItem(null);
   if(Number(d)===25&&!placed)stopShow(false);
-  persist();renderUI({placementDay:d});if($('item-dialog').open)renderItemDialog();drawFrame(0,performance.now());
+  persist();renderUI({placementDay:d});if($('item-dialog').open){if(placed&&Number(currentModalDay)===Number(d))closeDialog('item-dialog');else renderItemDialog();}drawFrame(0,performance.now());
   status(`「${item(d).name}」已${placed?'放入':'移出'}水晶球。`);
   if(Number(d)===25&&placed)startShow({scrollToGlobe:!fromCollection});
 }
@@ -909,19 +911,20 @@ function drawLooseSnow(target,depth,time,airflow=0,shakePower=0){
   }
   target.restore();
 }
-function drawCandy(target,px,py,size,angle,kind){
+const CANDY_COLORS=[['#cf414b','#ffaaa3','#962b46'],['#269769','#a2e0a4','#13573b'],['#56a9d1','#b9ebff','#2b658f'],['#a976cc','#e1c2f1','#67468f'],['#e8ae44','#fff0a1','#b77728']];
+function drawCandy(target,px,py,size,angle,kind,colorIndex=0){
   target.save();target.translate(px,py);target.rotate(angle);target.scale(size/24,size/24);
-  const cream='#fff4db',red='#cf414b',gold='#ecc781';
+  const cream='#fff4db',gold='#ecc781',[accent,light,dark]=CANDY_COLORS[colorIndex%CANDY_COLORS.length];
   if(kind===1){
     target.lineCap='round';target.lineJoin='round';target.strokeStyle=gold;target.lineWidth=7;target.beginPath();target.moveTo(-3,13);target.lineTo(-3,-5);target.arc(3,-5,6,Math.PI,0);target.stroke();
-    target.strokeStyle=cream;target.lineWidth=5;target.stroke();target.strokeStyle=red;target.lineWidth=2;
+    target.strokeStyle=cream;target.lineWidth=5;target.stroke();target.strokeStyle=accent;target.lineWidth=2;
     for(const y of [-5,2,9]){target.beginPath();target.moveTo(-5,y-1);target.lineTo(-1,y+1);target.stroke();}
     target.beginPath();target.moveTo(1,-11);target.lineTo(5,-9);target.stroke();
   }else if(kind===0){
     target.fillStyle=gold;for(const side of [-1,1]){target.beginPath();target.moveTo(side*6,0);target.lineTo(side*14,-6);target.lineTo(side*12,6);target.closePath();target.fill();}
-    const g=target.createLinearGradient(-8,-7,8,7);g.addColorStop(0,'#ffaaa3');g.addColorStop(.4,red);g.addColorStop(1,'#962b46');target.fillStyle=g;target.beginPath();target.ellipse(0,0,9,7,0,0,Math.PI*2);target.fill();target.strokeStyle=cream;target.lineWidth=2;target.beginPath();target.moveTo(-3,-5);target.lineTo(3,5);target.stroke();
+    const g=target.createLinearGradient(-8,-7,8,7);g.addColorStop(0,light);g.addColorStop(.4,accent);g.addColorStop(1,dark);target.fillStyle=g;target.beginPath();target.ellipse(0,0,9,7,0,0,Math.PI*2);target.fill();target.strokeStyle=cream;target.lineWidth=2;target.beginPath();target.moveTo(-3,-5);target.lineTo(3,5);target.stroke();
   }else{
-    target.fillStyle=cream;target.beginPath();target.arc(0,0,9,0,Math.PI*2);target.fill();target.strokeStyle=red;target.lineWidth=2;
+    target.fillStyle=cream;target.beginPath();target.arc(0,0,9,0,Math.PI*2);target.fill();target.strokeStyle=accent;target.lineWidth=2;
     for(let k=0;k<5;k++){target.rotate(Math.PI*2/5);target.beginPath();target.moveTo(0,0);target.quadraticCurveTo(6,-2,8,1);target.stroke();}
     target.fillStyle=gold;target.beginPath();target.arc(0,0,2,0,Math.PI*2);target.fill();
   }
@@ -931,7 +934,7 @@ function drawCandyRain(target,time){
   for(let k=0;k<38;k++){
     const phase=(time/5+k*.6180339)%1,px=275+(k*137%690)+Math.sin(time*Math.PI*2/5+k)*17,py=195+phase*720;
     target.save();target.globalAlpha=.88*Math.min(1,(915-py)/65,phase*15);
-    drawCandy(target,px,py,21+k%4*4,time*Math.PI*2/5*(k%2?1:-1)+k,k%3);target.restore();
+    drawCandy(target,px,py,21+k%4*4,time*Math.PI*2/5*(k%2?1:-1)+k,k%3,k%5);target.restore();
   }
 }
 
@@ -1041,10 +1044,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,sceneRevision:BASE_CONFIG.sceneRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}

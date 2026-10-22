@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 26,
+  "version": 27,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -282,14 +282,14 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 16,
       "type": "聖誕造景",
-      "name": "聖誕襪子",
-      "description": "把奶油白襪口、香檳金紋樣的紅色聖誕襪掛進雪境，自由擺到球內喜歡的位置。",
+      "name": "紅綠聖誕襪串",
+      "description": "一排紅綠交錯的聖誕襪掛在金色細繩上，奶油白襪口與香檳金雪花，為雪境添上溫暖的節慶裝飾。可自由拖曳至球內喜歡的位置。",
       "benefit": null,
-      "assetNeed": "微立體紙雕紅白聖誕襪透明圖",
+      "assetNeed": "微立體紙雕紅綠聖誕襪串透明圖",
       "layout": {
-        "x": 845,
+        "x": 650,
         "y": 680,
-        "h": 165
+        "h": 140
       },
       "hint": "一隻盛裝期待的聖誕襪，等你掛進自己的冬日世界。"
     },
@@ -329,7 +329,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 19,
       "type": "聖誕造景",
       "name": "拐杖糖＋糖果雨",
-      "description": "放入紅白拐杖糖，小糖果與迷你拐杖糖就會從球頂繽紛飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
+      "description": "放入紅白拐杖糖，紅、綠、藍、紫、金色小糖果與迷你拐杖糖就會從球頂繽紛飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
       "benefit": null,
       "assetNeed": "微立體紙雕拐杖糖透明圖及糖果雨粒子",
       "hint": "今天有一場甜甜的聖誕糖果雨，等待你親手開啟。",
@@ -650,7 +650,8 @@ window.DYSON_GAME_CONFIG = {
       "hint": "送給你的限定小驚喜。"
     }
   ],
-  "sceneRevision": "20261022-snow-candy-v26"
+  "sceneRevision": "20261022-snow-candy-v26",
+  "stockingRevision": "20261022-red-green-row-v27"
 };
 
 window.DYSON_ASSETS = {
@@ -661,7 +662,7 @@ window.DYSON_ASSETS = {
     "5": "./assets/images/products/hd19-snowglobe.png",
     "20": "./assets/images/products/bp10-snowglobe.png",
     "15": "./assets/images/products/hj10-snowglobe.png",
-    "16": "./assets/images/scene/day-16-christmas-stocking.webp",
+    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp",
     "10": "./assets/images/products/sv50-snowglobe.png",
     "2": "./assets/images/scene/day-02-fir-tree.webp",
     "3": "./assets/images/scene/day-03-ribbon-gift.webp",
