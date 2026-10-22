@@ -293,3 +293,25 @@ button,input,textarea,select{line-height:1.5}
 .sim-visits-label input{width:70px;padding:6px;background:#0d1927;color:var(--text);border:1px solid var(--line);border-radius:5px;font:inherit}
 .sim-visits-label span{font-size:12px;color:var(--muted)}
 @media(max-width:420px){.reward-product{gap:10px}.reward-product>canvas,.reward-product-teaser{width:78px;flex-basis:78px;height:110px}}
+
+/* Single-day simulation and ten distinct participation dates. */
+.sim-date-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--text);margin:10px 0}
+.sim-date-label input{min-width:0;max-width:190px;padding:8px 10px;border:1px solid #b38d5066;border-radius:6px;background:#111b29;color:var(--gold);font:inherit;color-scheme:dark}
+.participation{min-width:0;margin:6px 0 2px;padding:18px;border:1px solid #b38d5066;border-radius:9px;background:linear-gradient(145deg,#d8ad6110,#101925)}
+.participation-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.participation-heading h3{font-size:20px;font-weight:500;color:var(--text);margin:0}
+.participation-count{color:var(--gold);font-size:16px;font-weight:700;white-space:nowrap}
+.participation-message{font-size:14px;color:#e2c694;line-height:1.7;margin:8px 0 14px}
+.participation-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;list-style:none;padding:0;margin:0}
+.participation-cell{min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px dashed #53607388;border-radius:7px;background:#0e1621;color:#8e9aab}
+.participation-check{display:grid;place-items:center;width:25px;height:25px;border:1px solid #64718777;border-radius:50%;font-size:13px;line-height:1}
+.participation-date{font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.participation-cell.signed{border:1px solid #d9b372;background:linear-gradient(140deg,#c99b4938,#d4ac6312);color:#f3d5a2;box-shadow:inset 0 0 18px #d7ac5c0a}
+.participation-cell.signed .participation-check{background:#dfbd7e;color:#261c10;border-color:#e9ca91;font-size:16px;font-weight:700}
+.participation.complete{border-color:#dfbd7e}
+.participation-note,.participation-extra{font-size:13px;line-height:1.7;color:#aeb7c4;margin:12px 0 0}
+.participation-extra{color:var(--gold)}
+.participation-history{font-size:13px;color:#b7bfca;margin-top:9px;line-height:1.8}
+.participation-history summary{cursor:pointer;color:var(--gold)}
+.participation-history p{margin-top:6px;overflow-wrap:anywhere}
+@media(max-width:420px){.participation{padding:14px 12px}.participation-grid{gap:6px}.participation-cell{min-height:68px}.participation-date{font-size:12px}.participation-heading h3{font-size:18px}.sim-date-label{flex-wrap:wrap}.sim-date-label input{flex:1}}

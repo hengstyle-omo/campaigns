@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 19,
+  "version": 20,
   "visualStyle": "paper-relief-v1",
   "scheduleRevision": "20261021-four-products-v2",
   "year": 2026,

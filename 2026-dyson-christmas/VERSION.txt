@@ -1,13 +1,15 @@
 2026 Dyson 聖誕收藏
-活動設定版本：19
-完整包：20261022-v19
+活動設定版本：20
+完整包：20261022-v20
 資料夾：2026-dyson-christmas
+本次更新：單選日期模擬、聖誕足跡 10 格與實際參加日期
 限定收藏圖片：assets/images/bonus/（10 款動物，指定 Email 授權）
 12/10：SV50 筆型吸塵器
 12/16：聖誕心意禮盒
 12/20：BP10 空氣清淨機
 
 核心檔案 SHA-256：
-index.html 4920930d5eb12b233fea4fff506285912868b3dc80d4650ca17b30c77e26a8df
-assets/js/config.js accf5021ee05ae80bcda89f44ca56684d31468248a3fb3c113d4129baac0c882
-assets/js/app.js 353d4684bba01d7b73948c004c71ef9e4ecbea2f5032f2d005548f9cc8ca2c34
+index.html a0503f2e7f7e3287137bdb38c6d6aad6a7da80a767b02de789d4c65392712a71
+assets/js/config.js 481aa911bb26eeb9140e60eee789e208a4fa62e7885e11fbcba0010fbe267a69
+assets/js/app.js 86c523d21c8fb7a66f10d4636289e6e0b5fe7c4fe9cb3671ae9eaf06c572f969
+assets/css/style.css 8070f0be956d17fc8cdcbe2246f4a65e4c4955d00fe782f51506653f4b48e7aa

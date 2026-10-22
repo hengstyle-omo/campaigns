@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261022-bonus-folder-v19"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261022-signin-date-v20"></head>
 <body>
 <header class="site-header"><a class="brand" href="#"><img id="brand-logo" class="brand-logo" src="./assets/images/brand/dyson-logo-white.png" alt="Dyson" width="1702" height="591" fetchpriority="high"><span>FESTIVE SNOW GLOBE</span></a><nav aria-label="功能選單"><button id="progress-open" type="button">保存進度</button><button id="vouchers-open">我的禮遇 <span id="voucher-count">0</span></button><button id="sound-toggle" aria-pressed="false" aria-label="開啟音效">音效 關</button></nav></header>
 <div id="preview-banner" class="preview-banner" hidden>企劃預覽模式 · 測試收藏不計入正式紀錄 <button id="preview-exit">回到正式日期</button></div>
@@ -22,8 +22,8 @@
    <div class="calendar-heading"><div><p class="eyebrow">DECEMBER 01 — 25</p><h2>聖誕倒數日曆</h2></div><div class="calendar-tools"><span id="today-label" class="date-pill"></span><button id="quick-sim-toggle" type="button" aria-expanded="false" aria-controls="quick-sim-panel">模擬日期</button></div></div>
    <div id="today-card" class="today-card"><p id="today-kicker" class="eyebrow"></p><h3 id="today-title"></h3><p id="today-description"></p><button id="today-open" class="gold-button"></button></div>
    <section id="quick-sim-panel" class="quick-sim-panel" aria-label="模擬日期" hidden>
-    <div class="sim-panel-heading"><span>多日日期模擬</span><span id="sim-selection-count"></span></div>
-    <fieldset class="sim-multiselect"><legend>勾選要查看的日期</legend><div class="sim-selection-toolbar"><button id="sim-select-all" type="button">全選</button><button id="sim-select-none" type="button">取消全選</button></div><div id="sim-date-grid" class="sim-date-grid"></div><label class="sim-visits-label" for="sim-visit-count">模擬參與天數<input id="sim-visit-count" type="number" min="0" max="25" value="0" inputmode="numeric"><span>只測試 10 天禮遇，不計入正式參與。</span></label><p class="sim-grid-hint">全選會清空球內測試擺放，保留已開啟收藏與位置設定。個別取消再勾選則恢復原有擺放。</p></fieldset>
+    <div class="sim-panel-heading"><span>日期模擬 · 台灣時間</span></div>
+    <label class="sim-date-label" for="sim-date">模擬今天是<input id="sim-date" type="date" value="2026-12-01" min="2026-11-30" max="2026-12-26"></label>
     <p id="quick-sim-note" role="status" aria-live="polite"></p>
     <div class="sim-panel-footer"><button id="quick-sim-done" type="button">完成／收起</button><button id="quick-sim-exit" type="button">結束模擬</button></div>
    </section>
@@ -60,7 +60,7 @@
 
 
 
-<script src="./assets/js/config.js?v=20261022-bonus-folder-v19"></script>
+<script src="./assets/js/config.js?v=20261022-signin-date-v20"></script>
 <script src="./assets/js/media-codecs.js"></script>
-<script src="./assets/js/app.js?v=20261022-bonus-folder-v19"></script>
+<script src="./assets/js/app.js?v=20261022-signin-date-v20"></script>
 </body></html>
