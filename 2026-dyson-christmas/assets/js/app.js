@@ -127,17 +127,30 @@ function cloudCache(){
   if(canPreview()&&cloud.previewLoaded)safeWrite(previewCacheKey(cloud.email),{catalogRevision:BASE_CONFIG.scheduleRevision,pending:previewPending()});
 }
 function previewPersist(){safeWrite(STORAGE_PREFIX+'preview',preview);cloudScheduleSave();}
+let cloudFeedbackWasSaving=false,cloudSavedUntil=0,cloudFeedbackTimer=null;
 function renderCloud(){
   const active=cloudEnabled(),previewAllowed=canPreview(),busy=cloud.loading||!!cloud.saving||!!cloud.marketingSaving;
   const pending=cloud.ready&&(Object.keys(cloudDiff(live,cloud.synced)).length>0||Object.keys(previewPending()).length>0);
-  $('progress-open').textContent=cloud.ready?(cloud.error?'進度待同步':cloud.saving||cloud.marketingSaving||pending?'進度保存中':'我的進度'):'保存進度';
-  $('progress-open').setAttribute('aria-label',cloud.ready?'查看 Email 與收藏進度':'填 Email 保存收藏進度');
+  const saving=!!cloud.saving||!!cloud.marketingSaving||pending;
+  if(cloudFeedbackWasSaving&&!saving&&cloud.ready&&!cloud.error&&!cloud.loading){cloudSavedUntil=Date.now()+1800;clearTimeout(cloudFeedbackTimer);cloudFeedbackTimer=setTimeout(renderCloud,1850);}
+  cloudFeedbackWasSaving=saving;
+  if(cloud.error||!cloud.ready)cloudSavedUntil=0;
+  const saved=cloudSavedUntil>Date.now()&&!saving&&!cloud.loading;
+  $('progress-open').textContent=cloud.loading?'讀取中…':cloud.ready?(cloud.error?'進度待同步':saving?'保存中…':saved?'✓ 已保存':'保存進度'):'讀取進度';
+  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);
+  $('progress-open').classList.toggle('is-saved',saved);
+  $('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
+  $('progress-open').setAttribute('aria-label',cloud.ready?'查看與保存 Email 收藏進度':'輸入 Email 讀取進度');
+  $('progress-submit').textContent=busy?(cloud.loading?'讀取中…':'保存中…'):'保存';
+  $('progress-submit').classList.toggle('is-busy',busy);
+  $('progress-form').setAttribute('aria-busy',String(busy));
+  $('progress-message').classList.toggle('is-busy',busy||saving&&!cloud.error);
   $('progress-email-label').textContent=cloud.ready?cloud.email:'';
   $('progress-current').hidden=!cloud.ready;$('progress-submit').disabled=busy;$('progress-switch').disabled=busy;
   $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;
   $('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
-  $('progress-retry').hidden=!cloud.error||!cloud.ready||!active;
-  $('progress-message').textContent=cloud.error||(cloud.loading?'正在載入你的收藏…':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus?cloud.consentStatus:cloud.saving||pending?'正在保存進度，請稍候…':cloud.ready?(active?(previewAllowed?(cloud.previewLoaded?`正式已收藏 ${Object.keys(live.claimed).length}／25；模擬已收藏 ${Object.keys(cloud.previewSynced.state.claimed).length}／25，已保存至 Preview_${YEAR}。`:'正式進度已連接；請更新 Apps Script 以啟用模擬同步。'):'收藏已連接 Google Sheet。'):'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
+  $('progress-retry').hidden=!cloud.error||!active;
+  $('progress-message').textContent=cloud.error||(cloud.loading?'正在找回你的聖誕收藏…':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus?cloud.consentStatus:cloud.saving||pending?'正在保存進度，請稍候…':cloud.ready?(active?(previewAllowed?(cloud.previewLoaded?`正式已收藏 ${Object.keys(live.claimed).length}／25；模擬已收藏 ${Object.keys(cloud.previewSynced.state.claimed).length}／25，已保存至 Preview_${YEAR}。`:'正式進度已連接；請更新 Apps Script 以啟用模擬同步。'):'收藏已連接 Google Sheet。'):'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
   for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!previewAllowed;
   if(!previewAllowed){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
   $('cloud-settings').hidden=!previewAllowed;
@@ -279,11 +292,11 @@ async function saveMarketingConsent(){
   renderCloud();return cloud.marketingSaving;
 }
 $('progress-open').addEventListener('click',openProgress);
-$('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();else{cloud.consentStatus='行銷選擇尚未保存，請填寫 Email 後按「保存並接續收藏」。';renderCloud();}});
+$('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();else{cloud.consentStatus='行銷選擇尚未保存，請填寫 Email 後按「保存」。';renderCloud();}});
 $('progress-form').addEventListener('submit',async event=>{
   event.preventDefault();try{if(await cloudConnect($('progress-email').value,cloud.marketingDirty?cloud.marketingDraft:undefined)){const day=cloud.pendingDay;cloud.pendingDay=null;closeDialog('progress-dialog');if(day&&!previewDate)await openDay(day);}}catch(error){$('progress-message').textContent=error.message;}
 });
-$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect(cloud.email);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();renderCloud();});
+$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();renderCloud();});
 $('progress-switch').addEventListener('click',async()=>{
   if(cloud.marketingSaving&&!(await cloud.marketingSaving))return;
   if(!(await cloudFlush()))return;
@@ -399,6 +412,38 @@ function persist(){if(previewDate)previewPersist();else{cloudCache();cloudSchedu
 function status(message){$('status').textContent=message;}
 function closeDialog(id){const d=$(id);if(d.open)d.close();}
 function showDialog(id){const d=$(id);if(!d.open)d.showModal();}
+
+// Intro media is requested only on the first visit or an explicit replay.
+const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
+let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true;
+function welcomeMessage(message){$('welcome-status').textContent=message;}
+async function playWelcome(){
+  const video=$('welcome-video'),attempt=++welcomeAttempt;
+  $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
+  try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始收藏');}
+  catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
+}
+function openWelcome(){
+  if($('welcome-dialog').open)return;
+  welcomeCleaned=false;const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
+  video.poster='./assets/video/welcome-poster.webp';video.src='./assets/video/welcome.mp4';video.currentTime=0;
+  document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
+  welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始收藏。');}},8000);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始收藏。');}
+  else playWelcome();
+}
+function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
+function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
+$('welcome-open').addEventListener('click',openWelcome);
+$('welcome-skip').addEventListener('click',finishWelcome);
+$('welcome-start').addEventListener('click',finishWelcome);
+$('welcome-play').addEventListener('click',playWelcome);
+$('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始收藏');});
+$('welcome-video').addEventListener('ended',()=>{$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('準備好了嗎？一起開始收藏聖誕。');});
+$('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始收藏。');});
+$('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
+$('welcome-dialog').addEventListener('close',cleanupWelcome);
+
 function chime(){if(!sound)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=chime.context??=new AC();if(ac.state==='suspended')ac.resume();[659.25,830.61,987.77].forEach((hz,k)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=hz;g.gain.setValueAtTime(0,ac.currentTime+k*.08);g.gain.linearRampToValueAtTime(.035,ac.currentTime+k*.08+.015);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+k*.08+.8);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+k*.08);o.stop(ac.currentTime+k*.08+.85);});}catch{}}
 function describeState(d){return {future:'尚未開啟',current:'可領取',missed:'已錯過',owned:'已收藏'}[dayState(d)];}
 function getLayout(d){const def=item(d).layout;const saved=state().layouts[d];return saved?{...def,...saved}:{...def,scale:1};}
@@ -1111,6 +1156,7 @@ function updateCardMediaControls(){
   for(const id of ['card-recipient','card-message','card-signature','card-format','card-bgm'])$(id).disabled=busy;
   document.querySelectorAll('[data-card-preset]').forEach(b=>b.disabled=busy);
   $('card-export-progress').hidden=!cardExportBusy;
+  $('card-making').hidden=!cardExportBusy;$('card-making').parentElement.setAttribute('aria-busy',String(cardExportBusy));
   $('card-format-note').textContent=format==='gif'?'無聲、5 秒循環 · 720 × 1200。文字獨立繪製，只調整圖片細節控制容量。':format==='png'?'靜態卡片，不含聲音。':cardMP4Support===false?'此瀏覽器目前無法產生 H.264／AAC MP4，仍可製作 GIF 或 PNG；請使用支援的瀏覽器再製作影片。':'5 秒影片 · 720 × 1200。提高文字清晰度與影片畫質，預設聖誕配樂，可加入自己的錄音。';
   $('card-format-note').classList.toggle('card-format-error',format==='mp4'&&cardMP4Support===false);
   if(!navigator.mediaDevices?.getUserMedia)$('card-record-status').textContent='目前環境未提供麥克風；仍可使用預設聖誕配樂。錄音請使用允許麥克風的安全網頁環境。';
@@ -1166,7 +1212,15 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
     x.restore();output.setTransform(1,0,0,1,0,0);output.drawImage(poster,0,0);output.save();output.scale(width/1200,height/2000);cardRoundedRect(output,60,162,1080,1245,16);output.clip();output.drawImage(scene,60,162,1080,1245);output.restore();return frame;
   }};
 }
-function cardProgress(token,percent,message){checkCardJob(token);$('card-progress').value=Math.round(percent);$('card-status').textContent=message;}
+function cardMaking(stage,percent=null){
+  $('card-making-stage').textContent=stage;
+  $('card-making-percent').textContent=percent===null?'':`${Math.round(percent)}%`;
+  if(percent===null)$('card-progress').removeAttribute('value');else $('card-progress').value=Math.round(percent);
+}
+function cardProgress(token,percent,message){
+  checkCardJob(token);$('card-status').textContent=message;
+  cardMaking(percent<5?'準備畫面與聲音':percent>=97?'整理檔案':'製作動畫',percent);
+}
 async function encodeCardGIF(options,token){
   const {GIFEncoder,quantize,applyPalette}=window.DysonMediaCodecs;
   const renderer=createCardMovieRenderer(options.width,options.height,false,options.imageWidth),gif=GIFEncoder(),frames=40;
@@ -1270,7 +1324,7 @@ async function encodeCardMP4WebCodecs(options,audio,token,support){
       await cardEncodingWait(video.flush(),token);if(failure)throw failure;
       cardProgress(token,(n+1)/frames*95,`正在製作 MP4 · ${Math.round((n+1)/frames*100)}%`);await cardYield();
     }
-    checkCardJob(token);muxer.finalize();return new Blob([target.buffer],{type:'video/mp4'});
+    checkCardJob(token);cardMaking('整理檔案');await cardYield();checkCardJob(token);muxer.finalize();return new Blob([target.buffer],{type:'video/mp4'});
   }catch(e){if(token!==cardExportToken)throw cardAbort();throw e;}
   finally{close();renderer?.dispose();if(cardExportStop===close)cardExportStop=null;}
 }
@@ -1288,7 +1342,7 @@ async function encodeCardMP4Recorder(options,audio,mime,token){
     const stopped=new Promise((resolve,reject)=>{recorder.ondataavailable=e=>{if(e.data.size)parts.push(e.data);};recorder.onstop=resolve;recorder.onerror=e=>reject(e.error||new Error('影片錄製失敗。'));});
     await cardEncodingWait(ac.resume(),token);recorder.start(250);source.start();const started=performance.now();
     interval=setInterval(()=>{try{checkCardJob(token);const t=Math.min(CARD_SECONDS,(performance.now()-started)/1000);renderer.draw(t);cardProgress(token,t/CARD_SECONDS*95,`正在製作 MP4 · ${Math.round(t/CARD_SECONDS*100)}%`);}catch(e){renderError=e;stop();}},1000/options.fps);
-    ending=setTimeout(stop,CARD_SECONDS*1000);await cardEncodingWait(stopped,token,CARD_SECONDS*1000+15000);
+    ending=setTimeout(()=>{cardMaking('整理檔案');stop();},CARD_SECONDS*1000);await cardEncodingWait(stopped,token,CARD_SECONDS*1000+15000);
     if(renderError)throw renderError;checkCardJob(token);const blob=new Blob(parts,{type:'video/mp4'});if(!blob.size)throw new Error('影片內容為空，請重新製作。');return blob;
   }catch(e){if(token!==cardExportToken)throw cardAbort();throw e;}
   finally{
@@ -1300,7 +1354,9 @@ async function generateCardMedia(){
   if(cardExportBusy||cardRecordingBusy()||!validateCard().valid||!cardMotionBase)return false;
   const format=cardFormat();if(format==='png')return false;
   const token=++cardExportToken;cardExportBusy=true;clearCardMediaPreview();updateCardButtons();$('card-progress').value=0;
+  cardMaking('準備畫面');$('card-status').textContent='正在製作你的聖誕卡片…';
   try{
+    await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));checkCardJob(token);
     let blob=null,chosen=null;
     if(format==='gif'){
       for(const options of [{width:720,height:1200,colors:175,imageWidth:600},{width:720,height:1200,colors:127,imageWidth:540}]){
@@ -1364,7 +1420,7 @@ function deleteCardRecording(){
 $('card-format').value='mp4';
 $('card-format').addEventListener('change',()=>{renderCardMediaResult();updateCardButtons();$('card-status').textContent=currentCardBlob()?'已切換格式，可以下載或分享。':'按下製作，產生這個格式的 5 秒卡片。';});
 $('card-bgm').addEventListener('change',()=>{invalidateCardMedia('mp4');updateCardButtons();renderCardMediaResult();});
-$('card-generate').addEventListener('click',generateCardMedia);$('card-cancel-export').addEventListener('click',cancelCardExport);
+$('card-generate').addEventListener('click',generateCardMedia);$('card-cancel-export').addEventListener('click',cancelCardExport);$('card-making-cancel').addEventListener('click',cancelCardExport);
 $('card-record').addEventListener('click',startCardRecording);$('card-record-stop').addEventListener('click',stopCardRecording);$('card-record-delete').addEventListener('click',deleteCardRecording);
 $('card-dialog').addEventListener('close',()=>{cancelCardExport();abortCardMicrophone();$('card-voice-preview').pause();$('card-video-preview').pause();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;if(cardRecordPending&&!cardRecorder){abortCardMicrophone();updateCardButtons();}else if(cardRecorder)stopCardRecording();if(cardExportBusy)cancelCardExport();});
@@ -1429,7 +1485,7 @@ async function initialise(){
     await openDatabase();sprites.clear();sceneReady=true;$('scene-loading').hidden=true;renderUI();resize();requestAnimationFrame(loop);
     status(previewDate?'目前為企劃預覽。':'收藏今天以前的禮物，累積參與 10 天解鎖 Dyson 全品項禮遇。');
     if(cloud.email)cloudConnect(cloud.email).catch(()=>{});
-  }catch(e){$('scene-loading').textContent='素材載入失敗，請重新整理活動頁面。';status(e.message);}
+  }catch(e){$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材載入失敗，請重新整理活動頁面。';status(e.message);}
 }
 let currentTrackId=null,musicEnabled=false,musicPlaying=false,musicPlayToken=0,showMusic=false,showResumeTrack=null;
 const TRACKS=ASSETS.music||[],audio=$('music-player');audio.volume=.28;
@@ -1495,5 +1551,6 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,marketingSaving:!!cloud.marketingSaving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0})},Core,claimDay,openDay,setPreview,exitPreview,participationDates,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,capturedAt:()=>cardCapturedAt,shareMetadata:cardShareMetadata,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
+if(!safeRead(welcomeSeenKey,false))openWelcome();
 initialise();
 })();

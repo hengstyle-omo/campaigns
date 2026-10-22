@@ -1,14 +1,15 @@
 2026 Dyson 聖誕收藏
-活動設定版本：21
-Apps Script：DysonProgress.gs v6（行銷同意即時保存，需更新原部署）
-完整包：20261022-v21
+活動設定版本：22
+Apps Script：DysonProgress.gs v6（已部署第 6 版者本次不需重部署）
+完整包：20261022-v22
 資料夾：2026-dyson-christmas
-本次更新：行銷意願保存、三款動物、Merry Christmas 星光秀、5 秒卡片時間軸、台灣時間戳與分享連結
+本次更新：開場介紹影片、讀取與保存文字／動畫、GIF 與 MP4 製作階段與飄雪動畫
 限定收藏圖片：assets/images/bonus/
+開場影片：assets/video/welcome.mp4（6 秒、保留畫質並啟用 fast start）
 分享網址：https://hlh.tw/2026-dyson-christmas
 
 核心檔案 SHA-256：
-index.html e06d34aaf2002dd51cd1ade26d72e43a3ce81ba5916614d8ecc6af9ebe672610
-assets/js/config.js 6120775021aee4df842937cd2f7407c4c1621a176c7ad79861614e933f73d690
-assets/js/app.js 11c71d8416291c3508f8cec0093cb17674dff586187a309cd99a6962fc08e382
-assets/css/style.css e0926b6f2ceda44b82df28c1d472ce603fcd611b77021d562bf3ded60f76cbf5
+index.html e2daf1d23d741fb1f7f57bacfaeaa0a0442660074a091ca447a01c256db70186
+assets/js/config.js b92cb3b5d9292b470cd908002422bb8397bbc4e3c01fb20468cbe745b17ce096
+assets/js/app.js cabdebcfb1c1962d256c6d79582e5a1a4085c5078280ae9be411d51483f3300f
+assets/css/style.css 05c543b11fcf8d7aa9311abfbda5348cff381decfbf30ee9bdda65dc733234c8
