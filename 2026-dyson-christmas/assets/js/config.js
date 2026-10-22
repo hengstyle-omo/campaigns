@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 27,
+  "version": 28,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -372,10 +372,10 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 21,
       "type": "聖誕造景",
-      "name": "聖誕郵局",
-      "description": "加入一間小型郵局，形成節慶街景。",
+      "name": "聖誕百貨",
+      "description": "暖光櫥窗裡擺滿小禮物與聖誕樹，加入一間紙雕聖誕百貨，點亮節慶街景。",
       "benefit": null,
-      "assetNeed": "獨立郵局小屋去背圖",
+      "assetNeed": "分層紙雕聖誕百貨透明 WebP",
       "layout": {
         "x": 370,
         "y": 785,
@@ -404,10 +404,10 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 23,
       "type": "角色小物",
-      "name": "聖誕老公公",
-      "description": "加入提著小禮物的聖誕老人，迎接平安夜。",
+      "name": "橘貓版聖誕老公公",
+      "description": "穿上紅色聖誕裝的橘貓，背著禮物袋、抱著小禮物，帶著笑容迎接平安夜。",
       "benefit": null,
-      "assetNeed": "全身聖誕老人去背圖，比例配合麋鹿",
+      "assetNeed": "分層紙雕橘貓聖誕老人透明 WebP",
       "layout": {
         "x": 440,
         "y": 870,
@@ -556,8 +556,8 @@ window.DYSON_GAME_CONFIG = {
       "bonus": true,
       "type": "限定趣味收藏",
       "name": "這盒裝得下",
-      "animal": "橘貓",
-      "description": "硬塞進太小的禮物盒，肚子和尾巴露在外面。",
+      "animal": "灰色英短",
+      "description": "圓臉灰色英短硬塞進太小的禮物盒，肚子和尾巴露在外面。",
       "layout": {
         "x": 475,
         "y": 895,
@@ -651,7 +651,8 @@ window.DYSON_GAME_CONFIG = {
     }
   ],
   "sceneRevision": "20261022-snow-candy-v26",
-  "stockingRevision": "20261022-red-green-row-v27"
+  "stockingRevision": "20261022-red-green-row-v27",
+  "paperCollectionRevision": "20261022-deer-paper-v28"
 };
 
 window.DYSON_ASSETS = {
@@ -659,28 +660,28 @@ window.DYSON_ASSETS = {
   "visualStyle": "paper-relief-v1",
   "custom": {},
   "sprites": {
-    "5": "./assets/images/products/hd19-snowglobe.png",
-    "20": "./assets/images/products/bp10-snowglobe.png",
-    "15": "./assets/images/products/hj10-snowglobe.png",
-    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp",
-    "10": "./assets/images/products/sv50-snowglobe.png",
     "2": "./assets/images/scene/day-02-fir-tree.webp",
     "3": "./assets/images/scene/day-03-ribbon-gift.webp",
     "4": "./assets/images/scene/day-04-christmas-house.webp",
+    "5": "./assets/images/products/hd19-snowglobe.png",
     "6": "./assets/images/scene/day-06-snowman.webp",
     "7": "./assets/images/scene/day-07-christmas-bauble.webp",
-    "8": "./assets/images/scene/day-08-leaping-reindeer.webp",
+    "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp",
     "9": "./assets/images/scene/day-09-street-lamp.webp",
+    "10": "./assets/images/products/sv50-snowglobe.png",
     "11": "./assets/images/scene/day-11-reindeer.webp",
     "12": "./assets/images/scene/day-12-christmas-tree.webp",
     "14": "./assets/images/scene/day-14-christmas-wreath.webp",
+    "15": "./assets/images/products/hj10-snowglobe.png",
+    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp",
     "17": "./assets/images/scene/day-17-gingerbread.webp",
     "18": "./assets/images/scene/day-18-clock-tower.webp",
-    "21": "./assets/images/scene/day-21-christmas-post-office.webp",
+    "19": "./assets/images/scene/day-19-candy-cane.webp",
+    "20": "./assets/images/products/bp10-snowglobe.png",
+    "21": "./assets/images/scene/day-21-department-store-paper-v28.webp",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp",
-    "23": "./assets/images/scene/day-23-santa-claus.webp",
-    "24": "./assets/images/scene/day-24-christmas-star.webp",
-    "19": "./assets/images/scene/day-19-candy-cane.webp"
+    "23": "./assets/images/scene/day-23-orange-cat-santa-paper-v28.webp",
+    "24": "./assets/images/scene/day-24-christmas-star.webp"
   },
   "artDirection": {
     "mode": "Built-in image_gen",
@@ -774,15 +775,15 @@ window.DYSON_ASSETS = {
         "mode": "built-in imagegen style-transfer",
         "prompt": "Use case: style-transfer. Asset type: one transparent miniature product sprite for a Christmas snow-globe game. Input image 1 is the exact product EDIT TARGET. Image 2 (paper-relief Christmas house) is a material and lighting STYLE REFERENCE ONLY; do not include it. Image 3 (HJ10 purifier) sets the finished product rendering style; do not include or merge that product. Change only the rendering finish to a refined subtly three-dimensional collectible: softly beveled silhouette, satin matte body, extremely fine paper-grain texture, clean embossed small details, soft warm ivory key light, a thin restrained champagne rim highlight, realistic sculpted volume. Preserve the EDIT TARGET's exact recognizable industrial design, outline, proportions, camera angle, original product colors and unique controls. Keep its real hardware structure; do not invent attachments. Single upright product centered, complete, with comfortable transparent margins and about 85% image-height occupancy. Truly TRANSPARENT alpha around and within all openings. No scenery, background, platform, pedestal, snow, Christmas ornaments, house, trees, labels, watermarks or extra products. No external glow cloud: contrast comes from softly lit product edges, not an opaque surrounding shape. Avoid flat vector/cartoon simplification and avoid changing all colors to gold. Subject-specific invariants: a Dyson HD19 travel hair dryer seen from the provided front view. Preserve the round dark navy head with a large EMPTY circular opening, the slender navy cylindrical handle, copper/gold filter sleeve and buttons, and short straight black cord segment at the bottom. The entire central aperture must remain transparent, never filled with a disk or invented fan. Keep the original head-to-handle ratio."
       },
-      "15": {
-        "model": "HJ10",
-        "mode": "built-in imagegen style-transfer",
-        "prompt": "Use case: style-transfer. Asset type: transparent product sprite for a Christmas snow-globe game. Image 1 is the exact EDIT TARGET: Dyson HJ10 HushJet compact purifier, black cylindrical body and glacier-teal top nozzle. Image 2 is a STYLE REFERENCE ONLY: a warm, subtly three-dimensional layered paper-relief Christmas house. Do not include the house. Transform ONLY the product rendering finish into a refined miniature collectible with softly beveled edges, satin matte surfaces, very fine paper-grain texture, delicate sculpted depth, soft warm ivory key light and restrained pale champagne edge highlights. Keep the exact HJ10 silhouette, proportions, camera angle, short broad cylindrical body, star-shaped radial nozzle with the same number of lobes, teal collar, black perforated lower filter, tiny front screen and buttons. Keep the distinct teal/black colors; do not recolor it navy and gold. The product must remain instantly recognizable as the supplied real appliance. Treat the perforations as clean simplified embossed details, not random texture. One complete upright product, centered, filling about 85% of image height, with clear padding on all sides. GENUINELY TRANSPARENT alpha background, including around the feet; remove source floor remnants and white artifacts. Crisp complete contour, no cropping, no pedestal, no scene, no snow, no stars, no bow, no extra props, no invented labels, no watermark. Slightly lighter silhouette edge for readability on a dark blue background; keep the center physically dimensional rather than a flat graphic. Return one single standalone transparent product, not a sheet or mockup."
-      },
       "10": {
         "model": "SV50",
         "mode": "built-in imagegen style-transfer",
         "prompt": "Use case: style-transfer. Asset type: one transparent miniature product sprite for a Christmas snow-globe game. Input image 1 is the exact product EDIT TARGET. Image 2 (paper-relief Christmas house) is a material and lighting STYLE REFERENCE ONLY; do not include it. Image 3 (HJ10 purifier) sets the finished product rendering style; do not include or merge that product. Change only the rendering finish to a refined subtly three-dimensional collectible: softly beveled silhouette, satin matte body, extremely fine paper-grain texture, clean embossed small details, soft warm ivory key light, a thin restrained champagne rim highlight, realistic sculpted volume. Preserve the EDIT TARGET's exact recognizable industrial design, outline, proportions, camera angle, original product colors and unique controls. Keep its real hardware structure; do not invent attachments. Single upright product centered, complete, with comfortable transparent margins and about 85% image-height occupancy. Truly TRANSPARENT alpha around and within all openings. No scenery, background, platform, pedestal, snow, Christmas ornaments, house, trees, labels, watermarks or extra products. No external glow cloud: contrast comes from softly lit product edges, not an opaque surrounding shape. Avoid flat vector/cartoon simplification and avoid changing all colors to gold. Subject-specific invariants: Dyson SV50 PencilVac Fluffycones vacuum. Keep the EXTREMELY LONG SLENDER straight black pencil-like shaft and narrow rounded top, tiny red and blue front controls/display, lower transparent dust tube with red catch, and full wide low floor head containing the distinctive red and cobalt-blue conical rollers and small green light. Preserve source geometry and length-to-width ratio; do not add a conventional loop handle, bulky motor or change the floor head. Fit the WHOLE vacuum and floor head in the image, no cropping. Simplify only microscopic surface texture; retain enough red/blue roller detail to read at miniature size."
+      },
+      "15": {
+        "model": "HJ10",
+        "mode": "built-in imagegen style-transfer",
+        "prompt": "Use case: style-transfer. Asset type: transparent product sprite for a Christmas snow-globe game. Image 1 is the exact EDIT TARGET: Dyson HJ10 HushJet compact purifier, black cylindrical body and glacier-teal top nozzle. Image 2 is a STYLE REFERENCE ONLY: a warm, subtly three-dimensional layered paper-relief Christmas house. Do not include the house. Transform ONLY the product rendering finish into a refined miniature collectible with softly beveled edges, satin matte surfaces, very fine paper-grain texture, delicate sculpted depth, soft warm ivory key light and restrained pale champagne edge highlights. Keep the exact HJ10 silhouette, proportions, camera angle, short broad cylindrical body, star-shaped radial nozzle with the same number of lobes, teal collar, black perforated lower filter, tiny front screen and buttons. Keep the distinct teal/black colors; do not recolor it navy and gold. The product must remain instantly recognizable as the supplied real appliance. Treat the perforations as clean simplified embossed details, not random texture. One complete upright product, centered, filling about 85% of image height, with clear padding on all sides. GENUINELY TRANSPARENT alpha background, including around the feet; remove source floor remnants and white artifacts. Crisp complete contour, no cropping, no pedestal, no scene, no snow, no stars, no bow, no extra props, no invented labels, no watermark. Slightly lighter silhouette edge for readability on a dark blue background; keep the center physically dimensional rather than a flat graphic. Return one single standalone transparent product, not a sheet or mockup."
       },
       "20": {
         "model": "BP10",
@@ -805,18 +806,18 @@ window.DYSON_ASSETS = {
           [
             [
               14.1,
-              0.0
+              0
             ],
             [
               10.4,
-              0.0
+              0
             ],
             [
               10.4,
               6.8
             ],
             [
-              7.0,
+              7,
               6.8
             ],
             [
@@ -980,7 +981,7 @@ window.DYSON_ASSETS = {
               13.5161
             ],
             [
-              0.0,
+              0,
               13.8
             ],
             [
@@ -1144,7 +1145,7 @@ window.DYSON_ASSETS = {
               20.7945
             ],
             [
-              7.0,
+              7,
               20.8
             ],
             [
@@ -1308,108 +1309,108 @@ window.DYSON_ASSETS = {
               14.0839
             ],
             [
-              14.0,
+              14,
               13.8
             ],
             [
-              14.0,
+              14,
               13.5464
             ],
             [
-              14.0,
+              14,
               13.2631
             ],
             [
-              14.0,
+              14,
               12.9537
             ],
             [
-              14.0,
+              14,
               12.6218
             ],
             [
-              14.0,
+              14,
               12.2709
             ],
             [
-              14.0,
+              14,
               11.9047
             ],
             [
-              14.0,
+              14,
               11.5268
             ],
             [
-              14.0,
+              14,
               11.1407
             ],
             [
-              14.0,
+              14,
               10.7502
             ],
             [
-              14.0,
+              14,
               10.3587
             ],
             [
-              14.0,
+              14,
               9.97
             ],
             [
-              14.0,
+              14,
               9.5875
             ],
             [
-              14.0,
+              14,
               9.2149
             ],
             [
-              14.0,
+              14,
               8.8558
             ],
             [
-              14.0,
+              14,
               8.5139
             ],
             [
-              14.0,
+              14,
               8.1926
             ],
             [
-              14.0,
+              14,
               7.8956
             ],
             [
-              14.0,
+              14,
               7.6266
             ],
             [
-              14.0,
+              14,
               7.389
             ],
             [
-              14.0,
+              14,
               7.1866
             ],
             [
-              14.0,
+              14,
               7.0229
             ],
             [
-              14.0,
+              14,
               6.9014
             ],
             [
-              14.0,
+              14,
               6.826
             ],
             [
-              14.0,
+              14,
               6.8
             ],
             [
               14.1,
-              0.0
+              0
             ]
           ],
           [
@@ -1494,7 +1495,7 @@ window.DYSON_ASSETS = {
               17.1889
             ],
             [
-              7.0,
+              7,
               17.2
             ],
             [
@@ -1654,7 +1655,7 @@ window.DYSON_ASSETS = {
               10.5111
             ],
             [
-              7.0,
+              7,
               10.5
             ],
             [
@@ -1725,7 +1726,7 @@ window.DYSON_ASSETS = {
               24.6699
             ],
             [
-              22.0,
+              22,
               24.7
             ],
             [
@@ -1901,7 +1902,7 @@ window.DYSON_ASSETS = {
               20.8912
             ],
             [
-              23.0,
+              23,
               20.9
             ],
             [
@@ -2061,119 +2062,119 @@ window.DYSON_ASSETS = {
               14.3835
             ],
             [
-              16.0,
+              16,
               14.1
             ],
             [
-              16.0,
+              16,
               14.0844
             ],
             [
-              16.0,
+              16,
               14.05
             ],
             [
-              16.0,
+              16,
               14.0156
             ],
             [
-              16.0,
-              14.0
+              16,
+              14
             ],
             [
-              16.0,
+              16,
               13.7469
             ],
             [
-              16.0,
+              16,
               13.4651
             ],
             [
-              16.0,
+              16,
               13.158
             ],
             [
-              16.0,
+              16,
               12.8292
             ],
             [
-              16.0,
+              16,
               12.4821
             ],
             [
-              16.0,
+              16,
               12.1203
             ],
             [
-              16.0,
+              16,
               11.7473
             ],
             [
-              16.0,
+              16,
               11.3667
             ],
             [
-              16.0,
+              16,
               10.9818
             ],
             [
-              16.0,
+              16,
               10.5964
             ],
             [
-              16.0,
+              16,
               10.2137
             ],
             [
-              16.0,
+              16,
               9.8375
             ],
             [
-              16.0,
+              16,
               9.4712
             ],
             [
-              16.0,
+              16,
               9.1182
             ],
             [
-              16.0,
+              16,
               8.7822
             ],
             [
-              16.0,
+              16,
               8.4667
             ],
             [
-              16.0,
+              16,
               8.1751
             ],
             [
-              16.0,
+              16,
               7.9109
             ],
             [
-              16.0,
+              16,
               7.6778
             ],
             [
-              16.0,
+              16,
               7.4792
             ],
             [
-              16.0,
+              16,
               7.3186
             ],
             [
-              16.0,
+              16,
               7.1995
             ],
             [
-              16.0,
+              16,
               7.1255
             ],
             [
-              16.0,
+              16,
               7.1
             ],
             [
@@ -2274,7 +2275,7 @@ window.DYSON_ASSETS = {
             ],
             [
               19.7,
-              14.0
+              14
             ],
             [
               19.7111,
@@ -2353,7 +2354,7 @@ window.DYSON_ASSETS = {
               17.2889
             ],
             [
-              23.0,
+              23,
               17.3
             ],
             [
@@ -2434,23 +2435,23 @@ window.DYSON_ASSETS = {
             ],
             [
               26.3,
-              14.0
+              14
             ],
             [
               26.3,
-              14.0
+              14
             ],
             [
               26.3,
-              14.0
+              14
             ],
             [
               26.3,
-              14.0
+              14
             ],
             [
               26.3,
-              14.0
+              14
             ],
             [
               26.3,
@@ -2549,12 +2550,12 @@ window.DYSON_ASSETS = {
               7.1
             ],
             [
-              30.0,
+              30,
               7.1
             ],
             [
-              30.0,
-              14.0
+              30,
+              14
             ],
             [
               30.0002,
@@ -3032,7 +3033,7 @@ window.DYSON_ASSETS = {
               10.7807
             ],
             [
-              41.0,
+              41,
               10.9
             ],
             [
@@ -3108,7 +3109,7 @@ window.DYSON_ASSETS = {
               6.9055
             ],
             [
-              38.0,
+              38,
               6.9
             ],
             [
@@ -4781,7 +4782,7 @@ window.DYSON_ASSETS = {
               13.5181
             ],
             [
-              48.0,
+              48,
               13.8
             ],
             [
@@ -4972,7 +4973,7 @@ window.DYSON_ASSETS = {
               10.6111
             ],
             [
-              67.0,
+              67,
               10.6
             ],
             [
@@ -5164,99 +5165,99 @@ window.DYSON_ASSETS = {
               20.6
             ],
             [
-              60.0,
+              60,
               20.6
             ],
             [
-              60.0,
+              60,
               20.5734
             ],
             [
-              60.0,
+              60,
               20.4962
             ],
             [
-              60.0,
+              60,
               20.3721
             ],
             [
-              60.0,
+              60,
               20.205
             ],
             [
-              60.0,
+              60,
               19.9986
             ],
             [
-              60.0,
+              60,
               19.7567
             ],
             [
-              60.0,
+              60,
               19.4832
             ],
             [
-              60.0,
+              60,
               19.1819
             ],
             [
-              60.0,
+              60,
               18.8564
             ],
             [
-              60.0,
+              60,
               18.5107
             ],
             [
-              60.0,
+              60,
               18.1486
             ],
             [
-              60.0,
+              60,
               17.7737
             ],
             [
-              60.0,
+              60,
               17.39
             ],
             [
-              60.0,
+              60,
               17.0012
             ],
             [
-              60.0,
+              60,
               16.6111
             ],
             [
-              60.0,
+              60,
               16.2236
             ],
             [
-              60.0,
+              60,
               15.8423
             ],
             [
-              60.0,
+              60,
               15.4712
             ],
             [
-              60.0,
+              60,
               15.1139
             ],
             [
-              60.0,
+              60,
               14.7744
             ],
             [
-              60.0,
+              60,
               14.4564
             ],
             [
-              60.0,
+              60,
               14.1636
             ],
             [
-              60.0,
+              60,
               13.9
             ],
             [
@@ -5420,7 +5421,7 @@ window.DYSON_ASSETS = {
               6.9055
             ],
             [
-              67.0,
+              67,
               6.9
             ],
             [
@@ -5584,115 +5585,115 @@ window.DYSON_ASSETS = {
               13.6161
             ],
             [
-              74.0,
+              74,
               13.9
             ],
             [
-              74.0,
+              74,
               13.9
             ],
             [
-              74.0,
+              74,
               13.9
             ],
             [
-              74.0,
+              74,
               13.9
             ],
             [
-              74.0,
+              74,
               13.9
             ],
             [
-              74.0,
+              74,
               14.1756
             ],
             [
-              74.0,
+              74,
               14.4781
             ],
             [
-              74.0,
+              74,
               14.804
             ],
             [
-              74.0,
+              74,
               15.1495
             ],
             [
-              74.0,
+              74,
               15.5111
             ],
             [
-              74.0,
+              74,
               15.8851
             ],
             [
-              74.0,
+              74,
               16.2678
             ],
             [
-              74.0,
+              74,
               16.6555
             ],
             [
-              74.0,
+              74,
               17.0447
             ],
             [
-              74.0,
+              74,
               17.4317
             ],
             [
-              74.0,
+              74,
               17.8128
             ],
             [
-              74.0,
+              74,
               18.1844
             ],
             [
-              74.0,
+              74,
               18.5428
             ],
             [
-              74.0,
+              74,
               18.8844
             ],
             [
-              74.0,
+              74,
               19.2055
             ],
             [
-              74.0,
+              74,
               19.5026
             ],
             [
-              74.0,
+              74,
               19.7718
             ],
             [
-              74.0,
+              74,
               20.0097
             ],
             [
-              74.0,
+              74,
               20.2125
             ],
             [
-              74.0,
+              74,
               20.3765
             ],
             [
-              74.0,
+              74,
               20.4982
             ],
             [
-              74.0,
+              74,
               20.574
             ],
             [
-              74.0,
+              74,
               20.6
             ],
             [
@@ -5845,16 +5846,17 @@ window.DYSON_ASSETS = {
     "black": "./assets/images/brand/dyson-logo-black.png"
   },
   "bonusSprites": {
-    "101": "./assets/images/bonus/bonus-golden-dance.png?v=20261022-v21",
-    "102": "./assets/images/bonus/bonus-shiba-business.png?v=20261022-natural-v1",
-    "103": "./assets/images/bonus/bonus-polar-bear-samoyed.png?v=20261022-natural-v1",
-    "104": "./assets/images/bonus/bonus-cat-gift-box.png?v=20261022-natural-v1",
-    "105": "./assets/images/bonus/bonus-capybara-bath.png?v=20261022-v21",
-    "106": "./assets/images/bonus/bonus-penguin-slide.png?v=20261022-natural-v1",
-    "107": "./assets/images/bonus/bonus-white-sea-lion.png?v=20261022-white-pup-v1",
-    "108": "./assets/images/bonus/bonus-red-panda-tree.png?v=20261022-natural-v1",
-    "109": "./assets/images/bonus/bonus-otter-shell.png?v=20261022-v21",
-    "110": "./assets/images/bonus/bonus-fox-snow-dive.png?v=20261022-natural-v1"
+    "101": "./assets/images/bonus/bonus-golden-dance-paper-v28.webp",
+    "102": "./assets/images/bonus/bonus-shiba-business-paper-v28.webp",
+    "103": "./assets/images/bonus/bonus-polar-bear-samoyed-paper-v28.webp",
+    "104": "./assets/images/bonus/bonus-cat-gift-box-paper-v28.webp",
+    "105": "./assets/images/bonus/bonus-capybara-bath-paper-v28.webp",
+    "106": "./assets/images/bonus/bonus-penguin-slide-paper-v28.webp",
+    "107": "./assets/images/bonus/bonus-white-sea-lion-paper-v28.webp",
+    "108": "./assets/images/bonus/bonus-red-panda-tree-paper-v28.webp",
+    "109": "./assets/images/bonus/bonus-otter-coin-paper-v28.webp",
+    "110": "./assets/images/bonus/bonus-fox-snow-dive-paper-v28.webp"
   },
-  "sceneRevision": "20261022-snow-candy-v26"
+  "sceneRevision": "20261022-snow-candy-v26",
+  "paperCollectionRevision": "20261022-deer-paper-v28"
 };

@@ -388,6 +388,13 @@ if(!safeRead(sceneCopyKey,false)){
 
 const stockingCopyKey=STORAGE_PREFIX+'stocking-row-v27';
 if(!safeRead(stockingCopyKey,false)){delete settings[16];safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(stockingCopyKey,true);}
+// Refresh only collection copy and obsolete uploaded art, retaining claims and layouts.
+const PAPER_COLLECTION_DAYS=[8,21,23,...BONUS_IDS];
+const paperCollectionCopyKey=STORAGE_PREFIX+'paper-collection-'+BASE_CONFIG.paperCollectionRevision;
+if(!safeRead(paperCollectionCopyKey,false)){
+  for(const d of PAPER_COLLECTION_DAYS){if(settings[d])for(const k of ['name','calendarName','description','animal','assetNeed'])delete settings[d][k];}
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(paperCollectionCopyKey,true);
+}
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
@@ -1044,10 +1051,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}

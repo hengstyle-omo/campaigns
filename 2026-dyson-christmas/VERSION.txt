@@ -1,14 +1,14 @@
 2026 Dyson 聖誕收藏
-活動設定版本：27
+活動設定版本：28
 Apps Script：DysonProgress.gs v6（本次不需更新部署）
-完整包：20261022-v27
+完整包：20261022-v28
 資料夾：2026-dyson-christmas
-本次更新：放入自動收起視窗、五色糖果雨、紅綠聖誕襪串
+本次更新：小麋鹿紙雕系列、十款限定動物、聖誕百貨、橘貓聖誕老人、灰色英短
 新增場景素材：assets/images/scene/
 素材提示：scene-prompts.md
 
 核心檔案 SHA-256：
-index.html 64d4856cc9e51b414587c4264a7189c18dd869e9d6eb940873c5a4019c206e7f
-assets/js/config.js 09892d39bab114a7116e6cc5bfb82d3f045fd6c080805f3cc671422d8a4b797d
-assets/js/app.js 651992f35e29e9faef3379e4fc320eea8947f2d712ae235b6458f4e068417782
+index.html f26d3e6c1ceb66931843fcc1457a190617d4ffbfe5c8bccf1353d2aae0bbc6c3
+assets/js/config.js 5a6d15baa81b68aa68aaa98a58d8e11398a47047f54166d9edca1e5ce6c40d12
+assets/js/app.js be818ca9da16fdc13fa22d73db6efa3c601ed62b57764e744518a690a5a73194
 assets/css/style.css 1399fa985bab3a4a6c4bee85673055df124e219fc785684a703552fa046a46be
