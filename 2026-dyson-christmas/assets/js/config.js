@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 28,
+  "version": 32,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -405,7 +405,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 23,
       "type": "角色小物",
       "name": "橘貓版聖誕老公公",
-      "description": "穿上紅色聖誕裝的橘貓，背著禮物袋、抱著小禮物，帶著笑容迎接平安夜。",
+      "description": "胖胖的橘貓穿上聖誕裝、戴著白鬍子，背著裝滿禮物的大袋子，開心揮揮小貓掌。",
       "benefit": null,
       "assetNeed": "分層紙雕橘貓聖誕老人透明 WebP",
       "layout": {
@@ -515,7 +515,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "金金舞王",
       "animal": "黃金獵犬",
-      "description": "站起來扭腰、舉起前腳，開心跳舞。",
+      "description": "圓臉、短吻的小黃金獵犬，帶著開心吐舌的笑容，舉起前腳跳舞。",
       "layout": {
         "x": 365,
         "y": 875,
@@ -557,7 +557,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "這盒裝得下",
       "animal": "灰色英短",
-      "description": "圓臉灰色英短硬塞進太小的禮物盒，肚子和尾巴露在外面。",
+      "description": "純藍灰色、短圓臉的小英短，硬塞進太小的禮物盒，前腳搭在盒緣，圓肚子與尾巴露在外面。",
       "layout": {
         "x": 475,
         "y": 895,
@@ -585,7 +585,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "煞車在哪裡",
       "animal": "皇帝企鵝幼鳥",
-      "description": "灰絨毛的皇帝企鵝幼鳥，用肚皮開心滑行，小腳翹得高高。",
+      "description": "灰白紙雕的小皇帝企鵝幼鳥，沒有裝飾花紋與上勾眼角，張開翅膀開心滑行。",
       "layout": {
         "x": 570,
         "y": 900,
@@ -597,9 +597,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 107,
       "bonus": true,
       "type": "限定趣味收藏",
-      "name": "雪白小海獅",
-      "animal": "白色小海獅",
-      "description": "圓滾滾的雪白寶寶側躺著，蓬鬆白毛、小黑眼睛與圓圓黑鼻，像在雪地裡撒嬌。",
+      "name": "又想回家小海獅",
+      "animal": "又想回家小海獅",
+      "description": "雪白的小海獅懶洋洋側躺著，圓黑鼻子配上小黑眼睛，今天只想在雪地放空。",
       "layout": {
         "x": 680,
         "y": 900,
@@ -627,7 +627,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "今天吃大餐",
       "animal": "海獺",
-      "description": "灰色毛茸茸的海獺，懷抱閃亮金幣，用小石頭開心地敲呀敲。",
+      "description": "沒有裝飾花紋的灰色紙雕海獺，懷裡抱著閃亮金幣，拿小石頭開心敲一敲。",
       "layout": {
         "x": 755,
         "y": 900,
@@ -652,7 +652,10 @@ window.DYSON_GAME_CONFIG = {
   ],
   "sceneRevision": "20261022-snow-candy-v26",
   "stockingRevision": "20261022-red-green-row-v27",
-  "paperCollectionRevision": "20261022-deer-paper-v28"
+  "paperCollectionRevision": "20261022-deer-paper-v28",
+  "catRevision": "20261022-british-fat-santa-v29",
+  "characterRevision": "20261022-neutral-puppy-santa-v30",
+  "plainCoatRevision": "20261022-plain-gray-animals-v31"
 };
 
 window.DYSON_ASSETS = {
@@ -680,7 +683,7 @@ window.DYSON_ASSETS = {
     "20": "./assets/images/products/bp10-snowglobe.png",
     "21": "./assets/images/scene/day-21-department-store-paper-v28.webp",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp",
-    "23": "./assets/images/scene/day-23-orange-cat-santa-paper-v28.webp",
+    "23": "./assets/images/scene/day-23-fat-cat-santa-sack-v30.webp",
     "24": "./assets/images/scene/day-24-christmas-star.webp"
   },
   "artDirection": {
@@ -5846,17 +5849,20 @@ window.DYSON_ASSETS = {
     "black": "./assets/images/brand/dyson-logo-black.png"
   },
   "bonusSprites": {
-    "101": "./assets/images/bonus/bonus-golden-dance-paper-v28.webp",
-    "102": "./assets/images/bonus/bonus-shiba-business-paper-v28.webp",
+    "101": "./assets/images/bonus/bonus-golden-puppy-dance-v30.webp",
+    "102": "./assets/images/bonus/bonus-shiba-plain-v31.webp",
     "103": "./assets/images/bonus/bonus-polar-bear-samoyed-paper-v28.webp",
-    "104": "./assets/images/bonus/bonus-cat-gift-box-paper-v28.webp",
+    "104": "./assets/images/bonus/bonus-gray-british-kitten-v29.webp",
     "105": "./assets/images/bonus/bonus-capybara-bath-paper-v28.webp",
-    "106": "./assets/images/bonus/bonus-penguin-slide-paper-v28.webp",
+    "106": "./assets/images/bonus/bonus-penguin-neutral-v30.webp",
     "107": "./assets/images/bonus/bonus-white-sea-lion-paper-v28.webp",
     "108": "./assets/images/bonus/bonus-red-panda-tree-paper-v28.webp",
-    "109": "./assets/images/bonus/bonus-otter-coin-paper-v28.webp",
+    "109": "./assets/images/bonus/bonus-otter-gray-plain-v31.webp",
     "110": "./assets/images/bonus/bonus-fox-snow-dive-paper-v28.webp"
   },
   "sceneRevision": "20261022-snow-candy-v26",
-  "paperCollectionRevision": "20261022-deer-paper-v28"
+  "paperCollectionRevision": "20261022-deer-paper-v28",
+  "catRevision": "20261022-british-fat-santa-v29",
+  "characterRevision": "20261022-neutral-puppy-santa-v30",
+  "plainCoatRevision": "20261022-plain-gray-animals-v31"
 };

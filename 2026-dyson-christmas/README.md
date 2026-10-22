@@ -1,6 +1,44 @@
 # 2026 Dyson 聖誕收藏：GitHub Pages＋Google Sheet
 
 
+## 第 32 版更新（2026/10/22）
+
+小海獅 107 的收藏名稱及分類列由「不想上班小海獅」改為「又想回家小海獅」，舊瀏覽器已保存的歷史名稱會一併更新。圖像、收藏、位置與權限保留，Sheet 仍沿用「海豹」欄，不需改動或重新部署 Apps Script。
+
+完整網站：`2026-dyson-christmas-v32-complete.zip`；累積更新包：`2026-dyson-christmas-v32-update.zip`。解壓合併覆蓋後 Commit、Push。
+
+
+
+## 第 31 版更新（2026/10/22）
+
+- 柴犬 102 與海獺 109 移除身上的葉紋、金點等裝飾，保留紙雕分層、原動作及道具。海獺改為明確的冷灰、銀灰與深灰色，金幣保持金色；柴犬自然橘白毛色與旁邊黃金捲形保留。
+- 小海獅 107 的收藏名稱與介紹分類列均改為「不想上班小海獅」，白色小海獅原圖、姿勢與原本權限沿用。Sheet 仍使用「海豹」欄，請勿更改表頭。
+- 新圖 `assets/images/bonus/bonus-shiba-plain-v31.webp`、`bonus-otter-gray-plain-v31.webp`。使用內建 imagegen 編輯，提示與素材位置見 `animal-prompts.md`。舊瀏覽器的舊圖與舊文字會更新，領取、擺放、縮放與座標保留。
+- 完整網站：`2026-dyson-christmas-v31-complete.zip`；已有網站可用 `2026-dyson-christmas-v31-update.zip` 合併覆蓋同名資料夾，再 Commit、Push。包含此前所有更新；Apps Script 沿用 v6，不需重新部署。
+
+
+
+## 第 30 版更新（2026/10/22）
+
+- 企鵝 106 移除身上、翅膀與腳上的裝飾花紋、金點及眼尾線條，改為單純灰白紙雕與中性圓眼；滑行姿勢保留。
+- 黃金獵犬 101 依本次幼犬附件，改成圓臉、短吻、低垂小耳朵、開心吐舌的小黃金，保留跳舞姿勢與紙雕材質。
+- 12/23 胖橘聖誕老人依最新指示移除禮物盒，改成背著禮物袋、戴白色鬍子與翹鬍鬚、面容開心，露出胖肚子與小貓掌。
+- 包含 v29 的照片版純藍灰英短，以及未保存有效 Email 時跳過進度還原與進站等待蓋層。已保存的收藏、放入、位置、縮放與權限保留，灰色英短仍沿用 Sheet 的「橘貓」權限欄。
+- 新圖 `assets/images/bonus/bonus-penguin-neutral-v30.webp`、`bonus-golden-puppy-dance-v30.webp`、`assets/images/scene/day-23-fat-cat-santa-sack-v30.webp`。使用內建 imagegen 編輯，完整提示見 `animal-prompts.md`、`scene-prompts.md`。上傳照片僅供參考，未打包到網站。
+- 完整網站：`2026-dyson-christmas-v30-complete.zip`；已有網站可使用 `2026-dyson-christmas-v30-update.zip` 合併覆蓋同名資料夾，再 Commit、Push。不需先裝 v29，Apps Script 沿用 v6、不需重新部署。
+
+
+
+## 第 29 版更新（2026/10/22）
+
+- 瀏覽器沒有保存有效 Email 時，直接顯示水晶球，不進入進度還原或顯示進站等待蓋層。素材仍在背景準備，完成前卡片製作維持停用；素材失敗仍顯示重試說明。有有效 Email 才自動讀取原進度，手動輸入 Email 後仍可讀取並保存。使用 localStorage 保存識別，不依賴登入 Cookie。
+- 限定 104 灰色英短參考本次照片，改為純藍灰色、短圓臉、小耳朵，不帶橘貓紋路或白色口鼻；保留擠在小禮盒的姿勢。照片只供生成參考，未放入網站包。
+- 12/23 橘貓聖誕老人改由原本胖橘貓換裝，保留坐在盒裡、前腳搭盒緣、胖肚子與外露大尾巴的原姿勢，換上紅色聖誕帽與聖誕外套，維持紙雕系列。
+- 新圖 `assets/images/bonus/bonus-gray-british-kitten-v29.webp` 與 `assets/images/scene/day-23-fat-orange-santa-box-v29.webp`。內建 imagegen 編輯，完整提示見 `animal-prompts.md`、`scene-prompts.md`。既有領取、位置、縮放與權限保留；灰色英短仍沿用 Sheet 的「橘貓」權限欄。
+- 完整網站：`2026-dyson-christmas-v29-complete.zip`；已有網站可用 `2026-dyson-christmas-v29-update.zip` 合併覆蓋同名資料夾，再 Commit、Push。需一併更新圖片與程式，Apps Script 沿用 v6，不需重新部署。
+
+
+
 ## 第 28 版更新（2026/10/22）
 
 - 以 12/11「雪地小麋鹿」為材質與造型基準，十款限定動物、飛躍馴鹿及新角色統一為分層紙雕，保留趣味姿勢、道具與原本收藏編號。
@@ -108,7 +146,7 @@
 | 104 | 灰色英短 | 這盒裝得下 |
 | 105 | 水豚 | 冬日放空中 |
 | 106 | 皇帝企鵝幼鳥 | 煞車在哪裡 |
-| 107 | 白色小海獅 | 雪白小海獅 |
+| 107 | 白色小海獅 | 又想回家小海獅 |
 | 108 | 小熊貓 | 抱緊我的樹 |
 | 109 | 海獺 | 今天吃大餐 |
 | 110 | 狐狸 | 找禮物翻車 |

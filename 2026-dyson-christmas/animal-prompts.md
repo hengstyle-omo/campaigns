@@ -51,3 +51,37 @@ Primary request: Happy GRAY sea otter reclining on its back, holding a large GOL
 
 Use case: style-transfer. Asset type: single transparent game sprite for the same Christmas snow-globe collection. Input image 1 is the subject/pose edit target; image 2 (standing little deer) is STRICT style reference, not an additional animal. Rebuild target in the deer's layered cut-paper relief style: visibly stacked thick colored paper sheets, sculpted paper edges, fine matte paper grain, simple inset black eyes with tiny highlights, cream/gold botanical embossing, gentle warm light from upper left. Fur represented by broad shaped paper layers, NEVER photographic hairs, plush toy, resin figurine or glossy CGI. Keep natural cute proportions, clearly recognizable species and the described funny pose and props. Full subject entirely in frame with small even transparent margins, no floor rectangle, no backdrop, no text, no watermark. Actual transparent alpha background.
 Primary request: Fox head-first in a little snow mound looking for gifts. Head hidden under snow, only orange rump, dark hind paws and large white-tipped tail raised in air. Snow mound entirely sculpted ivory paper layers. Keep comic upside-down pose.
+
+
+## 第 29 版 — assets/images/bonus/bonus-gray-british-kitten-v29.webp
+
+使用內建 imagegen 編輯；參考角色姿勢與本次英短照片／原胖橘圖，維持小麋鹿紙雕風格。透明 alpha，最大邊 1000px WebP，品質 94。
+
+Use case: precise-object-edit and style-transfer. Single transparent game sprite. Image 1 is edit target, gray cat in navy gift box. Image 2 is the user's British Shorthair kitten appearance reference. Image 3 is the strict paper-relief style reference. Correct ONLY the cat's breed/appearance while retaining the box and paws draped over its edge, plump seated pose and tail outside. Make ONE kitten with the ROUND compact short broad face, small widely spaced rounded ears, tiny broad muzzle, short neck, compact stocky body, round blue-gray/greenish eyes of the photo kittens. Coat entirely solid dark blue-gray, NO tabby stripes, NO white chin, NO cream muzzle, NO striped tail. Do not copy two cats from photo. Fur is broad matte layered blue-gray paper shapes with fine paper grain, stacked cut-paper thickness and gentle upper-left warm light exactly like deer, not realistic fur or glossy resin. Box same navy with gold ribbon. Entire cat, whiskers, box and tail in frame with transparent margins. Actual transparent background, no scene, no text.
+
+
+## 第 30 版 — assets/images/bonus/bonus-penguin-neutral-v30.webp
+
+使用內建 imagegen 編輯；輸入是前版角色、使用者參考照片（如有）及小麋鹿風格。透明 alpha，最大邊 1000px WebP，品質 94。
+
+Use case: precise-object-edit. Edit this transparent paper-relief emperor penguin chick sprite. KEEP exact belly-sliding pose, wing positions, raised little feet, gray and ivory colors, layered paper construction, small happy open beak and full-body composition. REMOVE ALL ornamental patterns from its body, wings and feet: no gold leaves, no botanical designs, no gold dots, no stripes added for decoration, no gold claw tips or gold outlines. Plain gray/ivory/charcoal paper only. Make eyes simple round black eyes with small white highlight; no lashes, no upturned outer eye corners, no eyeliner, no feminine styling, neutral gender expression. Preserve paper texture and warm soft lighting. Entire penguin on actual transparent alpha background, no scenery, no text.
+
+
+## 第 30 版 — assets/images/bonus/bonus-golden-puppy-dance-v30.webp
+
+使用內建 imagegen 編輯；輸入是前版角色、使用者參考照片（如有）及小麋鹿風格。透明 alpha，最大邊 1000px WebP，品質 94。
+
+Use case: identity-preserve and style-transfer. Single transparent snow-globe sprite. Image 1 is dancing pose target. Image 2 is the user's EXACT golden retriever puppy appearance reference (ignore screenshot UI, all text, background and person). Image 3 is layered paper-relief material reference. Replace the adult narrow-faced dog with THIS round baby golden retriever: very broad puppy forehead, small low floppy ears, round cheeks, short broad muzzle, large black nose, round natural dark eyes, smiling open mouth with pink tongue like the reference, pale honey-golden fluffy coat. Keep playful upright dancing pose from image 1, both hind paws visible, one front paw raised and the other bent, long puppy tail. Full dog visible. Rebuild fur as broad layered matte honey/cream paper shapes with fine paper grain and sculpted thick cut-paper edges matching deer; no photo fur, no florals or gold leaf ornaments on the dog, no exaggerated eyelashes. Body compact chubby puppy proportions, no elongated adult neck or pointed adult muzzle. True transparent alpha background, no floor, no social media UI, no text, no watermark.
+
+
+# 第 31 版：無裝飾紋路柴犬與灰海獺
+
+使用內建 imagegen，precise-object-edit，參考前一版同角色；透明 alpha WebP，最大邊 1000px、品質 94。
+
+## 102 — assets/images/bonus/bonus-shiba-plain-v31.webp
+
+Use case: precise-object-edit. Edit this single transparent layered paper-relief Shiba Inu sprite. Remove ALL decorative patterns from the DOG ONLY: all botanical leaves, vines, gold dots, embossed ornaments on head, body, legs and curled tail. Preserve the plain natural orange-and-ivory Shiba coat color areas as broad paper layers, matte paper grain, exact squatting and looking-back pose, anatomy, facial expression, curled tail and composition. Keep the shiny gold coiled-poop-shaped ornament next to the dog exactly as it is; it remains bright gold, not an ingot. Do not remove natural cream fur patches or the paper layering/shadows. Entire dog and gold ornament remain fully in frame. Actual transparent alpha background, no scenery, no floor, no text, no watermark.
+
+## 109 — assets/images/bonus/bonus-otter-gray-plain-v31.webp
+
+Use case: precise-object-edit. Edit this single transparent layered paper-relief SEA OTTER sprite. Remove ALL decorative patterns from the OTTER ONLY: every botanical leaf, vine, gold dot and embossed ornament across arms, body, legs and tail. Make its coat visibly neutral COOL GRAY: medium slate-gray outer coat with lighter silver-gray face, chest and belly, charcoal-gray paws and tail, no warm brown/tan/beige fur. Preserve broad scalloped and pointed paper layers that suggest fluffy fur, matte paper grain and sculpted cut-paper edges, not photographic fur. Preserve exact happy reclining pose, face, ears, paws, tail and scale. Retain the GOLD COIN with its star design on the belly and the small GRAY STONE raised in its paw; these props must stay, the coin remains gold while the animal is gray. Full body and props visible within frame. Actual transparent alpha background, no scenery, no floor, no text, no watermark.

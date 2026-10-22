@@ -62,11 +62,13 @@ const ADMIN_PREVIEW_EMAIL='hengstyle.data@gmail.com';
 const BONUS_IDS=[101,102,103,104,105,106,107,108,109,110],bonusCatalog=BASE_CONFIG.bonusItems||[];
 const CLOUD_CONFIG=window.DYSON_CLOUD_CONFIG;
 const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:'',ready:false,loading:false,canPreview:false,bonusIds:[],consent:false,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null}};
+const cloudEmail=value=>String(value||'').trim().toLowerCase();
+const isCloudEmail=value=>value.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{});
-cloud.email=typeof savedCloudProfile.email==='string'?savedCloudProfile.email:'';
+const rememberedEmail=cloudEmail(savedCloudProfile?.email);
+cloud.email=isCloudEmail(rememberedEmail)?rememberedEmail:'';
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
 const canPreview=()=>cloud.ready&&cloud.canPreview;
-const cloudEmail=value=>String(value||'').trim().toLowerCase();
 const cloudCacheKey=email=>STORAGE_PREFIX+'cloud-state:'+cloud.endpoint+':'+email;
 function cloudDiff(current,previous){
   const changes={};
@@ -184,7 +186,7 @@ window.addEventListener('message',event=>{
 function cloudSend(payload){const request=cloud.queue.then(()=>cloudTransport(payload));cloud.queue=request.catch(()=>{});return request;}
 function cloudAcceptClock(result){if(Array.isArray(result.bonusIds))cloud.bonusIds=result.bonusIds.filter(d=>BONUS_IDS.includes(d));if(result.rulesVersion!==2)throw new Error('請先更新並重新部署新版 DysonProgress.gs，以啟用補領與參與天數禮遇。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同，請管理者檢查 .gs 設定。');if(Number.isFinite(Date.parse(result.serverTime))){cloud.offset=Date.parse(result.serverTime)-Date.now();cloud.hasClock=true;}}
 async function cloudConnect(email,consent){
-  email=cloudEmail(email);if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('請填寫有效的 Email。');
+  email=cloudEmail(email);if(!isCloudEmail(email))throw new Error('請填寫有效的 Email。');
   if(cloud.marketingSaving)await cloud.marketingSaving;
   if(cloud.loading)return false;
   const preserveConsentDraft=cloud.ready&&email===cloud.email&&cloud.marketingDirty&&typeof consent!=='boolean';
@@ -394,6 +396,30 @@ const paperCollectionCopyKey=STORAGE_PREFIX+'paper-collection-'+BASE_CONFIG.pape
 if(!safeRead(paperCollectionCopyKey,false)){
   for(const d of PAPER_COLLECTION_DAYS){if(settings[d])for(const k of ['name','calendarName','description','animal','assetNeed'])delete settings[d][k];}
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(paperCollectionCopyKey,true);
+}
+const CAT_COLLECTION_DAYS=[23,104];
+const catCopyKey=STORAGE_PREFIX+'cat-copy-'+BASE_CONFIG.catRevision;
+if(!safeRead(catCopyKey,false)){
+  for(const d of CAT_COLLECTION_DAYS){if(settings[d])for(const k of ['name','calendarName','description','animal'])delete settings[d][k];}
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(catCopyKey,true);
+}
+const CHARACTER_REVISED_DAYS=[23,101,106];
+const characterCopyKey=STORAGE_PREFIX+'character-copy-'+BASE_CONFIG.characterRevision;
+if(!safeRead(characterCopyKey,false)){
+  for(const d of CHARACTER_REVISED_DAYS){if(settings[d])for(const k of ['name','calendarName','description','animal'])delete settings[d][k];}
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(characterCopyKey,true);
+}
+const PLAIN_COAT_DAYS=[102,109];
+const plainCoatCopyKey=STORAGE_PREFIX+'plain-coat-'+BASE_CONFIG.plainCoatRevision;
+if(!safeRead(plainCoatCopyKey,false)){
+  for(const d of [...PLAIN_COAT_DAYS,107]){if(settings[d])for(const k of ['name','calendarName','description','animal'])delete settings[d][k];}
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(plainCoatCopyKey,true);
+}
+// Replace only previously published sea lion names, preserving custom copy and state.
+if(settings[107]){
+  let renamed=false;
+  for(const key of ['name','animal'])if(['雪白小海獅','白色小海獅','不想上班小海獅'].includes(settings[107][key])){delete settings[107][key];renamed=true;}
+  if(renamed)safeWrite(STORAGE_PREFIX+'config',settings);
 }
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
@@ -1051,10 +1077,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}
@@ -1572,6 +1598,8 @@ document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if
 window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('globe-wrapper'));
 let lastDay=dateISO();setInterval(()=>{if(previewDate||document.hidden)return;const next=dateISO();if(next!==lastDay){lastDay=next;renderUI();if($('item-dialog').open&&currentModalDay&&dayState(currentModalDay)!=='owned')closeDialog('item-dialog');status('新的一天開始了，可領取今天以前的禮物。');if(cloud.ready)cloudConnect(cloud.email).catch(()=>{});}},10000);
 async function initialise(){
+  // A new visitor has no progress record to restore; show the scene directly.
+  $('scene-loading').hidden=!cloud.email;
   renderUI();resize();
   try{
     // Load the embedded Traditional Chinese faces before measuring card text.
@@ -1583,7 +1611,7 @@ async function initialise(){
     await openDatabase();sprites.clear();sceneReady=true;$('scene-loading').hidden=true;renderUI();resize();requestAnimationFrame(loop);
     status(previewDate?'目前為企劃預覽。':'收藏今天以前的禮物，累積參與 10 天解鎖 Dyson 全品項禮遇。');
     if(cloud.email)cloudConnect(cloud.email).catch(()=>{});
-  }catch(e){$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材載入失敗，請重新整理活動頁面。';status(e.message);}
+  }catch(e){$('scene-loading').hidden=false;$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材載入失敗，請重新整理活動頁面。';status(e.message);}
 }
 let currentTrackId=null,musicEnabled=false,musicPlaying=false,musicPlayToken=0,showMusic=false,showResumeTrack=null;
 const TRACKS=ASSETS.music||[],audio=$('music-player');audio.volume=.28;
