@@ -1,0 +1,295 @@
+/* Embedded Source Han Sans Traditional Chinese (Taiwan), Adobe.
+Copyright 2014-2025 Adobe (http://www.adobe.com/), with Reserved Font
+Name 'Source'. Source is a trademark of Adobe in the United States
+and/or other countries.
+
+This Font Software is licensed under the SIL Open Font License,
+Version 1.1.
+
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font
+creation efforts of academic and linguistic communities, and to
+provide a free and open framework in which fonts may be shared and
+improved in partnership with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded,
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply to
+any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software
+components as distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to,
+deleting, or substituting -- in part or in whole -- any of the
+components of the Original Version, by changing formats or by porting
+the Font Software to a new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed,
+modify, redistribute, and sell modified and unmodified copies of the
+Font Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components, in
+Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the
+corresponding Copyright Holder. This restriction only applies to the
+primary font name as presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created using
+the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+
+*/
+@font-face{font-family:'Source Han Sans TC';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/source-han-sans-tw-regular.woff2) format('woff2')}
+@font-face{font-family:'Source Han Sans TC';font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/source-han-sans-tw-bold.woff2) format('woff2')}
+:root{color-scheme:dark;--bg:#0d1119;--panel:#151b26;--gold:#e5bd7e;--muted:#a3a5ab;--line:#b38d5038;--text:#f4efe7}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 10%,#3b281b55,transparent 55%),var(--bg);color:var(--text);font-family:'Source Han Sans TC','Microsoft JhengHei',sans-serif;font-size:16px;line-height:1.65}button,input,textarea{font:inherit}button{cursor:pointer;background:#19212d;color:#e9ddca;border:1px solid var(--line);border-radius:7px;padding:10px 15px;transition:background .18s,border-color .18s,transform .18s}button:hover{border-color:#e5bd7e99;background:#252b35}button:disabled{cursor:default;opacity:.47}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:4px}a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}h2{font-size:26px;font-weight:600;letter-spacing:.03em}h3{font-size:20px}img{display:block;max-width:100%}[hidden]{display:none!important}.site-header{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:14px max(24px,calc((100vw - 1260px)/2));border-bottom:1px solid var(--line);background:#0d1119ed;backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:18px}.brand-logo{display:block;width:112px;height:auto;aspect-ratio:1702/591;object-fit:contain;flex:none}.brand span{font-size:12px;letter-spacing:.21em;color:var(--gold);padding-left:18px;border-left:1px solid var(--line)}nav{display:flex;gap:9px}nav button{font-size:14px;padding:7px 12px}#voucher-count{display:inline-grid;place-items:center;min-width:20px;border-radius:20px;background:var(--gold);color:#261b10;margin-left:6px}.preview-banner{background:#d4a555;color:#20180d;text-align:center;padding:8px 16px;font-size:14px;position:sticky;top:65px;z-index:19}.preview-banner button{padding:2px 10px;margin-left:10px;border-color:#73511e;background:transparent;color:#20180d}main{max-width:1260px;margin:auto;padding:0 28px}.intro{text-align:center;padding:38px 0 27px}.eyebrow{font-size:12px;letter-spacing:.2em;color:var(--gold);font-weight:600}.intro h1{font-size:clamp(30px,3vw,42px);font-weight:500;letter-spacing:.05em;margin:7px 0 8px}.intro h1 span{color:var(--gold)}.intro>p:last-child{color:var(--muted);font-size:15px}.experience{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(350px,1fr);gap:40px;align-items:start}.globe-topline{display:flex;justify-content:space-between;color:#d6b98e;font-size:13px;letter-spacing:.04em;padding:0 1px 10px}.globe-topline>span:last-child{color:var(--muted)}#globe-wrapper{position:relative;aspect-ratio:1168/1346;background:#2f2116;overflow:hidden;border-radius:7px;box-shadow:0 18px 60px #0007;border:1px solid #b18b5438;isolation:isolate;transform-origin:50% 83%}#empty-globe{position:absolute;width:100%;height:100%;object-fit:fill;pointer-events:none}#snow-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:pointer}#snow-canvas.editing{touch-action:none;cursor:grab}#scene-loading{position:absolute;inset:0;display:grid;place-items:center;background:#19150ee6;color:var(--gold);font-size:14px}#scene-tip{position:absolute;pointer-events:none;background:#111723e8;border:1px solid #d2aa6888;border-radius:5px;color:#ffdfad;font-size:13px;padding:6px 10px;transform:translate(-50%,-130%);white-space:nowrap}.globe-actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;margin-top:15px}.globe-actions button{font-size:14px;padding:11px 5px}.gold-button{background:linear-gradient(115deg,#f1d4a2,#c79750);color:#261c10;font-weight:700;border-color:#ebc68d}.gold-button:hover{background:linear-gradient(115deg,#ffe8bf,#ddb36f);color:#261c10}button[aria-pressed=true]:not(.gold-button){background:#ddbc7a24;border-color:#e7bc79;color:#f5d6a3}.scene-options{display:flex;justify-content:center;gap:16px;margin-top:11px}.scene-options button{background:none;border:0;padding:4px 0;color:var(--muted);font-size:13px}.scene-options button:hover{color:var(--gold)}.status{color:#bdb3a4;font-size:14px;text-align:center;padding:10px 4px;min-height:42px}.position-editor{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px;background:#171e2b;border:1px solid var(--line);margin-top:12px;border-radius:7px;font-size:14px}.position-editor strong{flex:1 1 160px;color:var(--gold)}.position-editor label{display:flex;align-items:center;gap:8px}.position-editor input{width:100px;accent-color:var(--gold)}.position-editor button{padding:5px 9px;font-size:13px}.position-editor p{width:100%;color:var(--muted);font-size:13px}.calendar-panel{border:1px solid var(--line);background:linear-gradient(145deg,#191f2c,#111720);padding:24px;border-radius:10px;position:sticky;top:88px}.calendar-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:19px}.calendar-heading h2{font-size:26px;margin-top:3px}.date-pill{font-size:13px;white-space:nowrap;color:var(--gold);border:1px solid var(--line);padding:5px 9px;border-radius:5px}.today-card{background:#d5a45e0b;border:1px solid #e5bd7e3d;border-radius:7px;padding:18px;margin-bottom:21px}.today-card h3{margin:7px 0 6px}.today-card>p:not(.eyebrow){font-size:14px;color:#b8b4ad;min-height:38px}.today-card button{width:100%;margin-top:13px;font-size:14px}.progress-label{display:flex;justify-content:space-between;font-size:13px;color:#b8b3aa;margin-bottom:6px}.progress-track{height:4px;border-radius:9px;background:#30323b;overflow:hidden;margin-bottom:20px}#progress-fill{height:100%;background:var(--gold);width:0;transition:width .3s}.calendar-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.day-cell{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:81px;padding:8px 2px;background:#0c121d;border-color:#353b455e;border-radius:6px}.day-cell .day-number{font-family:Georgia,serif;font-size:25px;color:#706f75;line-height:1.3}.day-cell .day-status{font-size:11px;color:#797981;margin-top:6px}.day-cell.current{border-color:#ddb36b;background:radial-gradient(ellipse at top,#c3913a35,#151822)}.day-cell.current .day-number,.day-cell.current .day-status{color:#f2d49b}.day-cell.owned{background:#dec18e0c;border-color:#a58c5c66}.day-cell.owned .day-number{color:#c6a871}.day-cell.owned .day-status{color:#b9c5b8}.day-cell.missed{opacity:.52}.day-cell .ticket-mark{position:absolute;right:5px;top:3px;font-size:12px;color:#d7b271}.day-cell:disabled{opacity:.7}.calendar-key{display:flex;flex-wrap:wrap;gap:8px 13px;margin-top:16px;font-size:12px;color:#8f929b}.calendar-key span{display:flex;align-items:center;gap:5px}.key-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#747681}.key-dot.current{background:#dfb76f}.key-dot.owned{background:#9bb397}.key-dot.missed{background:#555861}.calendar-note{font-size:13px;line-height:1.8;color:#91949d;margin-top:12px}.next-benefit{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:15px;margin-top:16px;font-size:13px;color:var(--muted)}.next-benefit strong{color:var(--gold);font-weight:500}.collection-section,.benefit-section{margin-top:48px;padding-top:27px;border-top:1px solid var(--line)}.section-heading{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:22px}.section-heading h2{margin-top:4px}.section-heading>span{color:var(--muted);font-size:13px}.collection-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.collection-card{border:1px solid var(--line);background:#141b27;border-radius:7px;overflow:hidden}.collection-card>button:first-child{border:0;border-radius:0;background:radial-gradient(ellipse at center,#54402855,#121925 70%);padding:0;width:100%;display:block}.collection-card canvas{width:100%;height:135px;display:block}.collection-card .card-info{padding:11px}.collection-card .card-day{font-size:11px;letter-spacing:.12em;color:var(--gold)}.collection-card h3{font-size:14px;font-weight:500;margin:4px 0 9px;min-height:37px;line-height:1.5}.collection-card .place-button{width:100%;font-size:12px;padding:6px 3px;background:#101722}.empty-state{padding:36px 20px;text-align:center;background:#151b254d;border:1px dashed var(--line);border-radius:7px;color:#96959b;font-size:14px;line-height:2}.benefit-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.benefit-card{border:1px solid var(--line);border-radius:7px;background:#151b25;padding:19px 16px}.benefit-card .benefit-date{font:32px Georgia,serif;color:#dbc08d;line-height:1;margin-bottom:13px}.benefit-card h3{font-size:15px;font-weight:500;margin-bottom:7px}.benefit-card p{font-size:13px;color:#9699a2;min-height:35px}.benefit-card .benefit-state{display:block;border-top:1px dashed var(--line);padding-top:10px;margin-top:12px;color:#c4ab80;font-size:12px}.benefit-card.claimed{border-color:#b99a5e88}.benefit-note{font-size:13px;color:#8e929c;margin-top:16px}footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:40px;padding:26px 0;color:#6d7480;border-top:1px solid #b38d501a;font-size:13px}footer button{border:0;background:none;color:#9a948a;font-size:13px;padding:0}dialog{background:#141c29;color:var(--text);border:1px solid #b490535e;border-radius:12px;max-width:440px;width:calc(100% - 32px);max-height:90dvh;padding:32px;box-shadow:0 40px 140px #000b;overflow:auto}dialog::backdrop{background:#03060bc9;backdrop-filter:blur(8px)}.dialog-close{position:absolute;right:12px;top:10px;font-size:27px;border:0;background:transparent;padding:0 7px;color:#b0a899}.dialog-close:hover{background:none;color:var(--gold)}.dialog-subtitle{font-size:14px;color:#9b9da6;margin:9px 0 20px}.item-visual{height:220px;display:grid;place-items:center;background:radial-gradient(ellipse,#d9ad6520,transparent 70%);margin:16px 0 5px}.item-visual canvas{width:100%;height:220px;display:block}.small-label{font-size:12px;color:var(--gold);margin:8px 0}#item-title{font-size:24px}#item-description{font-size:15px;color:#a6a7ad;margin:12px 0 20px}#item-placement,.secondary-button{width:100%;margin-top:9px;font-size:14px}.secondary-button{background:none}.item-benefit{padding:13px;background:#dbb77712;border:1px solid var(--line);border-radius:6px;color:#dfc391;font-size:14px;margin-bottom:16px}.voucher-card{padding:17px;border:1px solid var(--line);border-radius:7px;margin:12px 0}.voucher-card h3{font-size:17px;color:var(--gold)}.voucher-card p{font-size:14px;margin:7px 0;color:#a3a6af}.voucher-code{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px;background:#0e1420;border-radius:5px}.voucher-code code{font-size:15px;color:#f3d9a8}.voucher-code button{padding:3px 10px;font-size:13px}.reference-dialog{max-width:650px}.reference-dialog p{font-size:14px;color:#a6a7af;margin:10px 0 18px}.reference-dialog img{width:100%;border-radius:5px}.studio-dialog{max-width:1180px}.preview-controls{display:flex;gap:9px;align-items:end;flex-wrap:wrap;padding:16px;border:1px solid var(--line);background:#0f1723;border-radius:7px}.preview-controls label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:#afa99e}.preview-controls input{border:1px solid var(--line);border-radius:5px;background:#19212d;color:#ead8b7;padding:7px}.preview-controls button{font-size:13px;padding:9px 11px}.studio-note{font-size:13px;color:#a6a4a0;margin:14px 0;line-height:1.8}.table-scroll{overflow:auto}.studio-table{width:100%;border-collapse:collapse;min-width:990px;font-size:13px}.studio-table th{padding:10px;text-align:left;background:#232d3c;color:#dfbf8b;white-space:nowrap}.studio-table td{padding:11px 9px;vertical-align:middle;border-bottom:1px solid #b38d5026}.studio-table td:nth-child(3){min-width:170px}.studio-table td:nth-child(4){min-width:220px;max-width:270px}.studio-table td:nth-child(5){min-width:140px;max-width:180px}.studio-table .studio-type{display:block;color:#a89f8f;font-size:12px}.studio-table canvas{width:65px;height:70px;display:block}.studio-table button{font-size:12px;padding:5px 8px;white-space:nowrap;margin:2px}.studio-table .asset-status{display:block;color:#a5a08f;font-size:12px;max-width:130px}.studio-table .missing{color:#e1b873}.config-editor{margin-top:22px;border-top:1px solid var(--line);padding-top:15px}.config-editor summary{cursor:pointer;color:var(--gold)}.config-editor p{font-size:13px;color:#9ea2ac;margin:12px 0}.config-editor textarea{width:100%;height:270px;background:#0b121d;border:1px solid var(--line);border-radius:5px;font-family:ui-monospace,monospace;font-size:14px;padding:14px;resize:vertical;line-height:1.7;color:#d6c7ad}.config-actions{display:flex;gap:10px;margin-top:12px}.config-actions button{font-size:13px}.shake{animation:globeShake .65s ease-out}@keyframes globeShake{0%,100%{transform:rotate(0)}20%{transform:rotate(-1.2deg)}40%{transform:rotate(1.1deg)}60%{transform:rotate(-.6deg)}80%{transform:rotate(.3deg)}}@media(min-width:1100px){body:has(#preview-banner:not([hidden])) .calendar-panel{top:125px}}@media(max-width:1000px){.experience{gap:25px;grid-template-columns:minmax(0,1.1fr) minmax(320px,1fr)}.calendar-panel{padding:19px}.collection-grid,.benefit-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.day-cell{min-height:74px}}@media(max-width:760px){main{padding:0 18px}.site-header{padding:14px 18px}.brand span{display:none}.brand-logo{width:100px}.intro{padding:27px 0 22px}.intro h1{font-size:30px}.intro>p:last-child{font-size:13px}.experience{display:flex;flex-direction:column;gap:22px}.globe-section,.calendar-panel{width:100%}.globe-section{max-width:560px;margin:auto}.calendar-panel{position:static;padding:22px}.day-cell{min-height:77px}.collection-section,.benefit-section{margin-top:32px}.section-heading{display:block}.section-heading>span{display:block;margin-top:7px}.collection-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.collection-card canvas{height:110px}.benefit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.benefit-card{padding:17px}.benefit-card:last-child{grid-column:1/-1}.benefit-card p{min-height:0}.studio-dialog{padding:27px 18px}footer{display:block}footer button{display:block;margin-top:9px}.preview-banner{top:60px;font-size:12px;padding:7px 5px}dialog{padding:28px 23px}.preview-controls button{flex:1 1 130px}.preview-controls label{width:100%}.preview-controls input{width:100%}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+.calendar-tools{display:flex;flex-direction:column;align-items:flex-end;gap:7px}.calendar-tools #quick-sim-toggle{padding:4px 9px;font-size:13px;border-color:#d2a96b88;color:#f0cf9a;background:#d8ad6120;white-space:nowrap}.quick-sim-panel{padding:14px;margin:-3px 0 18px;border:1px solid #d6ab6766;border-radius:7px;background:#080e17}.quick-sim-panel>p{font-size:12px;line-height:1.8;color:#b5afa3;margin:10px 0}@media(max-width:380px){.calendar-heading h2{font-size:24px}}
+
+.sim-multiselect{min-width:0;margin:16px 0 0;padding:10px 0 0;border:0;border-top:1px solid var(--line)}.sim-multiselect legend{font-size:14px;color:var(--gold);padding:0 7px 0 0}.sim-selection-toolbar{display:flex;gap:7px;align-items:center;margin-bottom:9px}.sim-selection-toolbar span{flex:1;font-size:12px;color:var(--muted)}.sim-selection-toolbar button{padding:4px 8px;font-size:12px}.sim-date-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.sim-date-option{display:flex;align-items:center;justify-content:center;gap:4px;min-height:38px;border:1px solid #b38d5038;border-radius:5px;background:#151c28;cursor:pointer;font-size:13px;white-space:nowrap}.sim-date-option input{margin:0;width:13px;height:13px;accent-color:var(--gold);cursor:pointer}.sim-date-option:has(input:checked){background:#ddbc7a24;border-color:#d6ae6c;color:#f2d4a2}.sim-date-option:focus-within{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:380px){.sim-date-grid{gap:4px}.sim-date-option{gap:3px;font-size:12px}.calendar-panel{padding:16px}}
+
+.quick-sim-panel{padding:10px 12px;margin:-7px 0 18px}.sim-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-size:12px;color:var(--muted)}.sim-panel-heading button{padding:3px 8px;font-size:12px;color:var(--gold);background:transparent}.sim-multiselect{margin:8px 0 0;padding:0;border:0}.sim-multiselect legend{font-size:12px;color:var(--muted)}.sim-selection-toolbar{justify-content:flex-end;margin:4px 0 6px}.sim-selection-toolbar button{padding:3px 7px}.sim-date-grid{max-height:128px;overflow-y:auto;overscroll-behavior:contain;padding:3px 5px 3px 3px;scrollbar-width:thin;scrollbar-color:#a98a55 #111824}.sim-date-option{min-height:32px}.sim-grid-hint{margin:6px 0 0;font-size:12px;line-height:1.6;color:var(--muted)}.quick-sim-panel>p{margin:7px 0;font-size:12px;line-height:1.6}.sim-panel-footer{display:flex;align-items:start;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:6px}.sim-panel-footer>button{font-size:12px;padding:4px 8px;white-space:nowrap;background:transparent}
+
+#empty-globe,#snow-canvas{transform:translateX(-3.8%) scale(1.08);transform-origin:50% 50%}.show-banner{position:absolute;left:50%;top:10%;transform:translateX(-50%);min-width:170px;padding:9px 16px;border:1px solid #f4d69e80;border-radius:7px;background:#17202bdc;text-align:center;pointer-events:none;box-shadow:0 0 35px #e5bd7e22}.show-banner>span{display:block;font-size:10px;letter-spacing:.16em;color:#dbbe8b}.show-banner strong{display:block;color:#ffe5b9;font-size:15px;font-weight:500;margin:3px 0 6px}.show-track{height:2px;background:#b8985a33}.show-track i{display:block;height:100%;background:#ffdc93;box-shadow:0 0 8px #ffdb8b}.show-controls{display:flex;flex-wrap:wrap;gap:7px;align-items:center;justify-content:center;margin-top:10px}.show-controls button{font-size:13px;padding:6px 10px;color:var(--gold);border-color:#d9b37a77}.show-controls span{font-size:12px;color:var(--muted)}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.music-panel{border:1px solid var(--line);border-radius:7px;background:#141b26;padding:12px;margin-top:13px}.music-heading{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:8px}.music-heading strong{font-size:14px;color:var(--gold);white-space:nowrap}.music-heading span{font-size:12px;color:var(--muted);text-align:right}.music-row{display:flex;gap:8px;align-items:center}.music-choice{flex:1;min-width:0}.music-choice select{width:100%;min-width:0;border:1px solid var(--line);border-radius:5px;background:#0c131f;color:#e7cd9f;padding:7px;font-size:13px}.music-row>button{font-size:13px;padding:7px 10px;white-space:nowrap}.music-volume{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}.music-volume input{width:65px;accent-color:var(--gold)}.music-caption{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:8px;color:var(--muted);font-size:11px}.music-caption button{font-size:12px;white-space:nowrap;padding:0;background:transparent;border:0;color:var(--gold)}.item-music{font-size:14px;color:#d6bd91;background:#d8b36a12;border:1px solid var(--line);border-radius:6px;padding:11px;margin:14px 0}.music-credit-card{border-top:1px solid var(--line);padding:14px 0}.music-credit-card h3{font-size:16px;color:var(--gold)}.music-credit-card p{font-size:13px;color:var(--muted);margin-top:6px}.credit-links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:#e4c38c;margin-top:7px}.credit-links a{text-decoration:underline;text-underline-offset:3px}@media(max-width:430px){.music-row{flex-wrap:wrap}.music-volume{width:100%;justify-content:flex-end}.music-volume input{width:85px}.music-heading{align-items:start}.music-caption{align-items:start}}
+
+.product-intro{padding:16px;background:#0d1521;border:1px solid var(--line);border-radius:7px;margin:16px 0}.product-model{color:var(--gold);font-size:13px;letter-spacing:.04em;margin-bottom:6px}.product-intro h3{font-size:16px;color:#ecd5ae;margin-bottom:7px}.product-intro>p:not(.product-model){font-size:14px;color:#bdbab4;line-height:1.8}.product-intro ul{padding-left:19px;margin:10px 0 12px;color:#cdbd9f;font-size:14px}.product-link{display:inline-block;border:1px solid #d8b36c88;border-radius:5px;padding:7px 12px;color:var(--gold);font-size:14px}.product-link-pending{display:block;color:var(--muted);font-size:13px;margin-top:10px}.coupon-progress-label{font-size:14px;color:var(--gold);margin:0 0 8px}.coupon-progress-track{height:5px;margin-bottom:18px}#coupon-progress-fill{height:100%;background:var(--gold);transition:width .25s}.benefit-card p{min-height:0}.benefit-card>button{margin-top:12px;padding:7px 12px;font-size:13px}.config-label{display:block;font-size:14px;color:var(--gold);margin:14px 0 7px}.config-editor textarea.reward-json{height:320px}
+
+/* Compact date summary leaves room for the calendar and globe. */
+.today-card.compact{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:4px;padding:12px 14px;margin-bottom:14px;align-items:center}
+.today-card.compact h3{grid-column:1;grid-row:1;margin:0;font-size:17px;line-height:1.45}
+.today-card.compact>p:not(.eyebrow){grid-column:1;grid-row:2;min-height:0;font-size:13px;line-height:1.6}
+.today-card.compact button{grid-column:2;grid-row:1 / span 2;width:auto;align-self:center;margin:0;padding:8px 12px;font-size:13px;white-space:nowrap}
+
+/* Product collectibles receive a quiet champagne highlight. */
+.collection-card{display:flex;flex-direction:column}.collection-card .card-info{display:flex;flex-direction:column;flex:1}
+.collection-card .place-button{margin-top:auto}.collection-card.product-card{border:2px solid #E5BD7E;box-shadow:0 0 0 1px #f5d69b18,0 0 24px #e5bd7e28;background:linear-gradient(155deg,#26242a,#141b27 65%)}
+.collection-card.product-card>button:first-child{background:radial-gradient(ellipse at 50% 58%,#d4aa6842,#70553713 55%,#131a25 85%)}
+.product-card .card-day{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}.product-badge{font-size:11px;letter-spacing:0;border:1px solid #caa66a55;border-radius:20px;padding:1px 6px;background:#E5BD7E;color:#2b2115;font-weight:600;white-space:nowrap}
+.collection-card.product-card h3{color:#f4dfbd;font-weight:600;font-size:15px;margin-bottom:6px}
+.product-tagline{font-size:13px;color:#c2b8a8;line-height:1.7;margin-bottom:12px;min-height:38px}
+.product-card .place-button{border-color:#d5b67c77;color:#f2d7a9}
+
+/* All five milestones remain visible, with concealed categories until unlocked. */
+.benefit-card,.voucher-card{min-width:0}.benefit-card{display:flex;flex-direction:column;padding:16px 13px}.benefit-card>button{margin-top:auto;padding-top:7px;align-self:flex-start}
+.reward-meta{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.benefit-card .reward-meta .benefit-date,.voucher-card .reward-meta .benefit-date{font-family:inherit;font-size:14px;font-weight:500;line-height:1.5;margin:0;color:#c0b8a9;min-height:0}
+.reward-state{font-size:12px;color:#b5bac4;white-space:nowrap}.benefit-card h3{font-size:16px;line-height:1.6}.benefit-card .reward-hint{margin:0 0 13px;line-height:1.7}
+.benefit-card.locked h3,.voucher-card.locked h3{color:#b8bec9;font-weight:500}.benefit-card.locked .reward-hint,.voucher-card.locked .reward-hint{color:#aab1bf}
+.benefit-card.claimed,.voucher-card.claimed{border-color:#c9a56a99;background:linear-gradient(120deg,#d1aa6512,#151c28)}.benefit-card.claimed h3,.voucher-card.claimed h3{color:#f0cc95}.claimed .reward-state{color:#e4c38d}
+.benefit-card.next-reward,.voucher-card.next-reward{border-color:#d9ba7e88;box-shadow:inset 0 0 22px #d4b27b08}.next-reward .reward-state{color:#e4c38d}
+#vouchers-dialog{max-width:680px}.voucher-overview{background:#d1aa650b;border:1px solid var(--line);border-radius:7px;padding:12px 14px;margin-bottom:15px}.voucher-overview p:first-child{font-size:14px;color:#efd1a1}.voucher-overview p:last-child{font-size:13px;color:#b7beca;margin-top:4px}
+#vouchers-list{display:grid;gap:10px}.voucher-card{margin:0;padding:14px 16px}.voucher-card .reward-meta{margin-bottom:5px}.voucher-card h3{font-size:17px;line-height:1.6}.voucher-card p.reward-hint,.voucher-card p.reward-conditions,.voucher-card p.reward-expiry,.voucher-card p.reward-pending{font-size:13px;line-height:1.7;margin:5px 0;color:#b1b7c3}.voucher-card .voucher-code{margin-top:9px;flex-wrap:wrap}.voucher-code code{overflow-wrap:anywhere;user-select:all}.voucher-code button{min-height:30px}
+@media(max-width:1000px){.benefit-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.benefit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.benefit-card:last-child{grid-column:1 / -1}.product-card .card-day{gap:4px}.product-badge{font-size:10px;padding:1px 5px}.product-tagline{font-size:12px}.collection-card.product-card h3{font-size:14px}}
+@media(max-width:420px){.today-card.compact{column-gap:8px;padding:11px 12px}.today-card.compact>p:not(.eyebrow){grid-column:1 / -1;grid-row:2}.today-card.compact button{grid-column:2;grid-row:1;padding:6px 10px}.benefit-card{padding:13px 11px}.benefit-card h3{font-size:15px}.voucher-card{padding:12px}.voucher-code{gap:7px}}
+
+.collection-card canvas,.item-visual canvas{object-fit:contain}
+
+.product-card .card-open{display:block;width:100%;padding:0;border:0;border-radius:2px;background:none;color:inherit;font:inherit;line-height:inherit;text-align:left}.product-card .card-open:hover{background:none;color:#ffe8bd}.product-card .product-tagline{cursor:pointer}
+
+.show-greeting{position:absolute;left:50%;top:37.7%;transform:translate(-50%,-50%);color:#fff2d0;font-size:clamp(20px,2.4vw,33px);font-weight:600;letter-spacing:.16em;white-space:nowrap;pointer-events:none;text-shadow:0 2px 5px #080e1d,0 0 16px #080e1d,0 0 25px #ffe0a080}
+.globe-stage{position:relative;padding-top:82px}.show-banner-slot{position:absolute;top:0;left:0;width:100%;height:70px;display:flex;align-items:center;justify-content:center}.show-banner-slot .show-banner{position:static;transform:none;width:220px;min-width:0;max-width:90%;padding:7px 16px;background:#17202bf5}.christmas-card-entry{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:16px;margin-top:15px;border:1px solid #e5bd7e55;border-radius:8px;background:linear-gradient(120deg,#d8ad6114,#151c27)}.christmas-card-entry strong{font-size:14px;color:#edcf9f;font-weight:500}.christmas-card-entry p{font-size:12px;color:var(--muted);margin-top:4px}.christmas-card-entry button{font-size:13px;color:var(--gold);white-space:nowrap;padding:9px 12px}
+.card-dialog{max-width:1000px;width:calc(100% - 32px)}.card-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:30px;align-items:start;margin-top:22px}.card-form{min-width:0}.card-field{margin-bottom:15px}.card-label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.card-label label{font-size:15px;color:#edcf9f}.card-label label span{font-size:12px;color:var(--muted);margin-left:5px}.card-label output{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.card-form input,.card-form textarea{display:block;width:100%;min-width:0;background:#0b121d;color:var(--text);border:1px solid #b38d5066;border-radius:6px;padding:10px 12px;font-size:16px;line-height:1.7}.card-form textarea{resize:vertical;min-height:140px}.card-form input::placeholder,.card-form textarea::placeholder{color:#7e838d}.card-form [aria-invalid=true]{border-color:#eda090}.card-error{font-size:13px;color:#f2afa0;margin-top:5px;min-height:0}.card-error:empty{display:none}.card-hint{color:#a3a5ab;font-size:12px;margin-top:7px;line-height:1.8}.card-presets{padding:0;border:0;margin:2px 0 20px;min-width:0}.card-presets legend{font-size:12px;color:var(--muted);margin-bottom:8px}.card-presets>div{display:flex;gap:6px;flex-wrap:wrap}.card-presets button{font-size:13px;padding:6px 9px}.card-photo-tools{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:16px;margin-top:18px}.card-photo-tools button{font-size:13px;padding:7px 10px;white-space:nowrap}.card-photo-tools span{font-size:12px;color:var(--muted)}.card-save-actions{display:flex;gap:8px;margin-top:20px}.card-save-actions button{flex:1;font-size:14px;padding:11px 8px}.card-status{font-size:14px;color:#e5bd7e;margin-top:10px;min-height:20px}.card-preview-area{min-width:0;background:#080e17;border:1px solid var(--line);border-radius:8px;padding:14px}.card-preview-label{display:flex;justify-content:space-between;font-size:12px;color:#d4bb93;margin-bottom:12px}.card-preview-label span:last-child{color:var(--muted)}#card-preview{width:100%;height:auto;display:block;border-radius:3px;box-shadow:0 6px 25px #0005}.card-preview-area>p{font-size:12px;color:var(--muted);margin-top:10px;text-align:center}
+@media(max-width:760px){.card-dialog{padding:28px 18px}.card-workspace{grid-template-columns:minmax(0,1fr);gap:22px}.card-preview-area{max-width:380px;width:100%;margin:auto}.card-dialog .dialog-subtitle{font-size:14px}.globe-stage{padding-top:76px}.show-banner-slot{height:64px}}
+@media(max-width:380px){.christmas-card-entry{gap:8px;padding:12px}.christmas-card-entry strong{font-size:13px}.christmas-card-entry button{padding:8px;font-size:12px}.card-photo-tools{flex-wrap:wrap}}
+
+/* Locked milestones stay subdued; the next target is distinct from an earned coupon. */
+.benefit-card.locked,.voucher-card.locked{background:#0e1520;border-color:#374252;box-shadow:none}
+.benefit-card.locked h3,.voucher-card.locked h3{color:#98a2b1}
+.benefit-card.locked .reward-hint,.voucher-card.locked .reward-hint{color:#8f99a8}
+.benefit-card.locked .benefit-date,.voucher-card.locked .benefit-date,.locked .reward-state{color:#8793a3}
+.benefit-card.locked>button{color:#a2acba;border-color:#46505e;background:#131c28}
+.benefit-card.locked.next-reward,.voucher-card.locked.next-reward{background:#121c29;border-color:#92794f;box-shadow:inset 0 0 20px #d4b27b07}
+.benefit-card.next-reward .benefit-date,.voucher-card.next-reward .benefit-date,.next-reward .reward-state{color:#d6b47e}
+.benefit-card.locked.next-reward h3,.voucher-card.locked.next-reward h3{color:#b7bec9}
+.benefit-card.locked.next-reward>button{color:#d6bc95;border-color:#786440;background:#17202b}
+
+.benefit-card.claimed .reward-meta .benefit-date,.voucher-card.claimed .reward-meta .benefit-date{color:#e2bf89}
+.day-cell{min-height:119px;gap:5px;padding:10px 4px}.day-cell .day-name{display:block;max-width:100%;font-size:12px;line-height:1.4;color:#c4c1bb;overflow-wrap:anywhere;font-weight:500;text-align:center}.day-cell.future .day-name{color:#b1b3b9}.day-cell.missed .day-name{color:#9598a1}.day-cell.owned .day-name{color:#efdbbb}.day-cell.current .day-name{color:#ffe2b2}.day-cell .day-status{margin-top:auto;padding-top:2px}.day-cell .day-music{font-size:10px;line-height:1.35;color:#b9a98d;text-align:center;overflow-wrap:anywhere}.day-cell.current .day-music,.day-cell.owned .day-music{color:#e2c38b}@media(max-width:1000px){.day-cell{min-height:125px}}@media(max-width:380px){.calendar-grid{gap:5px}.day-cell{padding:8px 3px;min-height:121px}.day-cell .day-name{font-size:11px}.day-cell .day-music{font-size:10px}.day-cell .day-number{font-size:23px}}
+.card-media-options{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}.card-format-label{display:block;color:var(--gold);font-size:14px;margin-bottom:7px}.card-media-options select{width:100%;background:#0b121d;color:var(--text);border:1px solid #b38d5066;border-radius:6px;padding:10px 8px;font:inherit;font-size:13px}.card-audio-check{display:flex;gap:7px;align-items:center;font-size:14px;margin:12px 0}.card-audio-check input{width:15px;height:15px;margin:0;accent-color:var(--gold)}.card-audio-check span,.card-voice-heading strong span{color:var(--muted);font-size:12px;font-weight:400}.card-voice-heading{display:flex;justify-content:space-between;gap:8px;align-items:baseline;font-size:13px;margin:14px 0 8px}.card-voice-heading strong{font-weight:500;color:#e7d1ad}.card-voice-heading>span{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--gold)}.card-voice-actions{display:flex;gap:7px;flex-wrap:wrap}.card-voice-actions button{padding:6px 10px;font-size:13px}#card-record-stop{border-color:#e9a087;color:#ffd2bf}#card-voice-preview{width:100%;height:34px;margin-top:10px}#card-generate{width:100%;margin-top:15px;padding:10px;font-size:14px;color:var(--gold);border-color:#c99c5899}#card-file-size{color:#d9c19a;font-size:13px;min-height:18px;margin-top:9px}#card-export-progress{display:flex;align-items:center;gap:9px;margin-top:10px}#card-progress{flex:1;width:0;height:7px;accent-color:var(--gold)}#card-cancel-export{padding:4px 8px;font-size:12px}#card-video-preview,#card-gif-preview{width:100%;height:auto;display:block;border-radius:3px}.card-format-error{color:#f2afa0!important}
+
+/* Base compact calendar; readable sizing and columns are defined below. */
+.day-music-short{display:none}
+@media(max-width:760px){
+ .calendar-grid{gap:5px}
+ .day-cell{height:100px;min-height:100px;padding:5px 2px;gap:2px;justify-content:flex-start}
+ .day-cell .day-number{font-size:23px;line-height:1.1;flex-shrink:0}
+ .day-cell .day-name{font-size:11px;line-height:1.25;flex-shrink:0}
+ .day-cell .day-music{font-size:10px;line-height:1.25;flex-shrink:0}
+ .day-cell .day-status{font-size:10px;line-height:1.25;margin-top:auto;padding-top:0;flex-shrink:0}
+ .day-music-full{display:none}
+ .day-music-short{display:inline}
+}
+
+.sim-panel-heading>span:last-child{color:var(--gold);font-size:12px}.sim-panel-footer{align-items:center;justify-content:flex-end}.sim-panel-footer #quick-sim-done{background:#ddbc7a24;border-color:#d6ae6c;color:#f2d4a2}
+
+/* Calendar states use color plus a corner symbol; full labels remain accessible. */
+.day-cell{height:100px;min-height:100px;justify-content:flex-start}
+.day-cell.owned{background:linear-gradient(145deg,#e5bd7e1d,#d7b8800d);border-color:#b89a658c}
+.day-cell.current{border-color:#e4ba78;box-shadow:inset 0 0 0 1px #e4ba7824}
+.day-cell.unselected{background:#0c121d;border-color:#353b455e;box-shadow:none}
+.day-cell .day-number{flex-shrink:0}.day-cell .day-name{line-height:1.3}
+.day-music-full{display:none}.day-music-short{display:inline}
+.calendar-state-icon{position:absolute;right:5px;top:4px;width:13px;height:13px;display:inline-grid;place-items:center;color:#8b919c;font-size:14px;line-height:1;pointer-events:none}
+.calendar-state-icon.placed{color:#edcf95;font-weight:700}.calendar-state-icon.current{color:#f4d393;font-size:21px}
+.calendar-state-icon.future{background:center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238b919c' stroke-width='1.4'%3E%3Crect x='3.5' y='7' width='9' height='7' rx='1.4'/%3E%3Cpath d='M5.5 7V4a2.5 2.5 0 0 1 5 0v3'/%3E%3C/svg%3E")}
+.calendar-state-icon.unselected{width:7px;height:7px;border:1px solid #737986;border-radius:50%}
+.calendar-key .calendar-state-icon{position:static;flex:none;margin-right:1px}.calendar-key>span{gap:4px}
+@media(min-width:761px){.day-cell{padding:7px 4px;gap:4px}.day-cell .day-number{font-size:25px;line-height:1.1}.day-cell .day-music{line-height:1.25}}
+/* Keep corner symbols clear of two-digit dates on narrow five-column grids. */
+.day-cell .calendar-state-icon{right:3px;top:3px;width:9px;height:9px;font-size:12px;background-size:9px 9px}
+.day-cell .calendar-state-icon.current{font-size:16px}
+.calendar-key .calendar-state-icon{width:13px;height:13px}
+
+/* Checkmarks describe placement, independently of gift ownership. */
+.calendar-state-icon.placed{background:center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23edcf95' d='m1 8 3-3 3 3 5-6 3 3-8 9z'/%3E%3C/svg%3E")}
+.calendar-state-icon.stored{background:center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%238b919c' stroke-width='1.1' stroke-linejoin='round' d='m1 8 3-3 3 3 5-6 3 3-8 9z'/%3E%3C/svg%3E");border:0;border-radius:0}
+.day-cell.product-day{border-color:#b39255a6;box-shadow:inset 0 0 0 1px #c3a15c13,0 0 9px #dfb7690c}
+.day-cell.product-day.current{border-color:#ecc88d;box-shadow:inset 0 0 0 1px #e4ba7844,0 0 12px #dfb76920}
+.day-cell.product-day.owned{border-color:#e7c185;box-shadow:inset 0 0 0 1px #e4ba7833,0 0 12px #dfb76918;background:linear-gradient(145deg,#e5bd7e27,#d7b88010)}
+.day-cell .calendar-state-icon{background-size:9px 9px}
+
+/* Collected gifts stay dark until the user explicitly places them. */
+.day-cell.owned.stored{background:#0c121d;border-color:#454854;box-shadow:none}
+.day-cell.owned.stored .day-number{color:#a5a5ad}.day-cell.owned.stored .day-name{color:#c0bdba}.day-cell.owned.stored .day-music{color:#b9a98d}
+.day-cell.owned.placed{background:linear-gradient(145deg,#e5bd7e2c,#d7b88016);border-color:#d5b37a;box-shadow:inset 0 0 0 1px #d5b37a22}
+.day-cell.owned.placed .day-number{color:#e5c58f}.day-cell.owned.placed .day-name{color:#f4ddba}
+.day-cell.product-day.owned.stored{border-color:#b39255a6;box-shadow:inset 0 0 0 1px #c3a15c13,0 0 9px #dfb7690c}
+.day-cell.product-day.owned.placed{border-color:#edcc91;box-shadow:inset 0 0 0 1px #e4ba7844,0 0 12px #dfb76920;background:linear-gradient(145deg,#e5bd7e35,#d7b88019)}
+.calendar-state-icon.current,.calendar-state-icon.unselected{background:none;border:1px solid #e4ba78;border-radius:2px;width:10px;height:10px}
+.calendar-state-icon.stored{color:#8b919c}.day-cell .calendar-state-icon{background-size:9px 9px}
+
+/* Midnight paper diorama palette: keep the controls clear and the artwork central. */
+:root{--bg:#0e1b2a;--panel:#142539;--gold:#dfc08b;--muted:#a4acb6;--line:#c5a47740;--text:#f3ece0}
+body{background:radial-gradient(ellipse at 18% 12%,#36566b38,transparent 54%),radial-gradient(ellipse at 90% 65%,#1c39444d,transparent 58%),var(--bg)}
+.site-header{background:#0e1b2aef}.calendar-panel{background:linear-gradient(145deg,#1a2c3f,#101f30);box-shadow:0 14px 40px #030e1a26}
+#globe-wrapper{background:#142638;border-color:#d6b47c4d;box-shadow:0 16px 50px #020c194d}
+.collection-card,.benefit-card{background:#142437}.collection-card>button:first-child{background:radial-gradient(ellipse at center,#dfc08b15,#122235 75%)}
+dialog{background:#122237}.empty-state{background:#14243780}.card-preview-area{background:#101f30}
+
+#progress-dialog{width:min(540px,calc(100vw - 28px))}#progress-form{display:grid;gap:15px}#progress-form>label{display:grid;gap:7px}#progress-email,#cloud-endpoint{width:100%;padding:12px;border:1px solid var(--line);border-radius:7px;background:#0d1927;color:var(--text)}.progress-consent{display:flex!important;grid-template-columns:none;align-items:flex-start;gap:9px!important;font-size:14px;color:#b4c1ce}.progress-consent input{margin-top:5px;flex:none;accent-color:var(--gold)}#progress-message,#cloud-settings-status{min-height:1.5em;color:var(--gold);font-size:14px}#progress-current{padding:12px;border:1px solid var(--line);border-radius:8px;overflow-wrap:anywhere}#progress-current button{margin-top:9px;font-size:14px;padding:6px 10px}#cloud-settings{padding:16px;border:1px solid var(--line);border-radius:8px;margin:20px 0}#cloud-settings p,#cloud-settings label{display:block;margin:10px 0;font-size:14px}#cloud-settings button{margin-top:10px}@media(max-width:600px){.site-header{gap:6px}.site-header nav{gap:5px}.site-header nav button{font-size:13px;padding:6px 7px}#progress-dialog{padding:28px 20px}}
+
+@media(max-width:360px){.site-header{padding-inline:12px}.brand-logo{width:82px}}
+
+/* Readable type: main copy 16px, calendar labels 14px, small badges at least 10px. */
+body{font-size:16px}
+button,input,textarea,select{line-height:1.5}
+.intro>p:last-child,#item-description{font-size:16px}
+.day-cell{height:auto;min-height:100px;padding:9px 5px;gap:5px}
+.day-cell .day-number{font-size:25px;line-height:1.1}
+.day-cell .day-name{font-size:14px;line-height:1.4}
+.day-cell .day-music{font-size:12px;line-height:1.35}
+.day-cell.future .day-name{color:#bec3cc}
+.calendar-note,.benefit-note,.dialog-subtitle,.today-card.compact>p:not(.eyebrow){font-size:14px}
+.calendar-key{font-size:12px;line-height:1.6}
+.collection-card h3,.collection-card.product-card h3{font-size:16px;min-height:0;line-height:1.5}
+.collection-card .place-button{font-size:14px;min-height:38px;padding:7px 5px}
+.product-tagline,.product-intro>p:not(.product-model),.product-intro ul{font-size:14px;line-height:1.7}
+.product-intro h3,.voucher-card h3{font-size:18px}
+.voucher-card p.reward-hint,.voucher-card p.reward-conditions,.voucher-card p.reward-expiry,.voucher-card p.reward-pending{font-size:14px;line-height:1.7}
+.voucher-code code{font-size:18px}
+.voucher-code button,.product-link,#item-placement,.secondary-button{font-size:14px}
+.progress-consent,#progress-message,#cloud-settings-status{font-size:14px}
+@media(max-width:760px){
+ .calendar-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+ .calendar-panel{padding:18px 14px}
+ .calendar-heading{align-items:flex-start;flex-wrap:wrap}
+ .calendar-heading h2{font-size:24px}
+ .calendar-tools{margin-left:auto;max-width:100%}
+ .day-cell{height:auto;min-height:100px;padding:8px 4px;gap:4px}
+ .day-cell .day-name{font-size:14px;line-height:1.4}
+ .day-cell .day-music{font-size:12px;line-height:1.35}
+ .collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .collection-card .card-info{padding:12px}
+ .collection-card.product-card h3{font-size:16px}
+ .product-tagline{font-size:14px;min-height:0}
+ .preview-banner{position:static;font-size:12px}
+ .intro>p:last-child{font-size:14px}
+}
+@media(max-width:600px){
+ .site-header nav{flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 108px)}
+ .site-header nav button{font-size:13px;white-space:nowrap}
+ .sim-date-option{padding:7px 3px;font-size:12px}
+ .sim-selection-toolbar{flex-wrap:wrap}
+ .sim-selection-toolbar span{flex-basis:100%}
+ .sim-panel-footer{flex-wrap:wrap}
+ .sim-panel-heading{flex-wrap:wrap}
+ .christmas-card-entry{flex-wrap:wrap}
+ .christmas-card-entry button{margin-left:auto}
+}
+@media(max-width:360px){
+ .site-header nav{max-width:calc(100% - 88px)}
+ main{padding-inline:12px}
+ .calendar-panel{padding-inline:12px}
+ .calendar-grid{gap:6px}
+}
+
+/* Product-linked offers and distinct participation days. */
+.reward-product{display:flex;align-items:center;gap:16px;margin:12px 0;min-width:0}
+.reward-product>canvas,.reward-product-teaser{width:104px;height:130px;flex:0 0 104px;object-fit:contain}
+.reward-product>div:last-child{min-width:0;flex:1}
+.reward-product-teaser{display:grid;place-items:center;border:1px dashed var(--line);border-radius:8px;color:var(--gold);font-size:14px}
+.voucher-card .reward-product-intro{font-size:14px;line-height:1.7;margin:0 0 10px}
+.reward-coupon-title{font-size:16px;color:var(--gold);margin:8px 0;line-height:1.5}
+.sim-visits-label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--gold)}
+.sim-visits-label input{width:70px;padding:6px;background:#0d1927;color:var(--text);border:1px solid var(--line);border-radius:5px;font:inherit}
+.sim-visits-label span{font-size:12px;color:var(--muted)}
+@media(max-width:420px){.reward-product{gap:10px}.reward-product>canvas,.reward-product-teaser{width:78px;flex-basis:78px;height:110px}}
