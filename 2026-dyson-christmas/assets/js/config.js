@@ -216,8 +216,8 @@ window.DYSON_GAME_CONFIG = {
       "benefit": null,
       "assetNeed": "主樹去背圖，不與其他物件合併",
       "layout": {
-        "x": 646,
-        "y": 793,
+        "x": 625,
+        "y": 855,
         "h": 455
       },
       "atlas": 8,
@@ -425,8 +425,8 @@ window.DYSON_GAME_CONFIG = {
       "benefit": null,
       "assetNeed": "金星去背圖，光暈另作效果",
       "layout": {
-        "x": 646,
-        "y": 327,
+        "x": 625,
+        "y": 408,
         "h": 77
       },
       "atlas": 15,

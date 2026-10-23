@@ -412,3 +412,14 @@ button,input,textarea,select{line-height:1.5}
 .benefit-card.compact-reward .reward-participation{font-size:14px;line-height:1.6;min-height:0;margin:0 0 3px;color:#aab1bf}
 .benefit-card.compact-reward>button{margin-top:auto;font-size:14px;padding:7px 10px}
 @media(max-width:420px){.benefit-card.compact-reward{padding:15px 12px;gap:10px}.benefit-card.compact-reward h3{font-size:16px}}
+
+/* v38: keep show status beside the controls, entirely outside the globe. */
+.show-controls{justify-content:flex-start;gap:8px}
+.show-controls .show-banner-slot{position:static;inset:auto;transform:none;width:auto;height:auto;flex:1 1 150px;min-width:0;pointer-events:none;z-index:auto}
+.show-controls .show-banner-slot .show-banner{position:static;transform:none;display:flex;align-items:center;gap:10px;width:100%;max-width:none;min-width:0;margin:0;padding:6px 10px;border:1px solid #d9b37a44;border-radius:5px;background:#14202c;box-shadow:none;text-align:left}
+.show-controls .show-banner>span{display:none}
+.show-controls .show-banner strong{font-size:13px;line-height:1.5;margin:0;white-space:nowrap}
+.show-controls .show-track{flex:1;min-width:35px;max-width:110px;height:2px}
+@media(max-width:420px){.show-controls{gap:7px}.show-controls .show-banner-slot{flex-basis:100%}.show-controls .show-track{max-width:none}}
+
+.show-controls .show-banner-slot:has(.show-banner[hidden]){display:none}

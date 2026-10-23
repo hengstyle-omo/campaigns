@@ -442,6 +442,15 @@ if(!safeRead(departmentStoreSizeKey,false)){
   if(settings[21]?.layout?.h===178){settings[21].layout.h=BASE_CONFIG.items.find(i=>i.day===21).layout.h;safeWrite(STORAGE_PREFIX+'config',settings);}
   safeWrite(departmentStoreSizeKey,true);
 }
+// Refresh formerly exported defaults; participant positions remain untouched.
+const treeDefaultsKey=STORAGE_PREFIX+'tree-star-centred-v38';
+if(!safeRead(treeDefaultsKey,false)){
+  for(const [day,x,y] of [[12,646,793],[24,646,327]]){
+    const layout=settings[day]?.layout,base=BASE_CONFIG.items.find(i=>i.day===day).layout;
+    if(layout&&layout.x===x&&layout.y===y){layout.x=base.x;layout.y=base.y;}
+  }
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(treeDefaultsKey,true);
+}
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
@@ -526,7 +535,11 @@ $('welcome-dialog').addEventListener('close',cleanupWelcome);
 
 function chime(){if(!sound)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=chime.context??=new AC();if(ac.state==='suspended')ac.resume();[659.25,830.61,987.77].forEach((hz,k)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=hz;g.gain.setValueAtTime(0,ac.currentTime+k*.08);g.gain.linearRampToValueAtTime(.035,ac.currentTime+k*.08+.015);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+k*.08+.8);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+k*.08);o.stop(ac.currentTime+k*.08+.85);});}catch{}}
 function describeState(d){return {future:'尚未開啟',current:'可領取',missed:'已錯過',owned:'已收藏'}[dayState(d)];}
-function getLayout(d){const def=item(d).layout,saved=state().layouts[d],layout=saved?{...def,...saved}:{...def,scale:1};return SCENE_REPLACED_DAYS.includes(Number(d))?constrain(d,layout):layout;}
+function getLayout(d){
+  const def=item(d).layout,saved=state().layouts[d],layout=saved?{...def,...saved}:{...def,scale:1};
+  if(Number(d)===24&&!saved&&isPlaced(12)){const tree=getLayout(12);layout.x=tree.x;layout.y=tree.y-tree.h*tree.scale+8;}
+  return SCENE_REPLACED_DAYS.includes(Number(d))?constrain(d,layout):layout;
+}
 function claimDay(d){
   if(!previewDate){if(!cloudEnabled()){openProgress();return false;}return claimCloud(d);}
   const alreadyUnlocked=rewardProgress().unlockedCount;
@@ -646,7 +659,7 @@ function renderUI({placementDay=null}={}){
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
   $('edit-toggle').setAttribute('aria-pressed',String(editMode));canvas.classList.toggle('editing',editMode);
   $('motion-toggle').setAttribute('aria-pressed',String(motion));$('motion-toggle').textContent=motion?'暫停動態':'開啟動態';
-  $('wind-button').setAttribute('aria-pressed',String(wind));$('wind-button').textContent=wind?'氣流吹拂中':'Dyson 氣流';
+  $('wind-button').setAttribute('aria-pressed',String(wind));$('wind-button').textContent=wind?'暴風雪中':'dyson 氣流';$('wind-button').title=wind?'關閉暴風雪':'開啟暴風雪';$('wind-button').setAttribute('aria-label',`dyson 氣流，暴風雪${wind?'已開啟':'已關閉'}`);
   $('card-open').disabled=!sceneReady||cardCapturing;renderCloud();
 }
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
@@ -807,34 +820,41 @@ function starShape(c,x,y,r,alpha=1,rotation=0){
   c.restore();
 }
 let glowStamp=null;
-function softGlow(x,y,r,opacity){
+function softGlow(x,y,r,opacity,target=ctx){
+  const ctx=target;
   if(!glowStamp){glowStamp=el('canvas');glowStamp.width=glowStamp.height=160;const c=glowStamp.getContext('2d'),g=c.createRadialGradient(80,80,0,80,80,80);g.addColorStop(0,'rgba(255,218,143,1)');g.addColorStop(.28,'rgba(255,177,74,.48)');g.addColorStop(1,'rgba(255,162,56,0)');c.fillStyle=g;c.fillRect(0,0,160,160);}
   ctx.save();ctx.globalAlpha*=opacity;ctx.drawImage(glowStamp,x-r,y-r,r*2,r*2);ctx.restore();
 }
-function drawWarmth(time,strength=1){
+function drawWarmth(time,strength=1,target=ctx,animate=motion){
+  const ctx=target;
   ctx.save();ctx.globalCompositeOperation='screen';
-  const breath=motion ? .9+Math.sin(time*1.3)*.1:1;
-  softGlow(625,680,410,.32*strength*breath);softGlow(430,735,160,.22*strength);softGlow(835,690,190,.20*strength);
+  const breath=animate ? .9+Math.sin(time*1.3)*.1:1;
+  softGlow(625,680,410,.32*strength*breath,ctx);softGlow(430,735,160,.22*strength,ctx);softGlow(835,690,190,.20*strength,ctx);
   ctx.restore();
 }
-function drawSnowLayer(pool,count,dt,time,show=false){
+function drawSnowLayer(pool,count,dt,time,show=false,target=ctx,environment=null){
+  const ctx=target,airflow=environment?environment.wind:wind,shakePower=environment?environment.turbulence:turbulence,activeSnow=environment?environment.activeSnow:isPlaced(1),random=environment?.random||Math.random;
   for(let k=0;k<count;k++){
     const p=pool[k];
     if(dt){
-      p.phase+=.014*dt;p.x+=(p.vx+Math.sin(p.phase)*(.2+turbulence*.35)+(wind?(3.8+Math.sin(time*1.3+p.phase)*1.1)*p.depth:0))*dt;
+      p.phase+=.014*dt;p.x+=(p.vx+Math.sin(p.phase)*(.2+shakePower*.35)+(airflow?(10.5+Math.sin(time*1.8+p.phase)*3)*p.depth:0))*dt;
       p.y+=p.vy*p.depth*dt;
-      if(turbulence>.1||wind)p.vy=Math.min(3.6,p.vy+.025*dt);else p.vy=.45+p.depth*.45;
+      if(airflow)p.vy=Math.min(8,p.vy+.16*dt);else if(shakePower>.1)p.vy=Math.min(3.6,p.vy+.025*dt);else p.vy=.45+p.depth*.45;
       p.vx*=Math.pow(.992,dt);
-      if(wind&&p.x>1025){p.x=235;p.y=205+Math.random()*680;p.vx=0;}else if(p.x<225||p.x>1025){p.vx*=-.5;p.x=Math.max(225,Math.min(1025,p.x));}
-      if(p.y>(!p.gold&&isPlaced(1)?snowSurface(p.x):902)){if(!p.gold&&isPlaced(1))snowPack.depth=Math.min(SNOW_PACK_LIMIT,snowPack.depth+.075*p.size);p.y=205+Math.random()*60;p.x=300+Math.random()*650;p.vy=.5+Math.random()*.7;p.vx=0;}
+      if(airflow&&p.x>1025){p.x=235;p.y=205+random()*680;p.vx=0;}else if(p.x<225||p.x>1025){p.vx*=-.5;p.x=Math.max(225,Math.min(1025,p.x));}
+      if(p.y>(!p.gold&&activeSnow?snowSurface(p.x,environment?environment.snowDepth:snowPack.depth):902)){if(!p.gold&&activeSnow){if(environment)environment.snowDepth=Math.min(SNOW_PACK_LIMIT,environment.snowDepth+.075*p.size);else snowPack.depth=Math.min(SNOW_PACK_LIMIT,snowPack.depth+.075*p.size);}p.y=205+random()*60;p.x=300+random()*650;p.vy=.5+random()*.7;p.vx=0;}
       if(p.y<185){p.y=185;p.vy=Math.abs(p.vy)*.5;}
     }
+    if(environment?.advanceOnly)continue;
     const alpha=p.gold?.6+Math.sin(time*2+p.phase)*.23:.44+p.depth*.29;
     ctx.fillStyle=p.gold?`rgba(230,199,143,${alpha})`:`rgba(247,239,221,${Math.min(.94,alpha)})`;
     ctx.beginPath();
     if(!p.gold&&k%7===0){const size=p.size*p.depth,dx=Math.cos(p.phase)*size,dy=Math.sin(p.phase)*size;ctx.moveTo(p.x-dx,p.y-dy);ctx.lineTo(p.x-dy,p.y+dx);ctx.lineTo(p.x+dx,p.y+dy);ctx.lineTo(p.x+dy,p.y-dx);ctx.closePath();}
     else ctx.ellipse(p.x,p.y,p.size*p.depth,p.size*p.depth*(p.gold?.9:.7),p.phase,0,Math.PI*2);
     ctx.fill();
+    if(airflow&&!p.gold&&k%3===0){
+      const length=5+p.depth*8;ctx.save();ctx.strokeStyle='rgba(250,251,255,.46)';ctx.lineWidth=Math.max(.7,p.size*.65);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(p.x-length,p.y-length*.45);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();
+    }
     if(p.gold&&k%13===0)starShape(ctx,p.x,p.y,p.size*2.8,alpha*.85,p.phase*.12);
     if(!p.gold&&k%27===0){ctx.save();ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(p.x-3,p.y);ctx.lineTo(p.x+3,p.y);ctx.moveTo(p.x,p.y-3);ctx.lineTo(p.x,p.y+3);ctx.stroke();ctx.restore();}
   }
@@ -860,12 +880,13 @@ function drawMerryChristmas(target,alpha=1,time=0){
   for(let k=0;k<8;k++){const a=k*Math.PI/4;starShape(target,625+Math.cos(a)*335,505+Math.sin(a)*100,k%2?5:8,.6+.3*Math.sin(time*2+k)**2,a);}
   target.restore();
 }
-function drawStarShow(elapsed,time){
-  const staticShow=!motion,fade=staticShow?1:Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2));
+function drawStarShow(elapsed,time,target=ctx,animate=motion){
+  const ctx=target;
+  const staticShow=!animate,fade=staticShow?1:Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2));
   ctx.save();ctx.globalAlpha=fade;
   // A large central star is visible from the opening, before the ribbons rise.
   ctx.globalCompositeOperation='screen';
-  softGlow(625,350,150,.72);softGlow(625,350,65,.9);
+  softGlow(625,350,150,.72,ctx);softGlow(625,350,65,.9,ctx);
   ctx.shadowColor='#ffe0a0';ctx.shadowBlur=22;
   starShape(ctx,625,350,staticShow?56:56+Math.sin(elapsed*.8)*4,.98,staticShow?0:Math.sin(elapsed*.3)*.06);
   ctx.shadowBlur=0;
@@ -967,7 +988,7 @@ function drawSnowPack(target,depth){
 function drawLooseSnow(target,depth,time,airflow=0,shakePower=0){
   if(depth<.5||(!airflow&&shakePower<.1))return;
   target.save();target.fillStyle='#fff8e8';
-  const lift=airflow?95:Math.min(145,shakePower*32),count=airflow?60:42;
+  const lift=airflow?125:Math.min(145,shakePower*32),count=airflow?80:42;
   for(let k=0;k<count;k++){
     const phase=(time*(airflow?.72:.48)+k*.618)%1,px=330+((k*83+phase*(airflow?200:65))%590),py=snowSurface(px,depth)-Math.sin(phase*Math.PI)*lift;
     target.globalAlpha=.65*Math.sin(phase*Math.PI);target.beginPath();target.arc(px,py,1.1+(k%3)*.6,0,Math.PI*2);target.fill();
@@ -1002,6 +1023,36 @@ function drawCandyRain(target,time){
 }
 
 
+function sceneParticleCounts({elapsed=0,finalShow=false,animate=true,airflow=false,shakePower=0,activeSnow=false,goldSnow=false}){
+  const showFade=finalShow&&animate?Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2)):1;
+  const flow=animate&&(airflow||shakePower>.1),baseWhite=animate&&airflow?420:flow?340:activeSnow?240:0,baseGold=goldSnow?310:0;
+  const whiteCount=finalShow?Math.max(baseWhite,Math.round(360*showFade)):baseWhite,goldCount=finalShow?Math.max(baseGold,Math.round((animate?100+320*Math.max(0,Math.min(1,(elapsed-7)/3)):420)*showFade)):baseGold;
+  return {showFade,whiteCount,goldCount};
+}
+function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=motion,activeSnow=false,goldSnow=false,warmth=false,candyRain=false,airflow=false,shakePower=0,objects=placedObjects(),whitePool=snow,goldPool=goldFlakes,environment=null,trackHits=false}){
+  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate,airflow,shakePower,activeSnow,goldSnow});
+  ctx.save();globePath(ctx);ctx.clip();
+  if(finalShow){const dim=ctx.createRadialGradient(625,560,150,625,560,465);dim.addColorStop(0,`rgba(7,12,27,${.53*showFade})`);dim.addColorStop(.65,`rgba(7,12,27,${.44*showFade})`);dim.addColorStop(1,'rgba(7,12,27,0)');ctx.fillStyle=dim;ctx.fillRect(180,150,900,790);}
+  if(warmth||finalShow)drawWarmth(time,finalShow ? .52*showFade : 1,ctx,animate);
+  drawSnowPack(ctx,environment?environment.snowDepth:snowPack.depth);
+  for(const p of objects){
+    const h=p.h*p.scale,s=loadSprite(p.day);if(!s)continue;const w=h*s.bounds.w/s.bounds.h;
+    if(p.day!==24&&p.y>=775){ctx.save();ctx.translate(p.x,p.y+3);ctx.scale(1,.19);const r=Math.max(12,w*.38),g=ctx.createRadialGradient(0,0,1,0,0,r);g.addColorStop(0,'rgba(15,35,53,.24)');g.addColorStop(1,'rgba(15,35,53,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();ctx.restore();}
+    const rect=drawSprite(ctx,p.day,p.x,p.y,h);if(rect&&trackHits)hitRegions.push({day:p.day,rect,sprite:s});
+    if(trackHits&&editMode&&selectedDay===p.day&&rect){ctx.save();ctx.strokeStyle='#f2cb83';ctx.lineWidth=2;ctx.setLineDash([6,6]);ctx.strokeRect(rect.x-7,rect.y-7,rect.w+14,rect.h+14);ctx.restore();}
+  }
+  drawSnowLayer(whitePool,whiteCount,animate?dt:0,time,finalShow,ctx,environment);drawSnowLayer(goldPool,goldCount,animate?dt:0,time,finalShow,ctx,environment);
+  if(activeSnow)drawLooseSnow(ctx,environment?environment.snowDepth:snowPack.depth,time,animate&&airflow?1:0,animate?shakePower:0);
+  if(candyRain)drawCandyRain(ctx,time);
+  if(warmth||finalShow){
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(const s of stars){const a=animate ? .42+(Math.sin(time*1.8+s.phase)+1)*.25:.8;softGlow(s.x,s.y,s.size*5,a*.36,ctx);starShape(ctx,s.x,s.y,s.size*(animate ? .85+Math.sin(time+s.phase)*.15:1),a);}
+    ctx.restore();
+  }
+  if(finalShow){drawStarShow(elapsed,time,ctx,animate);drawDysonSignature(elapsed,ctx,animate);}
+  const rim=ctx.createRadialGradient(625,560,280,625,560,430);rim.addColorStop(0,'rgba(255,223,157,0)');rim.addColorStop(.9,'rgba(255,223,157,.015)');rim.addColorStop(1,'rgba(255,223,157,.12)');ctx.fillStyle=rim;ctx.fillRect(180,150,900,790);ctx.restore();
+}
+
 function drawFrame(dt=0,now=0){
   if(!canvas.width)return;ctx.setTransform(canvas.width/SCENE_W,0,0,canvas.height/SCENE_H,0,0);ctx.clearRect(0,0,SCENE_W,SCENE_H);hitRegions=[];
   if(!sceneReady)return;
@@ -1009,35 +1060,14 @@ function drawFrame(dt=0,now=0){
   const time=motion?now/1000:0,finalShow=showActive(now),elapsed=finalShow?(now-showStarted)/1000:0;
   const activeSnow=isPlaced(1),goldSnow=isPlaced(13),warmth=isPlaced(13),candyRain=isPlaced(19),flow=motion&&(wind||turbulence>.1);
   syncSnowPack(activeSnow);
-  const showFade=finalShow&&motion?Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2)):1;
-  const baseWhite=flow?340:activeSnow?240:0,baseGold=goldSnow?310:0;
-  const whiteCount=finalShow?Math.max(baseWhite,Math.round(360*showFade)):baseWhite,goldCount=finalShow?Math.max(baseGold,Math.round((motion?100+320*Math.max(0,Math.min(1,(elapsed-7)/3)):420)*showFade)):baseGold;
+  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate:motion,airflow:wind,shakePower:turbulence,activeSnow,goldSnow});
   frameEffects={white:whiteCount,gold:goldCount,warmth,candyRain,accumulation:snowPack.depth,airborneSnow:activeSnow&&snowPack.depth>.5&&flow,show:finalShow,signature:finalShow?signatureProgress(elapsed):0,phase:finalShow?(!motion?'靜態星光':elapsed<4?'暖光亮起':elapsed<10?'星光升起':elapsed<15.5?'dyson 星光描繪':elapsed<17?'品牌星光':'聖誕祝福'):''};
   if(finalShow){$('show-banner').hidden=false;$('show-phase').textContent=frameEffects.phase;$('show-progress').style.width=`${Math.max(0,Math.min(100,elapsed/SHOW_SECONDS*100))}%`;}
   const greetingVisible=finalShow&&(!motion||elapsed>=17);$('show-greeting').hidden=!greetingVisible;
   if(greetingVisible){$('show-greeting').style.opacity=String(motion?showFade*Math.min(1,(elapsed-17)/.8):1);$('show-greeting').style.top=motion?'37.7%':'41%';}
-  ctx.save();globePath(ctx);ctx.clip();
-  if(finalShow){const dim=ctx.createRadialGradient(625,560,150,625,560,465);dim.addColorStop(0,`rgba(7,12,27,${.53*showFade})`);dim.addColorStop(.65,`rgba(7,12,27,${.44*showFade})`);dim.addColorStop(1,'rgba(7,12,27,0)');ctx.fillStyle=dim;ctx.fillRect(180,150,900,790);}
-  if(warmth||finalShow)drawWarmth(time,finalShow ? .52*showFade : 1);
-  drawSnowPack(ctx,snowPack.depth);
-  for(const p of placedObjects()){
-    const h=p.h*p.scale,s=loadSprite(p.day);if(!s)continue;const w=h*s.bounds.w/s.bounds.h;
-    if(p.day!==24&&p.y>=775){ctx.save();ctx.translate(p.x,p.y+3);ctx.scale(1,.19);const r=Math.max(12,w*.38),g=ctx.createRadialGradient(0,0,1,0,0,r);g.addColorStop(0,'rgba(15,35,53,.24)');g.addColorStop(1,'rgba(15,35,53,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();ctx.restore();}
-    const rect=drawSprite(ctx,p.day,p.x,p.y,h);if(rect)hitRegions.push({day:p.day,rect,sprite:s});
-    if(editMode&&selectedDay===p.day&&rect){ctx.save();ctx.strokeStyle='#f2cb83';ctx.lineWidth=2;ctx.setLineDash([6,6]);ctx.strokeRect(rect.x-7,rect.y-7,rect.w+14,rect.h+14);ctx.restore();}
-  }
-  drawSnowLayer(snow,whiteCount,motion?dt:0,time,finalShow);drawSnowLayer(goldFlakes,goldCount,motion?dt:0,time,finalShow);
-  if(activeSnow)drawLooseSnow(ctx,snowPack.depth,time,motion&&wind?1:0,motion?turbulence:0);
-  if(candyRain)drawCandyRain(ctx,time);
+  paintGlobeContents(ctx,{time,dt,elapsed,finalShow,animate:motion,activeSnow,goldSnow,warmth,candyRain,airflow:wind,shakePower:turbulence,trackHits:true});
   frameEffects.accumulation=snowPack.depth;
   if(motion)turbulence*=Math.pow(.984,dt);
-  if(warmth||finalShow){
-    ctx.save();ctx.globalCompositeOperation='screen';
-    for(const s of stars){const a=motion ? .42+(Math.sin(time*1.8+s.phase)+1)*.25:.8;softGlow(s.x,s.y,s.size*5,a*.36);starShape(ctx,s.x,s.y,s.size*(motion ? .85+Math.sin(time+s.phase)*.15:1),a);}
-    ctx.restore();
-  }
-  if(finalShow){drawStarShow(elapsed,time);drawDysonSignature(elapsed);}
-  const rim=ctx.createRadialGradient(625,560,280,625,560,430);rim.addColorStop(0,'rgba(255,223,157,0)');rim.addColorStop(.9,'rgba(255,223,157,.015)');rim.addColorStop(1,'rgba(255,223,157,.12)');ctx.fillStyle=rim;ctx.fillRect(180,150,900,790);ctx.restore();
 }
 function loop(now){const dt=lastFrame?Math.min((now-lastFrame)/16.667,2):0;lastFrame=now;if(!document.hidden&&!cardExportBusy)drawFrame(dt,now);requestAnimationFrame(loop);}
 function resize(){const r=$('globe-wrapper').getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);width=r.width;height=r.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);drawFrame(0,performance.now());}
@@ -1190,7 +1220,7 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
   cx.strokeStyle='#b8945b';cx.lineWidth=2;cardRoundedRect(cx,28,28,1144,1944,18);cx.stroke();
   cx.strokeStyle='#e5bd7e36';cx.lineWidth=1;cardRoundedRect(cx,40,40,1120,1920,12);cx.stroke();
   for(const [x,y,r] of [[87,90,8],[1113,90,8],[78,1918,6],[1120,1918,6]])starShape(cx,x,y,r,.8);
-  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#edcf9f';cx.font='400 60px Georgia,serif';cx.fillText('MERRY CHRISTMAS',600,100);
+  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#edcf9f';cx.font='400 78px Georgia,serif';cx.fillText('MERRY CHRISTMAS',600,100,990);
   cx.strokeStyle='#b8945b66';cx.beginPath();cx.moveTo(455,145);cx.lineTo(745,145);cx.stroke();
   const p=CARD_LAYOUT.photo;
   if(photo){cx.save();cardRoundedRect(cx,p.x,p.y,p.width,p.height,p.radius);cx.clip();cx.drawImage(photo,p.x,p.y,p.width,p.height);cx.restore();cx.strokeStyle='#e5bd7e66';cardRoundedRect(cx,p.x,p.y,p.width,p.height,p.radius);cx.stroke();}
@@ -1335,16 +1365,33 @@ function captureCardMotionBase(){
     drawSprite(x,p.day,p.x,p.y,h);
   }
   x.restore();x.restore();if(cardMotionBase){cardMotionBase.width=1;cardMotionBase.height=1;}cardMotionBase=c;
-  cardMotionFlags={white:isPlaced(1),gold:isPlaced(13),warmth:isPlaced(13),candyRain:isPlaced(19),snowDepth:snowPack.depth,airflow:wind,show:isPlaced(25)};
+  cardMotionFlags={white:isPlaced(1),gold:isPlaced(13),warmth:isPlaced(13),candyRain:isPlaced(19),snowDepth:snowPack.depth,airflow:wind,show:isPlaced(25),objects:placedObjects().map(p=>({...p})),whitePool:snow.map(p=>({...p})),goldPool:goldFlakes.map(p=>({...p})),showTimeOrigin:(showStarted||performance.now())/1000};
 }
 function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=600){
   const poster=el('canvas');paintChristmasCard(validateCard(),poster,cardMotionBase,{width,height});
   if(withMusicCredit){const c=poster.getContext('2d');c.font='16px sans-serif';c.textAlign='center';c.fillStyle='#c3b195';c.fillText('Jingle Bells — Kevin MacLeod / incompetech.com · CC BY 4.0: creativecommons.org/licenses/by/4.0 · 5s excerpt',600,1980);}
-  const frame=el('canvas');frame.width=width;frame.height=height;const output=frame.getContext('2d',{willReadFrequently:true}),flags={...cardMotionFlags};
+  const frame=el('canvas');frame.width=width;frame.height=height;const output=frame.getContext('2d',{willReadFrequently:true}),flags={...cardMotionFlags,whitePool:cardMotionFlags.whitePool.map(p=>({...p})),goldPool:cardMotionFlags.goldPool.map(p=>({...p}))};
   const scene=el('canvas');scene.width=Math.min(imageWidth,Math.round(width*.9));scene.height=Math.round(scene.width*SCENE_H/SCENE_W);const x=scene.getContext('2d',{willReadFrequently:true});
-  return {canvas:frame,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
+  let lastReplayTime=0,replaySeed=0x20261225;
+  const replay={wind:flags.airflow,turbulence:0,activeSnow:flags.white,snowDepth:flags.snowDepth,random:()=>((replaySeed=(Math.imul(replaySeed,1664525)+1013904223)>>>0)/4294967296)};
+  const resetReplay=()=>{flags.whitePool=cardMotionFlags.whitePool.map(p=>({...p}));flags.goldPool=cardMotionFlags.goldPool.map(p=>({...p}));replay.snowDepth=flags.snowDepth;lastReplayTime=0;replaySeed=0x20261225;};
+  return {canvas:frame,sourceTimeline:flags.show?{start:0,end:16.5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
     x.setTransform(1,0,0,1,0,0);x.drawImage(cardMotionBase,0,0,scene.width,scene.height);x.save();x.scale(scene.width/SCENE_W,scene.height/SCENE_H);
     x.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);x.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);x.translate(-SCENE_W*.5,-SCENE_H*.5);globePath(x);x.clip();
+    if(flags.show||flags.airflow){
+      const elapsed=Math.max(0,Math.min(flags.show?16.5:5,flags.show?t/5*16.5:t)),time=flags.showTimeOrigin+elapsed;
+      x.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);
+      if(elapsed<lastReplayTime)resetReplay();
+      replay.advanceOnly=true;
+      while(lastReplayTime+1/60<=elapsed){
+        lastReplayTime+=1/60;
+        const counts=sceneParticleCounts({elapsed:lastReplayTime,finalShow:flags.show,animate:true,airflow:flags.airflow,activeSnow:flags.white,goldSnow:flags.gold});
+        drawSnowLayer(flags.whitePool,counts.whiteCount,1,flags.showTimeOrigin+lastReplayTime,true,x,replay);
+        drawSnowLayer(flags.goldPool,counts.goldCount,1,flags.showTimeOrigin+lastReplayTime,true,x,replay);
+      }
+      replay.advanceOnly=false;
+      paintGlobeContents(x,{time,elapsed,finalShow:flags.show,animate:true,activeSnow:flags.white,goldSnow:flags.gold,warmth:flags.warmth,candyRain:flags.candyRain,airflow:flags.airflow,objects:flags.objects,whitePool:flags.whitePool,goldPool:flags.goldPool,environment:replay});
+    }else{
     if(flags.warmth||flags.show){
       const g=x.createRadialGradient(625,680,30,625,680,410);g.addColorStop(0,`rgba(255,214,137,${.24+.07*Math.sin(t*Math.PI*2/5)})`);g.addColorStop(1,'rgba(255,179,74,0)');x.fillStyle=g;x.fillRect(215,270,820,820);
       for(let k=0;k<22;k++)starShape(x,300+k*137%640,255+k*83%560,k%5===0?7:3,.4+.4*(1+Math.sin(t*Math.PI*2/5+k))/2);
@@ -1357,13 +1404,6 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
     }
     if(flags.white)drawLooseSnow(x,flags.snowDepth,t,flags.airflow?1:0,0);
     if(flags.candyRain)drawCandyRain(x,t);
-    if(flags.show){
-      // The GIF and both MP4 encoders share this deterministic five-second show.
-      // Draw the tree first, then trace the brand and hold the completed word.
-      const treeProgress=Math.max(0,Math.min(1,t/1.8)),treeOpacity=t<=2?1:Math.max(.16,1-(t-2)/.6);
-      drawChristmasTree(treeProgress,t,x,treeOpacity);
-      const signatureElapsed=10+Math.max(0,Math.min(1,(t-1.8)/2))*5.5;
-      drawDysonSignature(signatureElapsed,x,true);
     }
     x.restore();output.setTransform(1,0,0,1,0,0);output.drawImage(poster,0,0);output.save();output.scale(width/1200,height/2000);const p=CARD_LAYOUT.photo;cardRoundedRect(output,p.x,p.y,p.width,p.height,p.radius);output.clip();output.drawImage(scene,p.x,p.y,p.width,p.height);output.restore();return frame;
   }};
