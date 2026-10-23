@@ -85,3 +85,27 @@ Use case: precise-object-edit. Edit this single transparent layered paper-relief
 ## 109 — assets/images/bonus/bonus-otter-gray-plain-v31.webp
 
 Use case: precise-object-edit. Edit this single transparent layered paper-relief SEA OTTER sprite. Remove ALL decorative patterns from the OTTER ONLY: every botanical leaf, vine, gold dot and embossed ornament across arms, body, legs and tail. Make its coat visibly neutral COOL GRAY: medium slate-gray outer coat with lighter silver-gray face, chest and belly, charcoal-gray paws and tail, no warm brown/tan/beige fur. Preserve broad scalloped and pointed paper layers that suggest fluffy fur, matte paper grain and sculpted cut-paper edges, not photographic fur. Preserve exact happy reclining pose, face, ears, paws, tail and scale. Retain the GOLD COIN with its star design on the belly and the small GRAY STONE raised in its paw; these props must stay, the coin remains gold while the animal is gray. Full body and props visible within frame. Actual transparent alpha background, no scenery, no floor, no text, no watermark.
+
+
+## v36 · 小皇帝企鵝減少紙片感（2026/10/23）
+
+內建 imagegen 編修，以 `assets/images/bonus/bonus-penguin-neutral-v30.webp` 為來源，透明背景；新圖 `assets/images/bonus/bonus-penguin-soft-v36.webp`。最長邊 1000px、WebP quality 94、method 6，保留 alpha。文字更新為「小皇帝企鵝張開翅膀開心滑行」，趣味名稱、尺寸、位置與權限沿用。
+
+提示：Use case: precise-object-edit. Edit target: the attached transparent emperor penguin chick game sprite. Reduce the overly strong cut-paper feeling. Remove most of the big overlapping oval paper plates covering the back, neck and belly, and reduce visible fibrous/grainy paper texture by about 75 percent. Make the chick look gently rounded and soft, with broad continuous gray and cream-white body surfaces, subtle natural soft down and very restrained relief at the flipper boundaries. Keep a softly dimensional handcrafted appearance that still fits a winter snow globe. Preserve the exact character identity, gray-white-black color distribution, round neutral black eyes with no upturned eyelids, small open happy beak, prone belly-sliding pose diagonally toward the right, both flippers stretched wide, raised webbed feet behind, same framing and relative body proportions. No added clothing, patterns, gold accents, accessories, snow mound or scene. Do not add leaf-shaped or scalloped plates, obvious cut edges, dark layer seams or scales. Clean transparent background, no floor or drop shadow, no text. Whole silhouette entirely visible.
+
+
+## v37 · 小海獅與海獺減少紙片感（2026/10/23）
+
+使用內建 imagegen、precise-object-edit，透明背景編修。保留各自姿勢、角色、顏色與道具；輸出轉為最長邊 1000px、WebP quality 94／method 6／exact alpha。不改變預設尺寸或使用者座標。
+
+### 小海獅
+
+來源：`assets/images/bonus/bonus-white-sea-lion-paper-v28.webp`。新圖：`assets/images/bonus/bonus-white-sea-lion-soft-v37.webp`。
+
+提示：Use case: precise-object-edit. Edit target: this existing transparent white baby sea lion game sprite. Reduce its very strong cut-paper feeling. Remove the big overlapping scalloped paper plates on the neck, belly and back and reduce fibrous/grainy paper texture by about 75 percent. Create broad continuous softly rounded white and ivory surfaces with subtle smooth short down, gentle shading, a restrained dimensional handcrafted finish and small natural flipper boundaries. Keep the exact character identity and composition: plump white baby sea lion resting lazily on its side horizontally, head at the right, flippers behind at the left, little foreflippers resting against its body, round black eyes, tiny gray eyebrow dots, black nose, friendly muzzle and delicate whiskers. Preserve the pose, silhouette, expression, facial proportions, ivory-white and light gray palette, and full-body framing. Do not add accessories, clothing, patterns, scene or a snow mound. No conspicuous cut edges, stacked paper rings, scales, carved grooves, or leaf-shaped layers. Fully transparent background, no floor, no cast shadow, no text; entire silhouette visible.
+
+### 海獺
+
+來源：`assets/images/bonus/bonus-otter-gray-plain-v31.webp`。新圖：`assets/images/bonus/bonus-otter-gray-soft-v37.webp`。
+
+提示：Use case: precise-object-edit. Edit target: this existing transparent gray sea otter game sprite. Reduce the extremely strong layered cut-paper feeling while preserving a furry otter. Replace the many sharp overlapping leaf-shaped paper scales on its head, cheeks, torso, arms, legs and tail with softly blended natural short fluffy fur and broader rounded volumes. Reduce paper grain and obvious layer seams by about 75 percent; gentle dimensional handcrafted finish rather than a photographic animal or flat cartoon. Keep the exact happy round gray sea otter identity, cool silver/charcoal gray and cream-white colors, tilted reclining belly-up pose, round neutral black eyes, small ears, black nose, happy open mouth, fine whiskers, lifted hind paws with visible dark pads and curled tail. Preserve the large bright gold coin with its star design resting on its belly, one paw holding the coin and the other holding the small gray stone above the coin ready to tap it. Keep composition, body proportions, object arrangement, full-body framing and transparent background. No new patterns, gold decoration on fur, accessories, snow, water, floor or cast shadow. Avoid sharp paper strips, shingled plates, cut edges, scales, overly coarse strands, excessive texture or extra objects. No text, entire silhouette visible.

@@ -585,7 +585,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "煞車在哪裡",
       "animal": "皇帝企鵝幼鳥",
-      "description": "灰白紙雕的小皇帝企鵝幼鳥，沒有裝飾花紋與上勾眼角，張開翅膀開心滑行。",
+      "description": "小皇帝企鵝張開翅膀開心滑行",
       "layout": {
         "x": 570,
         "y": 900,
@@ -657,7 +657,9 @@ window.DYSON_GAME_CONFIG = {
   "characterRevision": "20261022-neutral-puppy-santa-v30",
   "plainCoatRevision": "20261022-plain-gray-animals-v31",
   "animalSizeRevision": "20261022-animal-plus10-v33",
-  "santaTailRevision": "20261023-santa-tail-v34"
+  "santaTailRevision": "20261023-santa-tail-v34",
+  "penguinRevision": "20261023-soft-penguin-v36",
+  "softAnimalsRevision": "20261023-sea-lion-otter-soft-v37"
 };
 
 window.DYSON_ASSETS = {
@@ -5856,10 +5858,10 @@ window.DYSON_ASSETS = {
     "103": "./assets/images/bonus/bonus-polar-bear-samoyed-paper-v28.webp",
     "104": "./assets/images/bonus/bonus-gray-british-kitten-v29.webp",
     "105": "./assets/images/bonus/bonus-capybara-bath-paper-v28.webp",
-    "106": "./assets/images/bonus/bonus-penguin-neutral-v30.webp",
-    "107": "./assets/images/bonus/bonus-white-sea-lion-paper-v28.webp",
+    "106": "./assets/images/bonus/bonus-penguin-soft-v36.webp",
+    "107": "./assets/images/bonus/bonus-white-sea-lion-soft-v37.webp",
     "108": "./assets/images/bonus/bonus-red-panda-tree-paper-v28.webp",
-    "109": "./assets/images/bonus/bonus-otter-gray-plain-v31.webp",
+    "109": "./assets/images/bonus/bonus-otter-gray-soft-v37.webp",
     "110": "./assets/images/bonus/bonus-fox-snow-dive-paper-v28.webp"
   },
   "sceneRevision": "20261022-snow-candy-v26",

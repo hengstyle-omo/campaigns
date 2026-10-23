@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261023-clean-layout-v35"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261023-soft-animals-v37"></head>
 <body>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
@@ -8,6 +8,7 @@
  <div class="welcome-content"><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="Dyson 聖誕收藏玩法介紹影片"></video><button id="welcome-play" type="button" hidden>播放介紹</button></div>
  <div class="welcome-guide"><p id="welcome-status" class="welcome-status" role="status" aria-live="polite"></p>
  <ol class="welcome-steps"><li><b>01</b><div><strong>收藏每日驚喜</strong><span>活動期間可領取當天及之前的禮物。</span></div></li><li><b>02</b><div><strong>布置水晶球，傳送祝福</strong><span>自行放入收藏、調整位置，再製作聖誕卡片。</span></div></li><li class="welcome-coupon"><b>03</b><div><strong>解鎖限量優惠券</strong><span>收藏產品領對應優惠，參與 10 天再享額外禮遇。</span></div></li></ol>
+ <section class="welcome-rules" aria-labelledby="welcome-rules-title"><h3 id="welcome-rules-title">活動時間與收藏規則</h3><p>活動期間依台灣時間（UTC+8）00:00 換日，可領取今天以前的禮物；未來日期仍鎖定。已收藏項目可隨時回看及重新擺放。</p></section>
  <figure class="welcome-reference"><figcaption>完成雪境示意</figcaption><img id="welcome-reference-image" src="./assets/images/scene/style-reference.webp" loading="lazy" alt="深藍、奶油白與香檳金的微立體紙雕水晶球完成示意。"><p>依照你的收藏與擺放，布置自己的聖誕世界。</p></figure></div></div>
  <button id="welcome-start" class="gold-button" type="button">開始收藏</button>
 </dialog>
@@ -22,7 +23,7 @@
 </section></div></nav></header>
 <div id="preview-banner" class="preview-banner" hidden>企劃預覽模式 · 測試收藏不計入正式紀錄 <button id="preview-exit">回到正式日期</button></div>
 <main>
- <section class="intro"><h1>把聖誕 <span>一點一點收藏</span></h1><p>玩遊戲收藏聖誕驚喜，傳送專屬祝福，解鎖<strong>限量優惠券</strong>。</p><button id="welcome-open" class="intro-about" type="button">活動介紹 <span aria-hidden="true">↗</span></button></section>
+ <section class="intro"><h1>把聖誕 <span>一點一點收藏</span></h1><p>玩遊戲收藏聖誕驚喜，傳送專屬祝福，解鎖<strong>限量優惠券</strong>。</p></section>
  <div class="experience">
   <section class="globe-section" aria-label="我的水晶球">
    <div class="globe-stage"><div class="show-banner-slot"><div id="show-banner" class="show-banner" hidden><span>CHRISTMAS LIGHT SHOW</span><strong id="show-phase" role="status" aria-live="polite"></strong><div class="show-track"><i id="show-progress"></i></div></div></div><div id="globe-wrapper"><img id="empty-globe" src="./assets/images/scene/snow-globe-background.webp" alt="燭光餐桌上的黑金 Dyson 水晶球，球內僅有薄薄積雪，等待加入每日收藏。" width="1168" height="1346"><canvas id="snow-canvas" aria-label="水晶球收藏擺放區"></canvas><div id="scene-loading" class="is-busy" role="status" hidden>正在準備冬日雪境…</div><div id="scene-tip" hidden></div><div id="show-greeting" class="show-greeting" role="status" aria-live="polite" hidden>Merry Christmas</div></div></div>
@@ -34,7 +35,7 @@
    <p id="status" class="status" role="status" aria-live="polite"></p>
   </section>
   <aside class="calendar-panel">
-   <div class="calendar-heading"><div><p class="eyebrow">DECEMBER 01 — 25</p><h2>聖誕倒數日曆</h2></div><div class="calendar-tools"><span id="today-label" class="date-pill"></span><button id="quick-sim-toggle" type="button" aria-expanded="false" aria-controls="quick-sim-panel">模擬日期</button></div></div>
+   <div class="calendar-heading"><div class="calendar-heading-main"><p class="eyebrow">DECEMBER 01 — 25</p><div class="calendar-title-row"><h2>聖誕倒數日曆</h2><button id="welcome-open" class="calendar-about" type="button">活動介紹 <span aria-hidden="true">↗</span></button></div></div><div class="calendar-tools"><span id="today-label" class="date-pill"></span><button id="quick-sim-toggle" type="button" aria-expanded="false" aria-controls="quick-sim-panel">模擬日期</button></div></div>
    <div id="today-card" class="today-card"><p id="today-kicker" class="eyebrow"></p><h3 id="today-title"></h3><button id="today-open" class="gold-button"></button></div>
    <section id="quick-sim-panel" class="quick-sim-panel" aria-label="模擬日期" hidden>
     <div class="sim-panel-heading"><span>日期模擬 · 台灣時間</span></div>
@@ -45,7 +46,6 @@
    <div class="progress-label"><span>我的收藏</span><span id="progress-count">0 / 25</span></div><div class="progress-track"><div id="progress-fill"></div></div>
    <div id="calendar-grid" class="calendar-grid" aria-label="12 月每日禮盒"></div>
    <div id="calendar-key" class="calendar-key" aria-label="日期狀態說明"></div>
-   <p class="calendar-note">活動期間依台灣時間（UTC+8）00:00 換日，可領取今天以前的禮物；未來日期仍鎖定。已收藏項目可隨時回看及重新擺放。</p>
    <div class="calendar-card-entry"><button id="card-open" class="gold-button" type="button" disabled>製作聖誕卡片</button></div>
   </aside>
  </div>
@@ -74,7 +74,7 @@
 
 
 
-<script src="./assets/js/config.js?v=20261023-clean-layout-v35"></script>
+<script src="./assets/js/config.js?v=20261023-soft-animals-v37"></script>
 <script src="./assets/js/media-codecs.js"></script>
-<script src="./assets/js/app.js?v=20261023-clean-layout-v35"></script>
+<script src="./assets/js/app.js?v=20261023-soft-animals-v37"></script>
 </body></html>
