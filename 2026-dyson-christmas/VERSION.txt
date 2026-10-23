@@ -1,13 +1,13 @@
 2026 Dyson 聖誕收藏
-活動設定版本：34
+活動設定版本：35
 Apps Script：DysonProgress.gs v6（本次不需更新部署）
-完整包：20261023-v34
-差異更新基準：v33
+完整包：20261023-v35
+差異更新基準：v34
 資料夾：2026-dyson-christmas
-本次更新：卡片版面、必填署名、統一 5 秒製作、頂部卡片入口與音訊面板、分類簡稱、聖誕老公公尾巴
+本次更新：首頁精簡、日曆底部製卡入口、整合活動介紹、縮小今日收藏、場景調整工具與短暫提示
 
 核心檔案 SHA-256：
-index.html 6a36fdd46d6d08001fe61ddf9522769c8a5d3659fb9ea33df7e1055f8da99c48
+index.html 8c96baecb03476c37028ab81d32bc61f19a525ef6381558dd04ba0942d30f752
 assets/js/config.js 298646f2e4c5f2216aa00706d8256d5441e5a3da77841ec608499bb918e3721c
-assets/js/app.js 606307f842b556c0782496396091fefecf4f2062d404702a5bd9384ef2f25182
-assets/css/style.css ab369930d731267575b41781652bbb6614fced8fc0a263e7f2bee3cd803e929f
+assets/js/app.js dd26c7bcdc525e936824384d60c45cc285279b9725b5970da86efea080b048fc
+assets/css/style.css 7fe248576565b6f20d9f140f90eb1484e4c552a35f1154dcf6d9fc49995ddef4
