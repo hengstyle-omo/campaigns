@@ -1,14 +1,13 @@
 2026 Dyson 聖誕收藏
-活動設定版本：32
+活動設定版本：33
 Apps Script：DysonProgress.gs v6（本次不需更新部署）
-完整包：20261022-v32
+完整包：20261022-v33
+差異更新基準：v32
 資料夾：2026-dyson-christmas
-本次更新：又想回家小海獅改名
-新增場景素材：assets/images/scene/
-素材提示：scene-prompts.md
+本次更新：動物預設放大 10%（小海獅除外）、聖誕老公公改名、5 秒聖誕樹與 dyson 動態卡片
 
 核心檔案 SHA-256：
-index.html dcb4b25467a29e8eb809c401926ccb860838c2ba253ac02e6d1b2781066104fa
-assets/js/config.js 13097b824d5762670c461aa5e4d63d3051704b2e3c3348af08aeaa1d42ca5d46
-assets/js/app.js 9b082dcd89effada70e8a4be327367ab8e87cfa9f7d125472c9ff5d40a4f0332
+index.html 124f83975afa94023af5992f1fa972d0e47ddeba4f87e4bb40e49194cc8f6c7d
+assets/js/config.js 238b5118d78410ac7686f88e6af0a334282beec1e3795712cf8e69405ed767fd
+assets/js/app.js 56dd3ab94a5363c3900c0f6a5add10534e43dfd6cb7200e85605bcd6ec240634
 assets/css/style.css 1399fa985bab3a4a6c4bee85673055df124e219fc785684a703552fa046a46be

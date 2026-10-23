@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 32,
+  "version": 33,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -144,7 +144,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 650,
         "y": 525,
-        "h": 205
+        "h": 225.5
       },
       "hint": "今天有一位輕盈的小夥伴，準備躍入你的聖誕世界。"
     },
@@ -202,7 +202,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 862,
         "y": 850,
-        "h": 140
+        "h": 154.0
       },
       "atlas": 7,
       "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
@@ -404,14 +404,14 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 23,
       "type": "角色小物",
-      "name": "橘貓版聖誕老公公",
+      "name": "聖誕老公公",
       "description": "胖胖的橘貓穿上聖誕裝、戴著白鬍子，背著裝滿禮物的大袋子，開心揮揮小貓掌。",
       "benefit": null,
       "assetNeed": "分層紙雕橘貓聖誕老人透明 WebP",
       "layout": {
         "x": 440,
         "y": 870,
-        "h": 200
+        "h": 220.0
       },
       "atlas": 14,
       "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
@@ -519,7 +519,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 365,
         "y": 875,
-        "h": 205
+        "h": 225.5
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -533,7 +533,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 800,
         "y": 880,
-        "h": 155
+        "h": 170.5
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -547,7 +547,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 650,
         "y": 875,
-        "h": 220
+        "h": 242.0
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -561,7 +561,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 475,
         "y": 895,
-        "h": 155
+        "h": 170.5
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -575,7 +575,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 820,
         "y": 875,
-        "h": 175
+        "h": 192.5
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -589,7 +589,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 570,
         "y": 900,
-        "h": 135
+        "h": 148.5
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -617,7 +617,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 405,
         "y": 870,
-        "h": 210
+        "h": 231.0
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -631,7 +631,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 755,
         "y": 900,
-        "h": 170
+        "h": 187.0
       },
       "hint": "送給你的限定小驚喜。"
     },
@@ -645,7 +645,7 @@ window.DYSON_GAME_CONFIG = {
       "layout": {
         "x": 500,
         "y": 890,
-        "h": 185
+        "h": 203.5
       },
       "hint": "送給你的限定小驚喜。"
     }
@@ -655,7 +655,8 @@ window.DYSON_GAME_CONFIG = {
   "paperCollectionRevision": "20261022-deer-paper-v28",
   "catRevision": "20261022-british-fat-santa-v29",
   "characterRevision": "20261022-neutral-puppy-santa-v30",
-  "plainCoatRevision": "20261022-plain-gray-animals-v31"
+  "plainCoatRevision": "20261022-plain-gray-animals-v31",
+  "animalSizeRevision": "20261022-animal-plus10-v33"
 };
 
 window.DYSON_ASSETS = {

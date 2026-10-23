@@ -421,6 +421,13 @@ if(settings[107]){
   for(const key of ['name','animal'])if(['雪白小海獅','白色小海獅','不想上班小海獅'].includes(settings[107][key])){delete settings[107][key];renamed=true;}
   if(renamed)safeWrite(STORAGE_PREFIX+'config',settings);
 }
+const animalSizeCopyKey=STORAGE_PREFIX+'animal-size-'+BASE_CONFIG.animalSizeRevision;
+if(!safeRead(animalSizeCopyKey,false)){
+  const oldHeights={"8":205,"11":140,"23":200,"101":205,"102":155,"103":220,"104":155,"105":175,"106":135,"108":210,"109":170,"110":185};
+  for(const [d,h] of Object.entries(oldHeights))if(settings[d]?.layout?.h===h)settings[d].layout.h=BASE_CONFIG.items.concat(bonusCatalog).find(i=>i.day===Number(d)).layout.h;
+  if(settings[23])for(const key of ['name','calendarName'])if(settings[23][key]==='橘貓版聖誕老公公')delete settings[23][key];
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(animalSizeCopyKey,true);
+}
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
@@ -1327,11 +1334,12 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
     if(flags.white)drawLooseSnow(x,flags.snowDepth,t,flags.airflow?1:0,0);
     if(flags.candyRain)drawCandyRain(x,t);
     if(flags.show){
-      // A deterministic five-second greeting, independent of live show position.
-      const treeProgress=Math.max(0,Math.min(1,t/2)),treeOpacity=t<=2?1:Math.max(.12,1-(t-2)/.65);
+      // The GIF and both MP4 encoders share this deterministic five-second show.
+      // Draw the tree first, then trace the brand and hold the completed word.
+      const treeProgress=Math.max(0,Math.min(1,t/1.8)),treeOpacity=t<=2?1:Math.max(.16,1-(t-2)/.6);
       drawChristmasTree(treeProgress,t,x,treeOpacity);
-      const greetingAlpha=Math.max(0,Math.min(1,(t-2)/.65));
-      drawMerryChristmas(x,greetingAlpha,t);
+      const signatureElapsed=10+Math.max(0,Math.min(1,(t-1.8)/2))*5.5;
+      drawDysonSignature(signatureElapsed,x,true);
     }
     x.restore();output.setTransform(1,0,0,1,0,0);output.drawImage(poster,0,0);output.save();output.scale(width/1200,height/2000);cardRoundedRect(output,60,162,1080,1245,16);output.clip();output.drawImage(scene,60,162,1080,1245);output.restore();return frame;
   }};
