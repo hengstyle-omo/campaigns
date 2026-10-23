@@ -423,3 +423,19 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:420px){.show-controls{gap:7px}.show-controls .show-banner-slot{flex-basis:100%}.show-controls .show-track{max-width:none}}
 
 .show-controls .show-banner-slot:has(.show-banner[hidden]){display:none}
+
+/* v38: one visual, three short steps, expandable full-width rules. */
+.welcome-dialog{width:min(760px,calc(100vw - 28px));scroll-padding-bottom:84px}
+.welcome-content{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center;gap:26px;margin:20px 0}
+.welcome-content .welcome-media{width:100%;aspect-ratio:auto;overflow:visible;background:transparent;border:0;border-radius:0}
+#welcome-video{aspect-ratio:1;height:auto;border:1px solid #e5bd7e40;border-radius:10px;background:#0e1621}
+.welcome-media-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;min-height:28px}
+.welcome-media-toolbar .welcome-status{flex:1;min-width:0;margin:0;min-height:1.5em;font-size:12px;line-height:1.6;text-align:left}
+.welcome-media-toolbar #welcome-play{position:static;transform:none;margin:0;padding:5px 9px;font-size:12px;flex:none}
+.welcome-steps{gap:22px}.welcome-steps strong{font-size:16px;line-height:1.6}.welcome-steps span{font-size:14px;line-height:1.7;margin-top:3px}
+.welcome-rules{padding-top:14px;margin-top:0}.welcome-rules summary{color:var(--gold);font-size:14px;font-weight:500;cursor:pointer;padding:3px 0}
+.welcome-rules-content{padding:9px 0 5px}.welcome-rules-content p{font-size:14px;line-height:1.8;margin:0 0 9px}
+.welcome-footer{position:sticky;bottom:-24px;margin:16px -24px -24px;padding:14px 24px 20px;border-top:1px solid var(--line);background:#142030;z-index:2}
+@media(max-width:760px){.welcome-dialog{padding:18px}.welcome-content{grid-template-columns:minmax(0,1fr);gap:18px;margin:16px 0}.welcome-content .welcome-media{width:min(100%,230px);margin:auto}.welcome-steps{gap:15px}.welcome-steps strong{font-size:15px}.welcome-footer{bottom:-18px;margin:14px -18px -18px;padding:12px 18px 16px}}
+
+.welcome-dialog{max-width:min(760px,calc(100vw - 28px))}

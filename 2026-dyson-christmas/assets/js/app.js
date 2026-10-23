@@ -508,6 +508,7 @@ let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
+  if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4';video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
   try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始收藏');}
   catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
@@ -528,7 +529,7 @@ $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',finishWelcome);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始收藏');});
-$('welcome-video').addEventListener('ended',()=>{$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('準備好了嗎？一起開始收藏聖誕。');});
+$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/images/scene/style-reference.webp';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
 $('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始收藏。');});
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
 $('welcome-dialog').addEventListener('close',cleanupWelcome);
@@ -842,18 +843,19 @@ function drawSnowLayer(pool,count,dt,time,show=false,target=ctx,environment=null
       if(airflow)p.vy=Math.min(8,p.vy+.16*dt);else if(shakePower>.1)p.vy=Math.min(3.6,p.vy+.025*dt);else p.vy=.45+p.depth*.45;
       p.vx*=Math.pow(.992,dt);
       if(airflow&&p.x>1025){p.x=235;p.y=205+random()*680;p.vx=0;}else if(p.x<225||p.x>1025){p.vx*=-.5;p.x=Math.max(225,Math.min(1025,p.x));}
-      if(p.y>(!p.gold&&activeSnow?snowSurface(p.x,environment?environment.snowDepth:snowPack.depth):902)){if(!p.gold&&activeSnow){if(environment)environment.snowDepth=Math.min(SNOW_PACK_LIMIT,environment.snowDepth+.075*p.size);else snowPack.depth=Math.min(SNOW_PACK_LIMIT,snowPack.depth+.075*p.size);}p.y=205+random()*60;p.x=300+random()*650;p.vy=.5+random()*.7;p.vx=0;}
+      if(p.y>(!p.gold&&activeSnow?snowSurface(p.x,environment?environment.snowDepth:snowPack.depth):902)){if(!p.gold&&activeSnow){if(environment)environment.snowDepth=Math.min(SNOW_PACK_LIMIT,environment.snowDepth+.035*p.size);else snowPack.depth=Math.min(SNOW_PACK_LIMIT,snowPack.depth+.035*p.size);}p.y=205+random()*60;p.x=300+random()*650;p.vy=.5+random()*.7;p.vx=0;}
       if(p.y<185){p.y=185;p.vy=Math.abs(p.vy)*.5;}
     }
     if(environment?.advanceOnly)continue;
     const alpha=p.gold?.6+Math.sin(time*2+p.phase)*.23:.44+p.depth*.29;
     ctx.fillStyle=p.gold?`rgba(230,199,143,${alpha})`:`rgba(247,239,221,${Math.min(.94,alpha)})`;
+    const flakeSize=p.size*(airflow&&!p.gold?(k%11===0?1.85:1.4):1);
     ctx.beginPath();
-    if(!p.gold&&k%7===0){const size=p.size*p.depth,dx=Math.cos(p.phase)*size,dy=Math.sin(p.phase)*size;ctx.moveTo(p.x-dx,p.y-dy);ctx.lineTo(p.x-dy,p.y+dx);ctx.lineTo(p.x+dx,p.y+dy);ctx.lineTo(p.x+dy,p.y-dx);ctx.closePath();}
-    else ctx.ellipse(p.x,p.y,p.size*p.depth,p.size*p.depth*(p.gold?.9:.7),p.phase,0,Math.PI*2);
+    if(!p.gold&&k%7===0){const size=flakeSize*p.depth,dx=Math.cos(p.phase)*size,dy=Math.sin(p.phase)*size;ctx.moveTo(p.x-dx,p.y-dy);ctx.lineTo(p.x-dy,p.y+dx);ctx.lineTo(p.x+dx,p.y+dy);ctx.lineTo(p.x+dy,p.y-dx);ctx.closePath();}
+    else ctx.ellipse(p.x,p.y,flakeSize*p.depth,flakeSize*p.depth*(p.gold?.9:.7),p.phase,0,Math.PI*2);
     ctx.fill();
     if(airflow&&!p.gold&&k%3===0){
-      const length=5+p.depth*8;ctx.save();ctx.strokeStyle='rgba(250,251,255,.46)';ctx.lineWidth=Math.max(.7,p.size*.65);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(p.x-length,p.y-length*.45);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();
+      const length=5+p.depth*8;ctx.save();ctx.strokeStyle='rgba(250,251,255,.46)';ctx.lineWidth=Math.max(.8,flakeSize*.6);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(p.x-length,p.y-length*.45);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();
     }
     if(p.gold&&k%13===0)starShape(ctx,p.x,p.y,p.size*2.8,alpha*.85,p.phase*.12);
     if(!p.gold&&k%27===0){ctx.save();ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(p.x-3,p.y);ctx.lineTo(p.x+3,p.y);ctx.moveTo(p.x,p.y-3);ctx.lineTo(p.x,p.y+3);ctx.stroke();ctx.restore();}
@@ -963,11 +965,13 @@ function placedObjects(){
   return ownedDays().filter(d=>isPlaced(d)&&!item(d).effect).map(d=>({day:d,...getLayout(d)})).sort((a,b)=>layer(a)-layer(b)||a.y-b.y||a.day-b.day);
 }
 // Snow is a bounded visual effect, independent of attendance and Sheet records.
-const SNOW_PACK_LIMIT=44;
+const SNOW_PACK_LIMIT=54;
 let snowPack={key:'',depth:0};
 function snowSurface(x,depth=snowPack.depth){
-  const edge=(x-625)/340;
-  return 873-11*edge*edge-depth*(.76+.12*Math.cos((x-410)/92)+.08*Math.sin(x/57));
+  const edge=(x-625)/350,taper=Math.max(0,1-edge**4);
+  const hill=(centre,width,height)=>height*Math.exp(-.5*((x-centre)/width)**2);
+  const profile=.16+hill(410,62,.75)+hill(650,70,1)+hill(840,55,.82);
+  return 873-11*edge*edge-Math.min(SNOW_PACK_LIMIT,Math.max(0,depth))*profile*taper;
 }
 function syncSnowPack(active){
   const key=cloud.email+'|'+(previewDate||'live');
@@ -976,12 +980,12 @@ function syncSnowPack(active){
 function drawSnowPack(target,depth){
   if(depth<.05)return;
   target.save();
-  const bank=target.createLinearGradient(0,810,0,908);bank.addColorStop(0,'#fffdf4');bank.addColorStop(.5,'#f6efdfed');bank.addColorStop(.82,'#eee6d74d');bank.addColorStop(1,'#eee6d700');
-  target.fillStyle=bank;target.beginPath();target.moveTo(285,908);
-  for(let x=285;x<=970;x+=5)target.lineTo(x,snowSurface(x,depth));
-  target.lineTo(970,908);target.closePath();target.fill();
+  const bank=target.createLinearGradient(0,810,0,908);bank.addColorStop(0,'#fffdf4');bank.addColorStop(.48,'#faf4e8ed');bank.addColorStop(.82,'#eee6d74d');bank.addColorStop(1,'#eee6d700');
+  target.fillStyle=bank;target.beginPath();target.moveTo(285,908);target.quadraticCurveTo(275,890,295,snowSurface(295,depth));
+  for(let x=300;x<=955;x+=5)target.lineTo(x,snowSurface(x,depth));
+  target.quadraticCurveTo(980,887,965,908);target.closePath();target.fill();
   target.save();target.clip();for(let k=0;k<100;k++){const x=292+k*113%672,y=snowSurface(x,depth)+3+(k*17%55);target.fillStyle=k%3?'#fffdf299':'#b8c4c52b';target.beginPath();target.ellipse(x,y,.6+k%3*.3,.45+k%2*.35,0,0,Math.PI*2);target.fill();}target.restore();
-  target.strokeStyle='#fffdf3bf';target.lineWidth=2;target.beginPath();
+  target.strokeStyle='#fffdf39c';target.lineWidth=1.5;target.beginPath();
   for(let x=290;x<=965;x+=5)x===290?target.moveTo(x,snowSurface(x,depth)+1):target.lineTo(x,snowSurface(x,depth)+1);
   target.stroke();target.restore();
 }
@@ -1178,7 +1182,7 @@ function applyConfig(value,rewardValue=configuredRewards()){
 }
 // Cards use a frozen copy of the rendered globe, without controls or edit outlines.
 // One geometry map keeps PNG, GIF's protected text palette and MP4 in sync.
-const CARD_LAYOUT=Object.freeze({width:1200,height:2000,photo:{x:60,y:190,width:1080,height:1245,radius:16},message:{x:110,y:1535,width:980,height:342},recipientY:1490,signatureY:1905,footerY:1940});
+const CARD_LAYOUT=Object.freeze({width:1200,height:2000,photo:{x:80,y:190,width:1040,height:1198,radius:16},message:{x:110,y:1530,width:980,height:306},recipientY:1480,signatureY:1870,footerY:1950});
 const CARD_FONT='"Source Han Sans TC","Microsoft JhengHei",sans-serif';
 const cardSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('zh-Hant',{granularity:'grapheme'}):null;
 const cardGraphemes=text=>cardSegmenter?[...cardSegmenter.segment(text)].map(s=>s.segment):Array.from(text);
@@ -1201,7 +1205,7 @@ function wrapCardText(context,text,maxWidth){
 }
 function cardTextLayout(text){
   const context=$('card-preview').getContext('2d');
-  for(const size of [56,52,48,44,40]){
+  for(const size of [56,52,48,44,40,36]){
     context.font=`400 ${size}px ${CARD_FONT}`;const lines=wrapCardText(context,text,CARD_LAYOUT.message.width);
     const lineHeight=Math.round(size*1.42);if(lines.length<=6&&lines.length*lineHeight<=CARD_LAYOUT.message.height)return {lines,size,lineHeight,fits:true};
   }
@@ -1220,8 +1224,8 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
   cx.strokeStyle='#b8945b';cx.lineWidth=2;cardRoundedRect(cx,28,28,1144,1944,18);cx.stroke();
   cx.strokeStyle='#e5bd7e36';cx.lineWidth=1;cardRoundedRect(cx,40,40,1120,1920,12);cx.stroke();
   for(const [x,y,r] of [[87,90,8],[1113,90,8],[78,1918,6],[1120,1918,6]])starShape(cx,x,y,r,.8);
-  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#edcf9f';cx.font='400 78px Georgia,serif';cx.fillText('MERRY CHRISTMAS',600,100,990);
-  cx.strokeStyle='#b8945b66';cx.beginPath();cx.moveTo(455,145);cx.lineTo(745,145);cx.stroke();
+  cx.textAlign='center';cx.textBaseline='alphabetic';cx.fillStyle='#edcf9f';cx.font='400 66px Georgia,serif';const headingMetrics=cx.measureText('MERRY CHRISTMAS');cx.fillText('MERRY CHRISTMAS',600,82+headingMetrics.actualBoundingBoxAscent,980);cx.textBaseline='middle';
+  cx.strokeStyle='#b8945b66';cx.beginPath();cx.moveTo(455,155);cx.lineTo(745,155);cx.stroke();
   const p=CARD_LAYOUT.photo;
   if(photo){cx.save();cardRoundedRect(cx,p.x,p.y,p.width,p.height,p.radius);cx.clip();cx.drawImage(photo,p.x,p.y,p.width,p.height);cx.restore();cx.strokeStyle='#e5bd7e66';cardRoundedRect(cx,p.x,p.y,p.width,p.height,p.radius);cx.stroke();}
   cx.textAlign='left';cx.fillStyle='#e8c58f';cx.font=`500 42px ${CARD_FONT}`;
@@ -1378,7 +1382,7 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
   return {canvas:frame,sourceTimeline:flags.show?{start:0,end:16.5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
     x.setTransform(1,0,0,1,0,0);x.drawImage(cardMotionBase,0,0,scene.width,scene.height);x.save();x.scale(scene.width/SCENE_W,scene.height/SCENE_H);
     x.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);x.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);x.translate(-SCENE_W*.5,-SCENE_H*.5);globePath(x);x.clip();
-    if(flags.show||flags.airflow){
+    if(flags.show||flags.airflow||flags.white){
       const elapsed=Math.max(0,Math.min(flags.show?16.5:5,flags.show?t/5*16.5:t)),time=flags.showTimeOrigin+elapsed;
       x.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);
       if(elapsed<lastReplayTime)resetReplay();
@@ -1719,7 +1723,7 @@ async function initialise(){
   try{
     // Load the embedded Traditional Chinese faces before measuring card text.
     if(document.fonts?.load)await Promise.all([document.fonts.load('400 14px "Source Han Sans TC"'),document.fonts.load('700 14px "Source Han Sans TC"')]).catch(()=>{});
-    const [photo,atlasImage]=await Promise.all([imageLoad($('welcome-reference-image').src),imageLoad(ASSETS.atlas)]);
+    const [photo,atlasImage]=await Promise.all([imageLoad('./assets/images/scene/style-reference.webp'),imageLoad(ASSETS.atlas)]);
     await Promise.all([photo.decode?.(),atlasImage.decode?.()]);originalPhoto=photo;atlas=atlasImage;sprites.clear();
     for(const [d,src] of Object.entries(ASSETS.custom||{}))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
     await Promise.all(Object.entries(ASSETS.sprites||{}).map(async([d,src])=>builtinAssets.set(Number(d),await imageLoad(src))));

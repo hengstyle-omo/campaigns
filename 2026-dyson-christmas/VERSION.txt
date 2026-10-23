@@ -1,13 +1,13 @@
 2026 Dyson 聖誕收藏
-活動設定版本：38
+活動設定版本：39
 Apps Script：DysonProgress.gs v6（本次不需更新部署）
-完整包：20261023-v38
-差異更新基準：v37（僅含 v38 變更）
+完整包：20261023-v39
+差異更新基準：最後交付的 v38（僅含 v39 變更）
 資料夾：2026-dyson-christmas
-本次更新：dyson 氣流暴風雪、星光秀提示移出球面；保留 v38 原版25號動畫濃縮輸出、主樹金星預設、放大標題、配樂、百貨招牌、禮遇摘要與12/26模擬修正
+本次更新：精簡活動介紹、放大暴風雪雪片、三座圓潤積雪丘、卡片文字留白與標題頂緣對齊星星
 
 核心檔案 SHA-256：
-index.html 9cebd7fede7e0b51dd81a7292eeb5531fc4b77bf7394a179ee323d38f902a5c0
-assets/js/config.js 42175ee9849d8e5ec3de3b58fc309c91b5b60a9cfd7d9e955ac72a40feeb4786
-assets/js/app.js 60a371fa0d9168c39e04f601552fbb0699d9b5d239caac9584017625b2059416
-assets/css/style.css 95ef73e0864c66095ec552737d397eb347e6346bb121f1968541766d0fbf72ad
+index.html c5a6f6c204eb6253a9f53a8e7bdfdea72af188313343a454115e99c59cef0f70
+assets/js/config.js 654ed9363fc03890375498e2abebd281e6c696ac7e3aec2f926d0051072c7884
+assets/js/app.js e47dcd74af6840b965764d2221877dbc39a93b569339de5a19a27ea343694f29
+assets/css/style.css 4e0c1797ce9412fd3285309aa78bcade7cc4786765c9a8bf9d9e8404dc3b9850
