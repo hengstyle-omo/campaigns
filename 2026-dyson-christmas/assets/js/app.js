@@ -436,6 +436,12 @@ if(!safeRead(animalSizeCopyKey,false)){
   if(settings[23])for(const key of ['name','calendarName'])if(settings[23][key]==='橘貓版聖誕老公公')delete settings[23][key];
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(animalSizeCopyKey,true);
 }
+// Refresh only the former default store size; preserve participant positions and scale.
+const departmentStoreSizeKey=STORAGE_PREFIX+'department-store-'+BASE_CONFIG.departmentStoreRevision;
+if(!safeRead(departmentStoreSizeKey,false)){
+  if(settings[21]?.layout?.h===178){settings[21].layout.h=BASE_CONFIG.items.find(i=>i.day===21).layout.h;safeWrite(STORAGE_PREFIX+'config',settings);}
+  safeWrite(departmentStoreSizeKey,true);
+}
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
@@ -473,7 +479,9 @@ function nextRewardLabel(p=rewardProgress()){
 }
 const items=()=>BASE_CONFIG.items.map(i=>item(i.day));
 const participationDates=()=>Core.participationDates(state().visits,dateISO(),YEAR);
-const dayState=d=>BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))?'owned':'future'):Core.dayState(d,today(),state().claimed);
+// Only admin preview can test all remaining gifts after the campaign closes.
+const claimableToday=()=>previewDate?Math.min(25,today()):today();
+const dayState=d=>BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))?'owned':'future'):Core.dayState(d,claimableToday(),state().claimed);
 const ownedDays=()=>{const t=today();return Object.keys(state().claimed).map(Number).filter(d=>d<=t).sort((a,b)=>a-b).concat(bonusDays());};
 const isPlaced=d=>BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))&&state().placement[d]===true):state().placement[d]===true&&Object.hasOwn(state().claimed,String(d))&&Number(d)<=today();
 function persist(){if(previewDate)previewPersist();else{cloudCache();cloudScheduleSave();}}
@@ -523,7 +531,7 @@ function claimDay(d){
   if(!previewDate){if(!cloudEnabled()){openProgress();return false;}return claimCloud(d);}
   const alreadyUnlocked=rewardProgress().unlockedCount;
   // Re-evaluate the date at the actual click, including clicks across midnight.
-  if(dayState(d)!=='current'||!Core.claim(state(),Number(d),today(),new Date().toISOString())){renderUI();return false;}
+  if(dayState(d)!=='current'||!Core.claim(state(),Number(d),claimableToday(),new Date().toISOString())){renderUI();return false;}
   persist();chime();renderUI();const progress=rewardProgress();status(`已收藏「${item(d).name}」。按「放入水晶球內」才會加入場景。${progress.unlockedCount>alreadyUnlocked?`第 ${progress.unlockedCount} 份節慶禮遇已解鎖！可至「我的禮遇」查看。`:''}`);return true;
 }
 async function openDay(d){
@@ -551,13 +559,13 @@ function setPreview(iso){
   // Visiting one simulated date counts once, independently of available gifts.
   if(Core.campaignDay(iso,YEAR)>=1&&Core.campaignDay(iso,YEAR)<=25)preview.visits[iso]=true;
   previewPersist();$('preview-date').value=iso;$('sim-date').value=iso;selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');closeDialog('studio-dialog');renderUI();
-  status(`正在模擬 ${iso.slice(5).replace('-','/')}（台灣時間）。當日及之前的禮物可逐件領取；測試簽到與正式紀錄分開保存。`);
+  status(Core.campaignDay(iso,YEAR)>25?'正在模擬 12/26：管理測試可領取 1～25 號未收藏禮物，不增加簽到天數；正式活動仍於 12/25 結束。':Core.campaignDay(iso,YEAR)<1?'正在模擬活動開始前，所有禮物尚未開放。':`正在模擬 ${iso.slice(5).replace('-','/')}（台灣時間）。當日及之前的禮物可逐件領取；測試簽到與正式紀錄分開保存。`);
   return true;
 }
 function exitPreview(){previewDate=null;previewPersist();selectedDay=null;wind=false;stopShow(false);pauseMusic(true);closeDialog('item-dialog');$('quick-sim-panel').hidden=true;renderUI();status('已回到正式日期。正式收藏與測試紀錄分開保存。');}
 function fillPreviewTo(iso){
   if(!setPreview(iso))return false;
-  const n=today();if(n<1||n>25){status('請選擇活動期間的日期，才能準備測試收藏。');return false;}
+  const n=claimableToday();if(n<1||n>25){status('請選擇活動期間的日期，才能準備測試收藏。');return false;}
   for(let d=1;d<=n;d++){if(!preview.claimed[d]){preview.claimed[d]={at:`${iso}T04:00:00.000Z`};preview.placement[d]=false;}}
   persist();renderUI();status(`已準備至 12/${n} 的測試收藏，簽到只計目前模擬的日期。請逐件按「放入水晶球內」。`);
 }
@@ -568,7 +576,7 @@ function renderQuickSimulation(){
   $('quick-sim-toggle').setAttribute('aria-expanded',String(!$('quick-sim-panel').hidden));
   $('quick-sim-exit').disabled=!active;
   if(active)$('sim-date').value=previewDate;
-  $('quick-sim-note').textContent=active?'當日及之前的禮物可逐件領取，收藏後再自行放入。每個模擬日期只計一次測試簽到，不影響正式進度。':'選擇日期即開始模擬，依台灣時間開放當日及之前的禮物。';
+  $('quick-sim-note').textContent=active&&today()>25?'12/26 管理測試可領取 1～25 號未收藏禮物，不增加簽到天數；正式活動仍於 12/25 結束。':active&&today()<1?'活動尚未開始，所有禮物保持鎖定。':active?'當日及之前的禮物可逐件領取，收藏後再自行放入。每個模擬日期只計一次測試簽到，不影響正式進度。':'選擇日期即開始模擬，依台灣時間開放當日及之前的禮物。';
 }
 function calendarStateIcon(state){
   const icon=el('span',`calendar-state-icon ${state}`);
@@ -594,7 +602,7 @@ function renderCalendar(){
   }
   const open=$('today-open');open.disabled=false;
   if(t===0){$('today-kicker').textContent='12/01 開始';$('today-title').textContent='第一場雪';open.textContent='尚未開始';open.disabled=true;}
-  else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent='聖誕倒數已結束';open.textContent='查看收藏';}
+  else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日收藏測試 · 1～25 號可領取':'聖誕倒數已結束';open.textContent='查看收藏';}
   else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent=s==='owned'?'回看收藏':'開啟禮盒';}
   const key=$('calendar-key');key.replaceChildren();
   for(const [s,label] of [['future','日期未到'],['current','可領取'],['stored','已領取・未放入'],['placed','已放入']]){
@@ -690,6 +698,14 @@ function renderRewardCard(b,progress,full){
   const card=el('article',`${full?'voucher-card':'benefit-card'}${unlocked?' claimed':' locked'}${isNext?' next-reward':''}`);card.dataset.rewardId=b.id;
   const condition=product?`收藏 12/${b.productDay} 產品`:`累積參與 ${b.required} 天`;
   card.setAttribute('aria-label',`${condition}，${unlocked?'已解鎖':'尚未解鎖'}，${unlocked?b.title:b.preview}`);
+  if(!full){
+    card.classList.add('compact-reward');
+    card.append(el('p','reward-coupon-summary',unlocked?b.title:b.preview));
+    card.append(el('h3','reward-product-name',product?product.name:condition));
+    if(!product)card.append(el('p','reward-participation',`已參與 ${progress.visits}／${b.required} 天`));
+    const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);
+    return card;
+  }
   const meta=el('div','reward-meta');meta.append(el('p','benefit-date',condition),el('span','reward-state',unlocked?'已解鎖':isNext?'下一份禮遇':'尚未解鎖'));card.append(meta);
   if(product){
     card.append(el('h3','reward-product-name',product.name));
@@ -1096,10 +1112,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}
@@ -1204,7 +1220,7 @@ function renderChristmasCard(){
     $(`card-${name}-error`).textContent=show?error:'';$(`card-${name}`).setAttribute('aria-invalid',String(!!error&&show));
   }
   paintChristmasCard(data);updateCardButtons();
-  $('card-preview-note').textContent=data.valid?'選擇格式，製作你的聖誕祝福。':'完成必填內容，即可製作卡片。';
+  $('card-preview-note').textContent=data.valid?'選擇格式，製作你的聖誕祝福。':'';
   if(!data.valid){$('card-status').textContent='';return;}
   $('card-status').textContent='正在準備卡片圖片…';
   $('card-preview').toBlob(blob=>{
@@ -1266,7 +1282,7 @@ const CARD_SECONDS=5,CARD_LIMITS={gif:4*1024*1024,mp4:4*1024*1024};
 let cardMotionBase=null,cardMotionFlags=null,cardExportBusy=false,cardExportToken=0,cardExportStop=null;
 let cardMediaOutputs=new Map(),cardMediaURL=null,cardVoiceURL=null,cardVoiceBuffer=null,cardVoiceBlob=null;
 let cardRecorder=null,cardMicStream=null,cardRecordPending=false,cardRecordTimer=null,cardRecordClock=null,cardRecordToken=0,cardRecordStarted=0;
-let cardMusicBuffer=null,cardSupportPromise=null,cardMP4Support=null;
+let cardMusicBuffer=null,cardMusicLoading=null,cardSupportPromise=null,cardMP4Support=null;
 const cardFormat=()=>['gif','mp4','png'].includes($('card-format').value)?$('card-format').value:'mp4';
 const cardRecordingBusy=()=>cardRecordPending||!!cardRecorder;
 const currentCardBlob=()=>cardFormat()==='png'?cardBlob:cardMediaOutputs.get(cardFormat())?.blob||null;
@@ -1286,7 +1302,7 @@ function invalidateCardMedia(format){
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
   $('card-generate').hidden=format==='png';$('card-generate').disabled=busy||!valid||(format==='mp4'&&cardMP4Support===false);
-  $('card-generate').textContent='製作 5 秒卡片';
+  $('card-generate').textContent='製作 5 秒卡片';$('card-generate').classList.toggle('is-busy',cardExportBusy);$('card-generate').setAttribute('aria-busy',String(cardExportBusy));
   $('card-audio-options').hidden=format!=='mp4';$('card-record').disabled=busy||!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder!=='function';
   $('card-record').textContent=cardVoiceBuffer?'重新錄音':'開始錄音';$('card-record').hidden=!!cardRecorder;
   $('card-record-stop').hidden=!cardRecorder;$('card-record-delete').disabled=busy||!cardVoiceBuffer;
@@ -1394,17 +1410,42 @@ async function encodeCardGIF(options,token){
   gif.finish();return new Blob([gif.bytesView()],{type:'image/gif'});
   }finally{renderer.dispose();}
 }
-async function cardDataBytes(src){if(!src.startsWith('data:')){const response=await fetch(new URL(src,document.baseURI));if(!response.ok)throw new Error('卡片配樂載入失敗，請檢查 assets/audio/ 是否完整上傳。');return response.arrayBuffer();}const b=atob(src.slice(src.indexOf(',')+1));return Uint8Array.from(b,c=>c.charCodeAt(0)).buffer;}
+// Card music prefers a short PCM WAV, independent of compressed AAC decoders.
+async function cardDataBytes(src){
+  if(typeof src!=='string'||!src)throw new Error('配樂檔案路徑未設定。');
+  if(src.startsWith('data:')){const b=atob(src.slice(src.indexOf(',')+1));return Uint8Array.from(b,c=>c.charCodeAt(0)).buffer;}
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+  try{
+    const response=await fetch(new URL(src,document.baseURI),{signal:controller.signal});
+    if(!response.ok||/^(?:text\/|application\/json)/i.test(response.headers.get('content-type')||''))throw new Error('配樂檔案未完整上傳。');
+    const bytes=await response.arrayBuffer();if(!bytes.byteLength)throw new Error('配樂檔案內容為空。');return bytes;
+  }finally{clearTimeout(timer);}
+}
 async function cardDecodeAudio(bytes){
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!Offline)throw new Error('此瀏覽器無法準備卡片聲音，請改用 GIF 或 PNG。');
   const ac=new Offline(1,44100,44100);return ac.decodeAudioData(bytes.slice(0));
 }
+async function loadCardMusic(){
+  if(cardMusicBuffer)return cardMusicBuffer;
+  if(!cardMusicLoading)cardMusicLoading=(async()=>{
+    const sources=[...new Set([ASSETS.cardMusic?.src,ASSETS.cardMusic?.fallbackSrc,'./assets/audio/card-jingle-bells-5s-pcm-v38.wav'].filter(Boolean))];
+    for(const src of sources){
+      try{
+        const buffer=await cardDecodeAudio(await cardDataBytes(src));
+        if(!buffer.length||!buffer.numberOfChannels)continue;
+        cardMusicBuffer=buffer;return buffer;
+      }catch{/* Try the next complete source; never silently remove requested music. */}
+    }
+    throw new Error('卡片配樂無法讀取。請確認新版配樂檔已完整上傳，或先關閉「聖誕背景音樂」再製作。');
+  })().finally(()=>{cardMusicLoading=null;});
+  return cardMusicLoading;
+}
 async function mixCardAudio(){
   const rate=44100,count=rate*CARD_SECONDS,samples=new Float32Array(count),music=$('card-bgm').checked,voice=cardVoiceBuffer;
-  if(music&&!cardMusicBuffer)cardMusicBuffer=await cardDecodeAudio(await cardDataBytes(ASSETS.cardMusic?.src||TRACKS.find(t=>t.id==='jingle-bright').src));
+  if(music)await loadCardMusic();
   const read=(buffer,t)=>{if(!buffer||t>=buffer.duration)return 0;const pos=Math.min(buffer.length-1,Math.floor(t*buffer.sampleRate));let v=0;for(let c=0;c<buffer.numberOfChannels;c++)v+=buffer.getChannelData(c)[pos];return v/buffer.numberOfChannels;};
   for(let n=0;n<count;n++){
-    const t=n/rate,fade=Math.min(1,t/.25,(5-t)/.45),bg=music?read(cardMusicBuffer,(ASSETS.cardMusic?0:8)+t)*(voice?.14:.43):0;
+    const t=n/rate,fade=Math.min(1,t/.25,(5-t)/.45),bg=music?read(cardMusicBuffer,t)*(voice?.14:.43):0;
     const spoken=voice?read(voice,t)*Math.min(1,t/.035,Math.max(0,(Math.min(5,voice.duration)-t)/.08)):0;
     samples[n]=Math.max(-.95,Math.min(.95,bg*fade+spoken));
   }

@@ -10,7 +10,8 @@
 | `jingle-calm.m4a` | Jingle Bells (Calm) | https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100188 |
 | `merry-christmas.m4a` | We Wish you a Merry Christmas | https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100369 |
 | `card-jingle-bells-5s.m4a` | Jingle Bells，從原曲第 8 秒開始的 5 秒片段 | 同上 Jingle Bells |
+| `card-jingle-bells-5s-pcm-v38.wav` | 同一段 5 秒 Jingle Bells，22050 Hz 單聲道 PCM 16-bit 相容版本 | 同上 Jingle Bells |
 
-修改：供網頁播放的音訊已轉為 AAC/M4A；卡片配樂經截取，匯出卡片時另加入淡入淡出，並可與使用者錄音混音。授權標示會保留在卡片畫面中。
+修改：供網頁播放的音訊已轉為 AAC/M4A；卡片配樂經截取，另提供 PCM WAV 版本，匯出卡片時另加入淡入淡出，並可與使用者錄音混音。授權標示會保留在卡片畫面中。
 
 這些是依 CC BY 授權使用的錄音，並非無著作權錄音。

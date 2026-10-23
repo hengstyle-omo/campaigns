@@ -62,3 +62,8 @@ Use case: identity-preserve costume edit. Single transparent paper-relief game s
 使用內建 imagegen，以 `assets/images/scene/day-23-fat-cat-santa-sack-v30.webp` 為編修來源，透明背景，僅編修尾巴。新圖 `assets/images/scene/day-23-fat-cat-santa-tail-v34.webp`，以 WebP quality 94、method 6、exact alpha 最長邊 1000px 優化。
 
 提示：Edit this existing transparent sprite. Change ONLY the cat's orange striped tail on the lower right. Keep the very plump orange Santa cat's exact happy face, closed eyes, white moustache and beard, Santa hat and outfit, waving paw, gift sack on back, seated pose, layered paper sculpture relief material, colors and framing. Make the tail anatomically natural: visibly originate behind the right hip, curve gently down and forward along the right side close to the body, slightly shorter with the tip lower, resting beside its feet. Remove the current bulky upright curl/furry mass. Tail should be one clear continuous tapered tail following a soft low curve, not a separate mound. Preserve all other elements unchanged and a clean fully transparent background with no added shadow or text. Full sprite centered with no clipping.
+
+
+## v38 聖誕百貨 Dyson 招牌
+
+使用內建 image_gen 編修 `day-21-department-store-paper-v28.webp`。保留深藍屋頂、象牙白積雪、香檳金邊、暖光櫥窗與紙雕百貨造型，在中央屋頂星星下方加入深藍金框招牌，白色小寫字樣 `dyson`。完整獨立建築、真實透明背景；不加周圍場景、不遮門窗。輸出：`assets/images/scene/day-21-department-store-dyson-v38.webp`。

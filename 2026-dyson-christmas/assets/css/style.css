@@ -398,3 +398,17 @@ button,input,textarea,select{line-height:1.5}
 .calendar-about{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;padding:5px 0;border:0;border-radius:0;background:transparent;color:var(--gold);font-size:13px;text-underline-offset:4px}.calendar-about:hover{background:transparent;text-decoration:underline}
 .welcome-rules{padding-top:14px;margin-top:16px;border-top:1px solid var(--line)}.welcome-rules h3{font-size:14px;font-weight:500;color:var(--gold);margin-bottom:6px}.welcome-rules p{font-size:13px;line-height:1.8;color:#b9c2cf}
 @media(max-width:1000px){.calendar-heading{grid-template-columns:minmax(0,1fr);gap:10px}.calendar-title-row{justify-content:space-between;gap:7px}.calendar-tools{flex-direction:row;align-items:center;justify-content:space-between;margin-left:0;width:100%;gap:8px;flex-wrap:wrap}}
+
+/* v38: logical reading order is write, preview, then format and sharing. */
+.card-workspace{row-gap:0}.card-form-fields,.card-export-panel{min-width:0}.card-form-fields{grid-column:1;grid-row:1}.card-workspace>.card-preview-area{grid-column:2;grid-row:1/span 2;align-self:start}.card-export-panel{grid-column:1;grid-row:2}
+#card-preview-note:empty,.card-status:empty{display:none}
+@media(max-width:760px){.card-workspace{row-gap:20px}.card-form-fields{grid-column:1;grid-row:1}.card-workspace>.card-preview-area{grid-column:1;grid-row:2}.card-export-panel{grid-column:1;grid-row:3}.card-export-panel .card-media-options{margin-top:0;padding-top:0;border-top:0}}
+
+/* v38: homepage reward summaries keep only the benefit, product and entry. */
+.benefit-card.compact-reward{gap:12px;padding:18px 15px}
+.benefit-card.compact-reward .reward-coupon-summary{font-size:14px;font-weight:600;line-height:1.6;min-height:0;margin:0;color:#aab1bf}
+.benefit-card.compact-reward.claimed .reward-coupon-summary{color:#e5bd7e}
+.benefit-card.compact-reward h3{font-size:18px;line-height:1.55;margin:0 0 5px;overflow-wrap:anywhere}
+.benefit-card.compact-reward .reward-participation{font-size:14px;line-height:1.6;min-height:0;margin:0 0 3px;color:#aab1bf}
+.benefit-card.compact-reward>button{margin-top:auto;font-size:14px;padding:7px 10px}
+@media(max-width:420px){.benefit-card.compact-reward{padding:15px 12px;gap:10px}.benefit-card.compact-reward h3{font-size:16px}}

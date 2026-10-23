@@ -1,13 +1,13 @@
 2026 Dyson 聖誕收藏
-活動設定版本：37
+活動設定版本：38
 Apps Script：DysonProgress.gs v6（本次不需更新部署）
-完整包：20261023-v37
-累積差異更新基準：v34（已包含 v35、v36 與 v37；不需分別安裝 v35、v36）
+完整包：20261023-v38
+差異更新基準：v37（僅含 v38 變更）
 資料夾：2026-dyson-christmas
-本次更新：小海獅與海獺減少紙片層次與紋理、整合 v35 與 v36 尚未上傳的更新
+本次更新：手機卡片流程、PCM WAV 配樂、Dyson 百貨招牌與預設放大、簡化禮遇摘要、12/26 管理測試補領
 
 核心檔案 SHA-256：
-index.html daac290950d5e70701024b98736c9657e5e9f3728e41a2f4437c1fb2d18771ad
-assets/js/config.js c66a64074877d46c8e3e242c039fc4a0934c9407fc8eb478fc469fa1aef25761
-assets/js/app.js 5e517448b8f67a730b307d3bb11748f36b0c5f7d60e6b4238974d131fe6005fe
-assets/css/style.css 7882600fd4b9ba834316a3e38b40b7d20162f6dda4d80701f5d6cfcba28f8940
+index.html d39670161e2d20f34b11037b7a2016bd3ed18b4aabe9f8c5d0a5a296a6d5dcad
+assets/js/config.js 570d39fc14a55970fbc1002e820742f10e15e730befa6ac24ba0c57b2113778d
+assets/js/app.js fed70607cd7deee9f9999fb1eb52e354f1daf3d8fdd32d5690d384ea48dc348c
+assets/css/style.css decf59e7e1b1fb2da737593f72d0c39bb538577f09af549416229d17a6cc2e64

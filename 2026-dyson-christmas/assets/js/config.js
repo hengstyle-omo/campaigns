@@ -373,13 +373,13 @@ window.DYSON_GAME_CONFIG = {
       "day": 21,
       "type": "聖誕造景",
       "name": "聖誕百貨",
-      "description": "暖光櫥窗裡擺滿小禮物與聖誕樹，加入一間紙雕聖誕百貨，點亮節慶街景。",
+      "description": "Dyson 招牌點亮屋頂，暖光櫥窗裡擺滿小禮物與聖誕樹，加入一間紙雕聖誕百貨，點亮節慶街景。",
       "benefit": null,
       "assetNeed": "分層紙雕聖誕百貨透明 WebP",
       "layout": {
         "x": 370,
         "y": 785,
-        "h": 178
+        "h": 205
       },
       "atlas": 12,
       "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
@@ -659,7 +659,8 @@ window.DYSON_GAME_CONFIG = {
   "animalSizeRevision": "20261022-animal-plus10-v33",
   "santaTailRevision": "20261023-santa-tail-v34",
   "penguinRevision": "20261023-soft-penguin-v36",
-  "softAnimalsRevision": "20261023-sea-lion-otter-soft-v37"
+  "softAnimalsRevision": "20261023-sea-lion-otter-soft-v37",
+  "departmentStoreRevision": "20261023-dyson-sign-v38"
 };
 
 window.DYSON_ASSETS = {
@@ -685,7 +686,7 @@ window.DYSON_ASSETS = {
     "18": "./assets/images/scene/day-18-clock-tower.webp",
     "19": "./assets/images/scene/day-19-candy-cane.webp",
     "20": "./assets/images/products/bp10-snowglobe.png",
-    "21": "./assets/images/scene/day-21-department-store-paper-v28.webp",
+    "21": "./assets/images/scene/day-21-department-store-dyson-v38.webp",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp",
     "23": "./assets/images/scene/day-23-fat-cat-santa-tail-v34.webp",
     "24": "./assets/images/scene/day-24-christmas-star.webp"
@@ -5844,7 +5845,8 @@ window.DYSON_ASSETS = {
     "id": "jingle-bright",
     "duration": 5,
     "sourceOffset": 8,
-    "src": "./assets/audio/card-jingle-bells-5s.m4a"
+    "src": "./assets/audio/card-jingle-bells-5s-pcm-v38.wav",
+    "fallbackSrc": "./assets/audio/card-jingle-bells-5s.m4a"
   },
   "productStyle": "miniature-relief-v1",
   "productRevision": "20261021-four-products-v2",
