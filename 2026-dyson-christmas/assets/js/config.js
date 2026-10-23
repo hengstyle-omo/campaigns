@@ -556,7 +556,7 @@ window.DYSON_GAME_CONFIG = {
       "bonus": true,
       "type": "限定趣味收藏",
       "name": "這盒裝得下",
-      "animal": "灰色英短",
+      "animal": "英短",
       "description": "純藍灰色、短圓臉的小英短，硬塞進太小的禮物盒，前腳搭在盒緣，圓肚子與尾巴露在外面。",
       "layout": {
         "x": 475,
@@ -598,7 +598,7 @@ window.DYSON_GAME_CONFIG = {
       "bonus": true,
       "type": "限定趣味收藏",
       "name": "又想回家小海獅",
-      "animal": "又想回家小海獅",
+      "animal": "小海獅",
       "description": "雪白的小海獅懶洋洋側躺著，圓黑鼻子配上小黑眼睛，今天只想在雪地放空。",
       "layout": {
         "x": 680,
@@ -656,7 +656,8 @@ window.DYSON_GAME_CONFIG = {
   "catRevision": "20261022-british-fat-santa-v29",
   "characterRevision": "20261022-neutral-puppy-santa-v30",
   "plainCoatRevision": "20261022-plain-gray-animals-v31",
-  "animalSizeRevision": "20261022-animal-plus10-v33"
+  "animalSizeRevision": "20261022-animal-plus10-v33",
+  "santaTailRevision": "20261023-santa-tail-v34"
 };
 
 window.DYSON_ASSETS = {
@@ -684,7 +685,7 @@ window.DYSON_ASSETS = {
     "20": "./assets/images/products/bp10-snowglobe.png",
     "21": "./assets/images/scene/day-21-department-store-paper-v28.webp",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp",
-    "23": "./assets/images/scene/day-23-fat-cat-santa-sack-v30.webp",
+    "23": "./assets/images/scene/day-23-fat-cat-santa-tail-v34.webp",
     "24": "./assets/images/scene/day-24-christmas-star.webp"
   },
   "artDirection": {

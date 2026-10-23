@@ -421,6 +421,10 @@ if(settings[107]){
   for(const key of ['name','animal'])if(['雪白小海獅','白色小海獅','不想上班小海獅'].includes(settings[107][key])){delete settings[107][key];renamed=true;}
   if(renamed)safeWrite(STORAGE_PREFIX+'config',settings);
 }
+// Short category names only; playful collection titles and permissions stay intact.
+for(const [d,oldLabel] of [[104,'灰色英短'],[107,'又想回家小海獅']]){
+  if(settings[d]?.animal===oldLabel){delete settings[d].animal;safeWrite(STORAGE_PREFIX+'config',settings);}
+}
 const animalSizeCopyKey=STORAGE_PREFIX+'animal-size-'+BASE_CONFIG.animalSizeRevision;
 if(!safeRead(animalSizeCopyKey,false)){
   const oldHeights={"8":205,"11":140,"23":200,"101":205,"102":155,"103":220,"104":155,"105":175,"106":135,"108":210,"109":170,"110":185};
@@ -637,7 +641,7 @@ function renderUI({placementDay=null}={}){
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
 function openItem(d){if(dayState(d)!=='owned')return;collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');}
 function renderItemDialog(){
-  if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.bonus?`${i.animal||''} · 限定趣味收藏`:i.type==='Dyson 產品'?'Dyson 微縮產品收藏':i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=i.name;$('item-description').textContent=i.description;
+  if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.type==='Dyson 產品'?'Dyson 微縮產品收藏':i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=i.name;$('item-description').textContent=i.description;
   const c=el('canvas');c.width=600;c.height=440;drawThumbnail(c,i.day);$('item-visual').replaceChildren(c);
   $('item-benefit').hidden=false;$('item-benefit').textContent=i.bonus?'這是送給此 Email 的限定收藏，可自行放入水晶球；不計入 25 天收藏及優惠券進度。':`${rewardProgressLabel()}。${nextRewardLabel()}`;renderProduct(i);
   $('item-placement').textContent=isPlaced(i.day)?'移除水晶球內':'放入水晶球內';$('item-placement').setAttribute('aria-pressed',String(isPlaced(i.day)));$('item-position').hidden=!isPlaced(i.day)||((!!i.effect||!!i.fixed)&&i.day!==25);$('item-position').textContent=i.day===25?'重播星光秀':'調整擺放位置';renderMusic();
@@ -1084,10 +1088,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}
@@ -1119,11 +1123,12 @@ function applyConfig(value,rewardValue=configuredRewards()){
   settings=next;rewardSettings=nextReward;safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(STORAGE_PREFIX+'rewards-v2',rewardSettings);renderUI();renderStudio();if(currentModalDay&&dayState(currentModalDay)==='owned')renderItemDialog();
 }
 // Cards use a frozen copy of the rendered globe, without controls or edit outlines.
+// One geometry map keeps PNG, GIF's protected text palette and MP4 in sync.
+const CARD_LAYOUT=Object.freeze({width:1200,height:2000,photo:{x:60,y:190,width:1080,height:1245,radius:16},message:{x:110,y:1535,width:980,height:342},recipientY:1490,signatureY:1905,footerY:1940});
 const CARD_FONT='"Source Han Sans TC","Microsoft JhengHei",sans-serif';
 const cardSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('zh-Hant',{granularity:'grapheme'}):null;
 const cardGraphemes=text=>cardSegmenter?[...cardSegmenter.segment(text)].map(s=>s.segment):Array.from(text);
 const cardCount=text=>cardGraphemes(text.replace(/\r\n?/g,'\n').replace(/\n/g,'')).length;
-const CARD_PRESETS={warm:'願這顆小小的水晶球，為你留住冬日的溫暖。聖誕快樂，願你每天都有值得期待的小美好。',thanks:'謝謝你今年的陪伴，讓平凡的日子多了好多光。把這片親手布置的雪境送給你，聖誕快樂！',wish:'願新的一年，有喜歡的日常、勇敢的開始，還有一起分享快樂的人。聖誕快樂，明年也一起創造美好回憶！'};
 let cardCapturedAt=null,cardSnapshot=null,cardBackground=null,cardCapturing=false,cardBlob=null,cardFile=null,cardRenderToken=0,cardSaving=false,cardTouched=false;
 function wrapCardText(context,text,maxWidth){
   const lines=[];
@@ -1143,15 +1148,15 @@ function wrapCardText(context,text,maxWidth){
 function cardTextLayout(text){
   const context=$('card-preview').getContext('2d');
   for(const size of [56,52,48,44,40]){
-    context.font=`400 ${size}px ${CARD_FONT}`;const lines=wrapCardText(context,text,980);
-    const lineHeight=Math.round(size*1.42);if(lines.length<=6&&lines.length*lineHeight<=342)return {lines,size,lineHeight,fits:true};
+    context.font=`400 ${size}px ${CARD_FONT}`;const lines=wrapCardText(context,text,CARD_LAYOUT.message.width);
+    const lineHeight=Math.round(size*1.42);if(lines.length<=6&&lines.length*lineHeight<=CARD_LAYOUT.message.height)return {lines,size,lineHeight,fits:true};
   }
   return {lines:[],size:40,lineHeight:57,fits:false};
 }
 function validateCard(){
   const recipient=$('card-recipient').value,message=$('card-message').value.replace(/\r\n?/g,'\n'),signature=$('card-signature').value;
   const counts={recipient:cardCount(recipient),message:cardCount(message),signature:cardCount(signature)},layout=cardTextLayout(message);
-  const errors={recipient:!recipient.trim()?'請填寫收件人的名字或暱稱。':counts.recipient>12?'收件人最多 12 字，請調整後再製作。':'',message:!message.trim()?'寫幾句想送給對方的話吧。':counts.message>100?'祝福最多 100 字，原文已保留，請稍微精簡。':!layout.fits?'排版後超過 6 行，請減少換行或精簡內容。':'',signature:counts.signature>12?'署名最多 12 字；也可以留空。':''};
+  const errors={recipient:!recipient.trim()?'請填寫收件人的名字或暱稱。':counts.recipient>12?'收件人最多 12 字，請調整後再製作。':'',message:!message.trim()?'寫幾句想送給對方的話吧。':counts.message>100?'祝福最多 100 字，原文已保留，請稍微精簡。':!layout.fits?'排版後超過 6 行，請減少換行或精簡內容。':'',signature:!signature.trim()?'請留下你的署名。':counts.signature>12?'署名最多 12 字，請調整後再製作。':''};
   return {recipient,message,signature,counts,layout,errors,valid:Object.values(errors).every(e=>!e)};
 }
 function cardRoundedRect(context,x,y,w,h,r){context.beginPath();context.moveTo(x+r,y);context.arcTo(x+w,y,x+w,y+h,r);context.arcTo(x+w,y+h,x,y+h,r);context.arcTo(x,y+h,x,y,r);context.arcTo(x,y,x+w,y,r);context.closePath();}
@@ -1161,24 +1166,25 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
   cx.strokeStyle='#b8945b';cx.lineWidth=2;cardRoundedRect(cx,28,28,1144,1944,18);cx.stroke();
   cx.strokeStyle='#e5bd7e36';cx.lineWidth=1;cardRoundedRect(cx,40,40,1120,1920,12);cx.stroke();
   for(const [x,y,r] of [[87,90,8],[1113,90,8],[78,1918,6],[1120,1918,6]])starShape(cx,x,y,r,.8);
-  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#edcf9f';cx.font='400 46px Georgia,serif';cx.fillText('MERRY CHRISTMAS',600,94);
-  cx.strokeStyle='#b8945b66';cx.beginPath();cx.moveTo(455,130);cx.lineTo(745,130);cx.stroke();
-  if(photo){cx.save();cardRoundedRect(cx,60,162,1080,1245,16);cx.clip();cx.drawImage(photo,60,162,1080,1245);cx.restore();cx.strokeStyle='#e5bd7e66';cardRoundedRect(cx,60,162,1080,1245,16);cx.stroke();}
+  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#edcf9f';cx.font='400 60px Georgia,serif';cx.fillText('MERRY CHRISTMAS',600,100);
+  cx.strokeStyle='#b8945b66';cx.beginPath();cx.moveTo(455,145);cx.lineTo(745,145);cx.stroke();
+  const p=CARD_LAYOUT.photo;
+  if(photo){cx.save();cardRoundedRect(cx,p.x,p.y,p.width,p.height,p.radius);cx.clip();cx.drawImage(photo,p.x,p.y,p.width,p.height);cx.restore();cx.strokeStyle='#e5bd7e66';cardRoundedRect(cx,p.x,p.y,p.width,p.height,p.radius);cx.stroke();}
   cx.textAlign='left';cx.fillStyle='#e8c58f';cx.font=`500 42px ${CARD_FONT}`;
-  cx.fillText(data.errors.recipient?'給，特別的你':`給 ${data.recipient}`,110,1474);
+  cx.fillText(data.errors.recipient?'給，特別的你':`給 ${data.recipient}`,110,CARD_LAYOUT.recipientY);
   const messageValid=!data.errors.message;
-  cx.fillStyle=messageValid?'#f4eee4':'#a6a8ae';cx.font=`400 ${messageValid?data.layout.size:40}px ${CARD_FONT}`;cx.textBaseline='top';
+  cx.fillStyle=messageValid?'#f4eee4':'#a6a8ae';cx.font=`400 ${messageValid?data.layout.size:40}px ${CARD_FONT}`;cx.textBaseline='middle';
   const lines=messageValid?data.layout.lines:[data.message.trim()?'內容超出卡片範圍，請調整後再製作。':'把想說的話，留在這片聖誕雪境裡。'];
-  lines.forEach((line,k)=>cx.fillText(line,110,1530+k*(messageValid?data.layout.lineHeight:52)));
-  if(data.signature.trim()&&!data.errors.signature){cx.textAlign='right';cx.textBaseline='middle';cx.font=`400 40px ${CARD_FONT}`;cx.fillStyle='#e8c58f';cx.fillText(`— ${data.signature}`,1090,1890);}
+  const lineHeight=messageValid?data.layout.lineHeight:52,messageCenter=CARD_LAYOUT.message.y+CARD_LAYOUT.message.height/2;
+  lines.forEach((line,k)=>cx.fillText(line,CARD_LAYOUT.message.x,messageCenter+(k-(lines.length-1)/2)*lineHeight));
+  if(data.signature.trim()&&!data.errors.signature){cx.textAlign='right';cx.textBaseline='middle';cx.font=`400 40px ${CARD_FONT}`;cx.fillStyle='#e8c58f';cx.fillText(`— ${data.signature}`,1090,CARD_LAYOUT.signatureY);}
   cx.textAlign='center';cx.textBaseline='middle';
-  if(cardCapturedAt){cx.fillStyle='#b8b8b6';cx.font=`400 20px ${CARD_FONT}`;cx.fillText(`${cardCapturedAt} · 台灣時間`,600,1920);}
-  cx.fillStyle='#b9a488';cx.font='400 18px Georgia,serif';cx.fillText('dyson  ·  A LITTLE WONDER, EVERY DAY',600,1947);
+  cx.fillStyle='#b9a488';cx.font=`400 22px ${CARD_FONT}`;cx.fillText(cardCapturedAt?`dyson · ${cardCapturedAt} · UTC+8`:'dyson',600,CARD_LAYOUT.footerY);
   c.setAttribute('aria-label',data.valid?`聖誕卡片預覽，送給 ${data.recipient}。${data.message}${data.signature.trim()?`，署名 ${data.signature}`:''}`:'聖誕卡片預覽，請完成欄位或調整超出限制的內容。');
 }
 function updateCardButtons(){
   const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardSaving||cardExportBusy||cardRecordingBusy();
-  $('card-download').disabled=disabled;$('card-share').disabled=disabled;$('card-retake').disabled=cardCapturing||cardSaving||cardExportBusy||cardRecordingBusy();
+  $('card-download').disabled=disabled;$('card-share').disabled=disabled;
   updateCardMediaControls();
 }
 function renderChristmasCard(){
@@ -1190,12 +1196,12 @@ function renderChristmasCard(){
     $(`card-${name}-error`).textContent=show?error:'';$(`card-${name}`).setAttribute('aria-invalid',String(!!error&&show));
   }
   paintChristmasCard(data);updateCardButtons();
-  $('card-preview-note').textContent=data.valid?`文字已排成 ${data.layout.lines.length} 行 · 可選擇靜態圖片或製作 5 秒動態卡片`:'完成必填內容，並符合字數與行數限制後即可下載或分享。';
+  $('card-preview-note').textContent=data.valid?'選擇格式，製作你的聖誕祝福。':'完成必填內容，即可製作卡片。';
   if(!data.valid){$('card-status').textContent='';return;}
   $('card-status').textContent='正在準備卡片圖片…';
   $('card-preview').toBlob(blob=>{
     if(token!==cardRenderToken)return;
-    if(!blob){$('card-status').textContent='圖片製作失敗，請重新拍照後再試。';return;}
+    if(!blob){$('card-status').textContent='圖片製作失敗，請關閉卡片再重新開啟。';return;}
     cardBlob=blob;if(typeof File==='function')cardFile=new File([blob],'dyson-christmas-card.png',{type:'image/png'});
     updateCardButtons();renderCardMediaResult();$('card-status').textContent=cardFormat()==='png'?'卡片圖片已準備好，可以下載或分享。':'文字與照片已準備好，按下製作即可產生 5 秒卡片。';
   },'image/png');
@@ -1240,17 +1246,12 @@ async function shareChristmasCard(){
   finally{cardSaving=false;updateCardButtons();}
 }
 $('card-open').addEventListener('click',openChristmasCard);
-$('card-retake').addEventListener('click',captureCardScene);
 $('card-form').addEventListener('submit',e=>e.preventDefault());
 for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('input',e=>{if(!e.isComposing)renderChristmasCard();});
   $(`card-${name}`).addEventListener('compositionend',renderChristmasCard);
   $(`card-${name}`).addEventListener('blur',()=>{cardTouched=true;renderChristmasCard();});
 }
-document.querySelectorAll('[data-card-preset]').forEach(b=>b.addEventListener('click',()=>{
-  if($('card-message').value.trim()&&$('card-message').value!==CARD_PRESETS[b.dataset.cardPreset]&&!window.confirm('要用這段祝福取代目前的文字嗎？'))return;
-  $('card-message').value=CARD_PRESETS[b.dataset.cardPreset];renderChristmasCard();
-}));
 $('card-download').addEventListener('click',downloadChristmasCard);$('card-share').addEventListener('click',shareChristmasCard);
 // Five-second, readability-first card exports. All encoding stays on this device.
 const CARD_SECONDS=5,CARD_LIMITS={gif:4*1024*1024,mp4:4*1024*1024};
@@ -1277,12 +1278,11 @@ function invalidateCardMedia(format){
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
   $('card-generate').hidden=format==='png';$('card-generate').disabled=busy||!valid||(format==='mp4'&&cardMP4Support===false);
-  $('card-generate').textContent=format==='gif'?'製作 5 秒動態卡片':'製作 5 秒有聲卡片';
+  $('card-generate').textContent='製作 5 秒卡片';
   $('card-audio-options').hidden=format!=='mp4';$('card-record').disabled=busy||!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder!=='function';
   $('card-record').textContent=cardVoiceBuffer?'重新錄音':'開始錄音';$('card-record').hidden=!!cardRecorder;
   $('card-record-stop').hidden=!cardRecorder;$('card-record-delete').disabled=busy||!cardVoiceBuffer;
   for(const id of ['card-recipient','card-message','card-signature','card-format','card-bgm'])$(id).disabled=busy;
-  document.querySelectorAll('[data-card-preset]').forEach(b=>b.disabled=busy);
   $('card-export-progress').hidden=!cardExportBusy;
   $('card-making').hidden=!cardExportBusy;$('card-making').parentElement.setAttribute('aria-busy',String(cardExportBusy));
   $('card-format-note').textContent=format==='gif'?'無聲、5 秒循環 · 720 × 1200。文字獨立繪製，只調整圖片細節控制容量。':format==='png'?'靜態卡片，不含聲音。':cardMP4Support===false?'此瀏覽器目前無法產生 H.264／AAC MP4，仍可製作 GIF 或 PNG；請使用支援的瀏覽器再製作影片。':'5 秒影片 · 720 × 1200。提高文字清晰度與影片畫質，預設聖誕配樂，可加入自己的錄音。';
@@ -1341,7 +1341,7 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
       const signatureElapsed=10+Math.max(0,Math.min(1,(t-1.8)/2))*5.5;
       drawDysonSignature(signatureElapsed,x,true);
     }
-    x.restore();output.setTransform(1,0,0,1,0,0);output.drawImage(poster,0,0);output.save();output.scale(width/1200,height/2000);cardRoundedRect(output,60,162,1080,1245,16);output.clip();output.drawImage(scene,60,162,1080,1245);output.restore();return frame;
+    x.restore();output.setTransform(1,0,0,1,0,0);output.drawImage(poster,0,0);output.save();output.scale(width/1200,height/2000);const p=CARD_LAYOUT.photo;cardRoundedRect(output,p.x,p.y,p.width,p.height,p.radius);output.clip();output.drawImage(scene,p.x,p.y,p.width,p.height);output.restore();return frame;
   }};
 }
 function cardMaking(stage,percent=null){
@@ -1357,7 +1357,7 @@ async function encodeCardGIF(options,token){
   const {GIFEncoder,quantize,applyPalette}=window.DysonMediaCodecs;
   const renderer=createCardMovieRenderer(options.width,options.height,false,options.imageWidth),gif=GIFEncoder(),frames=40;
   try{
-  const w=options.width,h=options.height,photo={x:Math.floor(w*60/1200),y:Math.floor(h*162/2000),right:Math.ceil(w*1140/1200),bottom:Math.ceil(h*1407/2000)};
+  const w=options.width,h=options.height,p=CARD_LAYOUT.photo,photo={x:Math.floor(w*p.x/CARD_LAYOUT.width),y:Math.floor(h*p.y/CARD_LAYOUT.height),right:Math.ceil(w*(p.x+p.width)/CARD_LAYOUT.width),bottom:Math.ceil(h*(p.y+p.height)/CARD_LAYOUT.height)};
   photo.w=photo.right-photo.x;photo.h=photo.bottom-photo.y;
   const first=renderer.draw(0).getContext('2d'),all=new Uint8Array(first.getImageData(0,0,w,h).data);
   // A separate UI palette protects text, its antialiasing and the card background.
@@ -1582,7 +1582,25 @@ $('selected-reset').addEventListener('click',()=>{if(!selectedDay)return;delete 
 $('selected-detail').addEventListener('click',()=>{if(selectedDay)openItem(selectedDay);});
 $('item-placement').addEventListener('click',()=>{if(currentModalDay)togglePlacement(currentModalDay);});
 $('item-position').addEventListener('click',()=>{if(!currentModalDay||!isPlaced(currentModalDay))return;const d=currentModalDay;if(d===25){startShow();return;}editMode=true;selectItem(d);closeDialog('item-dialog');renderUI();$('globe-wrapper').scrollIntoView({behavior:'smooth',block:'center'});});
-$('sound-toggle').addEventListener('click',()=>{sound=!sound;$('sound-toggle').textContent=sound?'音效 開':'音效 關';$('sound-toggle').setAttribute('aria-pressed',String(sound));if(sound)chime();});
+function renderAudioEntry(){
+  $('sound-toggle').textContent=sound?'開啟':'關閉';$('sound-toggle').setAttribute('aria-pressed',String(sound));
+  $('audio-open').classList.toggle('audio-active',sound||musicPlaying);
+  $('audio-open').setAttribute('aria-label',`音訊，音樂${musicPlaying?'播放中':'關閉'}，操作音效${sound?'開啟':'關閉'}`);
+}
+function closeAudioPanel(restoreFocus=false){
+  const panel=$('audio-panel'),hadFocus=panel.contains(document.activeElement);
+  panel.hidden=true;$('audio-open').setAttribute('aria-expanded','false');
+  if(restoreFocus&&hadFocus)$('audio-open').focus({preventScroll:true});
+}
+$('audio-open').addEventListener('click',()=>{
+  const opening=$('audio-panel').hidden;$('audio-panel').hidden=!opening;$('audio-open').setAttribute('aria-expanded',String(opening));
+  if(opening)$('audio-close').focus({preventScroll:true});
+});
+$('audio-close').addEventListener('click',()=>closeAudioPanel(true));
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('audio-panel').hidden){e.preventDefault();closeAudioPanel(true);}});
+document.addEventListener('focusin',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
+$('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();if(sound)chime();});
 $('vouchers-open').addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});$('reference-open').addEventListener('click',()=>showDialog('reference-dialog'));
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
@@ -1652,6 +1670,7 @@ function finishShowMusic(resume){
   else {musicEnabled=false;renderMusic();}
 }
 function renderMusic(){
+  renderAudioEntry();
   const unlocked=TRACKS.filter(trackAvailable);
   if(currentTrackId&&!unlocked.some(t=>t.id===currentTrackId)){pauseMusic(true);currentTrackId=null;}
   if(!currentTrackId&&unlocked.length)currentTrackId=unlocked[0].id;
@@ -1661,8 +1680,8 @@ function renderMusic(){
   select.value=currentTrackId||'';select.disabled=!unlocked.length;
   $('music-play').disabled=!unlocked.length;$('music-play').textContent=musicPlaying?'暫停音樂':'播放音樂';$('music-play').setAttribute('aria-pressed',String(musicPlaying));
   $('music-now').textContent=musicPlaying?`${showMusic?'演出配樂':'正在播放'} · ${TRACKS.find(t=>t.id===currentTrackId)?.label}`:`已解鎖 ${unlocked.length} / ${TRACKS.length} 首 · 音樂預設關閉`;
-  $('item-music').hidden=true;
-  if(currentModalDay){const t=TRACKS.find(t=>t.day===Number(currentModalDay));if(t&&trackAvailable(t)){$('item-music').hidden=false;$('item-music').textContent=`另已解鎖「${t.label}」。可在水晶球下方的「聖誕旋律」按播放。`;}}
+  renderAudioEntry();$('item-music').hidden=true;
+  if(currentModalDay){const t=TRACKS.find(t=>t.day===Number(currentModalDay));if(t&&trackAvailable(t)){$('item-music').hidden=false;$('item-music').textContent=`另已解鎖「${t.label}」。可在頂部「音訊」選擇播放。`;}}
 }
 function renderMusicCredits(){
   const root=$('music-credits-list');root.replaceChildren();
@@ -1676,7 +1695,7 @@ function renderMusicCredits(){
 $('music-play').addEventListener('click',()=>{if(musicPlaying){pauseMusic(true);renderMusic();}else if(currentTrackId)playMusic(currentTrackId);});
 $('music-track').addEventListener('change',()=>{const id=$('music-track').value;if(!TRACKS.some(t=>t.id===id&&trackAvailable(t)))return;if(musicPlaying)playMusic(id,{restart:true});else {currentTrackId=id;showResumeTrack=null;renderMusic();}});
 $('music-volume').addEventListener('input',()=>{audio.volume=Math.max(0,Math.min(1,Number($('music-volume').value)));});
-$('music-credits-open').addEventListener('click',()=>{renderMusicCredits();showDialog('music-credits-dialog');});
+$('music-credits-open').addEventListener('click',()=>{closeAudioPanel();renderMusicCredits();showDialog('music-credits-dialog');});
 audio.addEventListener('ended',()=>{if(showMusic)finishShowMusic(true);else {musicPlaying=false;musicEnabled=false;renderMusic();}});
 audio.addEventListener('error',()=>{pauseMusic(true);renderMusic();status('音樂無法讀取，請重新整理活動頁面。');});
 document.addEventListener('visibilitychange',()=>{
