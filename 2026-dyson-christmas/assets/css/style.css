@@ -439,3 +439,11 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:760px){.welcome-dialog{padding:18px}.welcome-content{grid-template-columns:minmax(0,1fr);gap:18px;margin:16px 0}.welcome-content .welcome-media{width:min(100%,230px);margin:auto}.welcome-steps{gap:15px}.welcome-steps strong{font-size:15px}.welcome-footer{bottom:-18px;margin:14px -18px -18px;padding:12px 18px 16px}}
 
 .welcome-dialog{max-width:min(760px,calc(100vw - 28px))}
+
+/* Completed cards are revealed only after an explicit successful generation. */
+.card-preview-area{scroll-margin-top:20px}
+
+/* v41: product details use one title, tagline, description and feature list. */
+#item-dialog .item-product-tagline{color:var(--gold);font-size:15px;font-weight:500;line-height:1.7;margin:10px 0}
+#item-dialog #item-product{margin-top:20px}
+#item-dialog #product-features-title{margin-bottom:8px}

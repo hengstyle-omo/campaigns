@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 39,
+  "version": 41,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -168,7 +168,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 10,
       "type": "Dyson 產品",
       "name": "PencilVac鉛筆吸塵器",
-      "description": "輕巧・靈活・極纖細\nDyson PencilVac™ Fluffycones SV50 鉛筆吸塵器\n\n搭載創新四錐全向吸頭，360° 靈活轉向，輕鬆穿梭居家角落，讓清潔更自由、更俐落。",
+      "description": "纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。",
       "benefit": null,
       "assetNeed": "SV50 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -181,7 +181,8 @@ window.DYSON_GAME_CONFIG = {
       "product": {
         "model": "SV50 · PencilVac™ Fluffycones",
         "color": "",
-        "intro": "纖細的筆型吸塵器搭配 Fluffycones™ 四錐全向吸頭，靈活穿梭居家空間，整理日常地面。",
+        "intro": "纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。",
+        "detailTitle": "Dyson PencilVac™ Fluffycones SV50 鉛筆吸塵器",
         "features": [
           "纖細筆型機身",
           "Fluffycones™ 四錐全向吸頭",
@@ -343,7 +344,7 @@ window.DYSON_GAME_CONFIG = {
     {
       "day": 20,
       "type": "Dyson 產品",
-      "name": "DYSON BP10 航空噴射空氣清淨機 星曜紫",
+      "name": "BP10 航空噴射空氣清淨機 星曜紫",
       "description": "運用航空聲學原理搭配獨創星形噴嘴90秒淨化。",
       "benefit": null,
       "assetNeed": "BP10 微立體透明 PNG，保留產品輪廓與配色",
