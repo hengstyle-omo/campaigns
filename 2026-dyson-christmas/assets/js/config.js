@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 41,
+  "version": 42,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -78,7 +78,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 5,
       "type": "Dyson 產品",
       "name": "HD19 隨行吹風機",
-      "description": "把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。",
+      "description": "把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。輕巧機身搭配自動電壓調節與智慧溫控，讓旅行途中也能輕鬆吹整秀髮。",
       "benefit": null,
       "assetNeed": "HD19 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -91,7 +91,7 @@ window.DYSON_GAME_CONFIG = {
       "product": {
         "model": "HD19 · Supersonic™ Travel",
         "color": "普魯士藍",
-        "intro": "輕巧的隨行吹風機，搭配自動電壓調節設計，讓旅行途中也能輕鬆吹整秀髮。",
+        "intro": "把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。輕巧機身搭配自動電壓調節與智慧溫控，讓旅行途中也能輕鬆吹整秀髮。",
         "features": [
           "100–240V 自動電壓調節",
           "智慧溫控",
@@ -168,7 +168,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 10,
       "type": "Dyson 產品",
       "name": "PencilVac鉛筆吸塵器",
-      "description": "纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。",
+      "description": "把 PencilVac™ Fluffycones SV50 放進雪境，收藏一份輕巧、靈活、極纖細的清潔靈感。纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。",
       "benefit": null,
       "assetNeed": "SV50 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -181,7 +181,7 @@ window.DYSON_GAME_CONFIG = {
       "product": {
         "model": "SV50 · PencilVac™ Fluffycones",
         "color": "",
-        "intro": "纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。",
+        "intro": "把 PencilVac™ Fluffycones SV50 放進雪境，收藏一份輕巧、靈活、極纖細的清潔靈感。纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。",
         "detailTitle": "Dyson PencilVac™ Fluffycones SV50 鉛筆吸塵器",
         "features": [
           "纖細筆型機身",
@@ -256,7 +256,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 15,
       "type": "Dyson 產品",
       "name": "HJ10 噴射氣流空氣清淨機",
-      "description": "冰川藍的 HushJet™ HJ10，精巧設計，節省空間卻不減性能，為雪境添上一件清新科技收藏。",
+      "description": "把冰川藍的 HushJet™ HJ10 放進雪境，為聖誕小天地添上一件清新科技收藏。精巧設計節省空間，搭配靈感源自航空噴射引擎的星形噴嘴，每秒輸出 380 升強勁氣流。",
       "benefit": null,
       "assetNeed": "HJ10 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -269,7 +269,7 @@ window.DYSON_GAME_CONFIG = {
       "product": {
         "model": "HJ10 · HushJet™ Purifier Compact",
         "color": "冰川藍",
-        "intro": "靈感源自航空噴射引擎，以獨特星形噴嘴吹送集中的淨化氣流，每秒輸出空氣380升強勁氣流。",
+        "intro": "把冰川藍的 HushJet™ HJ10 放進雪境，為聖誕小天地添上一件清新科技收藏。精巧設計節省空間，搭配靈感源自航空噴射引擎的星形噴嘴，每秒輸出 380 升強勁氣流。",
         "features": [
           "HushJet™ 氣流噴射技術",
           "獨特星形噴嘴設計",
@@ -345,7 +345,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 20,
       "type": "Dyson 產品",
       "name": "BP10 航空噴射空氣清淨機 星曜紫",
-      "description": "運用航空聲學原理搭配獨創星形噴嘴90秒淨化。",
+      "description": "把星曜紫的 BP10 放進雪境，收藏一份來自航空科技的清新靈感。運用航空聲學原理與 Dyson 創新氣流技術，搭配獨創星形噴嘴，90 秒淨化，為居家空間帶來清新舒適的空氣體驗。",
       "benefit": null,
       "assetNeed": "BP10 微立體透明 PNG，保留產品輪廓與配色",
       "layout": {
@@ -357,8 +357,8 @@ window.DYSON_GAME_CONFIG = {
       "hint": "今天有一款 Dyson 微縮科技，等待你親手放進雪境。",
       "product": {
         "model": "BP10",
-        "color": "",
-        "intro": "融合航空科技與 Dyson 創新氣流技術，打造新一代高效能空氣清淨機，結合強勁送風與高效空氣淨化，為居家空間帶來清新舒適的空氣體驗。",
+        "color": "星曜紫",
+        "intro": "把星曜紫的 BP10 放進雪境，收藏一份來自航空科技的清新靈感。運用航空聲學原理與 Dyson 創新氣流技術，搭配獨創星形噴嘴，90 秒淨化，為居家空間帶來清新舒適的空氣體驗。",
         "features": [
           "每秒送風量高達 1,300 公升",
           "350° 環繞式機身設計，搭配可旋轉風嘴和星形出風口",

@@ -391,6 +391,20 @@ if(!safeRead(conciseProductCopyKey,false)){
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(conciseProductCopyKey,true);
 }
 
+
+// Refresh only known v41 narrative fields. Custom copy, links, artwork and layouts remain.
+const snowProductCopyKey=STORAGE_PREFIX+'product-snow-narrative-v42';
+if(!safeRead(snowProductCopyKey,false)){
+  const oldCopy={"5":{"intro":"輕巧的隨行吹風機，搭配自動電壓調節設計，讓旅行途中也能輕鬆吹整秀髮。","description":"把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。","color":"普魯士藍"},"10":{"intro":"纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。","description":"纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。","color":""},"15":{"intro":"靈感源自航空噴射引擎，以獨特星形噴嘴吹送集中的淨化氣流，每秒輸出空氣380升強勁氣流。","description":"冰川藍的 HushJet™ HJ10，精巧設計，節省空間卻不減性能，為雪境添上一件清新科技收藏。","color":"冰川藍"},"20":{"intro":"融合航空科技與 Dyson 創新氣流技術，打造新一代高效能空氣清淨機，結合強勁送風與高效空氣淨化，為居家空間帶來清新舒適的空氣體驗。","description":"運用航空聲學原理搭配獨創星形噴嘴90秒淨化。","color":""}};
+  for(const [day,copy] of Object.entries(oldCopy)){
+    const saved=settings[day];if(!saved)continue;
+    if(saved.description===copy.description)delete saved.description;
+    if(saved.product?.intro===copy.intro)delete saved.product.intro;
+    if(Number(day)===20&&saved.product?.color===copy.color)delete saved.product.color;
+  }
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(snowProductCopyKey,true);
+}
+
 const SCENE_REPLACED_DAYS=[8,16,19];
 const sceneCopyKey=STORAGE_PREFIX+'scene-copy-'+BASE_CONFIG.sceneRevision;
 if(!safeRead(sceneCopyKey,false)){
@@ -676,8 +690,7 @@ function renderUI({placementDay=null}={}){
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
 function openItem(d){if(dayState(d)!=='owned')return;collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');}
 function renderItemDialog(){
-  if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.type==='Dyson 產品'?'Dyson 微縮產品收藏':i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
-  $('item-product-tagline').textContent=i.product?.tagline||'';$('item-product-tagline').hidden=!i.product?.tagline;
+  if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.product?[i.product.model,i.product.color].filter(Boolean).join(' · '):i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
   const c=el('canvas');c.width=600;c.height=440;drawThumbnail(c,i.day);$('item-visual').replaceChildren(c);
   renderProduct(i);
   $('item-placement').textContent=isPlaced(i.day)?'移除水晶球內':'放入水晶球內';$('item-placement').setAttribute('aria-pressed',String(isPlaced(i.day)));$('item-position').hidden=!isPlaced(i.day)||((!!i.effect||!!i.fixed)&&i.day!==25);$('item-position').textContent=i.day===25?'重播星光秀':'調整擺放位置';renderMusic();
