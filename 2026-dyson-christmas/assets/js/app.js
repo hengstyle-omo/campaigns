@@ -806,13 +806,31 @@ function drawChristmasTree(progress,time,target=ctx,opacity=1){
   if(progress>.7){target.globalAlpha*=Math.min(1,(progress-.7)/.3);for(let k=0;k<13;k++){const y=445+k*21,spread=(y-355)*.35,x=625+Math.sin(k*2.4)*spread;starShape(target,x,y,k%3===0?8:5,.85+.12*Math.sin(time*3+k),time*.12);}starShape(target,625,345,30,.98);}
   target.restore();
 }
+// Geometric, round-ended lettering shares the brand animation's gold glow.
+// Custom paths avoid depending on an unavailable proprietary logo typeface.
+const FESTIVE_GLYPHS={
+ M:'M 0 48 L 0 0 L 17 25 L 34 0 L 34 48',
+ E:'M 32 0 L 0 0 L 0 48 L 32 48 M 0 24 L 27 24',
+ R:'M 0 48 L 0 0 L 17 0 C 39 0 39 24 17 24 L 0 24 M 17 24 L 34 48',
+ Y:'M 0 0 L 17 24 L 34 0 M 17 24 L 17 48',
+ C:'M 34 6 C 23 -5 0 -2 0 24 C 0 50 23 53 34 42',
+ H:'M 0 0 L 0 48 M 34 0 L 34 48 M 0 24 L 34 24',
+ I:'M 17 0 L 17 48',
+ S:'M 32 5 C 15 -6 -3 2 1 15 C 5 27 33 20 33 35 C 33 50 12 53 0 43',
+ T:'M 0 0 L 34 0 M 17 0 L 17 48',
+ A:'M 0 48 L 17 0 L 34 48 M 7 30 L 27 30'
+};
+const festivePaths=Object.fromEntries(Object.entries(FESTIVE_GLYPHS).map(([letter,path])=>[letter,new Path2D(path)]));
 function drawMerryChristmas(target,alpha=1,time=0){
   if(alpha<=0)return;
   target.save();target.globalAlpha*=Math.min(1,alpha);
   const glow=target.createRadialGradient(625,505,30,625,505,330);glow.addColorStop(0,'rgba(9,17,31,.85)');glow.addColorStop(1,'rgba(9,17,31,0)');target.fillStyle=glow;target.fillRect(295,175,660,660);
-  target.font='italic 600 64px Georgia, serif';target.textAlign='center';target.textBaseline='middle';target.fillStyle='#fff1cd';target.shadowColor='#eac47a';target.shadowBlur=16;
-  target.fillText('Merry Christmas',625,505,650);
-  for(let k=0;k<8;k++){const a=k*Math.PI/4;starShape(target,625+Math.cos(a)*335,505+Math.sin(a)*100,k%2?5:8,.6+.3*Math.sin(time*2+k)**2,a);}
+  const text='MERRY CHRISTMAS',advance=letter=>letter===' '?30:letter==='I'?22:47,total=[...text].reduce((sum,letter)=>sum+advance(letter),0)-13,scale=630/(total+8);
+  target.save();target.translate(625-total*scale/2,505-24*scale);target.scale(scale,scale);
+  target.strokeStyle='#eac58a';target.lineWidth=7.5;target.lineCap='round';target.lineJoin='round';target.shadowColor='#f8ce88';target.shadowBlur=8;
+  for(const letter of text){if(festivePaths[letter]){target.save();if(letter==='I')target.translate(-12.5,0);target.stroke(festivePaths[letter]);target.restore();}target.translate(advance(letter),0);}
+  target.restore();
+  for(let k=0;k<8;k++){const a=k*Math.PI/4;starShape(target,625+Math.cos(a)*350,505+Math.sin(a)*95,k%2?5:8,.6+.3*Math.sin(time*2+k)**2,a);}
   target.restore();
 }
 function drawStarShow(elapsed,time,target=ctx,animate=motion){
@@ -898,7 +916,7 @@ function placedObjects(){
   return ownedDays().filter(d=>isPlaced(d)&&!item(d).effect).map(d=>({day:d,...getLayout(d)})).sort((a,b)=>layer(a)-layer(b)||a.y-b.y||a.day-b.day);
 }
 // Bounded visual snow, independent of participation and Sheet records.
-const SNOW_PACK_LIMIT=78,SNOW_PACK_RATE=5.2;
+const SNOW_PACK_LIMIT=125,SNOW_PACK_RATE=125/540,SNOW_WIND_MULTIPLIER=3.6;
 let snowPack={key:'',depth:0};
 const snowPackContexts=new Map();
 function snowSurface(x,depth=snowPack.depth){
@@ -907,13 +925,24 @@ function snowSurface(x,depth=snowPack.depth){
   const profile=.2+hill(410,66,.68)+hill(650,78,.9)+hill(840,60,.72);
   return 873-11*edge*edge-Math.min(SNOW_PACK_LIMIT,Math.max(0,depth))*profile*taper;
 }
-function advanceSnowPack(pack,seconds,active){
-  if(active&&seconds>0)pack.depth=Math.min(SNOW_PACK_LIMIT,Math.max(0,pack.depth)+seconds*SNOW_PACK_RATE);
+function advanceSnowPack(pack,seconds,active,airflow=false){
+  if(active&&seconds>0){
+    const key=Object.prototype.hasOwnProperty.call(pack,'snowDepth')?'snowDepth':'depth';
+    pack[key]=Math.min(SNOW_PACK_LIMIT,Math.max(0,pack[key])+seconds*SNOW_PACK_RATE*(airflow?SNOW_WIND_MULTIPLIER:1));
+  }
 }
 function syncSnowPack(active){
   const key=cloud.email+'|'+(previewDate?'preview':'live');
   if(snowPack.key!==key){if(snowPack.key)snowPackContexts.set(snowPack.key,snowPack.depth);snowPack={key,depth:snowPackContexts.get(key)||0};}
   if(!active){snowPack.depth=0;snowPackContexts.set(key,0);}
+}
+function drawSnowBase(target){
+  target.save();
+  const base=target.createLinearGradient(0,823,0,938);base.addColorStop(0,'#f9fcff');base.addColorStop(.45,'#ffffff');base.addColorStop(.82,'#edf5fc');base.addColorStop(1,'#d3e3ef');
+  target.fillStyle=base;target.beginPath();target.ellipse(625,883,342,48,0,0,Math.PI*2);target.fill();
+  target.strokeStyle='#ffffffcc';target.lineWidth=2;target.beginPath();target.ellipse(625,879,330,41,0,Math.PI,Math.PI*2);target.stroke();
+  for(let k=0;k<65;k++){target.fillStyle=k%3?'#ffffffa0':'#afc6da25';target.beginPath();target.ellipse(310+k*109%625,857+k*23%59,.7+k%3*.35,.45,0,0,Math.PI*2);target.fill();}
+  target.restore();
 }
 function drawSnowPack(target,depth){
   if(depth<.05)return;
@@ -930,7 +959,7 @@ function drawSnowPack(target,depth){
 function drawObjectSnow(target,object,depth){
   if(depth<2||object.y<775||object.day===24)return;
   const sprite=loadSprite(object.day);if(!sprite)return;
-  const h=object.h*object.scale,w=h*sprite.bounds.w/sprite.bounds.h,cover=Math.min(14,h*.055,depth*.19),r=Math.max(9,Math.min(w*.35,64)),x=object.x,y=object.y+2;
+  const h=object.h*object.scale,w=h*sprite.bounds.w/sprite.bounds.h,cover=Math.min(24,h*.10,depth*.19),r=Math.max(9,Math.min(w*.35,64)),x=object.x,y=object.y+2;
   target.save();target.globalAlpha=Math.min(1,depth/20);
   target.fillStyle='#7c9bb42b';target.beginPath();target.ellipse(x,y+2,r*1.1,3+cover*.12,0,0,Math.PI*2);target.fill();
   const cap=target.createLinearGradient(0,y-cover,0,y+5);cap.addColorStop(0,'#ffffff');cap.addColorStop(.65,'#f3f9ff');cap.addColorStop(1,'#cfdfec');target.fillStyle=cap;
@@ -940,7 +969,7 @@ function drawObjectSnow(target,object,depth){
 function drawSnowForeground(target,depth){
   if(depth<1)return;
   target.save();target.globalAlpha=Math.min(1,depth/24);
-  const top=904-Math.min(26,depth*.34),fullness=Math.min(1,depth/SNOW_PACK_LIMIT),bank=target.createLinearGradient(0,top-24,0,932);bank.addColorStop(0,'#ffffff');bank.addColorStop(.5,'#f5faff');bank.addColorStop(.82,'#d7e5f1');bank.addColorStop(1,'#c0d3e600');target.fillStyle=bank;
+  const top=904-Math.min(39,depth*.34),fullness=Math.min(1,depth/SNOW_PACK_LIMIT),bank=target.createLinearGradient(0,top-24,0,932);bank.addColorStop(0,'#ffffff');bank.addColorStop(.5,'#f5faff');bank.addColorStop(.82,'#d7e5f1');bank.addColorStop(1,'#c0d3e600');target.fillStyle=bank;
   target.beginPath();target.moveTo(310,925);target.bezierCurveTo(345,top+10,367,top-18*fullness,430,top-6*fullness);target.bezierCurveTo(490,top+10,527,top+9,580,top-5*fullness);target.bezierCurveTo(630,top-24*fullness,680,top-21*fullness,735,top-7*fullness);target.bezierCurveTo(800,top+9,865,top-12*fullness,954,top+10);target.lineTo(947,932);target.closePath();target.fill();target.restore();
 }
 
@@ -993,6 +1022,7 @@ function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=mot
   ctx.save();globePath(ctx);ctx.clip();
   if(finalShow){const dim=ctx.createRadialGradient(625,560,150,625,560,465);dim.addColorStop(0,`rgba(7,12,27,${.53*showFade})`);dim.addColorStop(.65,`rgba(7,12,27,${.44*showFade})`);dim.addColorStop(1,'rgba(7,12,27,0)');ctx.fillStyle=dim;ctx.fillRect(180,150,900,790);}
   if(warmth||finalShow)drawWarmth(time,finalShow ? .52*showFade : 1,ctx,animate);
+  drawSnowBase(ctx);
   drawSnowPack(ctx,environment?environment.snowDepth:snowPack.depth);
   for(const p of objects){
     const h=p.h*p.scale,s=loadSprite(p.day);if(!s)continue;const w=h*s.bounds.w/s.bounds.h;
@@ -1009,7 +1039,7 @@ function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=mot
     for(const s of stars){const a=animate ? .42+(Math.sin(time*1.8+s.phase)+1)*.25:.8;softGlow(s.x,s.y,s.size*5,a*.36,ctx);starShape(ctx,s.x,s.y,s.size*(animate ? .85+Math.sin(time+s.phase)*.15:1),a);}
     ctx.restore();
   }
-  if(finalShow){drawStarShow(elapsed,time,ctx,animate);drawDysonSignature(elapsed,ctx,animate);}
+  if(finalShow){drawStarShow(elapsed,time,ctx,animate);drawDysonSignature(elapsed,ctx,animate);if(!animate||elapsed>=17)drawMerryChristmas(ctx,animate?showFade*Math.min(1,(elapsed-17)/.8):1,time);}
   const rim=ctx.createRadialGradient(625,560,280,625,560,430);rim.addColorStop(0,'rgba(255,223,157,0)');rim.addColorStop(.9,'rgba(255,223,157,.015)');rim.addColorStop(1,'rgba(255,223,157,.12)');ctx.fillStyle=rim;ctx.fillRect(180,150,900,790);ctx.restore();
 }
 
@@ -1019,7 +1049,7 @@ function drawFrame(dt=0,now=0){
   if(showUntil&&now>=showUntil){stopShow(true);}
   const time=motion?now/1000:0,finalShow=showActive(now),elapsed=finalShow?(now-showStarted)/1000:0;
   const activeSnow=isPlaced(1),goldSnow=isPlaced(13),warmth=isPlaced(13),candyRain=isPlaced(19),flow=motion&&(wind||turbulence>.1);
-  syncSnowPack(activeSnow);if(activeSnow&&!motion)snowPack.depth=Math.max(28,snowPack.depth);advanceSnowPack(snowPack,motion?dt/60:0,activeSnow);
+  syncSnowPack(activeSnow);if(activeSnow&&!motion)snowPack.depth=Math.max(28,snowPack.depth);advanceSnowPack(snowPack,motion?dt/60:0,activeSnow,wind);
   const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate:motion,airflow:wind,shakePower:turbulence,activeSnow,goldSnow});
   frameEffects={white:whiteCount,gold:goldCount,warmth,candyRain,accumulation:snowPack.depth,airborneSnow:activeSnow&&snowPack.depth>.5&&flow,show:finalShow,signature:finalShow?signatureProgress(elapsed):0,phase:finalShow?(!motion?'靜態星光':elapsed<4?'暖光亮起':elapsed<10?'星光升起':elapsed<15.5?'dyson 星光描繪':elapsed<17?'品牌星光':'聖誕祝福'):''};
   if(finalShow){$('show-banner').hidden=false;$('show-phase').textContent=frameEffects.phase;$('show-progress').style.width=`${Math.max(0,Math.min(100,elapsed/SHOW_SECONDS*100))}%`;}
@@ -1231,7 +1261,6 @@ async function captureCardScene(){
       editMode=false;drawFrame(0,performance.now());
       cx.save();cx.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);cx.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);cx.translate(-SCENE_W*.5,-SCENE_H*.5);
       cx.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);cx.drawImage(canvas,0,0,SCENE_W,SCENE_H);cx.restore();
-      if(!$('show-greeting').hidden){cx.save();cx.globalAlpha=Number($('show-greeting').style.opacity)||1;cx.fillStyle='#fff2d0';cx.shadowColor='#080e1d';cx.shadowBlur=15;cx.font=`600 52px ${CARD_FONT}`;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('Merry Christmas',SCENE_W*.5,SCENE_H*parseFloat($('show-greeting').style.top)/100);cx.restore();}
       if(cardSnapshot){cardSnapshot.width=1;cardSnapshot.height=1;}cardSnapshot=snapshot;cardCapturedAt=Core.taipeiTimestamp(new Date(Date.now()+(cloud.hasClock?cloud.offset:0)));captureCardMotionBase();cardSceneKey=sceneKey;++cardSceneRevision;
     }finally{editMode=editing;drawFrame(0,performance.now());}
     cardCapturing=false;renderChristmasCard();return true;
@@ -1346,6 +1375,7 @@ function captureCardMotionBase(){
   const c=el('canvas');c.width=SCENE_W;c.height=SCENE_H;const x=c.getContext('2d');
   x.save();x.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);x.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);x.translate(-SCENE_W*.5,-SCENE_H*.5);x.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);
   x.save();globePath(x);x.clip();
+  drawSnowBase(x);
   drawSnowPack(x,snowPack.depth);
   for(const p of placedObjects()){
     const h=p.h*p.scale,s=loadSprite(p.day);if(!s)continue;const w=h*s.bounds.w/s.bounds.h;
@@ -1364,16 +1394,16 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
   let lastReplayTime=0,replaySeed=0x20261225;
   const replay={wind:flags.airflow,turbulence:0,activeSnow:flags.white,snowDepth:flags.snowDepth,random:()=>((replaySeed=(Math.imul(replaySeed,1664525)+1013904223)>>>0)/4294967296)};
   const resetReplay=()=>{flags.whitePool=cardMotionFlags.whitePool.map(p=>({...p}));flags.goldPool=cardMotionFlags.goldPool.map(p=>({...p}));replay.snowDepth=flags.snowDepth;lastReplayTime=0;replaySeed=0x20261225;};
-  return {canvas:frame,sourceTimeline:flags.show?{start:0,end:16.5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
+  return {canvas:frame,sourceTimeline:flags.show?{start:0,end:19.5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
     x.setTransform(1,0,0,1,0,0);x.drawImage(cardMotionBase,0,0,scene.width,scene.height);x.save();x.scale(scene.width/SCENE_W,scene.height/SCENE_H);
     x.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);x.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);x.translate(-SCENE_W*.5,-SCENE_H*.5);globePath(x);x.clip();
     if(flags.show||flags.airflow||flags.white){
-      const elapsed=Math.max(0,Math.min(flags.show?16.5:5,flags.show?t/5*16.5:t)),time=flags.showTimeOrigin+elapsed;
+      const elapsed=Math.max(0,Math.min(flags.show?19.5:5,flags.show?t/5*19.5:t)),time=flags.showTimeOrigin+elapsed;
       x.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);
       if(elapsed<lastReplayTime)resetReplay();
       replay.advanceOnly=true;
       while(lastReplayTime+1/60<=elapsed){
-        lastReplayTime+=1/60;advanceSnowPack(replay,1/60,flags.white);
+        lastReplayTime+=1/60;advanceSnowPack(replay,1/60,flags.white,flags.airflow);
         const counts=sceneParticleCounts({elapsed:lastReplayTime,finalShow:flags.show,animate:true,airflow:flags.airflow,activeSnow:flags.white,goldSnow:flags.gold});
         drawSnowLayer(flags.whitePool,counts.whiteCount,1,flags.showTimeOrigin+lastReplayTime,true,x,replay);
         drawSnowLayer(flags.goldPool,counts.goldCount,1,flags.showTimeOrigin+lastReplayTime,true,x,replay);

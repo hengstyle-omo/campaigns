@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 46,
+  "version": 47,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -439,7 +439,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 25,
       "type": "雪境光效",
       "name": "聖誕星光秀",
-      "description": "放入後回到水晶球，大星芒與金銀星帶展開 20 秒演出；後半段光點依序描出 dyson 字樣，停留後接上「聖誕快樂」祝福。可隨時停止或重播。另解鎖《We Wish You a Merry Christmas》配樂，音樂預設關閉。",
+      "description": "放入後回到水晶球，大星芒與金銀星帶展開 20 秒演出；後半段光點依序描出 dyson 字樣，停留後接上「MERRY CHRISTMAS」祝福。可隨時停止或重播。另解鎖《We Wish You a Merry Christmas》配樂，音樂預設關閉。",
       "benefit": null,
       "assetNeed": "獨立粒子及燈光演出，不需產品圖片",
       "effect": "finalShow",

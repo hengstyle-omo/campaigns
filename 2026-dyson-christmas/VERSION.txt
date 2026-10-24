@@ -1,14 +1,14 @@
 2026 Dyson 聖誕收藏
-更新包版本：46
-差異更新基準：v45
-更新內容：Email 優先 popup、簡短玩法與行銷文案、製作聖誕卡片提示、明顯積雪與腳邊薄雪。
-後端：沿用 v45 Apps Script v9，本次不需重新部署或執行 setup。
-資源版本：20261024-welcome-snow-v46
+更新包版本：47
+差異更新基準：v46
+更新內容：圓潤幾何聖誕字形、薄白底雪、慢速厚雪丘與氣流加速積雪。
+後端：沿用 v45 Apps Script schema v9，本次不需重新部署或執行 setup。
+資源版本：20261024-snow-greeting-v47
 
 檔案 SHA-256（不含本 VERSION.txt）：
-index.html 2dcf7cb3301efbf8bd4df1cc9798ae8d803dc51b9ff09351edd94fa57fc9dcbf
-assets/css/style.css ebb3b3967983232bc5b0fe3a29fb261f246a2f2f0d36b6b05cd4980f4fded571
-assets/js/app.js cf0518e0ce030b9fb5597f8f09564b931e5e21e2b1d31f5aae6edd49b913c219
-assets/js/config.js 5298dd9291f2a3cbe65b2773bef190e529f91d5fbf96ce247bd4f3d42755d1cf
-README.md e58773b3e2a48b85d8be9c70a2c49fb160535ff5bfe92a1a9878c938e14ccf2f
-UPDATE-v46.md 9dacdf763eb3b0c4e47633cba696459937eccad4556479bb75938523860db111
+index.html 7752bfa287f02ab1d49ea5b4d94f7c63495fdb472206fd76e473796b0227c141
+assets/css/style.css 52d392c36836493fa71903947ce3c57543511637aac36e0a3dacdbb0710abe22
+assets/js/app.js db68454228c614cebe62a25e757630bb0724c8a314ea7f47861b54d7b8fce97c
+assets/js/config.js 50e951a485ac3aeb91778c48100340fe2f7c17cd33e7d3384dea0843f0625b0f
+README.md 19fe9958ce90c87c33f8890263a1b486a58e536172f78e274c258ddd8dee8baa
+UPDATE-v47.md 467e20d135a48ead4681eafa9fc47896f3aa2b5c3ad31a245e7d928569ead073

@@ -505,3 +505,6 @@ button,input,textarea,select{line-height:1.5}
  .welcome-footer{bottom:-16px;margin:12px -16px -16px;padding:10px 16px 14px}
 }
 @media(max-width:360px){.welcome-dialog{padding:13px}.welcome-footer{bottom:-13px;margin:10px -13px -13px;padding:10px 13px 12px}.welcome-progress .progress-consent{font-size:12px}}
+
+/* v47: Canvas paths render the visible greeting consistently in live and export. */
+.show-greeting{width:1px;height:1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
