@@ -459,3 +459,49 @@ button,input,textarea,select{line-height:1.5}
 .welcome-progress .progress-consent{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.7}.welcome-progress input[type=checkbox]{flex:none;margin-top:5px}.welcome-progress #progress-message{font-size:14px;color:var(--gold);margin-top:10px}
 .welcome-dialog.progress-only{max-width:540px}.welcome-dialog.progress-only .welcome-content,.welcome-dialog.progress-only #welcome-description,.welcome-dialog.progress-only .welcome-rules,.welcome-dialog.progress-only #welcome-progress-title,.welcome-dialog.progress-only .welcome-label{display:none}.welcome-dialog.progress-only .welcome-progress{border:0;padding-top:0}
 .reward-task-hint{font-size:13px;color:var(--gold);line-height:1.7}.welcome-progress #progress-current p{font-size:13px;overflow-wrap:anywhere}.welcome-progress #progress-switch{font-size:13px;padding:5px 10px;margin:7px 0}
+
+/* v46: Show Email before secondary introduction content in the same dialog. */
+.welcome-dialog{width:min(760px,calc(100vw - 28px));padding:22px;max-height:calc(100dvh - 28px);scroll-padding-top:16px;scroll-padding-bottom:90px}
+.welcome-dialog h2{margin:6px 0;font-size:25px}
+#welcome-description{margin:0 0 14px;font-size:14px;line-height:1.6}
+.welcome-content{grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:24px;align-items:center;margin:0 0 14px}
+.welcome-content .welcome-progress{grid-column:2;grid-row:1;margin:0;padding:0;border:0;min-width:0}
+.welcome-progress h3{font-size:18px;line-height:1.4;margin:0 0 6px}
+.welcome-progress>p{font-size:14px;line-height:1.6;margin:0 0 10px}
+.welcome-progress input[type=email]{min-height:46px;margin:6px 0 10px}
+.welcome-progress .progress-consent{font-size:13px;line-height:1.6;gap:8px}
+.welcome-progress .card-hint{font-size:12px;line-height:1.6;margin:7px 0 0}
+.welcome-progress #progress-message:empty{display:none}
+.welcome-progress #progress-current p{margin:0;font-size:12px}
+.welcome-progress #progress-switch{margin:4px 0 8px}
+.welcome-content .welcome-media{grid-column:1;grid-row:1;width:min(100%,238px);margin:0 auto;align-self:center}
+.welcome-media-toolbar{min-height:24px;margin-top:6px;flex-wrap:wrap;gap:4px 8px}
+.welcome-media-toolbar .welcome-status{font-size:11px;line-height:1.5}
+.welcome-guide{margin:0 0 14px}
+.welcome-steps{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 8px;margin:0;padding:0;font-size:13px;line-height:1.6;color:#ead6b4}
+.welcome-steps li{display:block}
+.welcome-steps li+li:before{content:'→';color:var(--muted);margin-right:8px}
+.welcome-rules{padding-top:10px}
+.welcome-footer{bottom:-22px;margin:14px -22px -22px;padding:12px 22px 16px}
+.welcome-dialog.progress-only .welcome-content{display:block;margin:14px 0}
+.welcome-dialog.progress-only .welcome-media,.welcome-dialog.progress-only .welcome-guide{display:none}
+.welcome-dialog.progress-only .welcome-progress{display:block;margin:0;padding:0}
+@media(max-width:760px){
+ .welcome-dialog{padding:16px;max-height:calc(100dvh - 20px);width:calc(100vw - 24px);max-width:540px;scroll-padding-bottom:82px}
+ .welcome-dialog h2{font-size:23px;margin:5px 0}
+ .welcome-label{font-size:11px}
+ #welcome-skip{font-size:12px;padding:6px 8px}
+ #welcome-description{margin-bottom:12px;font-size:14px}
+ .welcome-content{grid-template-columns:minmax(0,1fr);gap:16px;margin:0 0 12px}
+ .welcome-content .welcome-progress{grid-column:1;grid-row:1}
+ .welcome-content .welcome-media{grid-column:1;grid-row:2;width:min(100%,160px)}
+ .welcome-progress h3{font-size:18px}
+ .welcome-progress>p{margin-bottom:8px}
+ .welcome-progress .progress-consent{font-size:13px}
+ .welcome-media-toolbar{justify-content:center}
+ .welcome-media-toolbar .welcome-status{flex-basis:100%;text-align:center}
+ .welcome-guide{margin-bottom:10px}
+ .welcome-steps{font-size:12px;gap:4px 7px}
+ .welcome-footer{bottom:-16px;margin:12px -16px -16px;padding:10px 16px 14px}
+}
+@media(max-width:360px){.welcome-dialog{padding:13px}.welcome-footer{bottom:-13px;margin:10px -13px -13px;padding:10px 13px 12px}.welcome-progress .progress-consent{font-size:12px}}

@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 45,
+  "version": 46,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
