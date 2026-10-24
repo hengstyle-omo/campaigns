@@ -508,3 +508,6 @@ button,input,textarea,select{line-height:1.5}
 
 /* v47: Canvas paths render the visible greeting consistently in live and export. */
 .show-greeting{width:1px;height:1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* v48: visible capture surface for the prepared-frame MP4 compatibility path. */
+.card-recording-preview{width:90px;height:150px;max-height:20vh;object-fit:contain;border-radius:6px;flex:none}

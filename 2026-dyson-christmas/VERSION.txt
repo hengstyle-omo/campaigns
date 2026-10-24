@@ -1,14 +1,18 @@
 2026 Dyson 聖誕收藏
-更新包版本：47
-差異更新基準：v46
-更新內容：圓潤幾何聖誕字形、薄白底雪、慢速厚雪丘與氣流加速積雪。
-後端：沿用 v45 Apps Script schema v9，本次不需重新部署或執行 setup。
-資源版本：20261024-snow-greeting-v47
+更新包版本：48
+差異更新基準：v47
+更新內容：9.5 秒網頁星光秀、5 秒卡片節奏、完整 MP4 逐格編碼與海獺自然臉型微笑。
+後端：沿用 v45 Apps Script schema v9，本次不需更新或執行 setup。
+資源版本：20261024-show-otter-v48
 
 檔案 SHA-256（不含本 VERSION.txt）：
-index.html 7752bfa287f02ab1d49ea5b4d94f7c63495fdb472206fd76e473796b0227c141
-assets/css/style.css 52d392c36836493fa71903947ce3c57543511637aac36e0a3dacdbb0710abe22
-assets/js/app.js db68454228c614cebe62a25e757630bb0724c8a314ea7f47861b54d7b8fce97c
-assets/js/config.js 50e951a485ac3aeb91778c48100340fe2f7c17cd33e7d3384dea0843f0625b0f
-README.md 19fe9958ce90c87c33f8890263a1b486a58e536172f78e274c258ddd8dee8baa
-UPDATE-v47.md 467e20d135a48ead4681eafa9fc47896f3aa2b5c3ad31a245e7d928569ead073
+ASSET-NOTES-v48.md 83c70842f1026b27fa6368815b159806aa12b196ff1dcab738deb2569f9481d6
+README.md ad7841be0aa6386e77ac85414ccd6d5a5ba818e39a8d2564380aae66d699427d
+UPDATE-v48.md b218cd731d2b10936856a6de92df4a1d858563ddb65565b50fa3a4b4292a74b7
+assets/audio/card-jingle-bells-5s-aac-v48.m4a 7a4a790a0c7f339fadbeca56d8f896337bb83893fe0fa869cb634794323f2f04
+assets/css/style.css 47b6e8126702571e9ce5cb6524c602a1b11c8cce5ad50c643514d2e3a47631c0
+assets/images/bonus/bonus-otter-gray-face-v48.png 8a5b0f7e529a9e2293695a4a48710eebc2933bc563e9b2635d8aca585ccb610c
+assets/js/app.js 805eba26e00cadb8296734bcfe20636b8a411272128cb9a4adb95e47b32b1c0f
+assets/js/config.js f2b71f84940e2bba6c1d4a1f10f9330c8b1ec480a6e9b280b0768067eef0cad7
+assets/js/media-mp4.js e5308948af6e83a93a500183528fd521400790df226d7b5b85589fbe9fa6aafc
+index.html 0cd897d31b6a25d873812bae7468d55414e9021563752a6f445bfed12bce64fd

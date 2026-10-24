@@ -717,7 +717,17 @@ function drawThumbnail(target,d){
 }
 function globePath(c){c.beginPath();c.moveTo(322,890);c.bezierCurveTo(193,774,153,538,248,355);c.bezierCurveTo(332,197,486,157,622,158);c.bezierCurveTo(833,155,1000,304,1046,504);c.bezierCurveTo(1076,659,1014,824,941,891);c.bezierCurveTo(796,936,464,938,322,890);c.closePath();}
 const SCENE_VIEW={zoom:1.08,shiftX:-.038};
-const SHOW_SECONDS=20;
+const SHOW_SECONDS=9.5;
+const SHOW_LIVE={duration:9.5,introEnd:2.5,drawEnd:5,holdEnd:6};
+const SHOW_CARD={duration:5,introEnd:1,drawEnd:2.8,holdEnd:3.4};
+function showState(elapsed,timeline=SHOW_LIVE){
+  const clamp=n=>Math.max(0,Math.min(1,n));
+  return {fade:clamp(elapsed/.45)*clamp((timeline.duration-elapsed)/.55),
+    signature:clamp((elapsed-timeline.introEnd)/(timeline.drawEnd-timeline.introEnd)),
+    signatureAlpha:clamp((elapsed-timeline.introEnd)/.2)*clamp((timeline.holdEnd+.25-elapsed)/.25),
+    greeting:clamp((elapsed-timeline.holdEnd)/.4),
+    phase:elapsed<timeline.introEnd?'暖光與星光':elapsed<timeline.drawEnd?'dyson 星光描繪':elapsed<timeline.holdEnd?'品牌星光':'聖誕祝福'};
+}
 const brandLetters=(ASSETS.brandMark?.letters||[]).map(letter=>{
   let length=0;
   const contours=letter.paths.map(points=>({points,segments:points.slice(1).map((b,k)=>{const a=points[k],size=Math.hypot(b[0]-a[0],b[1]-a[1]),start=length;length+=size;return {a,b,size,start,end:length};})}));
@@ -740,7 +750,7 @@ function startShow({scrollToGlobe=true}={}){
   showStarted=performance.now();showUntil=showStarted+SHOW_SECONDS*1000;showPausedAt=null;
   startShowMusic();renderUI({placementDay:25});drawFrame(0,showStarted);
   if(scrollToGlobe)$('globe-wrapper').scrollIntoView({behavior:motion?'smooth':'auto',block:'center'});
-  status(motion?'聖誕星光秀開始，20 秒後緩緩收尾。可隨時停止或重播。':'動態已暫停，顯示靜態聖誕星光畫面。');return true;
+  status(motion?'聖誕星光秀開始，9.5 秒後緩緩收尾。可隨時停止或重播。':'動態已暫停，顯示靜態聖誕星光畫面。');return true;
 }
 function renderShowControls(){
   const placed=isPlaced(25),active=showActive();
@@ -821,93 +831,59 @@ const FESTIVE_GLYPHS={
  A:'M 0 48 L 17 0 L 34 48 M 7 30 L 27 30'
 };
 const festivePaths=Object.fromEntries(Object.entries(FESTIVE_GLYPHS).map(([letter,path])=>[letter,new Path2D(path)]));
+let festiveStamp=null;
 function drawMerryChristmas(target,alpha=1,time=0){
   if(alpha<=0)return;
   target.save();target.globalAlpha*=Math.min(1,alpha);
   const glow=target.createRadialGradient(625,505,30,625,505,330);glow.addColorStop(0,'rgba(9,17,31,.85)');glow.addColorStop(1,'rgba(9,17,31,0)');target.fillStyle=glow;target.fillRect(295,175,660,660);
-  const text='MERRY CHRISTMAS',advance=letter=>letter===' '?30:letter==='I'?22:47,total=[...text].reduce((sum,letter)=>sum+advance(letter),0)-13,scale=630/(total+8);
-  target.save();target.translate(625-total*scale/2,505-24*scale);target.scale(scale,scale);
-  target.strokeStyle='#eac58a';target.lineWidth=7.5;target.lineCap='round';target.lineJoin='round';target.shadowColor='#f8ce88';target.shadowBlur=8;
-  for(const letter of text){if(festivePaths[letter]){target.save();if(letter==='I')target.translate(-12.5,0);target.stroke(festivePaths[letter]);target.restore();}target.translate(advance(letter),0);}
-  target.restore();
+  if(!festiveStamp){
+    festiveStamp=el('canvas');festiveStamp.width=750;festiveStamp.height=140;const lettering=festiveStamp.getContext('2d');
+    const text='MERRY CHRISTMAS',advance=letter=>letter===' '?30:letter==='I'?22:47,total=[...text].reduce((sum,letter)=>sum+advance(letter),0)-13,scale=630/(total+8);
+    lettering.translate(375-total*scale/2,70-24*scale);lettering.scale(scale,scale);lettering.strokeStyle='#eac58a';lettering.lineWidth=7.5;lettering.lineCap='round';lettering.lineJoin='round';lettering.shadowColor='#f8ce88';lettering.shadowBlur=8;
+    for(const letter of text){if(festivePaths[letter]){lettering.save();if(letter==='I')lettering.translate(-12.5,0);lettering.stroke(festivePaths[letter]);lettering.restore();}lettering.translate(advance(letter),0);}
+  }
+  target.drawImage(festiveStamp,250,435);
   for(let k=0;k<8;k++){const a=k*Math.PI/4;starShape(target,625+Math.cos(a)*350,505+Math.sin(a)*95,k%2?5:8,.6+.3*Math.sin(time*2+k)**2,a);}
   target.restore();
 }
-function drawStarShow(elapsed,time,target=ctx,animate=motion){
-  const ctx=target;
-  const staticShow=!animate,fade=staticShow?1:Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2));
-  ctx.save();ctx.globalAlpha=fade;
-  // A large central star is visible from the opening, before the ribbons rise.
-  ctx.globalCompositeOperation='screen';
-  softGlow(625,350,150,.72,ctx);softGlow(625,350,65,.9,ctx);
-  ctx.shadowColor='#ffe0a0';ctx.shadowBlur=22;
-  starShape(ctx,625,350,staticShow?56:56+Math.sin(elapsed*.8)*4,.98,staticShow?0:Math.sin(elapsed*.3)*.06);
-  ctx.shadowBlur=0;
-  const rise=staticShow?1:Math.max(0,Math.min(1,(elapsed-.8)/5));
-  const turn=staticShow?0:elapsed*.68;
-  ctx.save();ctx.globalAlpha*=staticShow ? .28 : elapsed>=10 ? .24 : 1;
-  for(let ribbon=0;ribbon<2;ribbon++){
-    const points=[];
-    for(let k=0;k<=100;k++){
-      const u=k/100;if(u>rise)break;
-      const phase=u*Math.PI*3.4+turn+ribbon*Math.PI,radius=290*(1-u*.57);
-      points.push({x:625+Math.cos(phase)*radius,y:855-u*560,phase,u,k});
-    }
-    if(points.length<2)continue;
-    ctx.save();ctx.globalAlpha*=.85;ctx.strokeStyle=ribbon?'#e5f3ff':'#ffe0a0';ctx.lineWidth=ribbon?3:3.6;ctx.shadowColor=ribbon?'#dceeff':'#ffc76c';ctx.shadowBlur=13;
-    ctx.beginPath();points.forEach((p,k)=>k?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.restore();
-    for(const p of points){
-      if(p.k%5===0)starShape(ctx,p.x,p.y,6+(1-p.u)*5,.88,p.phase*.2);
-      else if(p.k%2===0){ctx.fillStyle=ribbon?'#f1f8ff':'#ffe4b2';ctx.beginPath();ctx.arc(p.x,p.y,2.1,0,Math.PI*2);ctx.fill();}
-    }
+// One ribbon and a few cached glows keep the introduction light.
+function drawStarShow(elapsed,time,target=ctx,animate=motion,timeline=SHOW_LIVE){
+  const phase=showState(elapsed,timeline),rise=animate?Math.min(1,elapsed/timeline.introEnd):1;
+  target.save();target.globalAlpha*=animate?phase.fade:1;
+  softGlow(625,350,125,.5,target);starShape(target,625,350,animate?22+rise*13:35,.9);
+  const ribbonAlpha=animate?Math.max(0,1-(elapsed-timeline.introEnd)/.6):.3;
+  if(ribbonAlpha>0){
+    target.save();target.globalAlpha*=ribbonAlpha;target.strokeStyle='#f1d294';target.lineWidth=3;target.lineCap='round';target.beginPath();
+    let first=true;for(let k=0;k<=48;k++){const u=k/48;if(u>rise)break;const angle=u*Math.PI*3.4+elapsed*.4,radius=245*(1-u*.66),x=625+Math.cos(angle)*radius,y=855-u*505;
+      if(first){target.moveTo(x,y);first=false;}else target.lineTo(x,y);
+    }target.stroke();
+    for(let k=0;k<8;k++){const u=k/8;if(u>rise)continue;const angle=u*Math.PI*3.4+elapsed*.4,radius=245*(1-u*.66);starShape(target,625+Math.cos(angle)*radius,855-u*505,4,.75);}
+    target.restore();
   }
-  drawChristmasTree(staticShow?1:Math.max(0,Math.min(1,(elapsed-.8)/5)),time,ctx,staticShow?.7:Math.max(0,Math.min(1,(10-elapsed)/1.2)));
-  // Larger flakes provide a visible foreground without covering the products.
-  for(let k=0;k<30;k++){
-    const x=315+(k*137%630),y=235+((k*83+(staticShow?0:elapsed*(18+k%5*4)))%590);
-    starShape(ctx,x,y,k%4===0?10:5,.55+(k%3)*.12,staticShow?0:elapsed*.08);
-  }
-  if(staticShow||elapsed>=14){
-    const burst=staticShow?1:Math.min(1,(elapsed-14)/2.5),r=45+burst*160;
-    ctx.save();ctx.globalAlpha*=burst;
-    for(let k=0;k<32;k++){
-      const angle=k/32*Math.PI*2+(staticShow?0:elapsed*.04),x=625+Math.cos(angle)*r,y=350+Math.sin(angle)*r*.72;
-      ctx.strokeStyle=k%2?'#dcefffbb':'#ffdda3cc';ctx.lineWidth=1.5;
-      ctx.beginPath();ctx.moveTo(625+Math.cos(angle)*r*.7,350+Math.sin(angle)*r*.7*.72);ctx.lineTo(x,y);ctx.stroke();
-      starShape(ctx,x,y,k%4===0?13:7,.95,angle);
-    }
-    ctx.restore();
-  }
-  ctx.restore();ctx.restore();
+  target.restore();
 }
-function signatureProgress(elapsed){return motion?Math.max(0,Math.min(1,(elapsed-10)/5.5)):1;}
-function drawDysonSignature(elapsed,target=ctx,animate=motion){
-  const ctx=target;
-  const progress=animate?Math.max(0,Math.min(1,(elapsed-10)/5.5)):1;if(!progress||!brandLetters.length)return;
-  const opacity=animate?Math.min(1,(elapsed-10)/.5)*Math.max(0,Math.min(1,(17.9-elapsed)/.9)):1;
-  if(opacity<=0)return;
-  ctx.save();ctx.globalAlpha=opacity;
-  const halo=ctx.createRadialGradient(625,470,30,625,470,255);halo.addColorStop(0,'rgba(8,14,27,.78)');halo.addColorStop(.65,'rgba(8,14,27,.62)');halo.addColorStop(1,'rgba(8,14,27,0)');ctx.fillStyle=halo;ctx.fillRect(370,215,510,510);
-  const scale=animate?5.4:4.4;ctx.translate(625-74*scale/2,animate?404:375);ctx.scale(scale,scale);ctx.lineCap='round';ctx.lineJoin='round';
+function signatureProgress(elapsed){return motion?showState(elapsed).signature:1;}
+const signatureStamps=new Map();
+function signatureStamp(index){
+  if(signatureStamps.has(index))return signatureStamps.get(index);
+  const letter=brandLetters[index],c=el('canvas');c.width=420;c.height=240;const x=c.getContext('2d');x.scale(5,5);x.translate(5,5);x.fillStyle='#eac58a';x.strokeStyle='#ffe8b7';x.lineWidth=.34;x.beginPath();
+  for(const contour of letter.contours){x.moveTo(...contour.points[0]);for(const pt of contour.points.slice(1))x.lineTo(...pt);x.closePath();}x.fill('evenodd');x.stroke();signatureStamps.set(index,c);return c;
+}
+function drawDysonSignature(elapsed,target=ctx,animate=motion,timeline=SHOW_LIVE){
+  const phase=showState(elapsed,timeline),progress=animate?phase.signature:1,opacity=animate?phase.signatureAlpha*phase.fade:1;
+  if(progress<=0||opacity<=0||!brandLetters.length)return;
+  target.save();target.globalAlpha*=opacity;softGlow(625,470,235,.16,target);
+  const scale=animate?5.4:4.4;target.translate(625-74*scale/2,animate?404:375);target.scale(scale,scale);target.lineCap='round';target.lineJoin='round';
   for(let index=0;index<brandLetters.length;index++){
     const letter=brandLetters[index],p=Math.max(0,Math.min(1,progress*brandLetters.length-index));if(!p)continue;
-    if(p>=1){
-      ctx.save();ctx.globalAlpha*=.88;ctx.fillStyle='#eac58a';ctx.shadowColor='#f8ce88';ctx.shadowBlur=8;ctx.beginPath();
-      for(const c of letter.contours){ctx.moveTo(...c.points[0]);c.points.slice(1).forEach(pt=>ctx.lineTo(...pt));ctx.closePath();}ctx.fill('evenodd');ctx.restore();
+    if(p>=1){target.drawImage(signatureStamp(index),-5,-5,84,48);continue;}
+    const limit=p*letter.length;let head=null;target.strokeStyle='#ffe8b7';target.lineWidth=.5;
+    for(const contour of letter.contours){if(!contour.segments.length||limit<=contour.segments[0].start)continue;target.beginPath();target.moveTo(...contour.points[0]);
+      for(const seg of contour.segments){if(limit<=seg.start)break;const fraction=seg.size?Math.min(1,(limit-seg.start)/seg.size):1,point=[seg.a[0]+(seg.b[0]-seg.a[0])*fraction,seg.a[1]+(seg.b[1]-seg.a[1])*fraction];target.lineTo(...point);head=point;if(fraction<1)break;}target.stroke();
     }
-    const limit=p*letter.length;let head=null;ctx.strokeStyle='#ffe8b7';ctx.lineWidth=.34;ctx.shadowColor='#ffd28b';ctx.shadowBlur=10;
-    for(const c of letter.contours){
-      if(!c.segments.length||limit<=c.segments[0].start)continue;
-      ctx.beginPath();ctx.moveTo(...c.points[0]);
-      for(const seg of c.segments){
-        if(limit<=seg.start)break;
-        const fraction=seg.size?Math.min(1,(limit-seg.start)/seg.size):1;
-        const point=[seg.a[0]+(seg.b[0]-seg.a[0])*fraction,seg.a[1]+(seg.b[1]-seg.a[1])*fraction];ctx.lineTo(...point);head=point;if(fraction<1)break;
-      }ctx.stroke();
-    }
-    if(head&&p<1){ctx.shadowBlur=16;starShape(ctx,...head,1.05,1);}
+    if(head)starShape(target,...head,1.05,1);
   }
-  ctx.restore();
+  target.restore();
 }
 function placedObjects(){
   const layer=p=>item(p.day).product?2:1;
@@ -1011,14 +987,14 @@ function drawCandyRain(target,time){
 }
 
 
-function sceneParticleCounts({elapsed=0,finalShow=false,animate=true,airflow=false,shakePower=0,activeSnow=false,goldSnow=false}){
-  const showFade=finalShow&&animate?Math.max(0,Math.min(1,elapsed/1.2,(SHOW_SECONDS-elapsed)/2)):1;
+function sceneParticleCounts({elapsed=0,finalShow=false,animate=true,airflow=false,shakePower=0,activeSnow=false,goldSnow=false,timeline=SHOW_LIVE}){
+  const showFade=finalShow&&animate?showState(elapsed,timeline).fade:1;
   const flow=animate&&(airflow||shakePower>.1),baseWhite=animate&&airflow?420:flow?340:activeSnow?240:0,baseGold=goldSnow?310:0;
-  const whiteCount=finalShow?Math.max(baseWhite,Math.round(360*showFade)):baseWhite,goldCount=finalShow?Math.max(baseGold,Math.round((animate?100+320*Math.max(0,Math.min(1,(elapsed-7)/3)):420)*showFade)):baseGold;
+  const whiteCount=finalShow?Math.max(baseWhite,Math.round(100*showFade)):baseWhite,goldCount=finalShow?Math.max(baseGold,Math.round(90*showFade)):baseGold;
   return {showFade,whiteCount,goldCount};
 }
-function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=motion,activeSnow=false,goldSnow=false,warmth=false,candyRain=false,airflow=false,shakePower=0,objects=placedObjects(),whitePool=snow,goldPool=goldFlakes,environment=null,trackHits=false}){
-  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate,airflow,shakePower,activeSnow,goldSnow});
+function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=motion,activeSnow=false,goldSnow=false,warmth=false,candyRain=false,airflow=false,shakePower=0,objects=placedObjects(),whitePool=snow,goldPool=goldFlakes,environment=null,trackHits=false,timeline=SHOW_LIVE}){
+  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate,airflow,shakePower,activeSnow,goldSnow,timeline});
   ctx.save();globePath(ctx);ctx.clip();
   if(finalShow){const dim=ctx.createRadialGradient(625,560,150,625,560,465);dim.addColorStop(0,`rgba(7,12,27,${.53*showFade})`);dim.addColorStop(.65,`rgba(7,12,27,${.44*showFade})`);dim.addColorStop(1,'rgba(7,12,27,0)');ctx.fillStyle=dim;ctx.fillRect(180,150,900,790);}
   if(warmth||finalShow)drawWarmth(time,finalShow ? .52*showFade : 1,ctx,animate);
@@ -1039,7 +1015,7 @@ function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=mot
     for(const s of stars){const a=animate ? .42+(Math.sin(time*1.8+s.phase)+1)*.25:.8;softGlow(s.x,s.y,s.size*5,a*.36,ctx);starShape(ctx,s.x,s.y,s.size*(animate ? .85+Math.sin(time+s.phase)*.15:1),a);}
     ctx.restore();
   }
-  if(finalShow){drawStarShow(elapsed,time,ctx,animate);drawDysonSignature(elapsed,ctx,animate);if(!animate||elapsed>=17)drawMerryChristmas(ctx,animate?showFade*Math.min(1,(elapsed-17)/.8):1,time);}
+  if(finalShow){drawStarShow(elapsed,time,ctx,animate,timeline);drawDysonSignature(elapsed,ctx,animate,timeline);if(!animate||elapsed>=timeline.holdEnd)drawMerryChristmas(ctx,animate?showFade*showState(elapsed,timeline).greeting:1,time);}
   const rim=ctx.createRadialGradient(625,560,280,625,560,430);rim.addColorStop(0,'rgba(255,223,157,0)');rim.addColorStop(.9,'rgba(255,223,157,.015)');rim.addColorStop(1,'rgba(255,223,157,.12)');ctx.fillStyle=rim;ctx.fillRect(180,150,900,790);ctx.restore();
 }
 
@@ -1051,10 +1027,10 @@ function drawFrame(dt=0,now=0){
   const activeSnow=isPlaced(1),goldSnow=isPlaced(13),warmth=isPlaced(13),candyRain=isPlaced(19),flow=motion&&(wind||turbulence>.1);
   syncSnowPack(activeSnow);if(activeSnow&&!motion)snowPack.depth=Math.max(28,snowPack.depth);advanceSnowPack(snowPack,motion?dt/60:0,activeSnow,wind);
   const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate:motion,airflow:wind,shakePower:turbulence,activeSnow,goldSnow});
-  frameEffects={white:whiteCount,gold:goldCount,warmth,candyRain,accumulation:snowPack.depth,airborneSnow:activeSnow&&snowPack.depth>.5&&flow,show:finalShow,signature:finalShow?signatureProgress(elapsed):0,phase:finalShow?(!motion?'靜態星光':elapsed<4?'暖光亮起':elapsed<10?'星光升起':elapsed<15.5?'dyson 星光描繪':elapsed<17?'品牌星光':'聖誕祝福'):''};
+  frameEffects={white:whiteCount,gold:goldCount,warmth,candyRain,accumulation:snowPack.depth,airborneSnow:activeSnow&&snowPack.depth>.5&&flow,show:finalShow,signature:finalShow?signatureProgress(elapsed):0,phase:finalShow?(!motion?'靜態星光':showState(elapsed).phase):''};
   if(finalShow){$('show-banner').hidden=false;$('show-phase').textContent=frameEffects.phase;$('show-progress').style.width=`${Math.max(0,Math.min(100,elapsed/SHOW_SECONDS*100))}%`;}
-  const greetingVisible=finalShow&&(!motion||elapsed>=17);$('show-greeting').hidden=!greetingVisible;
-  if(greetingVisible){$('show-greeting').style.opacity=String(motion?showFade*Math.min(1,(elapsed-17)/.8):1);$('show-greeting').style.top=motion?'37.7%':'41%';}
+  const greetingVisible=finalShow&&(!motion||elapsed>=SHOW_LIVE.holdEnd);$('show-greeting').hidden=!greetingVisible;
+  if(greetingVisible){$('show-greeting').style.opacity=String(motion?showFade*showState(elapsed).greeting:1);$('show-greeting').style.top=motion?'37.7%':'41%';}
   paintGlobeContents(ctx,{time,dt,elapsed,finalShow,animate:motion,activeSnow,goldSnow,warmth,candyRain,airflow:wind,shakePower:turbulence,trackHits:true});
   frameEffects.accumulation=snowPack.depth;
   if(motion)turbulence*=Math.pow(.984,dt);
@@ -1394,22 +1370,22 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
   let lastReplayTime=0,replaySeed=0x20261225;
   const replay={wind:flags.airflow,turbulence:0,activeSnow:flags.white,snowDepth:flags.snowDepth,random:()=>((replaySeed=(Math.imul(replaySeed,1664525)+1013904223)>>>0)/4294967296)};
   const resetReplay=()=>{flags.whitePool=cardMotionFlags.whitePool.map(p=>({...p}));flags.goldPool=cardMotionFlags.goldPool.map(p=>({...p}));replay.snowDepth=flags.snowDepth;lastReplayTime=0;replaySeed=0x20261225;};
-  return {canvas:frame,sourceTimeline:flags.show?{start:0,end:19.5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
+  return {canvas:frame,sourceTimeline:flags.show?{start:0,end:5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
     x.setTransform(1,0,0,1,0,0);x.drawImage(cardMotionBase,0,0,scene.width,scene.height);x.save();x.scale(scene.width/SCENE_W,scene.height/SCENE_H);
     x.translate(SCENE_W*(.5+SCENE_VIEW.shiftX),SCENE_H*.5);x.scale(SCENE_VIEW.zoom,SCENE_VIEW.zoom);x.translate(-SCENE_W*.5,-SCENE_H*.5);globePath(x);x.clip();
     if(flags.show||flags.airflow||flags.white){
-      const elapsed=Math.max(0,Math.min(flags.show?19.5:5,flags.show?t/5*19.5:t)),time=flags.showTimeOrigin+elapsed;
+      const elapsed=Math.max(0,Math.min(5,t)),time=flags.showTimeOrigin+elapsed;
       x.drawImage(cardBackground,0,0,SCENE_W,SCENE_H);
       if(elapsed<lastReplayTime)resetReplay();
       replay.advanceOnly=true;
       while(lastReplayTime+1/60<=elapsed){
         lastReplayTime+=1/60;advanceSnowPack(replay,1/60,flags.white,flags.airflow);
-        const counts=sceneParticleCounts({elapsed:lastReplayTime,finalShow:flags.show,animate:true,airflow:flags.airflow,activeSnow:flags.white,goldSnow:flags.gold});
+        const counts=sceneParticleCounts({elapsed:lastReplayTime,finalShow:flags.show,animate:true,airflow:flags.airflow,activeSnow:flags.white,goldSnow:flags.gold,timeline:SHOW_CARD});
         drawSnowLayer(flags.whitePool,counts.whiteCount,1,flags.showTimeOrigin+lastReplayTime,true,x,replay);
         drawSnowLayer(flags.goldPool,counts.goldCount,1,flags.showTimeOrigin+lastReplayTime,true,x,replay);
       }
       replay.advanceOnly=false;
-      paintGlobeContents(x,{time,elapsed,finalShow:flags.show,animate:true,activeSnow:flags.white,goldSnow:flags.gold,warmth:flags.warmth,candyRain:flags.candyRain,airflow:flags.airflow,objects:flags.objects,whitePool:flags.whitePool,goldPool:flags.goldPool,environment:replay});
+      paintGlobeContents(x,{time,elapsed,finalShow:flags.show,animate:true,activeSnow:flags.white,goldSnow:flags.gold,warmth:flags.warmth,candyRain:flags.candyRain,airflow:flags.airflow,objects:flags.objects,whitePool:flags.whitePool,goldPool:flags.goldPool,environment:replay,timeline:SHOW_CARD});
     }else{
     if(flags.warmth||flags.show){
       const g=x.createRadialGradient(625,680,30,625,680,410);g.addColorStop(0,`rgba(255,214,137,${.24+.07*Math.sin(t*Math.PI*2/5)})`);g.addColorStop(1,'rgba(255,179,74,0)');x.fillStyle=g;x.fillRect(215,270,820,820);
@@ -1518,76 +1494,84 @@ function cardVideoConfig(options,hardwareAcceleration='prefer-software'){
 async function cardDetectMP4(){
   if(cardSupportPromise)return cardSupportPromise;
   cardSupportPromise=(async()=>{
-    let web=false,videoConfig=null;
+    let web=false,videoConfig=null,audioWeb=false;
     try{
-      if(typeof VideoEncoder==='function'&&typeof AudioEncoder==='function'&&typeof VideoFrame==='function'&&typeof AudioData==='function'){
-        for(const preference of ['prefer-software','no-preference']){
-          const config=cardVideoConfig({width:720,height:1200,bitrate:2400000,fps:12},preference);
-          if((await VideoEncoder.isConfigSupported(config)).supported){videoConfig=config;break;}
-        }
-        web=!!videoConfig&&(await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:44100,numberOfChannels:1,bitrate:32000})).supported;
+      if(typeof VideoEncoder==='function'&&typeof VideoFrame==='function'){
+        for(const preference of ['prefer-software','no-preference']){const config=cardVideoConfig({width:720,height:1200,bitrate:2400000,fps:12},preference);if((await VideoEncoder.isConfigSupported(config)).supported){videoConfig=config;break;}}
+        web=!!videoConfig;
       }
+      if(typeof AudioEncoder==='function'&&typeof AudioData==='function')audioWeb=(await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:44100,numberOfChannels:1,bitrate:64000})).supported;
     }catch{}
     let mime=null;try{if(typeof MediaRecorder==='function')mime=['video/mp4;codecs=avc1.42001f,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2'].find(m=>MediaRecorder.isTypeSupported(m))||null;}catch{}
-    cardMP4Support=!!(web||mime);return {web,mime,videoConfig};
+    cardMP4Support=!!(web||mime);return {web,audioWeb,mime,videoConfig};
   })();return cardSupportPromise;
 }
 function cardEncodingWait(promise,token,timeout=15000,message='影片編碼暫時沒有回應，請稍後再試，或先下載 GIF／PNG。'){
   let timer;
   return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(message)),timeout);})]).then(value=>{checkCardJob(token);return value;}).finally(()=>clearTimeout(timer));
 }
+async function validateCardMP4(blob,token){
+  checkCardJob(token);const info=window.DysonMP4Support.validate(await blob.arrayBuffer(),{duration:CARD_SECONDS,minFrames:40});checkCardJob(token);return info;
+}
 async function encodeCardMP4WebCodecs(options,audio,token,support){
-  const {Muxer,ArrayBufferTarget}=window.DysonMediaCodecs,target=new ArrayBufferTarget(),muxer=new Muxer({target,video:{codec:'avc',width:options.width,height:options.height,frameRate:options.fps},audio:{codec:'aac',sampleRate:audio.rate,numberOfChannels:1},fastStart:'in-memory',firstTimestampBehavior:'offset'});
-  let failure=null,video=null,sound=null,renderer=null;
-  const close=()=>{for(const encoder of [video,sound])if(encoder&&encoder.state!=='closed')try{encoder.close();}catch{}};
-  cardExportStop=close;
+  // Video timestamps come from frame number, not how long rendering takes.
+  const prepared=!support.audioWeb&&$('card-bgm').checked?window.DysonMP4Support.readAAC(await cardDataBytes('./assets/audio/card-jingle-bells-5s-aac-v48.m4a')):null;
+  if(!support.audioWeb&&cardVoiceBuffer)throw new Error('此裝置需使用相容模式製作錄音影片。');
+  checkCardJob(token);
+  const withAudio=!!(support.audioWeb||prepared),{Muxer,ArrayBufferTarget}=window.DysonMediaCodecs,target=new ArrayBufferTarget(),muxer=new Muxer({target,video:{codec:'avc',width:options.width,height:options.height,frameRate:options.fps},...(withAudio?{audio:{codec:'aac',sampleRate:prepared?.rate||audio.rate,numberOfChannels:1}}:{}),fastStart:'in-memory',firstTimestampBehavior:'offset'});
+  let failure=null,video=null,sound=null,renderer=null,videoFrames=0;
+  const close=()=>{for(const encoder of [video,sound])if(encoder&&encoder.state!=='closed')try{encoder.close();}catch{}};cardExportStop=close;
   try{
-    const fail=e=>{failure=e;};
-    video=new VideoEncoder({output:(chunk,meta)=>{try{muxer.addVideoChunk(chunk,meta);}catch(e){fail(e);}},error:fail});
-    sound=new AudioEncoder({output:(chunk,meta)=>{try{muxer.addAudioChunk(chunk,meta);}catch(e){fail(e);}},error:fail});
+    const fail=e=>{failure=e;};video=new VideoEncoder({output:(chunk,meta)=>{try{muxer.addVideoChunk(chunk,meta);videoFrames++;}catch(e){fail(e);}},error:fail});
     video.configure({...support.videoConfig,width:options.width,height:options.height,bitrate:options.bitrate,framerate:options.fps});
-    sound.configure({codec:'mp4a.40.2',sampleRate:audio.rate,numberOfChannels:1,bitrate:32000});
-    renderer=createCardMovieRenderer(options.width,options.height,$('card-bgm').checked);
-    for(let offset=0;offset<audio.samples.length;offset+=1024){
-      checkCardJob(token);const data=audio.samples.subarray(offset,offset+1024),frame=new AudioData({format:'f32',sampleRate:audio.rate,numberOfChannels:1,numberOfFrames:data.length,timestamp:Math.round(offset/audio.rate*1e6),data});
-      try{sound.encode(frame);}finally{frame.close();}
-      if(sound.encodeQueueSize>=4)await cardEncodingWait(sound.flush(),token);if(failure)throw failure;
+    if(prepared){
+      for(let n=0;n<prepared.samples.length;n++){const sample=prepared.samples[n];muxer.addAudioChunkRaw(sample.data,'key',sample.timestamp,sample.duration,n===0?{decoderConfig:{codec:'mp4a.40.2',sampleRate:prepared.rate,numberOfChannels:1,description:prepared.description}}:undefined);}
+    }else if(support.audioWeb){
+      sound=new AudioEncoder({output:(chunk,meta)=>{try{muxer.addAudioChunk(chunk,meta);}catch(e){fail(e);}},error:fail});sound.configure({codec:'mp4a.40.2',sampleRate:audio.rate,numberOfChannels:1,bitrate:64000});
+      for(let offset=0;offset<audio.samples.length;offset+=1024){checkCardJob(token);const data=audio.samples.subarray(offset,offset+1024),frame=new AudioData({format:'f32',sampleRate:audio.rate,numberOfChannels:1,numberOfFrames:data.length,timestamp:Math.round(offset/audio.rate*1e6),data});try{sound.encode(frame);}finally{frame.close();}if(sound.encodeQueueSize>=8)await cardEncodingWait(sound.flush(),token);if(failure)throw failure;}
+      await cardEncodingWait(sound.flush(),token);if(failure)throw failure;sound.close();
     }
-    await cardEncodingWait(sound.flush(),token);if(failure)throw failure;sound.close();
+    renderer=createCardMovieRenderer(options.width,options.height,$('card-bgm').checked);
     const frames=options.fps*CARD_SECONDS;
     for(let n=0;n<frames;n++){
-      checkCardJob(token);
-      // Read back into CPU memory instead of retaining GPU-backed canvas frames.
-      const pixels=renderer.draw(n/options.fps).getContext('2d').getImageData(0,0,options.width,options.height);
-      const frame=new VideoFrame(pixels.data,{format:'RGBA',codedWidth:options.width,codedHeight:options.height,timestamp:Math.round(n/options.fps*1e6),duration:Math.round(1e6/options.fps)});
+      checkCardJob(token);const pixels=renderer.draw(n/options.fps).getContext('2d').getImageData(0,0,options.width,options.height),timestamp=Math.round(n/options.fps*1e6),end=Math.round((n+1)/options.fps*1e6);
+      const frame=new VideoFrame(pixels.data,{format:'RGBA',codedWidth:options.width,codedHeight:options.height,timestamp,duration:end-timestamp});
       try{video.encode(frame,{keyFrame:n%options.fps===0});}finally{frame.close();}
-      await cardEncodingWait(video.flush(),token);if(failure)throw failure;
-      cardProgress(token,(n+1)/frames*95,`正在製作 MP4 · ${Math.round((n+1)/frames*100)}%`);await cardYield();
+      if(video.encodeQueueSize>=3)await cardEncodingWait(video.flush(),token);if(failure)throw failure;
+      cardProgress(token,(n+1)/frames*94,`正在製作 MP4 · ${Math.round((n+1)/frames*100)}%`);await cardYield();
     }
-    checkCardJob(token);cardMaking('整理檔案');await cardYield();checkCardJob(token);muxer.finalize();return new Blob([target.buffer],{type:'video/mp4'});
+    await cardEncodingWait(video.flush(),token);if(failure)throw failure;if(videoFrames!==frames)throw new Error('影片影格未完整編碼，請重新製作。');
+    checkCardJob(token);cardMaking('檢查影片完整性');muxer.finalize();const blob=new Blob([target.buffer],{type:'video/mp4'});await validateCardMP4(blob,token);return blob;
   }catch(e){if(token!==cardExportToken)throw cardAbort();throw e;}
   finally{close();renderer?.dispose();if(cardExportStop===close)cardExportStop=null;}
 }
 async function encodeCardMP4Recorder(options,audio,mime,token){
-  let ac=null,source=null,stream=null,renderer=null,recorder=null,interval=null,ending=null;
-  const stop=()=>{if(recorder&&recorder.state!=='inactive')recorder.stop();};cardExportStop=stop;
+  // Compatibility path: prepare lightweight frames before starting the clock.
+  let ac=null,source=null,stream=null,renderer=null,recorder=null,capture=null,current=null,next=null,timer=null;
+  const stop=()=>{if(recorder&&recorder.state!=='inactive')recorder.stop();};cardExportStop=stop;const frames=[];
   try{
-    const AC=window.AudioContext||window.webkitAudioContext;ac=new AC({sampleRate:audio.rate});
-    const destination=ac.createMediaStreamDestination(),buffer=ac.createBuffer(1,audio.samples.length,audio.rate);buffer.getChannelData(0).set(audio.samples);
-    source=ac.createBufferSource();source.buffer=buffer;source.connect(destination);
-    renderer=createCardMovieRenderer(options.width,options.height,$('card-bgm').checked);renderer.draw(0);
-    stream=renderer.canvas.captureStream(options.fps);destination.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
-    recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:options.bitrate,audioBitsPerSecond:32000});
-    const parts=[];let renderError=null;
+    renderer=createCardMovieRenderer(options.width,options.height,$('card-bgm').checked,480);
+    const total=options.fps*CARD_SECONDS;
+    for(let n=0;n<total;n++){
+      checkCardJob(token);const c=renderer.draw(n/options.fps),blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('影片畫面準備失敗。')),'image/jpeg',.95));frames.push(blob);
+      cardProgress(token,(n+1)/total*55,`正在準備影片 · ${Math.round((n+1)/total*100)}%`);await cardYield();
+    }
+    renderer.dispose();renderer=null;
+    capture=el('canvas','card-recording-preview');capture.width=options.width;capture.height=options.height;capture.setAttribute('aria-hidden','true');$('card-making').append(capture);const x=capture.getContext('2d');
+    const AC=window.AudioContext||window.webkitAudioContext;ac=new AC({sampleRate:audio.rate});const destination=ac.createMediaStreamDestination(),buffer=ac.createBuffer(1,audio.samples.length,audio.rate);buffer.getChannelData(0).set(audio.samples);source=ac.createBufferSource();source.buffer=buffer;source.connect(destination);
+    stream=capture.captureStream(0);const track=stream.getVideoTracks()[0];if(typeof track.requestFrame!=='function'){stream.getTracks().forEach(t=>t.stop());stream=capture.captureStream(options.fps);}destination.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+    recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:options.bitrate,audioBitsPerSecond:64000});const parts=[];
     const stopped=new Promise((resolve,reject)=>{recorder.ondataavailable=e=>{if(e.data.size)parts.push(e.data);};recorder.onstop=resolve;recorder.onerror=e=>reject(e.error||new Error('影片錄製失敗。'));});
-    await cardEncodingWait(ac.resume(),token);recorder.start(250);source.start();const started=performance.now();
-    interval=setInterval(()=>{try{checkCardJob(token);const t=Math.min(CARD_SECONDS,(performance.now()-started)/1000);renderer.draw(t);cardProgress(token,t/CARD_SECONDS*95,`正在製作 MP4 · ${Math.round(t/CARD_SECONDS*100)}%`);}catch(e){renderError=e;stop();}},1000/options.fps);
-    ending=setTimeout(()=>{cardMaking('整理檔案');stop();},CARD_SECONDS*1000);await cardEncodingWait(stopped,token,CARD_SECONDS*1000+15000);
-    if(renderError)throw renderError;checkCardJob(token);const blob=new Blob(parts,{type:'video/mp4'});if(!blob.size)throw new Error('影片內容為空，請重新製作。');return blob;
+    current=await createImageBitmap(frames[0]);x.drawImage(current,0,0);await cardEncodingWait(ac.resume(),token);checkCardJob(token);recorder.start();source.start();const started=performance.now();
+    for(let n=0;n<total;n++){
+      checkCardJob(token);if(n){current?.close();current=await next;}next=n+1<total?createImageBitmap(frames[n+1]):null;
+      const delay=started+n/options.fps*1000-performance.now();if(delay>0)await new Promise(resolve=>{timer=setTimeout(resolve,delay);});checkCardJob(token);x.drawImage(current,0,0);track.requestFrame?.();
+      await new Promise(resolve=>requestAnimationFrame(resolve));cardProgress(token,55+(n+1)/total*40,`正在錄製影片 · ${Math.round((n+1)/total*100)}%`);
+    }
+    const remaining=started+CARD_SECONDS*1000-performance.now();if(remaining>0)await new Promise(resolve=>{timer=setTimeout(resolve,remaining);});checkCardJob(token);stop();await cardEncodingWait(stopped,token);const blob=new Blob(parts,{type:'video/mp4'});cardMaking('檢查影片完整性');await validateCardMP4(blob,token);return blob;
   }catch(e){if(token!==cardExportToken)throw cardAbort();throw e;}
   finally{
-    clearInterval(interval);clearTimeout(ending);try{stop();}catch{}try{source?.stop();}catch{}source?.disconnect();
-    stream?.getTracks().forEach(t=>t.stop());if(ac&&ac.state!=='closed')await ac.close().catch(()=>{});renderer?.dispose();if(cardExportStop===stop)cardExportStop=null;
+    clearTimeout(timer);try{stop();}catch{}try{source?.stop();}catch{}source?.disconnect();stream?.getTracks().forEach(t=>t.stop());if(ac&&ac.state!=='closed')await ac.close().catch(()=>{});current?.close();if(next)next.then(b=>b.close()).catch(()=>{});capture?.remove();renderer?.dispose();frames.length=0;if(cardExportStop===stop)cardExportStop=null;
   }
 }
 async function generateCardMedia(){
@@ -1611,8 +1595,10 @@ async function generateCardMedia(){
       const support=await cardDetectMP4();if(!support.web&&!support.mime)throw new Error('此瀏覽器未提供可用的 MP4 編碼，請改用 GIF 或 PNG。');
       cardMaking('準備配樂與祝福聲音');const audio=await mixCardAudio();checkCardJob(token);
       const options={width:720,height:1200,fps:12,bitrate:2400000};
-      if(support.mime){try{blob=await encodeCardMP4Recorder(options,audio,support.mime,token);}catch(e){checkCardJob(token);if(!support.web)throw e;blob=await encodeCardMP4WebCodecs(options,audio,token,support);}}
-      else blob=await encodeCardMP4WebCodecs(options,audio,token,support);
+      if(support.web&&(!cardVoiceBuffer||support.audioWeb)){
+        try{blob=await encodeCardMP4WebCodecs(options,audio,token,support);}catch(e){checkCardJob(token);if(!support.mime)throw e;blob=await encodeCardMP4Recorder(options,audio,support.mime,token);}
+      }else if(support.mime)blob=await encodeCardMP4Recorder(options,audio,support.mime,token);
+      else throw new Error('此裝置暫時無法製作含錄音的 MP4，請改用 GIF／PNG，或刪除錄音後重試。');
       chosen=options;
     }
     checkCardJob(token);

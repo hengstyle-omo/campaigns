@@ -7,7 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 47,
+  "version": 48,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -439,7 +439,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 25,
       "type": "雪境光效",
       "name": "聖誕星光秀",
-      "description": "放入後回到水晶球，大星芒與金銀星帶展開 20 秒演出；後半段光點依序描出 dyson 字樣，停留後接上「MERRY CHRISTMAS」祝福。可隨時停止或重播。另解鎖《We Wish You a Merry Christmas》配樂，音樂預設關閉。",
+      "description": "放入後回到水晶球，暖光與單條星光展開 9.5 秒演出；光點依序描出 dyson 字樣，停留後接上「MERRY CHRISTMAS」祝福。可隨時停止或重播。另解鎖《We Wish You a Merry Christmas》配樂，音樂預設關閉。",
       "benefit": null,
       "assetNeed": "獨立粒子及燈光演出，不需產品圖片",
       "effect": "finalShow",
@@ -629,7 +629,7 @@ window.DYSON_GAME_CONFIG = {
       "type": "限定趣味收藏",
       "name": "今天吃大餐",
       "animal": "海獺",
-      "description": "沒有裝飾花紋的灰色紙雕海獺，懷裡抱著閃亮金幣，拿小石頭開心敲一敲。",
+      "description": "灰白毛絨海獺，圓圓的臉與短短的口鼻，懷裡抱著閃亮金幣，拿小石頭輕輕敲一敲。",
       "layout": {
         "x": 755,
         "y": 900,
@@ -661,7 +661,7 @@ window.DYSON_GAME_CONFIG = {
   "animalSizeRevision": "20261022-animal-plus10-v33",
   "santaTailRevision": "20261023-santa-tail-v34",
   "penguinRevision": "20261023-soft-penguin-v36",
-  "softAnimalsRevision": "20261023-sea-lion-otter-soft-v37",
+  "softAnimalsRevision": "20261024-sea-otter-face-v48",
   "departmentStoreRevision": "20261023-dyson-sign-v38"
 };
 
@@ -5865,7 +5865,7 @@ window.DYSON_ASSETS = {
     "106": "./assets/images/bonus/bonus-penguin-soft-v36.webp",
     "107": "./assets/images/bonus/bonus-white-sea-lion-soft-v37.webp",
     "108": "./assets/images/bonus/bonus-red-panda-tree-paper-v28.webp",
-    "109": "./assets/images/bonus/bonus-otter-gray-soft-v37.webp",
+    "109": "./assets/images/bonus/bonus-otter-gray-face-v48.png",
     "110": "./assets/images/bonus/bonus-fox-snow-dive-paper-v28.webp"
   },
   "sceneRevision": "20261022-snow-candy-v26",
