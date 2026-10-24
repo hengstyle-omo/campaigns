@@ -1,12 +1,16 @@
 2026 Dyson 聖誕收藏
-更新包版本：44
-差異基準：v43
-Apps Script：DysonProgress.gs v8（欄位結構版本 8）
-網頁相容協定：serviceVersion 7／rulesVersion 3
-更新步驟：先部署新版 Apps Script，再執行 setupV8()；原 /exec 網址沿用。
-本包僅含後端及說明文件，請依 DEPLOY-v44.md 操作。
+更新包版本：45
+差異更新基準：v44
+新增欄位：是否有專屬收藏（預設 C 欄）
+Apps Script：DysonProgress.gs v9／欄位結構版本 9
+相容協定：serviceVersion 7／rulesVersion 3／permissionsVersion 2
+部署順序：更新並重新部署 Apps Script → 執行 setupV9() → 上傳本包網站檔案。
+原 /exec 網址可沿用。
 
 檔案 SHA-256（不含本 VERSION.txt）：
-apps-script/DysonProgress.gs 001ed9b17d851a683d5532ef9f6574004843a84be45d780c12d76843c2e0989b
-README.md fe4e6c698f81d17fda68b5cb7246930a3f7959fcaf5c0a034660d63b37c736d5
-DEPLOY-v44.md 82cd729ac723a460ce0643de758f4e5972217fbd7e85a82de9e25c5d1935e721
+index.html 8e79b06451c137a2056e512d3e669e48713b3bcb4389997632773663d0d7bd00
+assets/js/app.js ff3023d77cd826482692b22d8d9c7f19896a32b62a5bf3409260bc22155b7a38
+assets/js/config.js 910d989e97b340badca1c03d6e6c0313eaae8f6306a3088df586d85af669099b
+apps-script/DysonProgress.gs 216789e8a9986ca58102683306919acdcb6ec283c43e51d590e81f02e5aa61e3
+README.md 4823af00d2295bafd2d8536decfd3dade128505c05e5ff8e842499aa7bf74b6d
+DEPLOY-v45.md aa34d70646d3eeb65616c20e247cb1e5b618e0498e99f239a7c924134a610f7f
