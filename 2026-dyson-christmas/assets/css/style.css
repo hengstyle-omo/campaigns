@@ -452,3 +452,10 @@ button,input,textarea,select{line-height:1.5}
 #item-dialog #item-product{padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;margin:20px 0 12px}
 #item-dialog #product-features-title{font-size:16px;margin-bottom:8px}
 #item-dialog #product-features{margin:8px 0 18px;line-height:1.85}
+
+/* v43: Email lives in the same welcome dialog; background sync never covers the game. */
+.welcome-progress{margin:20px 0;padding-top:18px;border-top:1px solid var(--line)}.welcome-progress h3{font-size:18px;color:var(--gold);margin-bottom:6px}.welcome-progress>p{font-size:14px;color:var(--muted);margin-bottom:12px}
+.welcome-progress #progress-form>label:first-child{display:block;font-size:14px}.welcome-progress input[type=email]{display:block;width:100%;margin:7px 0 12px;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:#0d1826;color:var(--text);font-size:16px}
+.welcome-progress .progress-consent{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.7}.welcome-progress input[type=checkbox]{flex:none;margin-top:5px}.welcome-progress #progress-message{font-size:14px;color:var(--gold);margin-top:10px}
+.welcome-dialog.progress-only{max-width:540px}.welcome-dialog.progress-only .welcome-content,.welcome-dialog.progress-only #welcome-description,.welcome-dialog.progress-only .welcome-rules,.welcome-dialog.progress-only #welcome-progress-title,.welcome-dialog.progress-only .welcome-label{display:none}.welcome-dialog.progress-only .welcome-progress{border:0;padding-top:0}
+.reward-task-hint{font-size:13px;color:var(--gold);line-height:1.7}.welcome-progress #progress-current p{font-size:13px;overflow-wrap:anywhere}.welcome-progress #progress-switch{font-size:13px;padding:5px 10px;margin:7px 0}

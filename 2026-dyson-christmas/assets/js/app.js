@@ -57,266 +57,146 @@ if(brandLogo)brandLogo.src=ASSETS.brandLogos?.[logoVariant]||ASSETS.brandLogos?.
 const YEAR=BASE_CONFIG.year,STORAGE_PREFIX=`dyson-advent-${YEAR}-v3-`;
 const safeRead=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
 const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
-// Email identifies this lightweight activity record; it is deliberately unverified.
-const ADMIN_PREVIEW_EMAIL='hengstyle.data@gmail.com';
+// Email is an unverified identifier. Only the private participant row defines admin access.
 const BONUS_IDS=[101,102,103,104,105,106,107,108,109,110],bonusCatalog=BASE_CONFIG.bonusItems||[];
 const CLOUD_CONFIG=window.DYSON_CLOUD_CONFIG;
-const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:'',ready:false,loading:false,canPreview:false,bonusIds:[],consent:false,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null}};
-const cloudEmail=value=>String(value||'').trim().toLowerCase();
-const isCloudEmail=value=>value.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{});
-const rememberedEmail=cloudEmail(savedCloudProfile?.email);
-cloud.email=isCloudEmail(rememberedEmail)?rememberedEmail:'';
+const cloudEmail=v=>String(v||'').trim().toLowerCase();
+const isCloudEmail=v=>v.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const cardTaskNormalise=v=>v?.completed===true&&['png','gif','mp4'].includes(v.format)&&['download','share'].includes(v.method)?{completed:true,format:v.format,method:v.method,at:String(v.at||'')}:null;
+let guestCardTask=cardTaskNormalise(safeRead(STORAGE_PREFIX+'guest-card-task',null)),previewCardTask=null;
+const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{}),rememberedEmail=cloudEmail(savedCloudProfile.email);
+const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:isCloudEmail(rememberedEmail)?rememberedEmail:'',ready:false,cachedView:false,loading:false,canPreview:false,isAdmin:false,bonusIds:[],consent:savedCloudProfile.consent===true,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),cardTask:null,pendingCardTask:null,offset:0,hasClock:false,pendingDay:null,pendingReward:false,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null,cardTask:null}};
+const timing={started:performance.now(),sceneReadyMs:null,progressReadMs:null,lastSaveMs:null};
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
-const canPreview=()=>cloud.ready&&cloud.canPreview;
+const canPreview=()=>cloud.ready&&cloud.isAdmin&&cloud.canPreview;
 const cloudCacheKey=email=>STORAGE_PREFIX+'cloud-state:'+cloud.endpoint+':'+email;
-function cloudDiff(current,previous){
-  const changes={};
-  for(const raw of [...Object.keys(current.claimed),...BONUS_IDS]){
-    const d=Number(raw),patch={};
-    if((current.placement[d]===true)!==(previous.placement[d]===true))patch.placement=current.placement[d]===true;
-    const a=current.layouts[d]||null,b=previous.layouts[d]||null;if(JSON.stringify(a)!==JSON.stringify(b))patch.layout=a;
-    if(Object.keys(patch).length)changes[d]=patch;
-  }
-  return changes;
-}
-function cloudApply(state,changes){
-  for(const [raw,patch] of Object.entries(changes||{})){
-    const d=Number(raw);if(!state.claimed[d]&&!BONUS_IDS.includes(d))continue;
-    if(typeof patch.placement==='boolean')state.placement[d]=patch.placement;
-    if(Object.hasOwn(patch,'layout')){if(patch.layout===null)delete state.layouts[d];else state.layouts[d]=patch.layout;}
-  }
-  return Core.normaliseState(state);
-}
+function cloudDiff(current,previous){const changes={};for(const raw of [...Object.keys(current.claimed),...BONUS_IDS]){const d=Number(raw),patch={};if((current.placement[d]===true)!==(previous.placement[d]===true))patch.placement=current.placement[d]===true;const a=current.layouts[d]||null,b=previous.layouts[d]||null;if(JSON.stringify(a)!==JSON.stringify(b))patch.layout=a;if(Object.keys(patch).length)changes[d]=patch;}return changes;}
+function cloudApply(state,changes){for(const [raw,patch] of Object.entries(changes||{})){const d=Number(raw);if(!state.claimed[d]&&!BONUS_IDS.includes(d))continue;if(typeof patch.placement==='boolean')state.placement[d]=patch.placement;if(Object.hasOwn(patch,'layout')){if(patch.layout===null)delete state.layouts[d];else state.layouts[d]=patch.layout;}}return Core.normaliseState(state);}
 const previewCacheKey=email=>STORAGE_PREFIX+'cloud-preview:'+cloud.endpoint+':'+email;
-function previewNormalise(raw){
-  const state=Core.normaliseState(raw?.state);
-  for(const claim of Object.values(state.claimed))if(Number.isFinite(Date.parse(claim.at)))claim.at=new Date(claim.at).toISOString();
-  const date=typeof raw?.date==='string'?raw.date:null;
-  const days=date&&Array.isArray(raw?.days)?[...new Set(raw.days.filter(d=>Number.isInteger(d)&&d>=1&&d<=25))].sort((a,b)=>a-b):null;
-  return {state,date,days};
-}
-function previewSnapshot(){return previewNormalise({state:preview,date:previewDate,days:null});}
-function previewDiff(current,previous){
-  const items={},entry=(s,d)=>s.claimed[d]?{at:s.claimed[d].at,placement:s.placement[d]===true,layout:s.layouts[d]||null}:null;
-  for(let d=1;d<=25;d++){const a=entry(current.state,d),b=entry(previous.state,d);if(JSON.stringify(a)!==JSON.stringify(b))items[d]=a;}
-  const changes={};if(Object.keys(items).length)changes.items=items;
-  if(current.date!==previous.date||JSON.stringify(current.days)!==JSON.stringify(previous.days))changes.view={date:current.date,days:current.days};
-  const bonus=Object.fromEntries(Object.entries(cloudDiff(current.state,previous.state)).filter(([d])=>BONUS_IDS.includes(Number(d))));if(Object.keys(bonus).length)changes.bonus=bonus;
-  if(JSON.stringify(current.state.visits)!==JSON.stringify(previous.state.visits))changes.visits=current.state.visits;
-  return changes;
-}
-function previewApply(snapshot,changes){
-  const next=previewNormalise(snapshot);
-  for(const [d,value] of Object.entries(changes?.items||{})){
-    if(value===null){delete next.state.claimed[d];delete next.state.placement[d];delete next.state.layouts[d];}
-    else{next.state.claimed[d]={at:value.at};next.state.placement[d]=value.placement===true;if(value.layout)next.state.layouts[d]=value.layout;else delete next.state.layouts[d];}
-  }
-  if(changes?.bonus)next.state=cloudApply(next.state,changes.bonus);
-  if(changes?.visits)next.state.visits={...changes.visits};
-  if(changes?.view){next.date=changes.view.date;next.days=changes.view.days;}
-  return previewNormalise(next);
-}
-function previewRestore(snapshot){
-  const next=previewNormalise(snapshot);preview=next.state;previewDate=next.date;
-  if(previewDate){$('preview-date').value=previewDate;$('sim-date').value=previewDate;}
-  safeWrite(STORAGE_PREFIX+'preview',preview);
-}
+function previewNormalise(raw){const state=Core.normaliseState(raw?.state);for(const claim of Object.values(state.claimed))if(Number.isFinite(Date.parse(claim.at)))claim.at=new Date(claim.at).toISOString();return {state,date:typeof raw?.date==='string'?raw.date:null,days:null,cardTask:cardTaskNormalise(raw?.cardTask)};}
+function previewSnapshot(){return previewNormalise({state:preview,date:previewDate,cardTask:previewCardTask});}
+function previewDiff(current,previous){const items={},entry=(s,d)=>s.claimed[d]?{at:s.claimed[d].at,placement:s.placement[d]===true,layout:s.layouts[d]||null}:null;for(let d=1;d<=25;d++){const a=entry(current.state,d),b=entry(previous.state,d);if(JSON.stringify(a)!==JSON.stringify(b))items[d]=a;}const changes={};if(Object.keys(items).length)changes.items=items;if(current.date!==previous.date)changes.view={date:current.date,days:null};const bonus=Object.fromEntries(Object.entries(cloudDiff(current.state,previous.state)).filter(([d])=>BONUS_IDS.includes(Number(d))));if(Object.keys(bonus).length)changes.bonus=bonus;if(JSON.stringify(current.state.visits)!==JSON.stringify(previous.state.visits))changes.visits=current.state.visits;if(current.cardTask&&!previous.cardTask)changes.cardTask=current.cardTask;return changes;}
+function previewApply(snapshot,changes){const next=previewNormalise(snapshot);for(const [d,value] of Object.entries(changes?.items||{})){if(value===null){delete next.state.claimed[d];delete next.state.placement[d];delete next.state.layouts[d];}else{next.state.claimed[d]={at:value.at};next.state.placement[d]=value.placement===true;if(value.layout)next.state.layouts[d]=value.layout;else delete next.state.layouts[d];}}if(changes?.bonus)next.state=cloudApply(next.state,changes.bonus);if(changes?.visits)next.state.visits={...changes.visits};if(changes?.view)next.date=changes.view.date;if(changes?.cardTask)next.cardTask=cardTaskNormalise(changes.cardTask);return next;}
+function previewRestore(snapshot){const next=previewNormalise(snapshot);preview=next.state;previewDate=next.date;previewCardTask=next.cardTask;if(previewDate){$('preview-date').value=previewDate;$('sim-date').value=previewDate;}safeWrite(STORAGE_PREFIX+'preview',preview);}
 function previewPending(){return canPreview()&&cloud.previewLoaded?previewDiff(previewSnapshot(),cloud.previewSynced):{};}
 function cloudCache(){
-  if(!cloud.ready||!cloudEnabled())return;
-  safeWrite(cloudCacheKey(cloud.email),{catalogRevision:BASE_CONFIG.scheduleRevision,state:live,pending:cloudDiff(live,cloud.synced)});
-  if(canPreview()&&cloud.previewLoaded)safeWrite(previewCacheKey(cloud.email),{catalogRevision:BASE_CONFIG.scheduleRevision,pending:previewPending()});
+ if(!cloud.email){safeWrite(STORAGE_PREFIX+'guest-state',live);return;}
+ if(!cloud.ready&&!cloud.cachedView)return;
+ safeWrite(cloudCacheKey(cloud.email),{catalogRevision:BASE_CONFIG.scheduleRevision,state:live,synced:cloud.synced,pending:cloudDiff(live,cloud.synced),cardTask:cloud.cardTask,pendingCardTask:cloud.pendingCardTask,consent:cloud.consent});
+ if(canPreview()&&cloud.previewLoaded)safeWrite(previewCacheKey(cloud.email),{catalogRevision:BASE_CONFIG.scheduleRevision,pending:previewPending()});
 }
 function previewPersist(){safeWrite(STORAGE_PREFIX+'preview',preview);cloudScheduleSave();}
-let cloudFeedbackWasSaving=false,cloudSavedUntil=0,cloudFeedbackTimer=null;
+function localCardTask(){return previewDate?previewCardTask:cloud.pendingCardTask||cloud.cardTask||(!cloud.email?guestCardTask:null);}
+function cardTaskConfirmed(){return previewDate?!!previewCardTask:cloud.ready&&!!cloud.cardTask;}
 function renderCloud(){
-  const active=cloudEnabled(),previewAllowed=canPreview(),busy=cloud.loading||!!cloud.saving||!!cloud.marketingSaving;
-  const pending=cloud.ready&&(Object.keys(cloudDiff(live,cloud.synced)).length>0||Object.keys(previewPending()).length>0);
-  const saving=!!cloud.saving||!!cloud.marketingSaving||pending;
-  if(cloudFeedbackWasSaving&&!saving&&cloud.ready&&!cloud.error&&!cloud.loading){cloudSavedUntil=Date.now()+1800;clearTimeout(cloudFeedbackTimer);cloudFeedbackTimer=setTimeout(renderCloud,1850);}
-  cloudFeedbackWasSaving=saving;
-  if(cloud.error||!cloud.ready)cloudSavedUntil=0;
-  const saved=cloudSavedUntil>Date.now()&&!saving&&!cloud.loading;
-  $('progress-open').textContent=cloud.loading?'讀取中…':cloud.ready?(cloud.error?'進度待同步':saving?'保存中…':saved?'✓ 已保存':'保存進度'):'讀取進度';
-  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);
-  $('progress-open').classList.toggle('is-saved',saved);
-  $('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
-  $('progress-open').setAttribute('aria-label',cloud.ready?'查看與保存 Email 收藏進度':'輸入 Email 讀取進度');
-  $('progress-submit').textContent=busy?(cloud.loading?'讀取中…':'保存中…'):'保存';
-  $('progress-submit').classList.toggle('is-busy',busy);
-  $('progress-form').setAttribute('aria-busy',String(busy));
-  $('progress-message').classList.toggle('is-busy',busy||saving&&!cloud.error);
-  $('progress-email-label').textContent=cloud.ready?cloud.email:'';
-  $('progress-current').hidden=!cloud.ready;$('progress-submit').disabled=busy;$('progress-switch').disabled=busy;
-  $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;
-  $('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
-  $('progress-retry').hidden=!cloud.error||!active;
-  $('progress-message').textContent=cloud.error||(cloud.loading?'正在找回你的聖誕收藏…':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus?cloud.consentStatus:cloud.saving||pending?'正在保存進度，請稍候…':cloud.ready?(active?(previewAllowed?(cloud.previewLoaded?`正式已收藏 ${Object.keys(live.claimed).length}／25；模擬已收藏 ${Object.keys(cloud.previewSynced.state.claimed).length}／25，已保存至 Preview_${YEAR}。`:'正式進度已連接；請更新 Apps Script 以啟用模擬同步。'):'收藏已連接 Google Sheet。'):'本機測試模式；連接 Google Sheet 後才會保存正式進度。'):(active?'填寫 Email，保存並接續你的聖誕收藏。':'活動進度尚未啟用。管理者可填指定 Email 進入設定。'));
-  for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!previewAllowed;
-  if(!previewAllowed){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
-  $('cloud-settings').hidden=!previewAllowed;
-  $('cloud-endpoint').value=cloud.endpoint;
-  $('cloud-summary').textContent=active?'已設定進度服務；正式領取依後端台灣日期判斷。':'尚未連接 Google Sheet，目前僅供管理者本機測試。';
+ const active=cloudEnabled(),admin=canPreview(),busy=cloud.loading||!!cloud.marketingSaving,pending=!!cloud.pendingCardTask||Object.keys(cloudDiff(live,cloud.synced)).length>0||Object.keys(previewPending()).length>0,saving=!!cloud.saving||cloud.ready&&pending;
+ $('progress-open').textContent=cloud.loading?'背景同步中…':cloud.ready?(cloud.error?'進度待同步':saving?'保存中…':'保存進度'):'讀取進度';
+ $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);$('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
+ $('progress-open').setAttribute('aria-label',cloud.ready?'查看與保存收藏進度':'輸入 Email 保存或找回進度');
+ $('progress-submit').textContent='保存';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
+ $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
+ $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
+ $('progress-retry').hidden=!cloud.error||!active;
+ const message=cloud.error||(cloud.loading?'正在背景同步進度，你可以先瀏覽與製作卡片。':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus|| (cloud.saving?'正在背景保存進度…':cloud.ready?'已保存，可在相同 Email 接續收藏。':''));
+ $('progress-message').textContent=message;$('progress-message').classList.toggle('is-busy',busy||saving&&!cloud.error);
+ for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!admin;
+ if(!admin){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
+ $('cloud-settings').hidden=!admin;$('cloud-endpoint').value=cloud.endpoint;$('cloud-summary').textContent=active?'進度服務已設定。':'請先設定進度服務網址。';
+ const returning=cloud.ready||cloud.email;$('welcome-progress-title').textContent=returning?'接續你的聖誕進度':'留住你的聖誕進度';
 }
-function openProgress(){
-  $('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
-  renderCloud();showDialog('progress-dialog');
-}
+function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;openWelcome({progressOnly:true});renderCloud();$('progress-email').focus();}
 function cloudTransport(payload){
-  if(!cloudEnabled())return Promise.reject(new Error('活動進度尚未啟用。'));
-  if(location.protocol!=='https:')return Promise.reject(new Error('請從 GitHub Pages 的 HTTPS 網址開啟活動，再保存進度。'));
-  return new Promise((resolve,reject)=>{
-    const id=Array.from(crypto.getRandomValues(new Uint8Array(20)),b=>b.toString(16).padStart(2,'0')).join('');
-    const frame=el('iframe');frame.name='dyson-progress-'+id;frame.hidden=true;frame.dataset.cloudTransport='true';frame.title='保存收藏進度';
-    const form=el('form');form.method='POST';form.action=cloud.endpoint;form.target=frame.name;form.hidden=true;form.dataset.cloudTransport='true';
-    const field=el('input');field.type='hidden';field.name='payload';field.value=JSON.stringify({...payload,requestId:id,clientOrigin:location.origin});form.append(field);
-    const finish=(error,result)=>{clearTimeout(timer);cloud.requests.delete(id);frame.remove();form.remove();error?reject(error):resolve(result);};
-    const timer=setTimeout(()=>finish(new Error('尚未收到保存回覆，請重試。若持續發生，請確認部署存取權為「所有人」、網址以 /exec 結尾。')),30000);
-    cloud.requests.set(id,result=>result?.ok?finish(null,result):finish(new Error(result?.error||'目前無法保存進度，請重試。')));
-    document.body.append(frame,form);form.submit();
-  });
+ if(!cloudEnabled())return Promise.reject(new Error('請從已設定進度服務的 HTTPS 活動網址保存。'));
+ return new Promise((resolve,reject)=>{
+  const id=Array.from(crypto.getRandomValues(new Uint8Array(20)),b=>b.toString(16).padStart(2,'0')).join(''),frame=el('iframe');frame.name='dyson-progress-'+id;frame.hidden=true;frame.dataset.cloudTransport='true';frame.title='背景保存收藏進度';
+  const form=el('form');form.method='POST';form.action=cloud.endpoint;form.target=frame.name;form.hidden=true;form.dataset.cloudTransport='true';const field=el('input');field.type='hidden';field.name='payload';field.value=JSON.stringify({...payload,requestId:id,clientOrigin:location.origin});form.append(field);
+  let finished=false;const finish=(error,result)=>{if(finished)return;finished=true;clearTimeout(timer);cloud.requests.delete(id);frame.remove();form.remove();error?reject(error):resolve(result);};
+  const timer=setTimeout(()=>finish(new Error('雲端尚未回覆，內容已留在此裝置，請稍後重試同步。')),30000);
+  cloud.requests.set(id,result=>result?.ok?finish(null,result):finish(new Error(result?.error||'暫時無法同步，請稍後重試。')));document.body.append(frame,form);form.submit();
+ });
 }
-window.addEventListener('message',event=>{
-  let origin;try{origin=new URL(event.origin);}catch{return;}
-  if(origin.protocol!=='https:'||!(origin.hostname==='script.google.com'||origin.hostname==='script.googleusercontent.com'||origin.hostname.endsWith('.googleusercontent.com')))return;
-  const m=event.data;if(!m||m.channel!=='dyson-progress-v1'||typeof m.requestId!=='string')return;
-  cloud.requests.get(m.requestId)?.(m.result);
-});
+window.addEventListener('message',event=>{let origin;try{origin=new URL(event.origin);}catch{return;}if(origin.protocol!=='https:'||!(origin.hostname==='script.google.com'||origin.hostname==='script.googleusercontent.com'||origin.hostname.endsWith('.googleusercontent.com')))return;const m=event.data;if(m?.channel==='dyson-progress-v1'&&typeof m.requestId==='string')cloud.requests.get(m.requestId)?.(m.result);});
 function cloudSend(payload){const request=cloud.queue.then(()=>cloudTransport(payload));cloud.queue=request.catch(()=>{});return request;}
-function cloudAcceptClock(result){if(Array.isArray(result.bonusIds))cloud.bonusIds=result.bonusIds.filter(d=>BONUS_IDS.includes(d));if(result.rulesVersion!==2)throw new Error('請先更新並重新部署新版 DysonProgress.gs，以啟用補領與參與天數禮遇。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同，請管理者檢查 .gs 設定。');if(Number.isFinite(Date.parse(result.serverTime))){cloud.offset=Date.parse(result.serverTime)-Date.now();cloud.hasClock=true;}}
+function cloudAcceptClock(result){
+ if(result.serviceVersion!==7||result.rulesVersion!==3)throw new Error('請先執行 setupV7，並將 Apps Script 更新至新版本部署。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同。');
+ cloud.isAdmin=result.isAdmin===true;cloud.canPreview=cloud.isAdmin&&result.canPreview===true;cloud.bonusIds=cloud.isAdmin&&Array.isArray(result.bonusIds)?result.bonusIds.filter(d=>BONUS_IDS.includes(d)):[];
+ if(Number.isFinite(Date.parse(result.serverTime))){cloud.offset=Date.parse(result.serverTime)-Date.now();cloud.hasClock=true;}
+}
+function acceptFormalResult(result){const pending=cloudDiff(live,cloud.synced);cloudAcceptClock(result);cloud.synced=Core.normaliseState(result.state);live=cloudApply(Core.normaliseState(result.state),pending);cloud.cardTask=cardTaskNormalise(result.cardTask);if(cloud.cardTask)cloud.pendingCardTask=null;cloudCache();}
 async function cloudConnect(email,consent){
-  email=cloudEmail(email);if(!isCloudEmail(email))throw new Error('請填寫有效的 Email。');
-  if(cloud.marketingSaving)await cloud.marketingSaving;
-  if(cloud.loading)return false;
-  const preserveConsentDraft=cloud.ready&&email===cloud.email&&cloud.marketingDirty&&typeof consent!=='boolean';
-  if(cloud.ready&&cloudEnabled()&&!(await cloudFlush()))throw new Error('目前進度尚未保存，請先按重試。');
-  cloud.loading=true;cloud.error='';renderCloud();
-  try{
-    if(!cloudEnabled()){
-      if(email!==ADMIN_PREVIEW_EMAIL)throw new Error('活動進度尚未啟用，請稍後再回來。');
-      cloud.email=email;cloud.ready=true;cloud.canPreview=true;cloud.bonusIds=[...BONUS_IDS];cloud.consent=consent===true;live=Core.freshState();cloud.synced=Core.freshState();cloud.previewLoaded=false;
-    }else{
-      const payload={action:'connect',email};if(typeof consent==='boolean')payload.marketingConsent=consent;
-      const result=await cloudSend(payload);cloudAcceptClock(result);
-      if(typeof consent==='boolean'&&result.marketingConsent!==consent)throw new Error('行銷意願尚未確認保存，請重試或更新 Apps Script 部署。');
-      const cached=safeRead(cloudCacheKey(email),{}),server=Core.normaliseState(result.state);
-      if(cached.pending)for(const d of BONUS_IDS)if(!cloud.bonusIds.includes(d))delete cached.pending[d];
-      if(cached.catalogRevision!==BASE_CONFIG.scheduleRevision&&cached.pending)for(const d of [10,16,20])delete cached.pending[d];
-      cloud.email=email;cloud.synced=server;live=cloudApply(Core.normaliseState(server),cached.pending);
-      cloud.ready=true;cloud.canPreview=result.canPreview===true;cloud.consent=result.marketingConsent===true;
-      cloud.previewLoaded=canPreview()&&result.previewSync===true;
-      if(cloud.previewLoaded){
-        const serverPreview=previewNormalise(result.preview),cachedPreview=safeRead(previewCacheKey(email),{});
-        cloud.previewSynced=serverPreview;
-        let pending=cachedPreview.pending;
-        if(pending?.bonus)for(const d of BONUS_IDS)if(!cloud.bonusIds.includes(d))delete pending.bonus[d];
-        if(cachedPreview.catalogRevision!==BASE_CONFIG.scheduleRevision)for(const d of [10,16,20]){const value=pending?.items?.[d];if(value){value.placement=false;value.layout=null;}}
-        // Import a pre-sync local test only when the test sheet has no row yet.
-        if(result.preview===null&&!Object.keys(pending||{}).length){
-          const legacy=Core.normaliseState(safeRead(STORAGE_PREFIX+'preview',null)),days=Object.keys(legacy.claimed).map(Number);
-          if(days.length)pending=previewDiff(previewNormalise({state:legacy,date:`${YEAR}-12-${String(Math.max(...days)).padStart(2,'0')}`,days}),serverPreview);
-        }
-        previewRestore(previewApply(serverPreview,pending));
-      }else if(!canPreview())previewRestore(null);
-    }
-    await loadBonusAssets();
-    if(!preserveConsentDraft){cloud.marketingDirty=false;cloud.marketingDraft=null;}
-    if(preserveConsentDraft)cloud.error='行銷意願尚未保存，請按重試同步。';
-    cloud.consentStatus=preserveConsentDraft?'行銷意願尚未保存，請按重試同步。':typeof consent==='boolean'?'行銷意願已保存至 Google Sheet。':'';$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
-    safeWrite(STORAGE_PREFIX+'cloud-profile',{email:cloud.email});
-    if(previewDate&&!canPreview())exitPreview();selectedDay=null;stopShow(false);pauseMusic(true);closeDialog('item-dialog');
-    cloudCache();renderUI();drawFrame(0,performance.now());if(cloudEnabled())cloudScheduleSave();return true;
-  }catch(error){cloud.error=error.message;throw error;}
-  finally{cloud.loading=false;renderCloud();}
+ email=cloudEmail(email);if(!isCloudEmail(email))throw new Error('請填寫有效的 Email。');if(cloud.loading)return false;
+ if(cloud.ready&&email!==cloud.email&&!(await cloudFlush()))throw new Error('原進度尚未同步，請先重試。');
+ const started=performance.now(),same=email===cloud.email,guestState=Core.normaliseState(safeRead(STORAGE_PREFIX+'guest-state',{})),guestTask=guestCardTask;
+ const preserveDraft=same&&cloud.marketingDirty&&typeof consent!=='boolean';
+ if(!same){cloud.ready=false;cloud.cachedView=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.synced=Core.freshState();live=Core.normaliseState(guestState);previewRestore(null);}
+ cloud.email=email;cloud.loading=true;cloud.error='';cloud.isAdmin=false;cloud.canPreview=false;cloud.bonusIds=[];safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});renderCloud();
+ try{
+  let cached=safeRead(cloudCacheKey(email),{});const payload={action:'connect',email};
+  if(Object.keys(guestState.claimed).length||Object.keys(guestState.visits).length)payload.guestState=guestState;
+  const task=cardTaskNormalise(cached.pendingCardTask)||guestTask;if(task)payload.cardTask=task;
+  if(typeof consent==='boolean')payload.marketingConsent=consent;
+  const result=await cloudSend(payload);cloudAcceptClock(result);cached=safeRead(cloudCacheKey(email),cached);
+  if(typeof consent==='boolean'&&result.marketingConsent!==consent)throw new Error('行銷意願尚未確認保存，請重試。');
+  cloud.synced=Core.normaliseState(result.state);const pending=cached.pending||{};for(const d of BONUS_IDS)if(!cloud.bonusIds.includes(d))delete pending[d];
+  if(cached.catalogRevision&&cached.catalogRevision!==BASE_CONFIG.scheduleRevision)for(const d of [10,16,20])delete pending[d];
+  live=cloudApply(Core.normaliseState(result.state),pending);cloud.ready=true;cloud.cachedView=true;cloud.cardTask=cardTaskNormalise(result.cardTask);cloud.pendingCardTask=cloud.cardTask?null:cardTaskNormalise(cached.pendingCardTask)||cloud.pendingCardTask;cloud.consent=result.marketingConsent===true;
+  if(!preserveDraft){cloud.marketingDirty=false;cloud.marketingDraft=null;}
+  cloud.previewLoaded=canPreview()&&result.previewSync===true;
+  if(cloud.previewLoaded){cloud.previewSynced=previewNormalise(result.preview);const saved=safeRead(previewCacheKey(email),{});previewRestore(previewApply(cloud.previewSynced,saved.pending));}else previewRestore(null);
+  safeWrite(STORAGE_PREFIX+'guest-state',Core.freshState());guestCardTask=null;safeWrite(STORAGE_PREFIX+'guest-card-task',null);safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});
+  timing.progressReadMs=Math.round(performance.now()-started);cloud.consentStatus=preserveDraft?'行銷意願尚未保存，請重試。':'進度已保存。';
+  cloudCache();renderUI();drawFrame(0,performance.now());ensureItemAssets(ownedDays()).then(()=>{renderUI();drawFrame(0,performance.now());}).catch(()=>{});cloudScheduleSave();
+  if(cloud.pendingReward){cloud.pendingReward=false;renderVouchers();showDialog('vouchers-dialog');}return true;
+ }catch(error){cloud.error=error.message;status(error.message,{persistent:true});throw error;}
+ finally{cloud.loading=false;renderCloud();}
 }
-function cloudScheduleSave(){
-  if(!cloudEnabled()||!cloud.ready)return;cloudCache();clearTimeout(cloud.timer);
-  if(!Object.keys(cloudDiff(live,cloud.synced)).length&&!Object.keys(previewPending()).length)return;
-  cloud.timer=setTimeout(()=>cloudFlush(),650);
-}
+function cloudScheduleSave(){cloudCache();if(!cloud.ready||!cloudEnabled())return;clearTimeout(cloud.timer);if(!cloud.pendingCardTask&&!Object.keys(cloudDiff(live,cloud.synced)).length&&!Object.keys(previewPending()).length)return;cloud.timer=setTimeout(()=>cloudFlush(),1500);}
 async function cloudFlush(){
-  clearTimeout(cloud.timer);if(!cloud.ready||!cloudEnabled())return true;
-  if(cloud.saving)return cloud.saving;
-  if(!Object.keys(cloudDiff(live,cloud.synced)).length&&!Object.keys(previewPending()).length)return true;
-  const email=cloud.email;
-  cloud.saving=(async()=>{
-    try{
-      while(true){
-        const before=Core.normaliseState(live),changes=cloudDiff(before,cloud.synced);if(!Object.keys(changes).length)break;
-        const result=await cloudSend({action:'save',email,changes});cloudAcceptClock(result);
-        const later=cloudDiff(live,before),oldClaims=Object.keys(live.claimed).join(',');cloud.synced=Core.normaliseState(result.state);
-        live=cloudApply(Core.normaliseState(cloud.synced),later);cloud.error='';cloudCache();
-        if(!previewDate){if(oldClaims!==Object.keys(live.claimed).join(','))renderUI();else{for(const d of [...Object.keys(live.claimed),...bonusDays()])updatePlacementUI(Number(d));updateSelection();drawFrame(0,performance.now());}}
-      }
-      while(canPreview()&&cloud.previewLoaded){
-        const before=previewSnapshot(),changes=previewDiff(before,cloud.previewSynced);if(!Object.keys(changes).length)break;
-        const result=await cloudSend({action:'previewSave',email,changes});cloudAcceptClock(result);
-        const later=previewDiff(previewSnapshot(),before);cloud.previewSynced=previewNormalise(result.preview);
-        previewRestore(previewApply(cloud.previewSynced,later));cloud.error='';cloudCache();renderUI();
-        if($('item-dialog').open)renderItemDialog();drawFrame(0,performance.now());
-      }
-      return true;
-    }catch(error){cloud.error=error.message;cloudCache();return false;}
-    finally{cloud.saving=null;renderCloud();}
-  })();
-  renderCloud();return cloud.saving;
+ clearTimeout(cloud.timer);if(!cloud.ready||!cloudEnabled())return true;if(cloud.saving)return cloud.saving;
+ cloud.saving=(async()=>{await Promise.resolve();const started=performance.now();try{
+  if(cloud.pendingCardTask){const result=await cloudSend({action:'cardComplete',email:cloud.email,cardTask:cloud.pendingCardTask});acceptFormalResult(result);}
+  while(true){const before=Core.normaliseState(live),changes=cloudDiff(before,cloud.synced);if(!Object.keys(changes).length)break;const result=await cloudSend({action:'save',email:cloud.email,changes});const later=cloudDiff(live,before);cloudAcceptClock(result);cloud.synced=Core.normaliseState(result.state);live=cloudApply(Core.normaliseState(result.state),later);cloud.cardTask=cardTaskNormalise(result.cardTask);cloudCache();}
+  while(canPreview()&&cloud.previewLoaded){const before=previewSnapshot(),changes=previewDiff(before,cloud.previewSynced);if(!Object.keys(changes).length)break;const result=await cloudSend({action:'previewSave',email:cloud.email,changes});cloudAcceptClock(result);const later=previewDiff(previewSnapshot(),before);cloud.previewSynced=previewNormalise(result.preview);previewRestore(previewApply(cloud.previewSynced,later));cloudCache();}
+  cloud.error='';timing.lastSaveMs=Math.round(performance.now()-started);return true;
+ }catch(error){cloud.error=error.message;cloudCache();return false;}finally{cloud.saving=null;if(!cloud.error)cloudScheduleSave();renderCloud();renderBenefits();}})();renderCloud();return cloud.saving;
 }
 async function claimCloud(d){
-  if(!cloud.ready){cloud.pendingDay=d;openProgress();return false;}
-  if(cloud.loading){status('正在載入進度，請稍候。');return false;}
-  if(!(await cloudFlush())){openProgress();return false;}
-  const unlocked=rewardProgress().unlockedCount;cloud.loading=true;cloud.error='';renderCloud();
-  try{
-    const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});cloudAcceptClock(result);
-    live=Core.normaliseState(result.state);cloud.synced=Core.normaliseState(live);cloudCache();chime();renderUI();
-    status(`已收藏「${item(d).name}」，進度已保存。按「放入水晶球內」才會加入場景。${rewardProgress().unlockedCount>unlocked?'新的節慶禮遇已解鎖。':''}`);return true;
-  }catch(error){cloud.error=error.message;status(error.message,{persistent:true});return false;}
-  finally{cloud.loading=false;renderCloud();}
+ if(!cloud.ready){status('進度正在同步，請稍候再領取；仍可先製作卡片。');return false;}
+ if(cloud.loading)return false;if(!(await cloudFlush())){openProgress();return false;}cloud.loading=true;renderCloud();
+ try{const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});acceptFormalResult(result);renderUI();chime();status(`已收藏「${item(d).name}」，按「放入水晶球內」才會加入場景。`);return true;}
+ catch(error){cloud.error=error.message;status(error.message,{persistent:true});return false;}finally{cloud.loading=false;renderCloud();}
 }
 async function saveMarketingConsent(){
-  if(!cloud.ready||cloudEmail($('progress-email').value)!==cloud.email)return false;
-  if(cloud.marketingSaving)return cloud.marketingSaving;
-  if(!cloud.marketingDirty)return true;
-  const email=cloud.email,desired=cloud.marketingDraft===true;
-  if(!cloudEnabled()){cloud.error='目前為本機測試，行銷意願尚未寫入 Google Sheet。';renderCloud();return false;}
-  cloud.error='';cloud.consentStatus='';
-  cloud.marketingSaving=(async()=>{
-    try{
-      const result=await cloudSend({action:'consent',email,marketingConsent:desired});cloudAcceptClock(result);
-      if(result.consentSaved!==true||result.marketingConsent!==desired)throw new Error('尚未收到 Google Sheet 的行銷意願保存確認，請更新 Apps Script 部署後重試。');
-      if(cloud.email!==email)return false;
-      const pending=cloudDiff(live,cloud.synced);cloud.synced=Core.normaliseState(result.state);live=cloudApply(Core.normaliseState(cloud.synced),pending);cloudCache();
-      cloud.consent=desired;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='行銷意願已保存至 Google Sheet。';cloud.error='';if(!previewDate)renderUI();return true;
-    }catch(error){cloud.error=`行銷意願尚未保存：${error.message}`;return false;}
-    finally{cloud.marketingSaving=null;renderCloud();}
-  })();
-  renderCloud();return cloud.marketingSaving;
+ if(!cloud.ready||cloudEmail($('progress-email').value)!==cloud.email||!cloud.marketingDirty)return false;if(cloud.marketingSaving)return cloud.marketingSaving;
+ const email=cloud.email,desired=cloud.marketingDraft===true;
+ cloud.marketingSaving=(async()=>{try{const result=await cloudSend({action:'consent',email,marketingConsent:desired});if(result.consentSaved!==true||result.marketingConsent!==desired)throw new Error('行銷意願尚未確認保存。');if(cloud.email!==email)return false;acceptFormalResult(result);cloud.consent=desired;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='行銷意願已保存。';cloud.error='';safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:desired});return true;}catch(error){cloud.error='行銷意願尚未保存：'+error.message;return false;}finally{cloud.marketingSaving=null;renderCloud();}})();renderCloud();return cloud.marketingSaving;
 }
+async function startWelcomeCollection(){
+ const email=cloudEmail($('progress-email').value);if(!email){if(welcomeProgressOnly){$('progress-message').textContent='請填寫 Email 保存或找回進度。';return;}finishWelcome();return;}
+ if(!isCloudEmail(email)){$('progress-message').textContent='請確認 Email 格式。';$('progress-email').focus();return;}
+ const consent=cloud.marketingDirty?cloud.marketingDraft:undefined;finishWelcome();cloudConnect(email,consent).catch(()=>{});
+}
+function markCardTask(format,method){
+ const task=cardTaskNormalise({completed:true,format,method,at:new Date().toISOString()});if(!task)return;
+ if(previewDate){if(!previewCardTask){previewCardTask=task;previewPersist();}}
+ else if(cloud.ready){if(!cloud.cardTask&&!cloud.pendingCardTask){cloud.pendingCardTask=task;cloudCache();cloudFlush();}}
+ else if(!cloud.email){guestCardTask=guestCardTask||task;safeWrite(STORAGE_PREFIX+'guest-card-task',guestCardTask);}
+ else{cloud.pendingCardTask=cloud.pendingCardTask||task;const cached=safeRead(cloudCacheKey(cloud.email),{});safeWrite(cloudCacheKey(cloud.email),{...cached,pendingCardTask:cloud.pendingCardTask});}
+ renderBenefits();
+}
+function startRewardTask(){if(localCardTask()){cloud.pendingReward=true;openProgress();}else{closeDialog('vouchers-dialog');openChristmasCard();}}
 $('progress-open').addEventListener('click',openProgress);
-$('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();else{cloud.consentStatus='行銷選擇尚未保存，請填寫 Email 後按「保存」。';renderCloud();}});
-$('progress-form').addEventListener('submit',async event=>{
-  event.preventDefault();try{if(await cloudConnect($('progress-email').value,cloud.marketingDirty?cloud.marketingDraft:undefined)){const day=cloud.pendingDay;cloud.pendingDay=null;closeDialog('progress-dialog');if(day&&!previewDate)await openDay(day);}}catch(error){$('progress-message').textContent=error.message;}
-});
-$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();renderCloud();});
+$('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();});
+$('progress-form').addEventListener('submit',event=>{event.preventDefault();startWelcomeCollection();});
+$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();});
 $('progress-switch').addEventListener('click',async()=>{
-  if(cloud.marketingSaving&&!(await cloud.marketingSaving))return;
-  if(!(await cloudFlush()))return;
-  cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='';
-  cloud.ready=false;cloud.canPreview=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.email='';cloud.consent=false;cloud.pendingDay=null;cloud.error='';cloud.hasClock=false;
-  clearTimeout(cloud.timer);safeWrite(STORAGE_PREFIX+'cloud-profile',{});live=Core.freshState();cloud.synced=Core.freshState();
-  if(previewDate)exitPreview();stopShow(false);pauseMusic(true);selectedDay=null;closeDialog('studio-dialog');closeDialog('item-dialog');renderUI();drawFrame(0,performance.now());openProgress();
+ if(cloud.marketingSaving&&!(await cloud.marketingSaving))return;if(!(await cloudFlush()))return;
+ clearTimeout(cloud.timer);cloud.ready=false;cloud.cachedView=false;cloud.canPreview=false;cloud.isAdmin=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.email='';cloud.consent=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='';cloud.error='';cloud.hasClock=false;live=Core.freshState();cloud.synced=Core.freshState();safeWrite(STORAGE_PREFIX+'cloud-profile',{});for(const id of ['studio-dialog','item-dialog'])closeDialog(id);renderUI();$('progress-email').value='';renderCloud();$('progress-email').focus();
 });
-$('cloud-save-export').addEventListener('click',async()=>{
-  if(!canPreview())return;const value=$('cloud-endpoint').value.trim();
-  if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(value)){$('cloud-settings-status').textContent='請貼上以 https://script.google.com/macros/s/ 開頭、/exec 結尾的部署網址。';return;}
-  if(!(await cloudFlush()))return;
-  cloud.endpoint=value;safeWrite(STORAGE_PREFIX+'cloud-endpoint',value);cloud.ready=false;cloud.canPreview=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.hasClock=false;live=Core.freshState();
-  if(!(await exportConfig()))return;closeDialog('studio-dialog');if(previewDate)exitPreview();renderUI();
-  status('已下載含進度服務網址的 config.js。請取代網站 assets/js/config.js，再以 GitHub Pages 的 HTTPS 網址開啟。');
-});
-window.addEventListener('online',()=>{if(cloud.ready&&cloudEnabled())cloudFlush();});
+$('cloud-save-export').addEventListener('click',async()=>{if(!canPreview())return;const value=$('cloud-endpoint').value.trim();if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(value)){$('cloud-settings-status').textContent='請填入有效 /exec 網址。';return;}if(!(await cloudFlush()))return;cloud.endpoint=value;safeWrite(STORAGE_PREFIX+'cloud-endpoint',value);await exportConfig();});
+window.addEventListener('online',()=>{if(cloud.ready)cloudFlush();else if(cloud.email)cloudConnect(cloud.email).catch(()=>{});});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)cloudFlush();else if(cloud.ready&&!previewDate&&today()>=1&&today()<=25&&!live.visits[dateISO()])cloudConnect(cloud.email).catch(()=>{});});
+
 
 const SCHEDULE_MOVES={4:5,5:4,10:20,20:10,18:16,16:18};
 const scheduleKey=STORAGE_PREFIX+'schedule-20261021-products';
@@ -348,7 +228,8 @@ if(!safeRead(productRevisionKey,false)){
   safeWrite(productRevisionKey,true);
 }
 let rewardSettings=safeRead(STORAGE_PREFIX+'rewards-v2',{});
-let live=Core.freshState();
+let live=Core.normaliseState(safeRead(STORAGE_PREFIX+'guest-state',null));
+if(cloud.email){const cached=safeRead(cloudCacheKey(cloud.email),{});if(cached.state){live=Core.normaliseState(cached.state);cloud.synced=Core.normaliseState(cached.synced||cached.state);cloud.cachedView=true;cloud.cardTask=cardTaskNormalise(cached.cardTask);cloud.pendingCardTask=cardTaskNormalise(cached.pendingCardTask);cloud.consent=cached.consent===true;}}
 let preview=Core.normaliseState(safeRead(STORAGE_PREFIX+'preview',null));
 if(scheduleNeedsMigration){
   settings=Object.fromEntries(Object.entries(settings).map(([d,value])=>[SCHEDULE_MOVES[d]||d,value]));
@@ -403,6 +284,15 @@ if(!safeRead(snowProductCopyKey,false)){
     if(Number(day)===20&&saved.product?.color===copy.color)delete saved.product.color;
   }
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(snowProductCopyKey,true);
+}
+
+
+const productCopyV43=STORAGE_PREFIX+'product-copy-v43';
+if(!safeRead(productCopyV43,false)){
+ const oldCopy={"5":{"intro":"把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。輕巧機身搭配自動電壓調節與智慧溫控，讓旅行途中也能輕鬆吹整秀髮。","description":"把普魯士藍的 Supersonic™ Travel HD19 放進雪境，收藏一份輕巧的旅行靈感。輕巧機身搭配自動電壓調節與智慧溫控，讓旅行途中也能輕鬆吹整秀髮。"},"10":{"intro":"把 PencilVac™ Fluffycones SV50 放進雪境，收藏一份輕巧、靈活、極纖細的清潔靈感。纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。","description":"把 PencilVac™ Fluffycones SV50 放進雪境，收藏一份輕巧、靈活、極纖細的清潔靈感。纖細筆型機身搭配創新 Fluffycones™ 四錐全向吸頭，實現 360° 無死角靈活轉向，讓日常地面清潔更俐落、更自由。"},"15":{"intro":"把冰川藍的 HushJet™ HJ10 放進雪境，為聖誕小天地添上一件清新科技收藏。精巧設計節省空間，搭配靈感源自航空噴射引擎的星形噴嘴，每秒輸出 380 升強勁氣流。","description":"把冰川藍的 HushJet™ HJ10 放進雪境，為聖誕小天地添上一件清新科技收藏。精巧設計節省空間，搭配靈感源自航空噴射引擎的星形噴嘴，每秒輸出 380 升強勁氣流。"},"20":{"intro":"把星曜紫的 BP10 放進雪境，收藏一份來自航空科技的清新靈感。運用航空聲學原理與 Dyson 創新氣流技術，搭配獨創星形噴嘴，90 秒淨化，為居家空間帶來清新舒適的空氣體驗。","description":"把星曜紫的 BP10 放進雪境，收藏一份來自航空科技的清新靈感。運用航空聲學原理與 Dyson 創新氣流技術，搭配獨創星形噴嘴，90 秒淨化，為居家空間帶來清新舒適的空氣體驗。"}};
+ for(const [day,copy] of Object.entries(oldCopy)){const saved=settings[day];if(!saved)continue;if(saved.description===copy.description)delete saved.description;if(saved.product?.intro===copy.intro)delete saved.product.intro;}
+ if(settings[10]){if(['PencilVac鉛筆吸塵器','PencilVac 鉛筆吸塵器'].includes(settings[10].name))delete settings[10].name;if(['Dyson PencilVac™ Fluffycones SV50 鉛筆吸塵器','PencilVac™ Fluffycones SV50 鉛筆吸塵器'].includes(settings[10].product?.detailTitle))delete settings[10].product.detailTitle;}
+ safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(productCopyV43,true);
 }
 
 const SCENE_REPLACED_DAYS=[8,16,19];
@@ -499,7 +389,8 @@ function item(d){
 }
 const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required}));
 const rewards=()=>configuredRewards().map(b=>b.productDay===20&&item(20).teaser?{...b,title:'清淨機新品專屬優惠券',preview:'清淨機新品專屬優惠',conditions:'新品專屬優惠將於 12/16 揭曉。'}:b);
-const rewardUnlocked=(b,p)=>b.unlock==='product'?p.claimedDays.includes(b.productDay):p.visits>=b.required;
+const rewardQualified=(b,p)=>b.unlock==='product'?p.claimedDays.includes(b.productDay):p.visits>=b.required;
+const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&cardTaskConfirmed();
 function rewardProgress(){
   const t=today(),claimedDays=Object.keys(state().claimed).map(Number).filter(d=>d<=t),count=claimedDays.length,visits=participationDates().length;
   const list=rewards(),progress={count,claimedDays,visits},unlockedCount=list.filter(b=>rewardUnlocked(b,progress)).length,next=list.find(b=>!rewardUnlocked(b,progress))||null;
@@ -507,8 +398,9 @@ function rewardProgress(){
 }
 function rewardProgressLabel(p=rewardProgress()){return `已收藏 ${p.count}／25 · 已參與 ${p.visits}${p.visits<10?'／10':''} 天 · 已解鎖 ${p.unlockedCount}／${p.total} 份禮遇`;}
 function nextRewardLabel(p=rewardProgress()){
+  if(!cardTaskConfirmed()&&rewards().some(b=>rewardQualified(b,p)))return localCardTask()?'優惠已保留，填寫 Email 或完成同步即可領取。':'優惠已保留，製作卡片並下載或分享一次即可領取。';
   if(!p.next)return '五份節慶禮遇已全部解鎖。';
-  return p.next.unlock==='product'?`收藏「${item(p.next.productDay).name}」，同步獲得對應優惠券。`:`再參與 ${Math.max(0,p.next.required-p.visits)} 天，解鎖 Dyson 全品項折抵 $1,000。`;
+  return p.next.unlock==='product'?`收藏「${item(p.next.productDay).name}」，保留對應優惠，完成一次卡片下載或分享即可領取。`:`再參與 ${Math.max(0,p.next.required-p.visits)} 天，解鎖 Dyson 全品項折抵 $1,000。`;
 }
 const items=()=>BASE_CONFIG.items.map(i=>item(i.day));
 const participationDates=()=>Core.participationDates(state().visits,dateISO(),YEAR);
@@ -528,7 +420,7 @@ function showDialog(id){const d=$(id);if(!d.open)d.showModal();}
 
 // Intro media is requested only on the first visit or an explicit replay.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
-let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true;
+let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=false;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
@@ -537,11 +429,13 @@ async function playWelcome(){
   try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始收藏');}
   catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
 }
-function openWelcome(){
+function openWelcome({progressOnly=false}={}){
+  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'留住你的聖誕進度':'活動介紹';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
-  video.poster='./assets/video/welcome-poster.webp';video.src='./assets/video/welcome.mp4';video.currentTime=0;
+  video.poster='./assets/video/welcome-poster.webp';if(!progressOnly){video.src='./assets/video/welcome.mp4';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
+  if(progressOnly)return;
   welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始收藏。');}},8000);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始收藏。');}
   else playWelcome();
@@ -550,7 +444,7 @@ function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcome
 function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
 $('welcome-open').addEventListener('click',()=>{openWelcome();$('welcome-dialog').scrollTop=0;});
 $('welcome-skip').addEventListener('click',finishWelcome);
-$('welcome-start').addEventListener('click',finishWelcome);
+$('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始收藏');});
 $('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/images/scene/style-reference.webp';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
@@ -566,7 +460,11 @@ function getLayout(d){
   return SCENE_REPLACED_DAYS.includes(Number(d))?constrain(d,layout):layout;
 }
 function claimDay(d){
-  if(!previewDate){if(!cloudEnabled()){openProgress();return false;}return claimCloud(d);}
+  if(!previewDate){
+    if(cloud.email)return claimCloud(d);
+    if(!Core.claim(live,Number(d),today(),new Date(Date.now()+(cloud.hasClock?cloud.offset:0)).toISOString()))return false;
+    if(today()>=1&&today()<=25)live.visits[dateISO()]=true;cloudCache();renderUI();chime();return true;
+  }
   const alreadyUnlocked=rewardProgress().unlockedCount;
   // Re-evaluate the date at the actual click, including clicks across midnight.
   if(dayState(d)!=='current'||!Core.claim(state(),Number(d),claimableToday(),new Date().toISOString())){renderUI();return false;}
@@ -578,10 +476,10 @@ async function openDay(d){
   if(s==='future'){status(`12/${d} 的驚喜尚未開啟，請在當天回來。`);return;}
   if(s==='missed'){status('活動領取已結束，已收藏的禮物仍可回看與擺放。');return;}
   if(s==='current'&&!(await claimDay(d)))return;
-  openItem(d);
+  await ensureItemAssets([Number(d)]);openItem(d);
 }
 function togglePlacement(d,{fromCollection=false}={}){
-  if(!previewDate&&(!cloud.ready||cloud.loading)){status('請先載入你的進度。');return;}
+  if(!previewDate&&cloud.email&&!cloud.ready&&!cloud.cachedView){status('正在背景找回進度，請稍後再調整。');return;}
   if(dayState(d)!=='owned')return;
   const placed=!isPlaced(d);state().placement[d]=placed;
   if(!placed&&selectedDay===d)selectItem(null);
@@ -716,7 +614,7 @@ function renderParticipation(progress=rewardProgress()){
   section.setAttribute('aria-label','聖誕足跡，累積參與 10 天');
   const heading=el('div','participation-heading');
   heading.append(el('h3','','聖誕足跡'),el('span','participation-count',`${Math.min(10,dates.length)}／10 天`));
-  const message=el('p','participation-message',complete?'已集滿 10 天，Dyson 全品項折抵 $1,000 已解鎖。':`再來 ${10-dates.length} 天，即可獲得 Dyson 全品項折抵 $1,000。`);
+  const message=el('p','participation-message',complete?(cardTaskConfirmed()?'已集滿 10 天，Dyson 全品項折抵 $1,000 已解鎖。':'已集滿 10 天，優惠已保留，完成一次卡片任務並保存進度即可領取。'):`再來 ${10-dates.length} 天，即可獲得 Dyson 全品項折抵 $1,000。`);
   const grid=el('ol','participation-grid');grid.setAttribute('aria-label','前 10 次參加日期');
   for(let index=0;index<10;index++){
     const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);
@@ -732,7 +630,7 @@ function renderParticipation(progress=rewardProgress()){
   return section;
 }
 function renderRewardCard(b,progress,full){
-  const unlocked=rewardUnlocked(b,progress),isNext=progress.next?.id===b.id,product=b.unlock==='product'?item(b.productDay):null;
+  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress),waiting=qualified&&!unlocked,isNext=progress.next?.id===b.id,product=b.unlock==='product'?item(b.productDay):null;
   const card=el('article',`${full?'voucher-card':'benefit-card'}${unlocked?' claimed':' locked'}${isNext?' next-reward':''}`);card.dataset.rewardId=b.id;
   const condition=product?`收藏 12/${b.productDay} 產品`:`累積參與 ${b.required} 天`;
   card.setAttribute('aria-label',`${condition}，${unlocked?'已解鎖':'尚未解鎖'}，${unlocked?b.title:b.preview}`);
@@ -741,10 +639,11 @@ function renderRewardCard(b,progress,full){
     card.append(el('p','reward-coupon-summary',unlocked?b.title:b.preview));
     card.append(el('h3','reward-product-name',product?product.name:condition));
     if(!product)card.append(el('p','reward-participation',`已參與 ${progress.visits}／${b.required} 天`));
-    const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);
+    if(waiting)card.append(el('p','reward-task-hint',localCardTask()?'優惠已保留，填寫 Email 或同步後領取':'優惠已保留，完成卡片即可領取'));
+    const button=el('button','',waiting?(localCardTask()?(cloud.ready?'重試同步領優惠':'填寫 Email 領優惠'):'製作卡片領優惠'):'查看我的禮遇');button.type='button';button.addEventListener('click',()=>{if(waiting){if(cloud.ready&&localCardTask())cloudFlush();else startRewardTask();}else{renderVouchers();showDialog('vouchers-dialog');}});card.append(button);
     return card;
   }
-  const meta=el('div','reward-meta');meta.append(el('p','benefit-date',condition),el('span','reward-state',unlocked?'已解鎖':isNext?'下一份禮遇':'尚未解鎖'));card.append(meta);
+  const meta=el('div','reward-meta');meta.append(el('p','benefit-date',condition),el('span','reward-state',unlocked?'已解鎖':waiting?'優惠已保留':isNext?'下一份禮遇':'尚未解鎖'));card.append(meta);
   if(product){
     card.append(el('h3','reward-product-name',product.name));
     if(full){
@@ -757,7 +656,8 @@ function renderRewardCard(b,progress,full){
     }
     card.append(el('h4','reward-coupon-title',unlocked?b.title:b.preview));
   }else{card.append(el('h3','',unlocked?b.title:b.preview),el('p','reward-hint',`已參與 ${progress.visits}／${b.required} 天 · 不需連續`));}
-  if(!unlocked)card.append(el('p','reward-hint',product?`收藏「${product.name}」即可解鎖，無須放入水晶球。`:`再參與 ${Math.max(0,b.required-progress.visits)} 個不同台灣日期，即可解鎖。`));
+  if(waiting){card.append(el('p','reward-hint',localCardTask()?'卡片任務已完成，填寫 Email 並同步即可領取。':'製作卡片並下載或分享一次，即可領取已達成條件的優惠。'));const button=el('button','gold-button',localCardTask()?'保存進度領優惠':'製作卡片領優惠');button.type='button';button.addEventListener('click',()=>{if(cloud.ready&&localCardTask())cloudFlush();else startRewardTask();});card.append(button);}
+  else if(!unlocked)card.append(el('p','reward-hint',product?`收藏「${product.name}」即可保留優惠，完成卡片任務後領取，無須放入水晶球。`:`再參與 ${Math.max(0,b.required-progress.visits)} 個不同台灣日期，即可解鎖。`));
   else if(full){
     card.append(el('p','reward-conditions',b.conditions));
     if(!b.approved||!b.code)card.append(el('p','reward-pending','已解鎖，序號準備中。'));
@@ -783,6 +683,7 @@ function loadSprite(d){
   if(sprites.has(d))return sprites.get(d);
   const i=item(d);if(i.effect)return null;
   let image=customAssets.get(d)?.image||builtinAssets.get(Number(d));
+  if(!image&&(ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d])){if(!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]).then(()=>{if(sceneReady&&builtinAssets.has(Number(d))){renderUI();if($('item-dialog').open)renderItemDialog();drawFrame(0,performance.now());}});return null;}
   if(i.bonus&&!image)return null;
   const out=el('canvas'),oc=out.getContext('2d');
   if(image){out.width=image.naturalWidth;out.height=image.naturalHeight;oc.drawImage(image,0,0);}
@@ -797,9 +698,16 @@ function loadSprite(d){
   }catch(error){spriteErrors.add(`${d}: ${error.message}`);}
   const sprite={image:out,bounds};sprites.set(d,sprite);return sprite;
 }
-async function loadBonusAssets(){
-  await Promise.all(bonusDays().map(async d=>{if(builtinAssets.has(d))return;const src=ASSETS.bonusSprites?.[d];if(!src)return;try{const image=await imageLoad(src);builtinAssets.set(d,image);sprites.delete(d);}catch(error){spriteErrors.add(`bonus-${d}: ${error.message}`);}}));
+const itemAssetLoads=new Map();
+async function ensureItemAssets(days){
+ await Promise.all([...new Set(days.map(Number))].map(d=>{
+  if(builtinAssets.has(d)||spriteErrors.has('asset-'+d))return;if(itemAssetLoads.has(d))return itemAssetLoads.get(d);
+  if(BONUS_IDS.includes(d)&&!bonusDays().includes(d))return;
+  const src=ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d];if(!src)return;
+  const promise=imageLoad(src).then(image=>{builtinAssets.set(d,image);sprites.delete(d);}).catch(error=>{spriteErrors.add('asset-'+d);spriteErrors.add(`item-${d}: ${error.message}`);}).finally(()=>itemAssetLoads.delete(d));itemAssetLoads.set(d,promise);return promise;
+ }));
 }
+async function loadBonusAssets(){return ensureItemAssets(bonusDays());}
 function drawSprite(target,d,x,bottom,h){const sprite=loadSprite(d);if(!sprite)return null;const b=sprite.bounds,w=h*b.w/b.h;target.drawImage(sprite.image,b.x,b.y,b.w,b.h,x-w/2,bottom-h,w,h);return {x:x-w/2,y:bottom-h,w,h};}
 function drawThumbnail(target,d){
   const c=target.getContext('2d');c.clearRect(0,0,target.width,target.height);const i=item(d);
@@ -1292,6 +1200,7 @@ async function captureCardScene(){
   if(cardSnapshot&&sceneKey===cardSceneKey){renderChristmasCard();return true;}
   cardCapturing=true;updateCardButtons();$('card-open').disabled=true;$('card-status').textContent='正在拍下你的聖誕雪境…';
   try{
+    await ensureItemAssets(placedObjects().map(p=>p.day));
     if(!cardBackground)cardBackground=await imageLoad($('empty-globe').src);
     const snapshot=el('canvas');snapshot.width=SCENE_W;snapshot.height=SCENE_H;const cx=snapshot.getContext('2d'),editing=editMode;
     try{
@@ -1312,6 +1221,7 @@ async function openChristmasCard(){
 function downloadChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardExportBusy)return false;
   const url=URL.createObjectURL(blob),link=el('a');link.href=url;link.download=`dyson-christmas-card.${cardFormat()}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  markCardTask(cardFormat(),'download');
   $('card-status').textContent='已準備下載卡片檔案。可將檔案傳給想祝福的人。';return true;
 }
 function cardShareMetadata(){
@@ -1323,7 +1233,7 @@ async function shareChristmasCard(){
   let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.({files:[file]}));}catch{}
   if(!supported){downloadChristmasCard();$('card-status').textContent='此裝置未提供此格式的檔案分享，已準備下載。儲存後即可透過 LINE 等應用程式傳送。';return;}
   cardSaving=true;updateCardButtons();
-  try{await navigator.share({files:[file],...cardShareMetadata()});$('card-status').textContent='已交由裝置的分享功能處理。';}
+  try{await navigator.share({files:[file],...cardShareMetadata()});markCardTask(cardFormat(),'share');$('card-status').textContent='已交由裝置的分享功能處理。';}
   catch(err){if(err.name==='AbortError')$('card-status').textContent='已取消分享，卡片仍可下載或再次分享。';else {downloadChristmasCard();$('card-status').textContent='目前無法開啟分享，已準備下載卡片檔案。';}}
   finally{cardSaving=false;updateCardButtons();}
 }
@@ -1567,9 +1477,9 @@ async function cardDetectMP4(){
     cardMP4Support=!!(web||mime);return {web,mime,videoConfig};
   })();return cardSupportPromise;
 }
-function cardEncodingWait(promise,token,timeout=15000){
+function cardEncodingWait(promise,token,timeout=15000,message='影片編碼暫時沒有回應，請稍後再試，或先下載 GIF／PNG。'){
   let timer;
-  return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('影片編碼暫時沒有回應，請稍後再試，或先下載 GIF／PNG。')),timeout);})]).then(value=>{checkCardJob(token);return value;}).finally(()=>clearTimeout(timer));
+  return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(message)),timeout);})]).then(value=>{checkCardJob(token);return value;}).finally(()=>clearTimeout(timer));
 }
 async function encodeCardMP4WebCodecs(options,audio,token,support){
   const {Muxer,ArrayBufferTarget}=window.DysonMediaCodecs,target=new ArrayBufferTarget(),muxer=new Muxer({target,video:{codec:'avc',width:options.width,height:options.height,frameRate:options.fps},audio:{codec:'aac',sampleRate:audio.rate,numberOfChannels:1},fastStart:'in-memory',firstTimestampBehavior:'offset'});
@@ -1634,7 +1544,7 @@ async function generateCardMedia(){
   cardMaking('準備畫面');$('card-status').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
   try{
     await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));checkCardJob(token);
-    if(document.fonts?.ready){await cardEncodingWait(document.fonts.ready,token);checkCardJob(token);}
+    if(document.fonts?.ready){await cardEncodingWait(document.fonts.ready,token,30000,'字型載入較慢，內容已保留，請稍後再試一次。');checkCardJob(token);}
     let blob=null,chosen=null;
     if(format==='png'){
       blob=await encodeCardPNG(token);chosen={width:1200,height:2000};
@@ -1776,19 +1686,18 @@ document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if
 window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('globe-wrapper'));
 let lastDay=dateISO();setInterval(()=>{if(previewDate||document.hidden)return;const next=dateISO();if(next!==lastDay){lastDay=next;renderUI();if($('item-dialog').open&&currentModalDay&&dayState(currentModalDay)!=='owned')closeDialog('item-dialog');status('新的一天開始了，可領取今天以前的禮物。');if(cloud.ready)cloudConnect(cloud.email).catch(()=>{});}},10000);
 async function initialise(){
-  // A new visitor has no progress record to restore; show the scene directly.
-  $('scene-loading').hidden=!cloud.email;
-  renderUI();resize();
-  try{
-    // Load the embedded Traditional Chinese faces before measuring card text.
-    if(document.fonts?.load)await Promise.all([document.fonts.load('400 14px "Source Han Sans TC"'),document.fonts.load('700 14px "Source Han Sans TC"')]).catch(()=>{});
-    const [photo,atlasImage]=await Promise.all([imageLoad('./assets/images/scene/style-reference.webp'),imageLoad(ASSETS.atlas)]);
-    await Promise.all([photo.decode?.(),atlasImage.decode?.()]);originalPhoto=photo;atlas=atlasImage;sprites.clear();
-    for(const [d,src] of Object.entries(ASSETS.custom||{}))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
-    await Promise.all(Object.entries(ASSETS.sprites||{}).map(async([d,src])=>builtinAssets.set(Number(d),await imageLoad(src))));
-    await openDatabase();sprites.clear();sceneReady=true;$('scene-loading').hidden=true;renderUI();resize();requestAnimationFrame(loop);
-    if(cloud.email)cloudConnect(cloud.email).catch(()=>{});
-  }catch(e){$('scene-loading').hidden=false;$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材載入失敗，請重新整理活動頁面。';status(e.message,{persistent:true});}
+ $('scene-loading').hidden=true;renderUI();resize();
+ if(cloud.email)cloudConnect(cloud.email).catch(()=>{});
+ // Fonts are fetched concurrently and awaited only when exporting a text card.
+ if(document.fonts?.load)Promise.all([document.fonts.load('400 14px "Source Han Sans TC"'),document.fonts.load('700 14px "Source Han Sans TC"')]).catch(()=>{});
+ try{
+  const [photo,atlasImage]=await Promise.all([imageLoad('./assets/images/scene/style-reference.webp'),imageLoad(ASSETS.atlas)]);
+  originalPhoto=photo;atlas=atlasImage;sprites.clear();
+  for(const [d,src] of Object.entries(ASSETS.custom||{}))if(ownedDays().includes(Number(d)))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
+  sceneReady=true;timing.sceneReadyMs=Math.round(performance.now()-timing.started);renderUI();resize();requestAnimationFrame(loop);
+  ensureItemAssets(ownedDays()).then(()=>{renderUI();drawFrame(0,performance.now());});
+  openDatabase().then(()=>{sprites.clear();renderUI();drawFrame(0,performance.now());}).catch(()=>{});
+ }catch(error){$('scene-loading').hidden=false;$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材尚未載入，請重新整理。';status(error.message,{persistent:true});}
 }
 let currentTrackId=null,musicEnabled=false,musicPlaying=false,musicPlayToken=0,showMusic=false,showResumeTrack=null;
 const TRACKS=ASSETS.music||[],audio=$('music-player');audio.volume=.28;
@@ -1854,7 +1763,7 @@ document.addEventListener('visibilitychange',()=>{
   else if(showPausedAt!==null){const delay=performance.now()-showPausedAt;showStarted+=delay;showUntil+=delay;showPausedAt=null;}
 });
 
-window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,marketingSaving:!!cloud.marketingSaving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0})},Core,claimDay,openDay,setPreview,exitPreview,participationDates,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,capturedAt:()=>cardCapturedAt,shareMetadata:cardShareMetadata,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
+window.__DYSON_GAME__={cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,marketingSaving:!!cloud.marketingSaving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0})},Core,claimDay,openDay,setPreview,exitPreview,participationDates,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,capturedAt:()=>cardCapturedAt,shareMetadata:cardShareMetadata,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({timing:{...timing},errors:[...spriteErrors],atlas:[atlas.complete,atlas.naturalWidth],photo:[originalPhoto.complete,originalPhoto.naturalWidth],objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
 if(!safeRead(welcomeSeenKey,false))openWelcome();
 initialise();
 })();

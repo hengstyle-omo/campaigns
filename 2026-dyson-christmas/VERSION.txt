@@ -1,13 +1,16 @@
 2026 Dyson 聖誕收藏
-活動設定版本：42
-Apps Script：DysonProgress.gs v6（本次不需更新部署）
-完整包：20261024-v42
-差異更新基準：最後交付的 v41（僅含 v42 變更）
-資料夾：2026-dyson-christmas
-本次更新：四款產品雪境一段式介紹、產品識別上移、移除內層框與獨立特色段落
+活動設定版本：43
+Apps Script：DysonProgress.gs v7／serviceVersion 7／rulesVersion 3
+差異更新基準：已交付並上傳的 v42
+本次只提供差異更新包，不含完整素材。
+更新前請閱讀 DEPLOY-v43.md；必須執行 setupV7 並重新部署既有 Apps Script。
+公開 /exec 網址沿用既有設定。
 
-核心檔案 SHA-256：
-index.html 07df991eec1d6c80d23f7632a86ece689b59113cfea4fbdf377bbe7b4862c3fb
-assets/js/config.js fb85dafb7dc0f39d592c612ac9ab084f34d205ce20793477a93917f103f8dbe8
-assets/js/app.js 1030fac02340af2adf2fabdd5ce537a286e28d093d4ef683ff44cc1e0ddef311
-assets/css/style.css eead688786d4276a173a1a7b8e5d7e4c2214ebd7695d3a0c3be28730b23c8643
+檔案 SHA-256（不含本 VERSION.txt）：
+index.html 1bc7302528040209fe67e627414c5297ef700649d2f7702cd846a4b1308cd7d4
+assets/js/app.js 6bde24e891ae703d5e0bd65d86bc68c85edde5a6ba07d0612595fb70a635bd92
+assets/js/config.js a36559fa439f2f242e7073d3cfa6914145446e5c76bf956f8e4cecc7eec22116
+assets/css/style.css 3d9d704f201cf05495f918beb81f4b74d2ecc3cd82515e53bdedecec969aed11
+README.md 3219b68394a09652213ac0396efa7392bdfdef3ecd9c8a996f3a10baaefc63aa
+DEPLOY-v43.md 79ab15678c3f90430d5232abaccc09f6d25cb54f3e42e2c75e39f29ae6a686c9
+apps-script/DysonProgress.gs 7a62c156696642ff886e5584617bf374a828fa760aa2addf2eb8a34f84a92df9
