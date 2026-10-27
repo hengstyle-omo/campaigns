@@ -7,7 +7,8 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
-  "version": 48,
+  "paperSceneryRevision": "20261027-quiet-paper-overwrite",
+  "version": 49,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -666,32 +667,36 @@ window.DYSON_GAME_CONFIG = {
 };
 
 window.DYSON_ASSETS = {
+  "paperSceneryRevision": "20261027-quiet-paper-overwrite",
+  "background": "./assets/images/scene/snow-globe-background.webp?rev=20261027-2",
+  "effectThumbnails": {"1": "./assets/images/scene/day-01-snowflake.webp?rev=20261027-2", "13": "./assets/images/scene/day-13-golden-snowflake.webp?rev=20261027-2", "25": "./assets/images/scene/day-25-starlight-show.webp?rev=20261027-2"},
+
   "atlas": "./assets/images/scene/transparent-atlas.png",
   "visualStyle": "paper-relief-v1",
   "custom": {},
   "sprites": {
-    "2": "./assets/images/scene/day-02-fir-tree.webp",
-    "3": "./assets/images/scene/day-03-ribbon-gift.webp",
-    "4": "./assets/images/scene/day-04-christmas-house.webp",
+    "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261027-2",
+    "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261027-2",
+    "4": "./assets/images/scene/day-04-christmas-house.webp?rev=20261027-2",
     "5": "./assets/images/products/hd19-snowglobe.png",
-    "6": "./assets/images/scene/day-06-snowman.webp",
-    "7": "./assets/images/scene/day-07-christmas-bauble.webp",
+    "6": "./assets/images/scene/day-06-snowman.webp?rev=20261027-2",
+    "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261027-2",
     "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp",
-    "9": "./assets/images/scene/day-09-street-lamp.webp",
+    "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261027-2",
     "10": "./assets/images/products/sv50-snowglobe.png",
     "11": "./assets/images/scene/day-11-reindeer.webp",
-    "12": "./assets/images/scene/day-12-christmas-tree.webp",
-    "14": "./assets/images/scene/day-14-christmas-wreath.webp",
+    "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261027-2",
+    "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261027-2",
     "15": "./assets/images/products/hj10-snowglobe.png",
-    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp",
-    "17": "./assets/images/scene/day-17-gingerbread.webp",
-    "18": "./assets/images/scene/day-18-clock-tower.webp",
-    "19": "./assets/images/scene/day-19-candy-cane.webp",
+    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp?rev=20261027-2",
+    "17": "./assets/images/scene/day-17-gingerbread.webp?rev=20261027-2",
+    "18": "./assets/images/scene/day-18-clock-tower.webp?rev=20261027-2",
+    "19": "./assets/images/scene/day-19-candy-cane.webp?rev=20261027-2",
     "20": "./assets/images/products/bp10-snowglobe.png",
-    "21": "./assets/images/scene/day-21-department-store-dyson-v38.webp",
-    "22": "./assets/images/scene/day-22-golden-sleigh.webp",
+    "21": "./assets/images/scene/day-21-department-store-dyson-v38.webp?rev=20261027-2",
+    "22": "./assets/images/scene/day-22-golden-sleigh.webp?rev=20261027-2",
     "23": "./assets/images/scene/day-23-fat-cat-santa-tail-v34.webp",
-    "24": "./assets/images/scene/day-24-christmas-star.webp"
+    "24": "./assets/images/scene/day-24-christmas-star.webp?rev=20261027-2"
   },
   "artDirection": {
     "mode": "Built-in image_gen",

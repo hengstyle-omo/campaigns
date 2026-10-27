@@ -296,6 +296,7 @@ if(!safeRead(productCopyV43,false)){
  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(productCopyV43,true);
 }
 
+const PAPER_SCENERY_DAYS=[2, 3, 4, 6, 7, 9, 12, 14, 16, 17, 18, 19, 21, 22, 24];
 const SCENE_REPLACED_DAYS=[8,16,19];
 const sceneCopyKey=STORAGE_PREFIX+'scene-copy-'+BASE_CONFIG.sceneRevision;
 if(!safeRead(sceneCopyKey,false)){
@@ -425,7 +426,7 @@ let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=f
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
-  if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4';video.currentTime=0;}
+  if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-2';video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
   try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始收藏');}
   catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
@@ -434,7 +435,7 @@ function openWelcome({progressOnly=false}={}){
   welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'留住你的聖誕進度':'活動介紹';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
-  video.poster='./assets/video/welcome-poster.webp';if(!progressOnly){video.src='./assets/video/welcome.mp4';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
+  video.poster='./assets/video/welcome-poster.webp?rev=20261027-2';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-2';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
   if(progressOnly)return;
   welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始收藏。');}},8000);
@@ -448,7 +449,7 @@ $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始收藏');});
-$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/images/scene/style-reference.webp';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
+$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261027-2';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
 $('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始收藏。');});
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
 $('welcome-dialog').addEventListener('close',cleanupWelcome);
@@ -704,7 +705,7 @@ async function ensureItemAssets(days){
  await Promise.all([...new Set(days.map(Number))].map(d=>{
   if(builtinAssets.has(d)||spriteErrors.has('asset-'+d))return;if(itemAssetLoads.has(d))return itemAssetLoads.get(d);
   if(BONUS_IDS.includes(d)&&!bonusDays().includes(d))return;
-  const src=ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d];if(!src)return;
+  const src=ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d]||ASSETS.effectThumbnails?.[d];if(!src)return;
   const promise=imageLoad(src).then(image=>{builtinAssets.set(d,image);sprites.delete(d);}).catch(error=>{spriteErrors.add('asset-'+d);spriteErrors.add(`item-${d}: ${error.message}`);}).finally(()=>itemAssetLoads.delete(d));itemAssetLoads.set(d,promise);return promise;
  }));
 }
@@ -712,7 +713,7 @@ async function loadBonusAssets(){return ensureItemAssets(bonusDays());}
 function drawSprite(target,d,x,bottom,h){const sprite=loadSprite(d);if(!sprite)return null;const b=sprite.bounds,w=h*b.w/b.h;target.drawImage(sprite.image,b.x,b.y,b.w,b.h,x-w/2,bottom-h,w,h);return {x:x-w/2,y:bottom-h,w,h};}
 function drawThumbnail(target,d){
   const c=target.getContext('2d');c.clearRect(0,0,target.width,target.height);const i=item(d);
-  if(i.effect){c.save();c.fillStyle='#e2c48e';c.textAlign='center';c.textBaseline='middle';c.font=`${Math.round(target.height*.35)}px Georgia,serif`;c.fillText(i.effect==='snow'?'❄':i.effect==='goldSnow'?'✧':i.effect==='warmth'?'✺':'✦',target.width/2,target.height/2);c.restore();return;}
+  if(i.effect){const image=builtinAssets.get(Number(d));if(image&&ASSETS.effectThumbnails?.[d]){const scale=Math.min(target.width*.86/image.naturalWidth,target.height*.86/image.naturalHeight),w=image.naturalWidth*scale,h=image.naturalHeight*scale;c.drawImage(image,(target.width-w)/2,(target.height-h)/2,w,h);return;}if(!image&&ASSETS.effectThumbnails?.[d]&&!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]).then(()=>{if(sceneReady&&builtinAssets.has(Number(d))){renderUI();if($('item-dialog').open)renderItemDialog();}});c.save();c.fillStyle='#e2c48e';c.textAlign='center';c.textBaseline='middle';c.font=`${Math.round(target.height*.35)}px Georgia,serif`;c.fillText(i.effect==='snow'?'❄':i.effect==='goldSnow'?'✧':i.effect==='warmth'?'✺':'✦',target.width/2,target.height/2);c.restore();return;}
   const s=loadSprite(d);if(!s)return;const b=s.bounds;let h=target.height*.84;if(h*b.w/b.h>target.width*.86)h=target.width*.86*b.h/b.w;drawSprite(c,d,target.width/2,target.height*.92,h);
 }
 function globePath(c){c.beginPath();c.moveTo(322,890);c.bezierCurveTo(193,774,153,538,248,355);c.bezierCurveTo(332,197,486,157,622,158);c.bezierCurveTo(833,155,1000,304,1046,504);c.bezierCurveTo(1076,659,1014,824,941,891);c.bezierCurveTo(796,936,464,938,322,890);c.closePath();}
@@ -1108,10 +1109,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(PAPER_SCENERY_DAYS.includes(Number(r.day))&&r.paperSceneryRevision!==BASE_CONFIG.paperSceneryRevision)continue;if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,paperSceneryRevision:BASE_CONFIG.paperSceneryRevision,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}
