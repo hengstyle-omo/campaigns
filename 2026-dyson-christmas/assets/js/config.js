@@ -9,7 +9,7 @@ window.DYSON_CLOUD_CONFIG = {
 window.DYSON_GAME_CONFIG = {
   "deerPaperRevision": "20261027-quiet-paper-deer",
   "paperSceneryRevision": "20261027-quiet-paper-overwrite",
-  "version": 49,
+  "version": 51,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -62,19 +62,20 @@ window.DYSON_GAME_CONFIG = {
     },
     {
       "day": 4,
-      "type": "聖誕造景",
-      "name": "暖光聖誕屋",
-      "description": "加入窗戶透出暖光的小屋。",
+      "type": "角色小物",
+      "name": "聖誕帽",
+      "description": "加入一頂紅色與米白相間的素面紙雕聖誕帽，替雪境添上一點聖誕氣息。",
       "benefit": null,
-      "assetNeed": "暖光小屋去背圖，保留屋頂積雪",
+      "assetNeed": "低細節紙雕聖誕帽透明圖，完整帽緣與帽球",
       "layout": {
-        "x": 874,
-        "y": 800,
-        "h": 210
+        "x": 625,
+        "y": 855,
+        "h": 115
       },
       "atlas": 2,
-      "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
-      "sourceDay": 5
+      "hint": "一頂小小聖誕帽，替你的冬日收藏添上節日色彩。",
+      "sourceDay": 5,
+      "calendarName": "聖誕帽"
     },
     {
       "day": 5,
@@ -140,7 +141,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 8,
       "type": "角色小物",
       "name": "飛躍馴鹿",
-      "description": "披著素面深藍圍巾的紙雕馴鹿躍進雪境，可自由移往球內上方，與站立的小麋鹿一起迎接聖誕。",
+      "description": "披著深藍金紋圍巾的馴鹿躍進雪境，可自由移往球內上方，與其他收藏一起迎接聖誕。",
       "benefit": null,
       "assetNeed": "微立體紙雕飛躍馴鹿透明圖",
       "layout": {
@@ -198,19 +199,20 @@ window.DYSON_GAME_CONFIG = {
     },
     {
       "day": 11,
-      "type": "角色小物",
-      "name": "雪地小麋鹿",
-      "description": "加入一隻站立的小麋鹿。",
+      "type": "聖誕造景",
+      "name": "流星",
+      "description": "加入一顆拖著米白與香檳金紙層尾跡的流星，可自由移到球內上方，收藏一個冬夜心願。",
       "benefit": null,
-      "assetNeed": "站立麋鹿去背圖，完整四肢",
+      "assetNeed": "低細節紙雕流星透明圖，含完整星體與尾跡",
       "layout": {
-        "x": 862,
-        "y": 850,
-        "h": 154.0
+        "x": 825,
+        "y": 400,
+        "h": 150
       },
       "atlas": 7,
-      "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。",
-      "sourceDay": 11
+      "hint": "把一顆流星收藏進雪境，留住冬夜的小小心願。",
+      "sourceDay": 11,
+      "calendarName": "流星"
     },
     {
       "day": 12,
@@ -664,12 +666,14 @@ window.DYSON_GAME_CONFIG = {
   "santaTailRevision": "20261023-santa-tail-v34",
   "penguinRevision": "20261023-soft-penguin-v36",
   "softAnimalsRevision": "20261024-sea-otter-face-v48",
-  "departmentStoreRevision": "20261023-dyson-sign-v38"
+  "departmentStoreRevision": "20261023-dyson-sign-v38",
+  "collectionContentRevision": "20261027-hat-meteor",
+  "restoredArtworkRevision": "20261027-uploaded-originals"
 };
 
 window.DYSON_ASSETS = {
   "paperSceneryRevision": "20261027-quiet-paper-overwrite",
-  "background": "./assets/images/scene/snow-globe-background.webp?rev=20261027-2",
+  "background": "./assets/images/scene/snow-globe-background.webp?rev=20261027-5",
   "effectThumbnails": {"1": "./assets/images/scene/day-01-snowflake.webp?rev=20261027-2", "13": "./assets/images/scene/day-13-golden-snowflake.webp?rev=20261027-2", "25": "./assets/images/scene/day-25-starlight-show.webp?rev=20261027-2"},
 
   "atlas": "./assets/images/scene/transparent-atlas.png",
@@ -677,15 +681,15 @@ window.DYSON_ASSETS = {
   "custom": {},
   "sprites": {
     "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261027-2",
-    "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261027-2",
-    "4": "./assets/images/scene/day-04-christmas-house.webp?rev=20261027-2",
+    "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261027-5",
+    "4": "./assets/images/scene/day-04-christmas-house.webp?rev=20261027-4",
     "5": "./assets/images/products/hd19-snowglobe.png",
-    "6": "./assets/images/scene/day-06-snowman.webp?rev=20261027-2",
-    "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261027-2",
-    "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp?rev=20261027-3",
+    "6": "./assets/images/scene/day-06-snowman.webp?rev=20261027-5",
+    "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261027-5",
+    "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp?rev=20261027-5",
     "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261027-2",
     "10": "./assets/images/products/sv50-snowglobe.png",
-    "11": "./assets/images/scene/day-11-reindeer.webp?rev=20261027-3",
+    "11": "./assets/images/scene/day-11-reindeer.webp?rev=20261027-4",
     "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261027-2",
     "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261027-2",
     "15": "./assets/images/products/hj10-snowglobe.png",

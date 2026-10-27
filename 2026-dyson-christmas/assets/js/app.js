@@ -296,6 +296,26 @@ if(!safeRead(productCopyV43,false)){
  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(productCopyV43,true);
 }
 
+// Refresh the two replaced collectibles without changing participant progress or layouts.
+// Restore only the uploaded artwork; retain claims, placements and participant layouts.
+const RESTORED_ARTWORK_DAYS=[3,6,7,8];
+const restoredCopyKey=STORAGE_PREFIX+'restored-artwork-'+BASE_CONFIG.restoredArtworkRevision;
+if(!safeRead(restoredCopyKey,false)){
+  if(settings[8])for(const k of ['description','assetNeed'])delete settings[8][k];
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(restoredCopyKey,true);
+}
+const CONTENT_REPLACED_DAYS=[4,11];
+const contentCopyKey=STORAGE_PREFIX+'collection-content-'+BASE_CONFIG.collectionContentRevision;
+if(!safeRead(contentCopyKey,false)){
+  const formerLayouts={4:{x:874,y:800,h:210},11:{x:862,y:850,h:154}};
+  for(const d of CONTENT_REPLACED_DAYS){
+    if(!settings[d])continue;
+    for(const k of ['name','calendarName','type','description','hint','assetNeed','sourceDay','atlas'])delete settings[d][k];
+    const old=formerLayouts[d],layout=settings[d].layout;
+    if(layout&&layout.x===old.x&&layout.y===old.y&&layout.h===old.h)delete settings[d].layout;
+  }
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(contentCopyKey,true);
+}
 const DEER_PAPER_DAYS=[8,11];
 const deerPaperCopyKey=STORAGE_PREFIX+'deer-paper-copy-'+BASE_CONFIG.deerPaperRevision;
 if(!safeRead(deerPaperCopyKey,false)){
@@ -432,7 +452,7 @@ let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=f
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
-  if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-2';video.currentTime=0;}
+  if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
   try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始收藏');}
   catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
@@ -441,7 +461,7 @@ function openWelcome({progressOnly=false}={}){
   welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'留住你的聖誕進度':'活動介紹';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
-  video.poster='./assets/video/welcome-poster.webp?rev=20261027-2';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-2';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
+  video.poster='./assets/video/welcome-poster.webp?rev=20261027-5';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
   if(progressOnly)return;
   welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始收藏。');}},8000);
@@ -455,7 +475,7 @@ $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始收藏');});
-$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261027-2';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
+$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261027-5';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
 $('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始收藏。');});
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
 $('welcome-dialog').addEventListener('close',cleanupWelcome);
@@ -1115,10 +1135,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(DEER_PAPER_DAYS.includes(Number(r.day))&&r.deerPaperRevision!==BASE_CONFIG.deerPaperRevision)continue;if(PAPER_SCENERY_DAYS.includes(Number(r.day))&&r.paperSceneryRevision!==BASE_CONFIG.paperSceneryRevision)continue;if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(RESTORED_ARTWORK_DAYS.includes(Number(r.day))&&r.restoredArtworkRevision!==BASE_CONFIG.restoredArtworkRevision)continue;if(CONTENT_REPLACED_DAYS.includes(Number(r.day))&&r.collectionContentRevision!==BASE_CONFIG.collectionContentRevision)continue;if(DEER_PAPER_DAYS.includes(Number(r.day))&&r.deerPaperRevision!==BASE_CONFIG.deerPaperRevision)continue;if(PAPER_SCENERY_DAYS.includes(Number(r.day))&&r.paperSceneryRevision!==BASE_CONFIG.paperSceneryRevision)continue;if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,deerPaperRevision:BASE_CONFIG.deerPaperRevision,paperSceneryRevision:BASE_CONFIG.paperSceneryRevision,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,restoredArtworkRevision:BASE_CONFIG.restoredArtworkRevision,collectionContentRevision:BASE_CONFIG.collectionContentRevision,deerPaperRevision:BASE_CONFIG.deerPaperRevision,paperSceneryRevision:BASE_CONFIG.paperSceneryRevision,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}
@@ -1739,7 +1759,7 @@ async function initialise(){
  // Fonts are fetched concurrently and awaited only when exporting a text card.
  if(document.fonts?.load)Promise.all([document.fonts.load('400 14px "Source Han Sans TC"'),document.fonts.load('700 14px "Source Han Sans TC"')]).catch(()=>{});
  try{
-  const [photo,atlasImage]=await Promise.all([imageLoad('./assets/images/scene/style-reference.webp'),imageLoad(ASSETS.atlas)]);
+  const [photo,atlasImage]=await Promise.all([imageLoad('./assets/images/scene/style-reference.webp?rev=20261027-5'),imageLoad(ASSETS.atlas)]);
   originalPhoto=photo;atlas=atlasImage;sprites.clear();
   for(const [d,src] of Object.entries(ASSETS.custom||{}))if(ownedDays().includes(Number(d)))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
   sceneReady=true;timing.sceneReadyMs=Math.round(performance.now()-timing.started);renderUI();resize();requestAnimationFrame(loop);

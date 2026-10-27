@@ -1,32 +1,18 @@
-# v49 更新方式
+# v51 同名覆蓋更新
 
-基準為 v48。請先保留目前網站，再將本包 `2026-dyson-christmas/` 內檔案按相同路徑合併至 GitHub 的 `campaigns/2026-dyson-christmas/`，覆蓋同名檔並新增效果代表圖；不需刪除舊素材或整個活動資料夾。
+基準為 v50。將本包 `2026-dyson-christmas/` 內檔案按相同路徑合併至 GitHub 的 `campaigns/2026-dyson-christmas/`，覆蓋同名檔；勿刪除整個活動資料夾。
 
-## 需上傳
+## 恢復的六個原檔
 
-- `index.html`
-- `assets/js/app.js`、`assets/js/config.js`
-- 本包 `assets/images/scene/` 內的 21 張 WebP；原有造景及背景使用原本檔名直接覆蓋，3 張效果代表圖為新增檔案
-- `assets/video/welcome.mp4`、`assets/video/welcome-poster.webp`
-- `README.md`、`VERSION.txt`、`UPDATE.md`、`ASSET-NOTES.md`、`PREVIEW.webp`
+- `assets/images/scene/day-03-ribbon-gift.webp`
+- `assets/images/scene/day-06-snowman.webp`
+- `assets/images/scene/day-07-christmas-bauble.webp`
+- `assets/images/scene/day-08-leaping-reindeer-paper-v28.webp`
+- `assets/images/scene/snow-globe-background.webp`
+- `assets/images/scene/style-reference.webp`
 
-GitHub Pages 部署完成後重新整理，新資源標記為 `20261027-quiet-paper-deer`。若快取仍顯示舊圖，可強制重新整理。新版會略過舊造景的自訂圖片快取，保留原收藏與位置。
+圖片來自使用者本次上傳，原樣覆蓋，不加版本檔名。請一併覆蓋 index.html、app.js、config.js、介紹影片與封面，以更新快取、背景與卡片輸出。
 
-**本次不需更新 Apps Script、重新部署後端或執行 setup。** 兩款馴鹿沿原檔名更新；四款產品、貓咪聖誕老人與十款限定動物沿用原圖。請勿刪除 `assets/images/products/`、`assets/images/bonus/` 或貓咪聖誕老人圖片。
+Day 4「聖誕帽」、Day 11「流星」保留。既有收藏、擺放位置、Email、權限與優惠券進度保留。這六件圖與程式以外的素材無需重新上傳。
 
-## 驗收
-
-1. 開啟活動介紹，影片與封面應使用簡化紙雕雪境。
-2. 收藏列表中，新造景應為素面與少量紙層，沒有舊版密集葉紋；第一場雪、金色雪花及星光秀都有同風格代表圖。
-3. 放入原產品、動物與新造景，確認可以繼續拖曳、縮放及保存位置。
-4. 製作 PNG／GIF／MP4，確認皆使用同一新背景與素材。GIF／MP4 仍為五秒；星光秀網頁仍為 9.5 秒。
-
-`PREVIEW.webp` 是新素材總覽；詳細範圍、保留項目與生成提示詞見 `ASSET-NOTES.md`。本包僅做視覺更新，原有音樂解鎖與音訊行為沿用 v48。
-
-## 同名覆蓋版
-
-更新素材不再使用 `paper-v49` 資料夾或 `-v49` 檔名。15 件造景、空球背景與介紹影片沿用 v48 的原路徑與檔名，三款效果代表圖使用固定名稱。程式以網址查詢參數更新快取，不改圖片實際檔名。若已上傳前一包，仍直接覆蓋本包即可；網站不再引用舊的 `paper-v49` 目錄。
-
-## 兩款鹿補充更新
-
-本包包含先前低細節造景更新，加上雪地小麋鹿（12/11）及飛躍馴鹿（12/08）。兩款鹿保留各自姿態，移除葉紋、星紋與亮金裝飾。原圖檔名與路徑沿用，無須手動改名。請整包按相同路徑合併覆蓋；已套用前一包也可以直接覆蓋。
+本次無需更新 Apps Script。先前僅討論的音樂解鎖／音訊切換調整仍未併入；本次也未變更程式的水晶球裁切邊界。
