@@ -5,8 +5,9 @@
 ## 保留原圖
 
 - 產品：12/05 HD19、12/10 SV50、12/15 HJ10、12/20 BP10。
-- 動物：12/08 飛躍馴鹿、12/11 雪地小麋鹿、12/23 貓咪造型聖誕老公公，以及 101–110 十款限定動物。
-- 保留圖的路徑、檔案內容與商品／動物 ID 均未更動；檔案 SHA-256 比對共 17 件完全一致。
+- 保留動物：12/23 貓咪造型聖誕老公公，以及 101–110 十款限定動物。
+- 本次授權例外：12/08 飛躍馴鹿及 12/11 雪地小麋鹿重製為素面低細節紙雕，沿原檔名覆蓋。
+- 保留圖的路徑、檔案內容與商品／動物 ID 均未更動；檔案 SHA-256 比對共 15 件完全一致。
 
 ## 新素材
 
@@ -99,3 +100,7 @@ undefined Subject: One slender plain navy Victorian street lamp, single simple g
 ### prompt-background
 
 Use case: style-transfer. Image 1 is the EDIT TARGET and absolute GEOMETRY LOCK, image 2 is the paper-collage palette/style reference only. Restyle the empty Dyson snow globe background with QUIET MINIMAL Nordic matte cut-paper scenery so the separately added animal characters and Dyson products remain the focal point. Preserve the EXACT portrait image ratio 1168:1346, camera, globe center, glass silhouette, base footprint and floor height from image 1. Globe center at x53.5%/y40.7%, glass top y11.8%, glass rim bottom y68%, snow floor centered y65.6%, pedestal ends y85%. No moving or resizing the globe, no new camera angle. Inside globe completely EMPTY, only a low smooth thin ivory paper snow floor; no collectibles, products, animals, houses, interior trees, stars or falling particles. Redesign the busy glittery metallic rim into a subtle clear transparent glass outline with restrained thin cream/champagne edge reflections, no broad sparkling gold streaks. Base remains plain matte midnight navy with narrow subdued champagne trim, preserve exact lowercase 'dyson' logo shape and its location. Background is a nearly blank muted midnight navy fine-paper field, very faint two-layer dark paper tree silhouettes ONLY along the extreme outer edges, no tiny branches or leaf patterns. Foreground smooth broad ivory paper snowbanks with two soft pale blue-gray layer shadows, NO stones, coarse granules, speckles, glitter or floral motifs. At least 85% of surfaces unpatterned. Low contrast scenery, gentle upper-left lighting, elegant adult Christmas campaign, shallow paper layering, NOT photorealistic or shiny plastic. Original structure and all geometry locked, only rendering/material simplification. No other text or frames.
+
+## 兩款鹿補充
+
+內建 ImageGen 生成，透明背景，移除身體與圍巾密集圖案；兩鹿姿態維持飛躍與站立。最終提示詞見 DEER-PROMPTS.json。WebP 僅做格式轉換與等比縮小，未以程式重畫造型。

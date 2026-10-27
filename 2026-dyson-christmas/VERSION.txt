@@ -1,16 +1,17 @@
-Dyson Christmas v49 同名覆蓋版
+Dyson Christmas v49 低細節紙雕＋兩款鹿，同名覆蓋版
 基準：v48 或已上傳的 v49
-圖片及影片沿用原檔名覆蓋，新增效果代表圖不含版本後綴。
-四款產品與所有動物原圖保留。Apps Script 無需更新。
-資源快取：20261027-quiet-paper-overwrite
+更新：15 件造景、2 款鹿、3 效果縮圖、空球背景與介紹影片。
+四款產品、貓咪聖誕老人與十款限定動物維持原圖。Apps Script 不需更新。
+兩款鹿沿用原檔名；快取更新：rev=20261027-3。
+驗證：Chromium 35 素材載入、桌機／手機、5 秒介紹影片，無 JS 錯誤或 404；15 件保留圖檔 SHA-256 相同。
 
-檔案 SHA-256（不含本 VERSION.txt）：
-index.html 25b537a3dab12e6110db9c94494a43eb728a21b4f8c8a3d405686ac666b591c5
-assets/js/app.js 562be96782892e1280c7749189e352b3ee2edf4c3727587cbd223da9b655aa98
-assets/js/config.js 7561ad586dd8055b2ca1a2f2b3e8f2d8b750ed5fd757e7d49f7b02ea6323625e
-README.md 0af4e60d7ec534ad367ecbd59c3eaf9f4539b06e33e54f984ce123c78eaaec51
-UPDATE.md 7fd072c07ae99ab2afa2f03dfe583321374b223a12822162e476763c33121c95
-ASSET-NOTES.md b6b6d42e5e73af5e441290da30b1981c3ff8c55b1ef965da0e985b6e0062dbb0
+SHA-256（不含 VERSION.txt）：
+index.html 123687fe9c132b429953a0123bab57f36713609747bd827277363bef69a1ce90
+assets/js/app.js 78d45fa61f847ec7c1875cf5e2279e3ba5de055552bd2440cc31fa885b33b18e
+assets/js/config.js 6b2d8b7d236cd12b6e7f7a610a1ac00b0b409f3013fdc57241ce5474ecdb2823
+README.md e05feb4aef6ec88e57c41b84bcab5b81239891a3236551f93e5a18abf925fb6a
+UPDATE.md eed3a3ae40fbaefffd8729489d865037a345add45ec2c4994c584350f41d941d
+ASSET-NOTES.md 2a63dcf59d3618c1436c0f7b76003630a4b3e7021bbf3a50fce0a8e9d66c0463
 PREVIEW.webp 036342f95ce33767c3dd8fbb84444b192b367ecd68da70b3364247445b0c71ac
 assets/images/scene/day-02-fir-tree.webp a8df2b1fb9ef9114ca758ee8441083907edd495eff94325a78b0f903cc8ad3b1
 assets/images/scene/day-03-ribbon-gift.webp 5416e0c230ba13f0877252b79fe33f46580b93467af7ab90fb98ed007bd1709a
@@ -33,3 +34,7 @@ assets/images/scene/day-25-starlight-show.webp 25964086f925eac627a0dc0196f04ce87
 assets/images/scene/snow-globe-background.webp ca65eefce4446c6fa6ff7747717a07e75d14cbbcc044fb47eec5f7a20076ca5a
 assets/video/welcome.mp4 078c7ea2b9fb2a60eb6fb23bee2a399087e41424e6cf7799babeae58fdfcae59
 assets/video/welcome-poster.webp 868274629f34f44ce3e9151b64b6c5443d7886a9d8d41e676481d567a878f5d3
+assets/images/scene/day-08-leaping-reindeer-paper-v28.webp ba5acf67de012d3b0dd422a27c31875bd7011fc566ee33b96b23306bd33aa324
+assets/images/scene/day-11-reindeer.webp 66266ead1733e4511565036a5394300e8a889b64482c83f12bf3517b2e777ae4
+DEER-PREVIEW.webp 6c35ce962b3f301635f63a4e4fa2ed1ff1aaf3e851ef1922feef4c73259abcf9
+DEER-PROMPTS.json 7c11911ac62b616f22c9878c5f13aa6d72027a29de27f01e9fd38eb5ab828480

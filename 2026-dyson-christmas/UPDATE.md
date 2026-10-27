@@ -6,13 +6,13 @@
 
 - `index.html`
 - `assets/js/app.js`、`assets/js/config.js`
-- 本包 `assets/images/scene/` 內的 19 張 WebP；原有造景及背景使用原本檔名直接覆蓋，3 張效果代表圖為新增檔案
+- 本包 `assets/images/scene/` 內的 21 張 WebP；原有造景及背景使用原本檔名直接覆蓋，3 張效果代表圖為新增檔案
 - `assets/video/welcome.mp4`、`assets/video/welcome-poster.webp`
 - `README.md`、`VERSION.txt`、`UPDATE.md`、`ASSET-NOTES.md`、`PREVIEW.webp`
 
-GitHub Pages 部署完成後重新整理，新資源標記為 `20261027-quiet-paper-overwrite`。若快取仍顯示舊圖，可強制重新整理。新版會略過舊造景的自訂圖片快取，保留原收藏與位置。
+GitHub Pages 部署完成後重新整理，新資源標記為 `20261027-quiet-paper-deer`。若快取仍顯示舊圖，可強制重新整理。新版會略過舊造景的自訂圖片快取，保留原收藏與位置。
 
-**本次不需更新 Apps Script、重新部署後端或執行 setup。** 四款產品及所有動物不在差異包內，直接沿用目前網站的原檔；不要刪除 `assets/images/products/`、`assets/images/bonus/` 或原本兩款馴鹿、貓咪聖誕老人圖片。
+**本次不需更新 Apps Script、重新部署後端或執行 setup。** 兩款馴鹿沿原檔名更新；四款產品、貓咪聖誕老人與十款限定動物沿用原圖。請勿刪除 `assets/images/products/`、`assets/images/bonus/` 或貓咪聖誕老人圖片。
 
 ## 驗收
 
@@ -26,3 +26,7 @@ GitHub Pages 部署完成後重新整理，新資源標記為 `20261027-quiet-pa
 ## 同名覆蓋版
 
 更新素材不再使用 `paper-v49` 資料夾或 `-v49` 檔名。15 件造景、空球背景與介紹影片沿用 v48 的原路徑與檔名，三款效果代表圖使用固定名稱。程式以網址查詢參數更新快取，不改圖片實際檔名。若已上傳前一包，仍直接覆蓋本包即可；網站不再引用舊的 `paper-v49` 目錄。
+
+## 兩款鹿補充更新
+
+本包包含先前低細節造景更新，加上雪地小麋鹿（12/11）及飛躍馴鹿（12/08）。兩款鹿保留各自姿態，移除葉紋、星紋與亮金裝飾。原圖檔名與路徑沿用，無須手動改名。請整包按相同路徑合併覆蓋；已套用前一包也可以直接覆蓋。

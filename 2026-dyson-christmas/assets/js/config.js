@@ -7,6 +7,7 @@ window.DYSON_CLOUD_CONFIG = {
 };
 
 window.DYSON_GAME_CONFIG = {
+  "deerPaperRevision": "20261027-quiet-paper-deer",
   "paperSceneryRevision": "20261027-quiet-paper-overwrite",
   "version": 49,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
@@ -139,7 +140,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 8,
       "type": "角色小物",
       "name": "飛躍馴鹿",
-      "description": "披著深藍金紋圍巾的馴鹿躍進雪境，可自由移往球內上方，與站立的小麋鹿一起迎接聖誕。",
+      "description": "披著素面深藍圍巾的紙雕馴鹿躍進雪境，可自由移往球內上方，與站立的小麋鹿一起迎接聖誕。",
       "benefit": null,
       "assetNeed": "微立體紙雕飛躍馴鹿透明圖",
       "layout": {
@@ -681,10 +682,10 @@ window.DYSON_ASSETS = {
     "5": "./assets/images/products/hd19-snowglobe.png",
     "6": "./assets/images/scene/day-06-snowman.webp?rev=20261027-2",
     "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261027-2",
-    "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp",
+    "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp?rev=20261027-3",
     "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261027-2",
     "10": "./assets/images/products/sv50-snowglobe.png",
-    "11": "./assets/images/scene/day-11-reindeer.webp",
+    "11": "./assets/images/scene/day-11-reindeer.webp?rev=20261027-3",
     "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261027-2",
     "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261027-2",
     "15": "./assets/images/products/hj10-snowglobe.png",
