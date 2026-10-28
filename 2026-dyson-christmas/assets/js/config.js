@@ -9,7 +9,7 @@ window.DYSON_CLOUD_CONFIG = {
 window.DYSON_GAME_CONFIG = {
   "deerPaperRevision": "20261027-quiet-paper-deer",
   "paperSceneryRevision": "20261027-quiet-paper-overwrite",
-  "version": 52,
+  "version": 53,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -667,7 +667,7 @@ window.DYSON_GAME_CONFIG = {
   "penguinRevision": "20261023-soft-penguin-v36",
   "softAnimalsRevision": "20261024-sea-otter-face-v48",
   "departmentStoreRevision": "20261023-dyson-sign-v38",
-  "collectionContentRevision": "20261027-hat-meteor",
+  "collectionContentRevision": "20261028-hat-meteor-originals",
   "restoredArtworkRevision": "20261027-uploaded-originals"
 };
 
@@ -682,14 +682,14 @@ window.DYSON_ASSETS = {
   "sprites": {
     "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261027-2",
     "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261027-5",
-    "4": "./assets/images/scene/day-04-christmas-house.webp?rev=20261028-preview-sync",
+    "4": "./assets/images/scene/day-04-christmas-house.webp?rev=20261028-artwork-repair",
     "5": "./assets/images/products/hd19-snowglobe.png",
     "6": "./assets/images/scene/day-06-snowman.webp?rev=20261027-5",
     "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261027-5",
     "8": "./assets/images/scene/day-08-leaping-reindeer-paper-v28.webp?rev=20261027-5",
     "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261027-2",
     "10": "./assets/images/products/sv50-snowglobe.png",
-    "11": "./assets/images/scene/day-11-reindeer.webp?rev=20261028-preview-sync",
+    "11": "./assets/images/scene/day-11-reindeer.webp?rev=20261028-artwork-repair",
     "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261027-2",
     "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261027-2",
     "15": "./assets/images/products/hj10-snowglobe.png",

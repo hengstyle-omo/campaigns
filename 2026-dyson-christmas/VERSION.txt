@@ -1,13 +1,16 @@
-Dyson Christmas v52
-基準：v51
-修正：收藏列表縮圖與水晶球圖片同步。
-圖檔與後端不變；保留活動進度與擺放位置。
-測試：舊版重現、新版修正，32 件縮圖核對、冷載入、手機、物件介紹與 PNG 輸出通過。
-資源版本：20261028-preview-sync
+Dyson Christmas v53
+基準：v52
+修正：補齊正式站未正確替換的聖誕帽與流星原圖。
+圖片沿原檔名覆蓋，不新增版本檔名。
+資源版本：20261028-artwork-repair
+驗證：正式站舊圖重現；正式站頁面套用補正檔的測試瀏覽器中，兩件新圖核對通過。
+後端、其餘素材、收藏進度與位置不變。
 
 SHA-256（不含 VERSION.txt）：
-index.html 3e98a3b86df6cc91fcf24772f2f5a83e9f3c77de6264aa948e7780a111c76203
+index.html f1fac05e74b1f32af840a83cfabc763c830b796f8e4fc61e8a6c3d020d83706d
 assets/js/app.js 70526c225a75a6eaf217d3ddf409680af9d283c1bbad0e66fec0757e6834d3a3
-assets/js/config.js be3bae3765f4166fb3851d142f1a8532f8fecbdb14a98b2659c68a3a55ea2909
-README.md 868e0a36986d2ab9e7da0c72cfb9a2d3da77089b03ba94f72f0f840993c4b229
-UPDATE.md f1ea3e729df1cbb85b18d4979e10692424db6866045e88dfe6df1d87a075ddc4
+assets/js/config.js e518eb0ae3b4e039dd0cca04e9ebb6b4f41d0482a44f091fbd5ad16ee73b224d
+assets/images/scene/day-04-christmas-house.webp de43c34edd92421fecc59ee694a05005d15719171322ee5014a61caa61794020
+assets/images/scene/day-11-reindeer.webp 893239652fe21ed5ba5d36e38c12dbb69ad8a2100c0b30503e2a48e7f4bb32db
+README.md 8fda5772fe5401376a605f6393134f99ff2943960e75749133b817e4c81e6854
+UPDATE.md fc5ec997748674d82977c7324d449d7e980292121079007fccbe76be4c7d99bc
