@@ -1,0 +1,248 @@
+{
+  "schema": 1,
+  "baselineUpload": "2026-dyson-christmas.zip",
+  "baselineSHA256": "6ac71b55a5667913e8c0d366bdef7d53fbd450187968ac025040b575abbb4aad",
+  "version": 58,
+  "files": [
+    {
+      "path": "assets/audio/card-jingle-bells-5s-aac-v48.m4a",
+      "bytes": 42186,
+      "sha256": "7a4a790a0c7f339fadbeca56d8f896337bb83893fe0fa869cb634794323f2f04"
+    },
+    {
+      "path": "assets/audio/card-jingle-bells-5s-pcm-v38.wav",
+      "bytes": 220578,
+      "sha256": "b518d38c51996189ea8ab44c111a1380a0843c57aa19c9ae9e36e9d19bd1855f"
+    },
+    {
+      "path": "assets/audio/card-jingle-bells-5s.m4a",
+      "bytes": 42059,
+      "sha256": "a5927a6adb80fb8dbcff8cc750bfac21601201418b2d7ab49b93f7cd15cf717a"
+    },
+    {
+      "path": "assets/audio/jingle-bright.m4a",
+      "bytes": 1239409,
+      "sha256": "56f6f9dff29e7c7a78edcb4fe8641070b669a398bbcedbdc2a724e9615776e12"
+    },
+    {
+      "path": "assets/audio/jingle-calm.m4a",
+      "bytes": 1700724,
+      "sha256": "594644b3acc2cda175ddeb8974787fda944d298ea51c3f8ca4d286008c473cf6"
+    },
+    {
+      "path": "assets/audio/merry-christmas.m4a",
+      "bytes": 1686363,
+      "sha256": "aa7b639989dad08d2466330513910773e9f7ff01d84b6918b504daf60bda1f48"
+    },
+    {
+      "path": "assets/fonts/source-han-sans-tw-bold.woff2",
+      "bytes": 4413448,
+      "sha256": "9cdddf305fb4aa5dcb202a862da94f763ac839a3ff96dba73ae9486756eedd97"
+    },
+    {
+      "path": "assets/fonts/source-han-sans-tw-regular.woff2",
+      "bytes": 4236256,
+      "sha256": "1c67b674ccc235a8ba0655ac0433327e2716d67cb388e0f689eab82093b36366"
+    },
+    {
+      "path": "assets/images/bonus/bonus-capybara-bath-paper-v28.webp",
+      "bytes": 279032,
+      "sha256": "7105f941f2f628357d971aa0139bdf0e51944be0e1fcce875b09bd9da24fe5d9"
+    },
+    {
+      "path": "assets/images/bonus/bonus-fox-snow-dive-paper-v28.webp",
+      "bytes": 165064,
+      "sha256": "a96b12ca6a4de2eeb7a91664c7d540820b281921f5a2b7f3e57bddf5d52c0749"
+    },
+    {
+      "path": "assets/images/bonus/bonus-golden-puppy-dance-v30.webp",
+      "bytes": 202784,
+      "sha256": "8c11668459ea050d1eb3d3fbc9e5af5ada1cd490eead4b7148916124e70c92de"
+    },
+    {
+      "path": "assets/images/bonus/bonus-gray-british-kitten-v29.webp",
+      "bytes": 293346,
+      "sha256": "b02abc10a01f395e3a90ae1abbb49e789af4c515b5fe215ae5d5fa1c2afccf91"
+    },
+    {
+      "path": "assets/images/bonus/bonus-otter-gray-face-v48.png",
+      "bytes": 2718418,
+      "sha256": "8a5b0f7e529a9e2293695a4a48710eebc2933bc563e9b2635d8aca585ccb610c"
+    },
+    {
+      "path": "assets/images/bonus/bonus-penguin-soft-v36.webp",
+      "bytes": 111136,
+      "sha256": "f66c3a2224317297a5e2bf1d8bd3a2a923d0cfa2a7f04975131d1f1c010d8349"
+    },
+    {
+      "path": "assets/images/bonus/bonus-polar-bear-samoyed-paper-v28.webp",
+      "bytes": 244000,
+      "sha256": "aace0fd60183619221e3aa8b5fa7a023f9af468f7a74d31b16a69091a7d465a8"
+    },
+    {
+      "path": "assets/images/bonus/bonus-red-panda-tree-paper-v28.webp",
+      "bytes": 269874,
+      "sha256": "55678d37db9694e1dd957b42deb258f31dd2dffb40737011017024810795c121"
+    },
+    {
+      "path": "assets/images/bonus/bonus-shiba-plain-v31.webp",
+      "bytes": 174064,
+      "sha256": "f17b5047e952964e16f59d2a935d1832feff4ba3da126f97bb5ce900b6ed3c65"
+    },
+    {
+      "path": "assets/images/bonus/bonus-white-sea-lion-soft-v37.webp",
+      "bytes": 61828,
+      "sha256": "685083374d247de1c04aa8149549a46ede89b8c7fffa552b02ba716cab3dce61"
+    },
+    {
+      "path": "assets/images/brand/dyson-logo-black.png",
+      "bytes": 21074,
+      "sha256": "0bfabd25e85c83a51159ac55008ee6418d175dc9e3014201c23da2923b2521f9"
+    },
+    {
+      "path": "assets/images/brand/dyson-logo-white.png",
+      "bytes": 19247,
+      "sha256": "54e268624483cf875872b9aec5184ec80779187da8b57586d1496f13951a648b"
+    },
+    {
+      "path": "assets/images/products/bp10-snowglobe.png",
+      "bytes": 2421437,
+      "sha256": "38291381097e7214e21b5537ebdb7703d76cf410d36d45b0bd976ad79723ac9a"
+    },
+    {
+      "path": "assets/images/products/hd19-snowglobe.png",
+      "bytes": 709205,
+      "sha256": "8fd450d91c07ce5f18caa8606c2f7f1e98bc119be851f59f8f8143057a79f0c0"
+    },
+    {
+      "path": "assets/images/products/hj10-snowglobe.png",
+      "bytes": 2264505,
+      "sha256": "7366f453910b5e12b8a4b768b0004e9270191fb01bd3c7d9c7514a65eaa1d9ed"
+    },
+    {
+      "path": "assets/images/products/sv50-snowglobe.png",
+      "bytes": 344222,
+      "sha256": "1ea653e40ab90f67c97d294170618ec09d026cdaa506765f7ae880372fd52808"
+    },
+    {
+      "path": "assets/images/scene/day-01-snowflake.webp",
+      "bytes": 87192,
+      "sha256": "6eed6fa40071099e5bdc471927ec02fa8a29757ff64f307b77665e032dd6cf36"
+    },
+    {
+      "path": "assets/images/scene/day-02-fir-tree.webp",
+      "bytes": 49742,
+      "sha256": "7411918dc0c4ec47d6bf83be0dbfcd9b12c39eca9092cbd10a43f49620cd9d2d"
+    },
+    {
+      "path": "assets/images/scene/day-03-ribbon-gift.webp",
+      "bytes": 57616,
+      "sha256": "0b9c7a1d557c850a03102fafc2b57c6845eb858d6f020debd8a1411130ce0720"
+    },
+    {
+      "path": "assets/images/scene/day-04-santa-hat.webp",
+      "bytes": 51840,
+      "sha256": "80fb79f45bb1168e9f0ef31958661797539cd56d13c83c656fc63cde932b8c23"
+    },
+    {
+      "path": "assets/images/scene/day-06-snowman.webp",
+      "bytes": 53216,
+      "sha256": "a2779f3bf6bc5936b4f6878106db207b09873a1f4de198c396630465651b3fef"
+    },
+    {
+      "path": "assets/images/scene/day-07-christmas-bauble.webp",
+      "bytes": 48938,
+      "sha256": "a767871d3f1a07f217779feaeef5bdbc43413eb32c5121733b158aa8521df92d"
+    },
+    {
+      "path": "assets/images/scene/day-08-leaping-reindeer.webp",
+      "bytes": 91714,
+      "sha256": "1c21bff99f372336817deabea6606fdb8044aabc3befe2e6baa6a8b3ddc0da64"
+    },
+    {
+      "path": "assets/images/scene/day-09-street-lamp.webp",
+      "bytes": 38732,
+      "sha256": "37c65b3639396c45fe033742972c4ef33e76bdde8e6f926e4ac69e6eb2fc6744"
+    },
+    {
+      "path": "assets/images/scene/day-11-shooting-star.webp",
+      "bytes": 53018,
+      "sha256": "79a94bdcdb4f6ddb799f1260a939303d04916ab6297f58e08afbda656cc0a6c4"
+    },
+    {
+      "path": "assets/images/scene/day-12-christmas-tree.webp",
+      "bytes": 63940,
+      "sha256": "e8f03a06888a2ff69194227bd0f1b505b2342d06836b494434eea16ce5c19661"
+    },
+    {
+      "path": "assets/images/scene/day-13-golden-snowflake.webp",
+      "bytes": 90358,
+      "sha256": "7e0035707a6b9b8ba554616e6e97ea320747295a9b903d63a016de4062477680"
+    },
+    {
+      "path": "assets/images/scene/day-14-christmas-wreath.webp",
+      "bytes": 71812,
+      "sha256": "fa89875961e6901c92b31b93c0e3282d12fa78c5387b7f053265454cfe6218dd"
+    },
+    {
+      "path": "assets/images/scene/day-16-red-green-stocking-row.webp",
+      "bytes": 73714,
+      "sha256": "4cff15adfd17e5c4939c3a19c518585b0e5745c4e0196e11ac9889413d3e1fc0"
+    },
+    {
+      "path": "assets/images/scene/day-17-gingerbread.webp",
+      "bytes": 61814,
+      "sha256": "baccf9c9912f2e652cee694ca0045ef3894e0b11731b6bc7be8234c6c9a93b11"
+    },
+    {
+      "path": "assets/images/scene/day-18-clock-tower.webp",
+      "bytes": 39216,
+      "sha256": "913dfd9b33c3da9f68548cc6d6d7f00355ff2cc5c660b97bb4de5e2c5ab8f024"
+    },
+    {
+      "path": "assets/images/scene/day-19-candy-cane.webp",
+      "bytes": 39960,
+      "sha256": "d5eb7018bd54920834a478623d6b20cd70c022a25dfde44ba20bf2cf6d226845"
+    },
+    {
+      "path": "assets/images/scene/day-21-department-store.webp",
+      "bytes": 79348,
+      "sha256": "75677610551b50ec918033bae0f8727b7858b95bbff2221cdfeb03e64e012140"
+    },
+    {
+      "path": "assets/images/scene/day-22-golden-sleigh.webp",
+      "bytes": 77126,
+      "sha256": "2e2566d5a3a41457374fcf49a2cea25f099fa524916064afa0cfed86915cc970"
+    },
+    {
+      "path": "assets/images/scene/day-23-cat-santa.webp",
+      "bytes": 245720,
+      "sha256": "01190db5f323f65327fb246a403456a1f1cc591061eb6861998f9f32a6382181"
+    },
+    {
+      "path": "assets/images/scene/day-24-christmas-star.webp",
+      "bytes": 63256,
+      "sha256": "f88d8408ef5bdd071a6451a7aeacf00282ce0bc7da9ab7e5286e9692366b6c09"
+    },
+    {
+      "path": "assets/images/scene/day-25-starlight-show.webp",
+      "bytes": 77712,
+      "sha256": "443641260877efc7f38a6190adc88998ceebb880202f3027f86d7e3fd252d6f3"
+    },
+    {
+      "path": "assets/images/scene/snow-globe-background.webp",
+      "bytes": 616530,
+      "sha256": "b0eedc3b04de2b653c5d3c9b945ce5197b6eff977c6c8a78b6c4adb8a861aeac"
+    },
+    {
+      "path": "assets/video/welcome-poster.webp",
+      "bytes": 38702,
+      "sha256": "b4eeeb892c6321ac6e1f129f730ce4dddd558a4460e5052e94dedc8e0c1f7b36"
+    },
+    {
+      "path": "assets/video/welcome.mp4",
+      "bytes": 119810,
+      "sha256": "078c7ea2b9fb2a60eb6fb23bee2a399087e41424e6cf7799babeae58fdfcae59"
+    }
+  ]
+}
