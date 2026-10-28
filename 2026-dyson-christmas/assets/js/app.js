@@ -596,6 +596,7 @@ function updatePlacementUI(d){
   const placed=isPlaced(d),label=placed?'移除水晶球內':'放入水晶球內';
   const button=$(BONUS_IDS.includes(Number(d))?'bonus-grid':'collection-grid').querySelector(`[data-day="${Number(d)}"] .place-button`);
   if(button){button.textContent=label;button.setAttribute('aria-pressed',String(placed));}
+  refreshItemThumbnails(d);
   const cell=$('calendar-grid').querySelector(`[data-day="${Number(d)}"]`);
   if(cell&&dayState(d)==='owned'){
     const stateLabel=placed?'已領取，已放入水晶球':'已領取，尚未放入水晶球',displayState=placed?'placed':'stored',music=calendarMusic(d);
@@ -708,11 +709,18 @@ const ORIGINAL_PHOTO_PRODUCTS={
 };
 const PHOTO_PRODUCTS=Object.fromEntries(Object.entries(ORIGINAL_PHOTO_PRODUCTS).map(([d,p])=>[Number(d)===4?5:Number(d),p]));
 function loadSprite(d){
-  if(sprites.has(d))return sprites.get(d);
+  d=Number(d);
   const i=item(d);if(i.effect)return null;
-  let image=customAssets.get(d)?.image||builtinAssets.get(Number(d));
+  const image=customAssets.get(d)?.image||builtinAssets.get(d);
   if(!image&&(ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d])){if(!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]).then(()=>{if(sceneReady&&builtinAssets.has(Number(d))){renderUI();if($('item-dialog').open)renderItemDialog();drawFrame(0,performance.now());}});return null;}
   if(i.bonus&&!image)return null;
+  // A cached raster belongs to its actual source, not just a calendar day.
+  const photoFallback=!image&&PHOTO_PRODUCTS[d]&&originalPhoto.complete&&originalPhoto.naturalWidth;
+  const sourceImage=image||(photoFallback?originalPhoto:atlas);
+  const sourceKey=image?'image':photoFallback?'photo':'atlas-'+(i.atlas??1);
+  const cached=sprites.get(d);
+  if(cached&&cached.sourceImage===sourceImage&&cached.sourceKey===sourceKey)return cached;
+  sprites.delete(d);
   const out=el('canvas'),oc=out.getContext('2d');
   if(image){out.width=image.naturalWidth;out.height=image.naturalHeight;oc.drawImage(image,0,0);}
   else if(PHOTO_PRODUCTS[d]&&originalPhoto.complete&&originalPhoto.naturalWidth){
@@ -724,7 +732,7 @@ function loadSprite(d){
     for(let y=0;y<out.height;y++)for(let x=0;x<out.width;x++){if(pixels[(y*out.width+x)*4+3]>48){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}}
     if(maxX>=minX)bounds={x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1};
   }catch(error){spriteErrors.add(`${d}: ${error.message}`);}
-  const sprite={image:out,bounds};sprites.set(d,sprite);return sprite;
+  const sprite={image:out,bounds,sourceImage,sourceKey};sprites.set(d,sprite);return sprite;
 }
 const itemAssetLoads=new Map();
 async function ensureItemAssets(days){
@@ -732,12 +740,16 @@ async function ensureItemAssets(days){
   if(builtinAssets.has(d)||spriteErrors.has('asset-'+d))return;if(itemAssetLoads.has(d))return itemAssetLoads.get(d);
   if(BONUS_IDS.includes(d)&&!bonusDays().includes(d))return;
   const src=ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d]||ASSETS.effectThumbnails?.[d];if(!src)return;
-  const promise=imageLoad(src).then(image=>{builtinAssets.set(d,image);sprites.delete(d);}).catch(error=>{spriteErrors.add('asset-'+d);spriteErrors.add(`item-${d}: ${error.message}`);}).finally(()=>itemAssetLoads.delete(d));itemAssetLoads.set(d,promise);return promise;
+  const promise=imageLoad(src).then(image=>{builtinAssets.set(d,image);sprites.delete(d);refreshItemThumbnails(d);}).catch(error=>{spriteErrors.add('asset-'+d);spriteErrors.add(`item-${d}: ${error.message}`);}).finally(()=>itemAssetLoads.delete(d));itemAssetLoads.set(d,promise);return promise;
  }));
 }
 async function loadBonusAssets(){return ensureItemAssets(bonusDays());}
 function drawSprite(target,d,x,bottom,h){const sprite=loadSprite(d);if(!sprite)return null;const b=sprite.bounds,w=h*b.w/b.h;target.drawImage(sprite.image,b.x,b.y,b.w,b.h,x-w/2,bottom-h,w,h);return {x:x-w/2,y:bottom-h,w,h};}
+function refreshItemThumbnails(d){
+  for(const target of document.querySelectorAll(`canvas[data-thumbnail-day="${Number(d)}"]`))drawThumbnail(target,Number(d));
+}
 function drawThumbnail(target,d){
+  d=Number(d);target.dataset.thumbnailDay=String(d);
   const c=target.getContext('2d');c.clearRect(0,0,target.width,target.height);const i=item(d);
   if(i.effect){const image=builtinAssets.get(Number(d));if(image&&ASSETS.effectThumbnails?.[d]){const scale=Math.min(target.width*.86/image.naturalWidth,target.height*.86/image.naturalHeight),w=image.naturalWidth*scale,h=image.naturalHeight*scale;c.drawImage(image,(target.width-w)/2,(target.height-h)/2,w,h);return;}if(!image&&ASSETS.effectThumbnails?.[d]&&!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]).then(()=>{if(sceneReady&&builtinAssets.has(Number(d))){renderUI();if($('item-dialog').open)renderItemDialog();}});c.save();c.fillStyle='#e2c48e';c.textAlign='center';c.textBaseline='middle';c.font=`${Math.round(target.height*.35)}px Georgia,serif`;c.fillText(i.effect==='snow'?'❄':i.effect==='goldSnow'?'✧':i.effect==='warmth'?'✺':'✦',target.width/2,target.height/2);c.restore();return;}
   const s=loadSprite(d);if(!s)return;const b=s.bounds;let h=target.height*.84;if(h*b.w/b.h>target.width*.86)h=target.width*.86*b.h/b.w;drawSprite(c,d,target.width/2,target.height*.92,h);

@@ -1,18 +1,15 @@
-# v51 同名覆蓋更新
+# v52 收藏縮圖同步修正
 
-基準為 v50。將本包 `2026-dyson-christmas/` 內檔案按相同路徑合併至 GitHub 的 `campaigns/2026-dyson-christmas/`，覆蓋同名檔；勿刪除整個活動資料夾。
+本包以 v51 為基準。將 `2026-dyson-christmas/` 內檔案按相同路徑合併至 GitHub 的 `campaigns/2026-dyson-christmas/`，覆蓋同名檔。
 
-## 恢復的六個原檔
+需更新的程式檔案：
 
-- `assets/images/scene/day-03-ribbon-gift.webp`
-- `assets/images/scene/day-06-snowman.webp`
-- `assets/images/scene/day-07-christmas-bauble.webp`
-- `assets/images/scene/day-08-leaping-reindeer-paper-v28.webp`
-- `assets/images/scene/snow-globe-background.webp`
-- `assets/images/scene/style-reference.webp`
+- `index.html`
+- `assets/js/app.js`
+- `assets/js/config.js`
 
-圖片來自使用者本次上傳，原樣覆蓋，不加版本檔名。請一併覆蓋 index.html、app.js、config.js、介紹影片與封面，以更新快取、背景與卡片輸出。
+本版補上收藏縮圖的同步更新：圖片完成載入、替換來源，以及按下放入／移除時，重畫對應縮圖。圖片快取會核對實際來源，避免沿用同一天的舊圖。Day 4、Day 11 的圖片網址快取參數一併更新。
 
-Day 4「聖誕帽」、Day 11「流星」保留。既有收藏、擺放位置、Email、權限與優惠券進度保留。這六件圖與程式以外的素材無需重新上傳。
+上傳完成並等待 GitHub Pages 部署後，重新整理網頁。Day 4 的收藏縮圖應為聖誕帽，Day 11 應為流星，與水晶球內及物件介紹圖一致。
 
-本次無需更新 Apps Script。先前僅討論的音樂解鎖／音訊切換調整仍未併入；本次也未變更程式的水晶球裁切邊界。
+本包沒有圖片檔案，不需改圖檔名。所有圖檔維持 v51；先前恢復的六個上傳原圖保持不變。已收藏項目、擺放位置、Email、權限與優惠券進度保留。不需清除網站資料或重新參加活動，也不需更新 Apps Script。

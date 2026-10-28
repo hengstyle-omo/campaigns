@@ -1,24 +1,13 @@
-Dyson Christmas v51
-基準：v50
-恢復：本次上傳的 6 個原始 WebP，原檔名與原路徑直接覆蓋。
-保留：Day 4 聖誕帽、Day 11 流星，及所有其他圖檔、收藏與擺放位置。
-快取：restoredArtworkRevision=20261027-uploaded-originals，rev=20261027-5。
-後端無需更新。
-驗證：六個原檔逐位元組相同，其他 64 圖不變；35 素材、快取遷移、手機及 PNG／GIF／MP4 輸出通過。
+Dyson Christmas v52
+基準：v51
+修正：收藏列表縮圖與水晶球圖片同步。
+圖檔與後端不變；保留活動進度與擺放位置。
+測試：舊版重現、新版修正，32 件縮圖核對、冷載入、手機、物件介紹與 PNG 輸出通過。
+資源版本：20261028-preview-sync
 
 SHA-256（不含 VERSION.txt）：
-index.html 8e6bd54f5295f7b6f2ad3d7764689a37bee5f3024e5140ae3c7c8440f2732495
-assets/js/app.js ea580e9a1b9ea9caf92dc14d12e74be730a2e23234833acc2e87e9f8eaffe760
-assets/js/config.js 5839a8e56b76c80d846af2caa04d6668696845626e09b0a9338088932b92266a
-assets/images/scene/day-03-ribbon-gift.webp 69b99f293a40c18b7f8f46fc5c09809c303185eb50e3e01f01ce461555114e60
-assets/images/scene/day-06-snowman.webp 6c1883b2e05ec842b0f620297ca6ca21c384975c4ebe4d2e130a5630d62da1d9
-assets/images/scene/day-07-christmas-bauble.webp d9011ef69bc8d16b0401380f6c536732f1d1ff02bf06bf26a4e736a291abdf93
-assets/images/scene/snow-globe-background.webp b0eedc3b04de2b653c5d3c9b945ce5197b6eff977c6c8a78b6c4adb8a861aeac
-assets/images/scene/style-reference.webp 3bd4f5159b729e0a0c68a2e40d5c4589c0fe72e898c92a259146b7916b4ed0df
-assets/images/scene/day-08-leaping-reindeer-paper-v28.webp 62eeee4417cedc59ea984f188e792c8fa25fda038125fa443ac0cf5d7ef93325
-assets/video/welcome.mp4 b0284d944460c588d07d34204cef0f775873506f33b22d80e657871aad75872c
-assets/video/welcome-poster.webp 01c694844d492572136bfd82512c8e0a44d20b43ff8fc9c402936bfe377c6e80
-README.md e6e9614b2bf61e201556e53711a9986abb6f1b41cb03daa712287175b637354f
-UPDATE.md d37e75ffde264e3102ace3e05d2df776708f02c16e6f7ae803a91e9fdecaf713
-ASSET-NOTES.md 3e5b9bba684ebc1aa6bd33a45b25026ee83360d7ab6da237c67d14a98d498ab3
-PREVIEW.webp ab5f3c6da9b01602ef1d16f7e45e5f77d986803421070bc17b50c6378fea287f
+index.html 3e98a3b86df6cc91fcf24772f2f5a83e9f3c77de6264aa948e7780a111c76203
+assets/js/app.js 70526c225a75a6eaf217d3ddf409680af9d283c1bbad0e66fec0757e6834d3a3
+assets/js/config.js be3bae3765f4166fb3851d142f1a8532f8fecbdb14a98b2659c68a3a55ea2909
+README.md 868e0a36986d2ab9e7da0c72cfb9a2d3da77089b03ba94f72f0f840993c4b229
+UPDATE.md f1ea3e729df1cbb85b18d4979e10692424db6866045e88dfe6df1d87a075ddc4
