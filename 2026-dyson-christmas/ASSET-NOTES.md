@@ -1,14 +1,8 @@
-# v51 原檔恢復記錄
+# v54 素材記錄
 
-以下六個檔案直接複製自本次上傳，網站圖檔未重新生成、縮放或壓縮。逐件位元組與 SHA-256 比對通過。
+主聖誕樹採用本次上傳的 WebP 原檔，逐位元組一致。拐杖糖由內建 ImageGen 編輯原圖，改為紅、綠與米白條紋；僅做等比縮小及 WebP 格式最佳化，沒有以程式重畫造型。最終提示詞見 PROMPTS.json。
 
-| 原檔名 | SHA-256 |
-| --- | --- |
-| day-03-ribbon-gift.webp | 69b99f293a40c18b7f8f46fc5c09809c303185eb50e3e01f01ce461555114e60 |
-| day-06-snowman.webp | 6c1883b2e05ec842b0f620297ca6ca21c384975c4ebe4d2e130a5630d62da1d9 |
-| day-07-christmas-bauble.webp | d9011ef69bc8d16b0401380f6c536732f1d1ff02bf06bf26a4e736a291abdf93 |
-| snow-globe-background.webp | b0eedc3b04de2b653c5d3c9b945ce5197b6eff977c6c8a78b6c4adb8a861aeac |
-| style-reference.webp | 3bd4f5159b729e0a0c68a2e40d5c4589c0fe72e898c92a259146b7916b4ed0df |
-| day-08-leaping-reindeer-paper-v28.webp | 62eeee4417cedc59ea984f188e792c8fa25fda038125fa443ac0cf5d7ef93325 |
+- `day-12-christmas-tree.webp`：SHA-256 `5a9932c88cbdd0b65bc7da2d58d024776fdb7a366f3b676a34030956c9ace46a`
+- `day-19-candy-cane.webp`：SHA-256 `8705bf3d78689f9fc64525358478e5d372b40cd1526228c4af5fb0d81d736bc5`
 
-介紹影片與封面由網站以這些原檔及原產品／動物繪製，縮圖總覽僅供查看。Day 4 聖誕帽與 Day 11 流星不受恢復影響。
+其餘 67 個圖片檔案與 v53 相同。本包一併附上 v53 的聖誕帽與流星正確圖，方便直接覆蓋 v52 或 v53。

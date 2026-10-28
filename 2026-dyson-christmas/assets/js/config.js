@@ -9,7 +9,7 @@ window.DYSON_CLOUD_CONFIG = {
 window.DYSON_GAME_CONFIG = {
   "deerPaperRevision": "20261027-quiet-paper-deer",
   "paperSceneryRevision": "20261027-quiet-paper-overwrite",
-  "version": 53,
+  "version": 54,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -335,7 +335,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 19,
       "type": "聖誕造景",
       "name": "拐杖糖＋糖果雨",
-      "description": "放入紅白拐杖糖，紅、綠、藍、紫、金色小糖果與迷你拐杖糖就會從球頂繽紛飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
+      "description": "放入紅、綠與米白條紋拐杖糖，紅、綠、藍、紫、金色小糖果與迷你拐杖糖就會從球頂繽紛飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
       "benefit": null,
       "assetNeed": "微立體紙雕拐杖糖透明圖及糖果雨粒子",
       "hint": "今天有一場甜甜的聖誕糖果雨，等待你親手開啟。",
@@ -668,7 +668,8 @@ window.DYSON_GAME_CONFIG = {
   "softAnimalsRevision": "20261024-sea-otter-face-v48",
   "departmentStoreRevision": "20261023-dyson-sign-v38",
   "collectionContentRevision": "20261028-hat-meteor-originals",
-  "restoredArtworkRevision": "20261027-uploaded-originals"
+  "restoredArtworkRevision": "20261027-uploaded-originals",
+  "seasonalArtworkRevision": "20261028-tree-redgreen"
 };
 
 window.DYSON_ASSETS = {
@@ -690,13 +691,13 @@ window.DYSON_ASSETS = {
     "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261027-2",
     "10": "./assets/images/products/sv50-snowglobe.png",
     "11": "./assets/images/scene/day-11-reindeer.webp?rev=20261028-artwork-repair",
-    "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261027-2",
+    "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261028-tree-redgreen",
     "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261027-2",
     "15": "./assets/images/products/hj10-snowglobe.png",
     "16": "./assets/images/scene/day-16-red-green-stocking-row.webp?rev=20261027-2",
     "17": "./assets/images/scene/day-17-gingerbread.webp?rev=20261027-2",
     "18": "./assets/images/scene/day-18-clock-tower.webp?rev=20261027-2",
-    "19": "./assets/images/scene/day-19-candy-cane.webp?rev=20261027-2",
+    "19": "./assets/images/scene/day-19-candy-cane.webp?rev=20261028-tree-redgreen",
     "20": "./assets/images/products/bp10-snowglobe.png",
     "21": "./assets/images/scene/day-21-department-store-dyson-v38.webp?rev=20261027-2",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp?rev=20261027-2",
