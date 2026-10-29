@@ -1,33 +1,10 @@
-# v58 雪屋百貨融合版
+# v61 正式採用 A 圖
 
-本次以 v57 為基準，只更新 Day 21 聖誕百貨：結合上傳參考的積雪斜屋頂、中央山牆與遮棚，保留目前寬大正面的三層百貨、展示櫥窗、玻璃入口及清楚的 dyson 招牌。材質維持簡潔微立體紙雕。
+- Day 02、03、04、06、07、08、09、11、12、14、16、17、18、19、21、22、23、24：沿用 A/B 比較頁已選定的 A 圖。
+- 正式頁直接載入 A 圖，同步用於瀏覽圖、詳情及水晶球，不含比較功能。
+- 固定檔名覆蓋；更新 config.js 與 app.js 的網址快取參數。
+- 新增針對上述 18 個 Day 的圖片快取識別。僅略過過期圖，不更動產品、額外動物、收藏位置與進度。
+- 文字中原有不適用的「紙雕」描述，改為對應圖像的節慶說明。
+- 更新兩張預覽圖、素材清單與正式部署說明。
 
-圖片仍覆蓋 day-21-department-store.webp，不新增帶版本號的圖片；同步更新 config.js、index.html 快取識別與百貨舊自訂圖片識別。鐘樓及其他圖片與程式保留。
-
-這是完整替換包。請同步替換同一活動資料夾內的圖片與程式，收藏及位置保留，Apps Script 與 GA4 沿用。
-
-## 延續 v57 的更新說明
-
-本次以 v56 為基準，只修改 Day 18 鐘樓與 Day 21 百貨的圖片及相關快取識別。鐘樓為正面；百貨為正面三層店面，新增 dyson 招牌、展示櫥窗與玻璃入口。實體檔名不加版本號，仍是 day-18-clock-tower.webp 與 day-21-department-store.webp。
-
-這是完整替換包，可直接完整替換相同活動資料夾；必須同時上傳圖片、config.js、app.js 與 index.html。兩張圖片的過期自訂快取將自動略過，收藏進度與擺放位置保留。Apps Script 與 GA4 沿用。
-
-## 延續 v56 的部署與改名說明
-
-1. 保留原活動資料夾備份。
-2. 以本包 `2026-dyson-christmas/` 完整替換 `campaigns/2026-dyson-christmas/`，保留同一活動網址。讓 Git 同時記錄改名及舊檔刪除，避免合併後殘留舊圖片。
-3. GitHub Pages 部署完成後重新整理，確認下方瀏覽圖與水晶球都呈現新紙雕圖，尤其 Day 4 聖誕帽與 Day 11 流星。
-
-本次重製 20 張 scene 收藏圖，聖誕老公公僅改名。水晶球背景、四款產品、十款額外動物不重製。圖片本身不含任何版本字樣。
-
-| 舊檔名 | 固定新檔名 |
-| --- | --- |
-| day-04-christmas-house.webp | day-04-santa-hat.webp |
-| day-08-leaping-reindeer-paper-v28.webp | day-08-leaping-reindeer.webp |
-| day-11-reindeer.webp | day-11-shooting-star.webp |
-| day-21-department-store-dyson-v38.webp | day-21-department-store.webp |
-| day-23-fat-cat-santa-tail-v34.webp | day-23-cat-santa.webp |
-
-已同步 config.js、index.html 快取識別與舊造景素材快取遷移；下方縮圖及球內渲染共用新圖。不要只上傳程式而漏傳圖片，或只上傳圖片而漏傳設定檔。
-
-不清空網站資料、不更換 Apps Script、不需執行 setup。既有收藏、擺放、Email 進度與 GA4 埋點沿用。
+來源為目前保存的 v59 正式程式。v60 的鐘樓、流星、拐杖糖圖片在此由最終選定的 A 圖取代。活動規則、產品日程、音樂與特效程式沒有另作變更。

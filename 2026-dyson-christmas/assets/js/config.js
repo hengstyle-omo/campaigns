@@ -5,9 +5,10 @@ window.DYSON_CLOUD_CONFIG = {
 
 window.DYSON_GAME_CONFIG = {
   "deerPaperRevision": "20261027-quiet-paper-deer",
+  "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 58,
+  "version": 61,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -31,7 +32,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "積雪小冷杉",
       "description": "加入第一棵帶薄雪的綠色小樹。",
       "benefit": null,
-      "assetNeed": "寫實積雪冷杉去背 PNG／WebP",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 425,
         "y": 795,
@@ -45,7 +46,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "金色緞帶小禮物",
       "description": "加入一組深藍禮盒與金色緞帶。",
       "benefit": null,
-      "assetNeed": "完整禮盒及緞帶去背圖",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 395,
         "y": 861,
@@ -57,9 +58,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 4,
       "type": "角色小物",
       "name": "聖誕帽",
-      "description": "加入一頂紅色與米白相間的素面紙雕聖誕帽，替雪境添上一點聖誕氣息。",
+      "description": "加入一頂紅色與米白相間的聖誕帽，金色葉紋替雪境添上一點聖誕氣息。",
       "benefit": null,
-      "assetNeed": "低細節紙雕聖誕帽透明圖，完整帽緣與帽球",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 625,
         "y": 855,
@@ -100,7 +101,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "金圍巾雪人",
       "description": "加入戴香檳金圍巾的小雪人。",
       "benefit": null,
-      "assetNeed": "完整雪人去背圖，含雪地接觸面",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 355,
         "y": 833,
@@ -114,7 +115,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "香檳金聖誕球",
       "description": "加入香檳金聖誕球，另解鎖輕快版《Jingle Bells》旋律。音樂需自行按播放。",
       "benefit": null,
-      "assetNeed": "金色圓球小組去背圖",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 360,
         "y": 877,
@@ -128,7 +129,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "飛躍馴鹿",
       "description": "披著深藍金紋圍巾的馴鹿躍進雪境，可自由移往球內上方，與其他收藏一起迎接聖誕。",
       "benefit": null,
-      "assetNeed": "微立體紙雕飛躍馴鹿透明圖",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 650,
         "y": 525,
@@ -142,7 +143,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "暖金街燈",
       "description": "加入一盞微亮街燈，不依賴先前小屋。",
       "benefit": null,
-      "assetNeed": "街燈去背圖，光暈另作效果",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 925,
         "y": 822,
@@ -182,9 +183,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 11,
       "type": "聖誕造景",
       "name": "流星",
-      "description": "加入一顆拖著米白與香檳金紙層尾跡的流星，可自由移到球內上方，收藏一個冬夜心願。",
+      "description": "加入一顆拖著米白與香檳金尾跡的流星，可自由移到球內上方，收藏一個冬夜心願。",
       "benefit": null,
-      "assetNeed": "低細節紙雕流星透明圖，含完整星體與尾跡",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 825,
         "y": 400,
@@ -199,7 +200,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "金燈主聖誕樹",
       "description": "加入較高的主樹，雪枝間帶暖金燈光。",
       "benefit": null,
-      "assetNeed": "主樹去背圖，不與其他物件合併",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 625,
         "y": 855,
@@ -223,7 +224,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "聖誕花環立飾",
       "description": "加入可獨立站立的花環，無須依附房屋。",
       "benefit": null,
-      "assetNeed": "花環與小支架一體去背圖",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 340,
         "y": 812,
@@ -261,9 +262,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 16,
       "type": "聖誕造景",
       "name": "紅綠聖誕襪串",
-      "description": "一排紅綠交錯的聖誕襪掛在金色細繩上，奶油白襪口與香檳金雪花，為雪境添上溫暖的節慶裝飾。可自由拖曳至球內喜歡的位置。",
+      "description": "一排紅綠交錯的聖誕襪掛在金色細繩上，為雪境添上溫暖的節慶裝飾。可自由拖曳至球內喜歡的位置。",
       "benefit": null,
-      "assetNeed": "微立體紙雕紅綠聖誕襪串透明圖",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 650,
         "y": 680,
@@ -277,7 +278,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "薑餅人朋友",
       "description": "加入一個帶糖霜細節的薑餅人。",
       "benefit": null,
-      "assetNeed": "站立薑餅人去背圖",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 760,
         "y": 867,
@@ -291,7 +292,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "聖誕鐘樓",
       "description": "加入一座小鐘樓，擴展村落輪廓。",
       "benefit": null,
-      "assetNeed": "寫實鐘樓去背圖，窗光與小屋一致",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 810,
         "y": 784,
@@ -303,9 +304,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 19,
       "type": "聖誕造景",
       "name": "拐杖糖＋糖果雨",
-      "description": "放入紅、綠與米白條紋拐杖糖，紅、綠、藍、紫、金色小糖果與迷你拐杖糖就會從球頂繽紛飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
+      "description": "放入紅、深藍與米白條紋拐杖糖，繽紛小糖果與迷你拐杖糖就會從球頂飄落；落地後淡出，移除拐杖糖便停止糖果雨。",
       "benefit": null,
-      "assetNeed": "微立體紙雕拐杖糖透明圖及糖果雨粒子",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "hint": "今天有一場甜甜的聖誕糖果雨，等待你親手開啟。",
       "ambient": "candyRain",
       "layout": {
@@ -345,9 +346,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 21,
       "type": "聖誕造景",
       "name": "聖誕百貨",
-      "description": "Dyson 招牌點亮屋頂，暖光櫥窗裡擺滿小禮物與聖誕樹，加入一間紙雕聖誕百貨，點亮節慶街景。",
+      "description": "Dyson 招牌與暖光櫥窗點亮積雪百貨，為你的聖誕雪境添上一間溫暖的店。",
       "benefit": null,
-      "assetNeed": "分層紙雕聖誕百貨透明 WebP",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 370,
         "y": 785,
@@ -361,7 +362,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "金色雪橇",
       "description": "加入可獨立擺放的小雪橇。",
       "benefit": null,
-      "assetNeed": "完整雪橇去背圖，不依賴麋鹿或聖誕老人",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 807,
         "y": 889,
@@ -375,7 +376,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "聖誕老公公",
       "description": "胖胖的橘貓穿上聖誕裝、戴著白鬍子，背著裝滿禮物的大袋子，開心揮揮小貓掌。",
       "benefit": null,
-      "assetNeed": "分層紙雕橘貓聖誕老人透明 WebP",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 440,
         "y": 870,
@@ -389,7 +390,7 @@ window.DYSON_GAME_CONFIG = {
       "name": "平安夜金星",
       "description": "加入獨立懸掛金星，可吸附至已收藏的樹頂，另解鎖慢版《Jingle Bells》旋律。",
       "benefit": null,
-      "assetNeed": "金星去背圖，光暈另作效果",
+      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
       "layout": {
         "x": 625,
         "y": 408,
@@ -626,10 +627,34 @@ window.DYSON_GAME_CONFIG = {
   "departmentStoreRevision": "20261028-snowy-retail",
   "collectionContentRevision": "20261028-hat-meteor-originals",
   "restoredArtworkRevision": "20261027-uploaded-originals",
-  "seasonalArtworkRevision": "20261028-tree-redgreen"
+  "seasonalArtworkRevision": "20261028-tree-redgreen",
+  "artworkStyle": "nordic-textured-a",
+  "finalArtworkRevision": "20261029-style-a-final",
+  "finalArtworkDays": [
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    14,
+    16,
+    17,
+    18,
+    19,
+    21,
+    22,
+    23,
+    24
+  ]
 };
 
 window.DYSON_ASSETS = {
+  "artworkStyle": "nordic-textured-a",
+  "finalArtworkRevision": "20261029-style-a-final",
   "paperSceneryRevision": "20261028-minimal-relief",
   "background": "./assets/images/scene/snow-globe-background.webp?rev=20261027-5",
   "effectThumbnails": {
@@ -640,28 +665,28 @@ window.DYSON_ASSETS = {
   "visualStyle": "paper-relief-v1",
   "custom": {},
   "sprites": {
-    "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261028-minimal-relief",
-    "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261028-minimal-relief",
-    "4": "./assets/images/scene/day-04-santa-hat.webp?rev=20261028-minimal-relief",
+    "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261029-style-a-final",
+    "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261029-style-a-final",
+    "4": "./assets/images/scene/day-04-santa-hat.webp?rev=20261029-style-a-final",
     "5": "./assets/images/products/hd19-snowglobe.png",
-    "6": "./assets/images/scene/day-06-snowman.webp?rev=20261028-minimal-relief",
-    "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261028-minimal-relief",
-    "8": "./assets/images/scene/day-08-leaping-reindeer.webp?rev=20261028-minimal-relief",
-    "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261028-minimal-relief",
+    "6": "./assets/images/scene/day-06-snowman.webp?rev=20261029-style-a-final",
+    "7": "./assets/images/scene/day-07-christmas-bauble.webp?rev=20261029-style-a-final",
+    "8": "./assets/images/scene/day-08-leaping-reindeer.webp?rev=20261029-style-a-final",
+    "9": "./assets/images/scene/day-09-street-lamp.webp?rev=20261029-style-a-final",
     "10": "./assets/images/products/sv50-snowglobe.png",
-    "11": "./assets/images/scene/day-11-shooting-star.webp?rev=20261028-minimal-relief",
-    "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261028-minimal-relief",
-    "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261028-minimal-relief",
+    "11": "./assets/images/scene/day-11-shooting-star.webp?rev=20261029-style-a-final",
+    "12": "./assets/images/scene/day-12-christmas-tree.webp?rev=20261029-style-a-final",
+    "14": "./assets/images/scene/day-14-christmas-wreath.webp?rev=20261029-style-a-final",
     "15": "./assets/images/products/hj10-snowglobe.png",
-    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp?rev=20261028-minimal-relief",
-    "17": "./assets/images/scene/day-17-gingerbread.webp?rev=20261028-minimal-relief",
-    "18": "./assets/images/scene/day-18-clock-tower.webp?rev=20261028-front-retail",
-    "19": "./assets/images/scene/day-19-candy-cane.webp?rev=20261028-minimal-relief",
+    "16": "./assets/images/scene/day-16-red-green-stocking-row.webp?rev=20261029-style-a-final",
+    "17": "./assets/images/scene/day-17-gingerbread.webp?rev=20261029-style-a-final",
+    "18": "./assets/images/scene/day-18-clock-tower.webp?rev=20261029-style-a-final",
+    "19": "./assets/images/scene/day-19-candy-cane.webp?rev=20261029-style-a-final",
     "20": "./assets/images/products/bp10-snowglobe.png",
-    "21": "./assets/images/scene/day-21-department-store.webp?rev=20261028-snowy-retail",
-    "22": "./assets/images/scene/day-22-golden-sleigh.webp?rev=20261028-minimal-relief",
-    "23": "./assets/images/scene/day-23-cat-santa.webp?rev=20261028-minimal-relief",
-    "24": "./assets/images/scene/day-24-christmas-star.webp?rev=20261028-minimal-relief"
+    "21": "./assets/images/scene/day-21-department-store.webp?rev=20261029-style-a-final",
+    "22": "./assets/images/scene/day-22-golden-sleigh.webp?rev=20261029-style-a-final",
+    "23": "./assets/images/scene/day-23-cat-santa.webp?rev=20261029-style-a-final",
+    "24": "./assets/images/scene/day-24-christmas-star.webp?rev=20261029-style-a-final"
   },
   "music": [
     {

@@ -2,7 +2,7 @@
   "schema": 1,
   "baselineUpload": "2026-dyson-christmas.zip",
   "baselineSHA256": "6ac71b55a5667913e8c0d366bdef7d53fbd450187968ac025040b575abbb4aad",
-  "version": 58,
+  "version": 61,
   "files": [
     {
       "path": "assets/audio/card-jingle-bells-5s-aac-v48.m4a",
@@ -131,48 +131,48 @@
     },
     {
       "path": "assets/images/scene/day-02-fir-tree.webp",
-      "bytes": 49742,
-      "sha256": "7411918dc0c4ec47d6bf83be0dbfcd9b12c39eca9092cbd10a43f49620cd9d2d"
+      "bytes": 116756,
+      "sha256": "3e160db036d69a7b56599e2fd908e853bff509e1d4e9048fb084dbd67bdaec1b"
     },
     {
       "path": "assets/images/scene/day-03-ribbon-gift.webp",
-      "bytes": 57616,
-      "sha256": "0b9c7a1d557c850a03102fafc2b57c6845eb858d6f020debd8a1411130ce0720"
+      "bytes": 188300,
+      "sha256": "439944712b20f8a1fa8872437ab28fcae799b5a57d02fd31d8b2ff2c2d01fa7c"
     },
     {
       "path": "assets/images/scene/day-04-santa-hat.webp",
-      "bytes": 51840,
-      "sha256": "80fb79f45bb1168e9f0ef31958661797539cd56d13c83c656fc63cde932b8c23"
+      "bytes": 244470,
+      "sha256": "9f0e2645f1d9f795e7da788402c8d92759e5f2b796f6a67d491efcdd5fdf1ffc"
     },
     {
       "path": "assets/images/scene/day-06-snowman.webp",
-      "bytes": 53216,
-      "sha256": "a2779f3bf6bc5936b4f6878106db207b09873a1f4de198c396630465651b3fef"
+      "bytes": 206124,
+      "sha256": "106b82b319b5116a03f552ae112b1bdf03f10922213fdfa3484436242b3b6fac"
     },
     {
       "path": "assets/images/scene/day-07-christmas-bauble.webp",
-      "bytes": 48938,
-      "sha256": "a767871d3f1a07f217779feaeef5bdbc43413eb32c5121733b158aa8521df92d"
+      "bytes": 221654,
+      "sha256": "de1f19022edd28ad688d0327e7ea5ca5657fafa11c5edfd946dee901b0e16795"
     },
     {
       "path": "assets/images/scene/day-08-leaping-reindeer.webp",
-      "bytes": 91714,
-      "sha256": "1c21bff99f372336817deabea6606fdb8044aabc3befe2e6baa6a8b3ddc0da64"
+      "bytes": 219974,
+      "sha256": "e20141b3ce73accc0339d025f9a54d32ca4a7fe0e1a49a1efc40217d833ebed9"
     },
     {
       "path": "assets/images/scene/day-09-street-lamp.webp",
-      "bytes": 38732,
-      "sha256": "37c65b3639396c45fe033742972c4ef33e76bdde8e6f926e4ac69e6eb2fc6744"
+      "bytes": 54730,
+      "sha256": "7384fb77237731d58f84f82a14255e305e652648329f2871cffc6e3ebbf53e3b"
     },
     {
       "path": "assets/images/scene/day-11-shooting-star.webp",
-      "bytes": 53018,
-      "sha256": "79a94bdcdb4f6ddb799f1260a939303d04916ab6297f58e08afbda656cc0a6c4"
+      "bytes": 104670,
+      "sha256": "762c48b2eefd99764fe9866e2b4d7986cfbbc1e5fd26834de0bc64564bbc9941"
     },
     {
       "path": "assets/images/scene/day-12-christmas-tree.webp",
-      "bytes": 63940,
-      "sha256": "e8f03a06888a2ff69194227bd0f1b505b2342d06836b494434eea16ce5c19661"
+      "bytes": 155052,
+      "sha256": "a41bad77f6bcfa0c6c40d85edb008e631dbc931b44d1febe58fe16c38a097cc7"
     },
     {
       "path": "assets/images/scene/day-13-golden-snowflake.webp",
@@ -181,48 +181,48 @@
     },
     {
       "path": "assets/images/scene/day-14-christmas-wreath.webp",
-      "bytes": 71812,
-      "sha256": "fa89875961e6901c92b31b93c0e3282d12fa78c5387b7f053265454cfe6218dd"
+      "bytes": 198626,
+      "sha256": "df4473b72d96e535babd91a0d1db194540059d41ae77ef923bb0f10b51503473"
     },
     {
       "path": "assets/images/scene/day-16-red-green-stocking-row.webp",
-      "bytes": 73714,
-      "sha256": "4cff15adfd17e5c4939c3a19c518585b0e5745c4e0196e11ac9889413d3e1fc0"
+      "bytes": 136802,
+      "sha256": "933db71c9167dcb28e348480f4204695b1f0cb2c7ca93b904bff6737abf7bf8b"
     },
     {
       "path": "assets/images/scene/day-17-gingerbread.webp",
-      "bytes": 61814,
-      "sha256": "baccf9c9912f2e652cee694ca0045ef3894e0b11731b6bc7be8234c6c9a93b11"
+      "bytes": 164724,
+      "sha256": "10691b475c8b0e635f2254f4295d5cd00e66b4b9d884ff3e3918061aac5311fc"
     },
     {
       "path": "assets/images/scene/day-18-clock-tower.webp",
-      "bytes": 39216,
-      "sha256": "913dfd9b33c3da9f68548cc6d6d7f00355ff2cc5c660b97bb4de5e2c5ab8f024"
+      "bytes": 107018,
+      "sha256": "56234925a30a837a557f931d198027eb3029d3fc298cdb771801cf592cbb6e4a"
     },
     {
       "path": "assets/images/scene/day-19-candy-cane.webp",
-      "bytes": 39960,
-      "sha256": "d5eb7018bd54920834a478623d6b20cd70c022a25dfde44ba20bf2cf6d226845"
+      "bytes": 112584,
+      "sha256": "e5ecbe6e2a8a7fda79d05e08efbe26f48c5f323a8ed40bb85a9811b2a634ca6f"
     },
     {
       "path": "assets/images/scene/day-21-department-store.webp",
-      "bytes": 79348,
-      "sha256": "75677610551b50ec918033bae0f8727b7858b95bbff2221cdfeb03e64e012140"
+      "bytes": 268416,
+      "sha256": "b4f1a27595ed4d68b3072e71f7c8adf9900e5fadc4d49878388ef6b94445ea71"
     },
     {
       "path": "assets/images/scene/day-22-golden-sleigh.webp",
-      "bytes": 77126,
-      "sha256": "2e2566d5a3a41457374fcf49a2cea25f099fa524916064afa0cfed86915cc970"
+      "bytes": 158874,
+      "sha256": "3350c1b3af0301b202a014b832e44cc6cf12a07d09a146a0b384afea67cfbd7d"
     },
     {
       "path": "assets/images/scene/day-23-cat-santa.webp",
-      "bytes": 245720,
-      "sha256": "01190db5f323f65327fb246a403456a1f1cc591061eb6861998f9f32a6382181"
+      "bytes": 279552,
+      "sha256": "d35bccb6d8f9650f0aadad67b7eba65f6fc987561a5b970d377c0131b6d9aaf1"
     },
     {
       "path": "assets/images/scene/day-24-christmas-star.webp",
-      "bytes": 63256,
-      "sha256": "f88d8408ef5bdd071a6451a7aeacf00282ce0bc7da9ab7e5286e9692366b6c09"
+      "bytes": 146954,
+      "sha256": "c20b200d99efde3373cc06ec539c46304c7d589b700ebea385f2d24c2ed44580"
     },
     {
       "path": "assets/images/scene/day-25-starlight-show.webp",
@@ -244,5 +244,26 @@
       "bytes": 119810,
       "sha256": "078c7ea2b9fb2a60eb6fb23bee2a399087e41424e6cf7799babeae58fdfcae59"
     }
+  ],
+  "artworkStyle": "A / 原版北歐紋理",
+  "changedDays": [
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    14,
+    16,
+    17,
+    18,
+    19,
+    21,
+    22,
+    23,
+    24
   ]
 }
