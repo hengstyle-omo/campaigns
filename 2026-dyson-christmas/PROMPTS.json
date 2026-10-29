@@ -148,8 +148,9 @@
       "day": 24,
       "file": "assets/images/scene/day-24-christmas-star.webp",
       "approvedStyle": "A",
-      "sha256": "c20b200d99efde3373cc06ec539c46304c7d589b700ebea385f2d24c2ed44580",
-      "prompt": "Use case: stylized-concept. Asset: one isolated Christmas collectible for a style-comparison sheet. Input reference is STYLE ONLY, showing the existing collection; do NOT reproduce the four reference objects or layout. Match its visual language precisely. Style: ORIGINAL NORDIC TEXTURED ILLUSTRATION: finely grained matte painted illustration, soft restrained shading and modest botanical leaf ornament; elegant navy/ivory/champagne-gold Nordic winter collectible. No thick cutout layers or glossy plastic. Subject: ONE independent five-pointed Christmas star, champagne gold, simple clearly defined five points, with a tiny subtle hanging loop. No tree, no string leaving frame, no light rays, no halo, no surrounding sparkles. Main palette: midnight navy, warm ivory and champagne gold; use the specific red, green and brown accents only where stated in the subject. Completely isolated single collectible on genuine transparent alpha background. Object centered with every part fully visible, 10% clear margins, maximize useful canvas. No background, no floor or horizon, no drop shadow beneath object, no haze, glow, confetti, extra stars or snow particles. No text, labels, letters, watermark or brand name. This is thumbnail artwork: keep silhouette clear and details restrained."
+      "sha256": "53cb7334a4ac4bd0917ac73b3971a1b9db43b1c65cb03080d23ad6d0bee05f8a",
+      "prompt": "Remove ring and metal ornament cap from approved A five-point star; restore uninterrupted upper point; preserve navy/ivory/champagne-gold wedges, botanical motifs and transparent background.",
+      "source": "built-in image_gen precise object edit"
     }
   ]
 }

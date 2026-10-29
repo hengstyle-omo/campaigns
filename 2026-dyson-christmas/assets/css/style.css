@@ -517,3 +517,6 @@ button,input,textarea,select{line-height:1.5}
 
 /* Counter gift uses the supplied artwork without recoloring. */
 .passport-visual{display:flex;align-items:center;justify-content:center;margin:14px 0;padding:14px;border-radius:10px;background:#f3ecdc;overflow:hidden}.passport-visual img{display:block;width:100%;max-width:240px;height:auto;object-fit:contain}.compact-reward .passport-visual{max-width:220px;margin:12px auto}.passport-eligible{color:var(--gold);font-weight:700;line-height:1.7}.passport-reward h3,.passport-reward p{overflow-wrap:anywhere}
+
+/* Keep replay control; media status is available only to screen readers. */
+.welcome-media-toolbar{justify-content:flex-end}.welcome-media-toolbar .welcome-status{position:absolute;width:1px;height:1px;min-height:0;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;flex:none}

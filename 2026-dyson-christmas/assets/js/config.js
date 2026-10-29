@@ -8,7 +8,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 64,
+  "version": 65,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -388,12 +388,12 @@ window.DYSON_GAME_CONFIG = {
       "day": 24,
       "type": "聖誕造景",
       "name": "平安夜金星",
-      "description": "加入獨立懸掛金星，可吸附至已收藏的樹頂，為雪境點上一顆平安夜金星。",
+      "description": "加入沒有吊飾環的平安夜金星，放入時自動對齊金燈主聖誕樹正上方，為雪境點上一顆祝福金星。",
       "benefit": null,
-      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
+      "assetNeed": "A款五角金星透明WebP，無吊飾環與金屬吊帽",
       "layout": {
         "x": 625,
-        "y": 408,
+        "y": 492,
         "h": 77
       },
       "hint": "一個冬日小驚喜，將為你的聖誕世界添上新的細節。"
@@ -655,7 +655,8 @@ window.DYSON_GAME_CONFIG = {
     "21": "simple-front-snowy-department-store"
   },
   "treeArtworkRevision": "20261029-tree-gingerbread-music",
-  "rewardPresentationRevision": "20261029-passport-product-rewards"
+  "rewardPresentationRevision": "20261029-passport-product-rewards",
+  "starArtworkRevision": "20261029-intro-tree-top-star"
 };
 
 window.DYSON_ASSETS = {
@@ -692,7 +693,7 @@ window.DYSON_ASSETS = {
     "21": "./assets/images/scene/day-21-department-store.webp?rev=20261029-simple-store-notices",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp?rev=20261029-style-a-final",
     "23": "./assets/images/scene/day-23-cat-santa.webp?rev=20261029-style-a-final",
-    "24": "./assets/images/scene/day-24-christmas-star.webp?rev=20261029-style-a-final"
+    "24": "./assets/images/scene/day-24-christmas-star.webp?rev=20261029-intro-tree-top-star"
   },
   "music": [
     {
