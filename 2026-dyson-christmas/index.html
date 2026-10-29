@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261029-intro-tree-top-star"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261029-admin-code-email-only"></head>
 <body>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
@@ -9,6 +9,11 @@
  <details class="welcome-rules"><summary id="welcome-rules-title">活動規則</summary><div class="welcome-rules-content"><p>活動期間為 2026/12/01–12/25，以台灣時間（UTC+8）每日 00:00 換日。可領取當天及之前的禮物，未來日期仍鎖定；活動結束後，已收藏項目仍可回看及重新擺放。</p><p>四款產品各附一份商品專屬優惠券，收藏即可保留對應優惠。製作卡片並下載或分享一次、填寫 Email 保存進度後，即可領取已達成條件的優惠券；整個活動只需完成一次卡片任務。活動期間累積參與 10 個不同台灣日期，即可至 Dyson 櫃位兌換護照；不需連續，同日補領多份禮物只算參與一天。</p><p>Email 用於保存與找回活動進度，請確認拼寫正確；本活動不驗證信箱持有人。未填 Email 可先體驗，填寫後按「開始收藏」即可保存。已載入進度後，變更行銷意願會立即保存；勾選行銷意願者，可於活動結束後接收 Dyson 優惠與新品資訊，不影響活動參加。</p><p>優惠內容與使用條件以券面說明為準。</p></div></details>
  <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><ol id="activity-notices-list"><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol></div></details>
  <div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始收藏</button></div>
+</dialog>
+<dialog id="admin-auth-dialog" class="admin-auth-dialog" aria-labelledby="admin-auth-title" aria-describedby="admin-auth-description">
+ <p class="eyebrow">ADMIN ACCESS</p><h2 id="admin-auth-title">管理員驗證</h2>
+ <p id="admin-auth-description">此帳號需要驗證碼，才能載入進度與日期模擬。</p><p id="admin-auth-email" class="admin-auth-email"></p>
+ <form id="admin-auth-form"><label for="admin-auth-code">管理員驗證碼<input id="admin-auth-code" type="password" minlength="16" maxlength="128" autocomplete="current-password" required></label><p id="admin-auth-message" role="status" aria-live="polite"></p><div class="admin-auth-actions"><button id="admin-auth-cancel" type="button">切換 Email</button><button id="admin-auth-submit" class="gold-button" type="submit">驗證並繼續</button></div></form>
 </dialog>
 <header class="site-header"><a class="brand" href="#"><img id="brand-logo" class="brand-logo" src="./assets/images/brand/dyson-logo-white.png" alt="Dyson" width="1702" height="591" fetchpriority="high"></a><nav aria-label="功能選單"><button id="progress-open" type="button">讀取進度</button><button id="vouchers-open">我的禮遇 <span id="voucher-count">0</span></button><div class="audio-menu"><button id="audio-open" type="button" aria-expanded="false" aria-controls="audio-panel">音訊<span class="audio-indicator" aria-hidden="true"></span></button>
 <section id="audio-panel" class="audio-panel" aria-labelledby="audio-title" hidden>
@@ -64,7 +69,7 @@
  <p class="studio-note">產品圖可在下表替換，建議透明 PNG／WebP。HD19、SV50、HJ10、BP10 已使用獨立透明產品圖；BP10 的了解詳情連結待補。HD19、SV50、HJ10 商品專屬券沿用既有序號；BP10 專屬序號與使用期限可於下方設定。護照禮為櫃位兌換，不使用折價序號。</p>
  <div id="asset-persistence" class="studio-note"></div><div class="table-scroll"><table class="studio-table"><thead><tr><th>日期</th><th>預覽</th><th>類型與項目</th><th>當日效果</th><th>產品介紹</th><th>素材</th><th>調整</th></tr></thead><tbody id="studio-table-body"></tbody></table></div>
  <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四款產品優惠與累積參與 10 天的 Dyson 護照禮；可調整商品券的預告、內容、序號與期限，以及護照禮的顯示文字，請保留解鎖條件。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇與序號</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>商品優惠券尚未提供序號時，請保留 code 空白、approved 為 false。解鎖後會顯示「序號準備中」。填入序號並設 approved 為 true 後，即可提供複製；未解鎖時只顯示 preview 預告。護照禮不需序號，累積參與10天並保存進度即可出示兌換資格。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
- <p class="studio-note">連接 Google Sheet 後，正式領取以後端台灣時間檢查。日期模擬只供 Sheet 勾選的管理者測試；限定動物另由「是否有專屬收藏」控制，模擬進度不混入正式收藏。Email 未經驗證，測試入口顯示限制不等同身分驗證。</p>
+ <p class="studio-note">連接 Google Sheet 後，正式領取以後端台灣時間檢查。日期模擬只供 Sheet 勾選的管理者測試；限定動物另由「是否有專屬收藏」控制，模擬進度不混入正式收藏。管理員需輸入驗證碼；一般參加者仍以 Email 保存進度，不驗證信箱持有人。</p>
 </dialog>
 <input id="asset-input" type="file" accept="image/png,image/webp,image/jpeg" hidden>
 
@@ -72,9 +77,9 @@
 
 
 
-<script src="./assets/js/config.js?v=20261029-intro-tree-top-star"></script>
+<script src="./assets/js/config.js?v=20261029-admin-code-email-only"></script>
 <script src="./assets/js/analytics.js?v=20261028-white-blue-gold"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>
-<script src="./assets/js/app.js?v=20261029-intro-tree-top-star"></script>
+<script src="./assets/js/app.js?v=20261029-admin-code-email-only"></script>
 </body></html>

@@ -8,7 +8,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 65,
+  "version": 66,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
