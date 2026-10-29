@@ -85,7 +85,9 @@
       "day": 12,
       "file": "assets/images/scene/day-12-christmas-tree.webp",
       "approvedStyle": "A",
-      "sha256": "a41bad77f6bcfa0c6c40d85edb008e631dbc931b44d1febe58fe16c38a097cc7"
+      "sha256": "e850c24dec2079cc255f6815e3920fe1ef1fda0f3c94d6a90a15b63ae4fc9e3d",
+      "source": "built-in image_gen edit of approved A tree",
+      "prompt": "Edit approved A tree: remove only separate star topper; lengthen exposed gold trunk slightly; preserve navy/ivory/champagne-gold palette, botanical motifs, internal stars, garlands and transparent background."
     },
     {
       "day": 14,
