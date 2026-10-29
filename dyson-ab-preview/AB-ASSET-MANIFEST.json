@@ -1,0 +1,46 @@
+{
+  "days": [
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    14,
+    16,
+    17,
+    18,
+    19,
+    21,
+    22,
+    23,
+    24
+  ],
+  "names": {
+    "2": "day-02-fir-tree.webp",
+    "3": "day-03-ribbon-gift.webp",
+    "4": "day-04-santa-hat.webp",
+    "6": "day-06-snowman.webp",
+    "7": "day-07-christmas-bauble.webp",
+    "8": "day-08-leaping-reindeer.webp",
+    "9": "day-09-street-lamp.webp",
+    "11": "day-11-shooting-star.webp",
+    "12": "day-12-christmas-tree.webp",
+    "14": "day-14-christmas-wreath.webp",
+    "16": "day-16-red-green-stocking-row.webp",
+    "17": "day-17-gingerbread.webp",
+    "18": "day-18-clock-tower.webp",
+    "19": "day-19-candy-cane.webp",
+    "21": "day-21-department-store.webp",
+    "22": "day-22-golden-sleigh.webp",
+    "23": "day-23-cat-santa.webp",
+    "24": "day-24-christmas-star.webp"
+  },
+  "versions": {
+    "a": "原版北歐紋理",
+    "b": "簡潔色塊插畫"
+  }
+}

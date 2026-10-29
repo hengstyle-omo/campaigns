@@ -1,0 +1,11 @@
+.art-compare-panel{border:1px solid #8b7654;border-radius:16px;background:#102536;padding:20px;margin:0 auto 18px;max-width:720px;color:#f3ead9;text-align:center}
+.art-compare-panel h2{margin:0 0 6px;font-size:1.3rem}.art-compare-panel p{margin:6px 0 14px;font-size:.9rem;color:#c6d1d6}
+.art-compare-choices,.art-compare-presets{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+.art-compare-choices button{flex:1;min-width:210px;min-height:48px;border:1px solid #9e875e;background:#0b1b29;color:#f3ead9;border-radius:10px;padding:10px 16px;font:inherit;cursor:pointer}
+.art-compare-choices button[aria-pressed=true]{background:#e8cd96;border-color:#e8cd96;color:#112332;font-weight:700}
+.art-compare-panel button:focus-visible,.art-compare-panel a:focus-visible{outline:3px solid #f1d69d;outline-offset:4px}
+.art-compare-presets{margin-top:14px}.art-compare-presets button{font:inherit;font-size:.85rem;border:1px solid #536471;border-radius:8px;color:#dce5e8;background:transparent;padding:8px 12px;cursor:pointer}
+.art-compare-panel .art-compare-status{min-height:1.5em;margin:14px 0 4px;color:#e8cd96}.art-compare-exit{font-size:.85rem;color:#c6d1d6}
+.art-comparing #progress-open,.art-comparing #vouchers-open,.art-comparing #benefits,.art-comparing .calendar-tools,.art-comparing #calendar-section{display:none!important}
+.art-comparing .site-header nav{gap:8px}
+@media(max-width:560px){.art-compare-panel{margin:0 12px 14px;padding:16px}.art-compare-choices button{min-width:120px;line-height:1.5;padding:10px;font-size:.9rem}.art-compare-presets{gap:7px}.art-compare-presets button{font-size:.8rem;padding:8px}}
