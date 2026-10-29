@@ -514,3 +514,6 @@ button,input,textarea,select{line-height:1.5}
 
 /* Activity notice text shares the existing scrollable introduction dialog. */
 .welcome-notices ol{margin:0;padding-left:1.6em}.welcome-notices li{padding-left:.2em;color:#b9c2cf}.welcome-notices li+li{margin-top:12px}.welcome-notices li p{margin:0;overflow-wrap:anywhere}.welcome-notices li::marker{font-size:14px}
+
+/* Counter gift uses the supplied artwork without recoloring. */
+.passport-visual{display:flex;align-items:center;justify-content:center;margin:14px 0;padding:14px;border-radius:10px;background:#f3ecdc;overflow:hidden}.passport-visual img{display:block;width:100%;max-width:240px;height:auto;object-fit:contain}.compact-reward .passport-visual{max-width:220px;margin:12px auto}.passport-eligible{color:var(--gold);font-weight:700;line-height:1.7}.passport-reward h3,.passport-reward p{overflow-wrap:anywhere}

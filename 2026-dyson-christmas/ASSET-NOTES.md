@@ -7,3 +7,7 @@
 finalArtworkRevision 用於辨識舊自訂圖片；之後新上傳的自訂素材會記錄目前識別並正常保留。不清空 IndexedDB 或使用者進度。
 
 Day 21 使用先前完成的原始透明圖，並更新 departmentStoreRevision；圖片保留原檔名，不會帶入參考截圖的深藍底色。
+
+Day12使用內建圖片編輯完成去除頂端星星與加長樹幹，保留A款植物紋樣與透明背景；透過treeArtworkRevision只更新該日舊圖片快取。
+
+護照禮使用提供的1080×1080透明PNG，無損轉為assets/images/rewards/dyson-passport.webp；首頁與禮遇對話框共用來源。

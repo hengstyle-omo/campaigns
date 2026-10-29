@@ -236,6 +236,16 @@ if(!safeRead(productRevisionKey,false)){
   safeWrite(productRevisionKey,true);
 }
 let rewardSettings=safeRead(STORAGE_PREFIX+'rewards-v2',{});
+const rewardPresentationKey=STORAGE_PREFIX+'reward-presentation-'+BASE_CONFIG.rewardPresentationRevision;
+if(!safeRead(rewardPresentationKey,false)){
+  const oldRewards=[{"id": "product-hd19", "unlock": "product", "productDay": 5, "title": "髮品折抵 $1,000", "preview": "髮品專屬優惠", "conditions": "適用商品、使用門檻及期限以活動與結帳頁面說明為準。", "code": "HC999999", "approved": true, "validUntil": ""}, {"id": "product-sv50", "unlock": "product", "productDay": 10, "title": "吸塵器折抵 $1,000", "preview": "吸塵器專屬優惠", "conditions": "適用商品、使用門檻及期限以活動與結帳頁面說明為準。", "code": "FC999999", "approved": true, "validUntil": ""}, {"id": "product-hj10", "unlock": "product", "productDay": 15, "title": "清淨機折抵 $1,000", "preview": "清淨機專屬優惠", "conditions": "適用商品、使用門檻及期限以活動與結帳頁面說明為準。", "code": "EC999999", "approved": true, "validUntil": ""}, {"id": "product-bp10", "unlock": "product", "productDay": 20, "title": "BP10 專屬優惠券", "preview": "BP10 專屬優惠", "conditions": "BP10 專屬優惠，折抵金額、序號與使用條件待公布。", "code": "", "approved": false, "validUntil": ""}, {"id": "visits-10", "unlock": "visits", "required": 10, "title": "Dyson 全品項折抵 $1,000", "preview": "Dyson 全品項折抵 $1,000", "conditions": "活動期間累積參與 10 個不同台灣日期即可解鎖，不需連續。適用商品、使用門檻及期限以活動與結帳頁面說明為準。", "code": "All999999", "approved": true, "validUntil": ""}];
+  for(const base of BASE_CONFIG.rewards){const saved=rewardSettings[base.id],old=oldRewards.find(r=>r.id===base.id);if(!saved||!old)continue;
+    for(const key of ['title','preview','conditions'])if(saved[key]===old[key])delete saved[key];
+    if(base.id==='visits-10')for(const key of ['title','preview','conditions','code','approved','validUntil'])delete saved[key];
+  }
+  safeWrite(STORAGE_PREFIX+'rewards-v2',rewardSettings);safeWrite(rewardPresentationKey,true);
+}
+
 let live=Core.normaliseState(safeRead(STORAGE_PREFIX+'guest-state',null));
 if(cloud.email){const cached=safeRead(cloudCacheKey(cloud.email),{});if(cached.state){live=Core.normaliseState(cached.state);cloud.synced=Core.normaliseState(cached.synced||cached.state);cloud.cachedView=true;cloud.cardTask=cardTaskNormalise(cached.cardTask);cloud.pendingCardTask=cardTaskNormalise(cached.pendingCardTask);cloud.consent=cached.consent===true;}}
 let preview=Core.normaliseState(safeRead(STORAGE_PREFIX+'preview',null));
@@ -409,6 +419,13 @@ if(!safeRead(treeDefaultsKey,false)){
   }
   safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(treeDefaultsKey,true);
 }
+// Refresh only former published defaults; retain custom positions and scale.
+const treeMusicUpdateKey=STORAGE_PREFIX+'tree-music-'+BASE_CONFIG.treeArtworkRevision;
+if(!safeRead(treeMusicUpdateKey,false)){
+  for(const [d,oldHeight] of [[12,455],[17,110]])if(settings[d]?.layout?.h===oldHeight)settings[d].layout.h=BASE_CONFIG.items.find(i=>i.day===d).layout.h;
+  if(settings[24]?.description=== '加入獨立懸掛金星，可吸附至已收藏的樹頂，另解鎖慢版《Jingle Bells》旋律。')delete settings[24].description;
+  safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(treeMusicUpdateKey,true);
+}
 let previewDate=null,selectedDay=null,currentModalDay=null,editMode=false;
 let campaignStarted=false;
 function analyticsAllowed(){return !previewDate&&!$('studio-dialog')?.open;}
@@ -429,17 +446,17 @@ const today=()=>Core.campaignDay(dateISO(),YEAR);
 const itemByDay=d=>BASE_CONFIG.items.find(i=>i.day===Number(d))||bonusCatalog.find(i=>i.day===Number(d));
 const bonusDays=()=>cloud.ready?cloud.bonusIds.filter(d=>bonusCatalog.some(i=>i.day===d)):[];
 const calendarName=d=>{const i=item(d);return i.teaser?i.name:i.calendarName||i.name;};
-const calendarMusic=d=>({7:'Jingle Bells · 輕快版',24:'Jingle Bells · 冬日慢版',25:'聖誕祝福旋律'})[d]||'';
+const calendarMusic=d=>({7:'Jingle Bells · 輕快版',25:'聖誕祝福旋律'})[d]||'';
 function configuredItem(d){const source=itemByDay(d);return {...source,...settings[d],day:source.day,benefit:null,product:source.product?{...source.product,...settings[d]?.product}:null};}
 function item(d){
   const value=configuredItem(d);
   if(Number(d)===20&&dateISO()<(BASE_CONFIG.bp10RevealDate||`${YEAR}-12-16`))return {...value,teaser:true,name:'清淨機新品',description:'全新清淨科技，即將揭曉。',hint:'12/16 揭曉清淨機新品，12/20 開放收藏。',product:{...value.product,model:'清淨機新品',color:'',intro:'清淨機新品將於 12/16 揭曉，12/20 開放收藏並解鎖專屬優惠券。',tagline:'清淨新科技，即將揭曉。',features:[],url:''}};
   return value;
 }
-const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required}));
+const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required,redemption:b.redemption,...(b.redemption==='counter'?{code:'',approved:true}:{} )}));
 const rewards=()=>configuredRewards().map(b=>b.productDay===20&&item(20).teaser?{...b,title:'清淨機新品專屬優惠券',preview:'清淨機新品專屬優惠',conditions:'新品專屬優惠將於 12/16 揭曉。'}:b);
 const rewardQualified=(b,p)=>b.unlock==='product'?p.claimedDays.includes(b.productDay):p.visits>=b.required;
-const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&cardTaskConfirmed();
+const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&(b.redemption==='counter'?(!!previewDate||cloud.ready):cardTaskConfirmed());
 function rewardProgress(){
   const t=today(),claimedDays=Object.keys(state().claimed).map(Number).filter(d=>d<=t),count=claimedDays.length,visits=participationDates().length;
   const list=rewards(),progress={count,claimedDays,visits},unlockedCount=list.filter(b=>rewardUnlocked(b,progress)).length,next=list.find(b=>!rewardUnlocked(b,progress))||null;
@@ -447,9 +464,9 @@ function rewardProgress(){
 }
 function rewardProgressLabel(p=rewardProgress()){return `已收藏 ${p.count}／25 · 已參與 ${p.visits}${p.visits<10?'／10':''} 天 · 已解鎖 ${p.unlockedCount}／${p.total} 份禮遇`;}
 function nextRewardLabel(p=rewardProgress()){
-  if(!cardTaskConfirmed()&&rewards().some(b=>rewardQualified(b,p)))return localCardTask()?'優惠已保留，填寫 Email 或完成同步即可領取。':'優惠已保留，製作卡片並下載或分享一次即可領取。';
+  if(!cardTaskConfirmed()&&rewards().some(b=>b.unlock==='product'&&rewardQualified(b,p)))return localCardTask()?'優惠已保留，填寫 Email 或完成同步即可領取。':'優惠已保留，製作卡片並下載或分享一次即可領取。';
   if(!p.next)return '五份節慶禮遇已全部解鎖。';
-  return p.next.unlock==='product'?`收藏「${item(p.next.productDay).name}」，保留對應優惠，完成一次卡片下載或分享即可領取。`:`再參與 ${Math.max(0,p.next.required-p.visits)} 天，解鎖 Dyson 全品項折抵 $1,000。`;
+  return p.next.unlock==='product'?`收藏「${item(p.next.productDay).name}」，保留對應優惠，完成一次卡片下載或分享即可領取。`:`再參與 ${Math.max(0,p.next.required-p.visits)} 天，解鎖 Dyson 護照兌換禮。`;
 }
 const items=()=>BASE_CONFIG.items.map(i=>item(i.day));
 const participationDates=()=>Core.participationDates(state().visits,dateISO(),YEAR);
@@ -664,7 +681,7 @@ function renderParticipation(progress=rewardProgress()){
   section.setAttribute('aria-label','聖誕足跡，累積參與 10 天');
   const heading=el('div','participation-heading');
   heading.append(el('h3','','聖誕足跡'),el('span','participation-count',`${Math.min(10,dates.length)}／10 天`));
-  const message=el('p','participation-message',complete?(cardTaskConfirmed()?'已集滿 10 天，Dyson 全品項折抵 $1,000 已解鎖。':'已集滿 10 天，優惠已保留，完成一次卡片任務並保存進度即可領取。'):`再來 ${10-dates.length} 天，即可獲得 Dyson 全品項折抵 $1,000。`);
+  const message=el('p','participation-message',complete?'已集滿 10 天，可至 Dyson 櫃位兌換護照。':`再來 ${10-dates.length} 天，即可至 Dyson 櫃位兌換護照。`);
   const grid=el('ol','participation-grid');grid.setAttribute('aria-label','前 10 次參加日期');
   for(let index=0;index<10;index++){
     const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);
@@ -680,6 +697,7 @@ function renderParticipation(progress=rewardProgress()){
   return section;
 }
 function renderRewardCard(b,progress,full){
+  if(b.redemption==='counter')return renderCounterReward(b,progress,full);
   const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress),waiting=qualified&&!unlocked,isNext=progress.next?.id===b.id,product=b.unlock==='product'?item(b.productDay):null;
   const card=el('article',`${full?'voucher-card':'benefit-card'}${unlocked?' claimed':' locked'}${isNext?' next-reward':''}`);card.dataset.rewardId=b.id;
   const condition=product?`收藏 12/${b.productDay} 產品`:`累積參與 ${b.required} 天`;
@@ -718,6 +736,18 @@ function renderRewardCard(b,progress,full){
     }
   }else card.append(el('p','reward-hint',b.approved&&b.code?'產品禮遇已揭曉，前往查看序號。':'禮遇已解鎖，序號準備中。'));
   if(!full){const button=el('button','',unlocked?'查看我的禮遇':'查看產品與進度');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);}
+  return card;
+}
+function renderCounterReward(b,progress,full){
+  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress),card=el('article',`${full?'voucher-card':'benefit-card compact-reward'} passport-reward${unlocked?' claimed':' locked'}`);
+  card.dataset.rewardId=b.id;card.setAttribute('aria-label',`累積參與 ${b.required} 天，${unlocked?'兌換資格已解鎖':'尚未解鎖'}，${b.title}`);
+  const meta=el('div','reward-meta');meta.append(el('p','benefit-date',`累積參與 ${b.required} 天`),el('span','reward-state',unlocked?'可至櫃位兌換':'集滿10天解鎖'));card.append(meta);
+  const visual=el('div','passport-visual'),image=el('img');image.src=ASSETS.rewardImages.passport;image.alt='Dyson 護照，封面印有吹風機與飛機圖案';image.loading='lazy';image.width=1080;image.height=1080;visual.append(image);card.append(visual,el('h3','reward-product-name',b.title),el('p','reward-participation',`已參與 ${progress.visits}／${b.required} 天 · 不需連續`));
+  if(full){card.append(el('p','reward-conditions',b.conditions));
+    if(unlocked)card.append(el('p','passport-eligible','兌換資格已解鎖，請至 Dyson 櫃位出示此畫面兌換護照。'));
+    else if(qualified){const button=el('button','gold-button','保存進度查看兌換資格');button.type='button';button.addEventListener('click',openProgress);card.append(button);}
+    else card.append(el('p','reward-hint',`再參與 ${Math.max(0,b.required-progress.visits)} 個不同台灣日期，即可取得護照兌換資格。`));
+  }else{const button=el('button','','查看護照禮與集點進度');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);}
   return card;
 }
 function validatedProductURL(value){
@@ -1156,10 +1186,10 @@ async function openDatabase(){
       if(moved.length)await new Promise((resolve,reject)=>{const tx=assetDb.transaction('images','readwrite'),store=tx.objectStore('images');for(const d of Object.keys(SCHEDULE_MOVES))store.delete(Number(d));for(const r of moved)store.put(r,r.day);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('素材日期更新未完成'));});
       records=records.filter(r=>!SCHEDULE_MOVES[r.day]).concat(moved);safeWrite(scheduleKey+'-assets',true);
     }
-    for(const r of records||[]){if(FINAL_ARTWORK_DAYS.includes(Number(r.day))&&r.finalArtworkRevision!==BASE_CONFIG.finalArtworkRevision)continue;if(HOLIDAY_ACCENT_DAYS.includes(Number(r.day))&&r.holidayAccentRevision!==BASE_CONFIG.holidayAccentRevision)continue;if(FRONT_FACING_ARTWORK_DAYS.includes(Number(r.day))&&r.frontFacingArtworkRevision!==BASE_CONFIG.frontFacingArtworkRevision)continue;if(SEASONAL_ARTWORK_DAYS.includes(Number(r.day))&&r.seasonalArtworkRevision!==BASE_CONFIG.seasonalArtworkRevision)continue;if(RESTORED_ARTWORK_DAYS.includes(Number(r.day))&&r.restoredArtworkRevision!==BASE_CONFIG.restoredArtworkRevision)continue;if(CONTENT_REPLACED_DAYS.includes(Number(r.day))&&r.collectionContentRevision!==BASE_CONFIG.collectionContentRevision)continue;if(DEER_PAPER_DAYS.includes(Number(r.day))&&r.deerPaperRevision!==BASE_CONFIG.deerPaperRevision)continue;if(PAPER_SCENERY_DAYS.includes(Number(r.day))&&r.paperSceneryRevision!==BASE_CONFIG.paperSceneryRevision)continue;if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
+    for(const r of records||[]){if(Number(r.day)===12&&r.treeArtworkRevision!==BASE_CONFIG.treeArtworkRevision)continue;if(FINAL_ARTWORK_DAYS.includes(Number(r.day))&&r.finalArtworkRevision!==BASE_CONFIG.finalArtworkRevision)continue;if(HOLIDAY_ACCENT_DAYS.includes(Number(r.day))&&r.holidayAccentRevision!==BASE_CONFIG.holidayAccentRevision)continue;if(FRONT_FACING_ARTWORK_DAYS.includes(Number(r.day))&&r.frontFacingArtworkRevision!==BASE_CONFIG.frontFacingArtworkRevision)continue;if(SEASONAL_ARTWORK_DAYS.includes(Number(r.day))&&r.seasonalArtworkRevision!==BASE_CONFIG.seasonalArtworkRevision)continue;if(RESTORED_ARTWORK_DAYS.includes(Number(r.day))&&r.restoredArtworkRevision!==BASE_CONFIG.restoredArtworkRevision)continue;if(CONTENT_REPLACED_DAYS.includes(Number(r.day))&&r.collectionContentRevision!==BASE_CONFIG.collectionContentRevision)continue;if(DEER_PAPER_DAYS.includes(Number(r.day))&&r.deerPaperRevision!==BASE_CONFIG.deerPaperRevision)continue;if(PAPER_SCENERY_DAYS.includes(Number(r.day))&&r.paperSceneryRevision!==BASE_CONFIG.paperSceneryRevision)continue;if(Number(r.day)===21&&r.departmentStoreRevision!==BASE_CONFIG.departmentStoreRevision)continue;if([107,109].includes(Number(r.day))&&r.softAnimalsRevision!==BASE_CONFIG.softAnimalsRevision)continue;if(Number(r.day)===106&&r.penguinRevision!==BASE_CONFIG.penguinRevision)continue;if(Number(r.day)===23&&r.santaTailRevision!==BASE_CONFIG.santaTailRevision)continue;if(PLAIN_COAT_DAYS.includes(Number(r.day))&&r.plainCoatRevision!==BASE_CONFIG.plainCoatRevision)continue;if(CHARACTER_REVISED_DAYS.includes(Number(r.day))&&r.characterRevision!==BASE_CONFIG.characterRevision)continue;if(CAT_COLLECTION_DAYS.includes(Number(r.day))&&r.catRevision!==BASE_CONFIG.catRevision)continue;if(PAPER_COLLECTION_DAYS.includes(Number(r.day))&&r.paperCollectionRevision!==BASE_CONFIG.paperCollectionRevision)continue;if(Number(r.day)===16&&r.stockingRevision!==BASE_CONFIG.stockingRevision)continue;if(SCENE_REPLACED_DAYS.includes(Number(r.day))&&r.sceneRevision!==BASE_CONFIG.sceneRevision)continue;if(!itemByDay(r.day)?.product&&r.productModel)continue;if(itemByDay(r.day)?.product&&ASSETS.productStyle&&(r.productStyle!==ASSETS.productStyle||r.productModel!==itemByDay(r.day).product.model))continue;if(ASSETS.visualStyle==='paper-relief-v1'&&!item(r.day)?.product&&r.visualStyle!=='paper-relief-v1')continue;if(r.removed)customAssets.delete(r.day);else try{customAssets.set(r.day,{src:r.src,image:await imageLoad(r.src)});}catch{}}
   }catch{assetDb=null;assetStorage='memory';}
 }
-function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,finalArtworkRevision:BASE_CONFIG.finalArtworkRevision,holidayAccentRevision:BASE_CONFIG.holidayAccentRevision,frontFacingArtworkRevision:BASE_CONFIG.frontFacingArtworkRevision,seasonalArtworkRevision:BASE_CONFIG.seasonalArtworkRevision,restoredArtworkRevision:BASE_CONFIG.restoredArtworkRevision,collectionContentRevision:BASE_CONFIG.collectionContentRevision,deerPaperRevision:BASE_CONFIG.deerPaperRevision,paperSceneryRevision:BASE_CONFIG.paperSceneryRevision,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function dbWrite(day,src){return new Promise((resolve,reject)=>{if(!assetDb){resolve();return;}const tx=assetDb.transaction('images','readwrite');tx.objectStore('images').put(src?{day,src,treeArtworkRevision:BASE_CONFIG.treeArtworkRevision,finalArtworkRevision:BASE_CONFIG.finalArtworkRevision,holidayAccentRevision:BASE_CONFIG.holidayAccentRevision,frontFacingArtworkRevision:BASE_CONFIG.frontFacingArtworkRevision,seasonalArtworkRevision:BASE_CONFIG.seasonalArtworkRevision,restoredArtworkRevision:BASE_CONFIG.restoredArtworkRevision,collectionContentRevision:BASE_CONFIG.collectionContentRevision,deerPaperRevision:BASE_CONFIG.deerPaperRevision,paperSceneryRevision:BASE_CONFIG.paperSceneryRevision,departmentStoreRevision:BASE_CONFIG.departmentStoreRevision,softAnimalsRevision:BASE_CONFIG.softAnimalsRevision,penguinRevision:BASE_CONFIG.penguinRevision,santaTailRevision:BASE_CONFIG.santaTailRevision,plainCoatRevision:BASE_CONFIG.plainCoatRevision,characterRevision:BASE_CONFIG.characterRevision,catRevision:BASE_CONFIG.catRevision,paperCollectionRevision:BASE_CONFIG.paperCollectionRevision,sceneRevision:BASE_CONFIG.sceneRevision,stockingRevision:BASE_CONFIG.stockingRevision,visualStyle:ASSETS.visualStyle,productStyle:item(day).product?ASSETS.productStyle:null,productModel:configuredItem(day).product?.model||null}:{day,removed:true,visualStyle:ASSETS.visualStyle},day);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
 async function removeCustomAsset(d){customAssets.delete(d);sprites.delete(d);await dbWrite(d,null).catch(()=>{});renderUI();renderStudio();}
 $('asset-input').addEventListener('change',async e=>{const file=e.target.files?.[0],d=assetUploadDay;if(!file||!d)return;if(file.size>12*1024*1024){$('config-status').textContent='單張圖片請控制在 12 MB 內。';return;}
   try{const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const image=await imageLoad(src);customAssets.set(d,{src,image});sprites.delete(d);try{await dbWrite(d,src);}catch{assetStorage='memory';}$('config-status').textContent=`12/${d} 圖片已替換。可下載新版 config.js 保留素材。`;renderUI();renderStudio();}catch(err){$('config-status').textContent=err.message;}
@@ -1177,7 +1207,7 @@ function applyConfig(value,rewardValue=configuredRewards()){
       next[r.day].product={model:String(p.model||'').slice(0,100),color:String(p.color||'').slice(0,80),intro:p.intro.trim().slice(0,1000),tagline:String(p.tagline||'').trim().slice(0,120),features:p.features.map(f=>f.trim().slice(0,150)),url,...(typeof p.detailTitle==='string'?{detailTitle:p.detailTitle.trim().slice(0,160)}:{})};
     }
   }
-  if(!Array.isArray(rewardValue)||rewardValue.length!==5)throw new Error('禮遇設定必須包含五張優惠券。');
+  if(!Array.isArray(rewardValue)||rewardValue.length!==5)throw new Error('禮遇設定必須包含四張商品優惠券與一份護照禮。');
   const nextReward={},rewardIDs=new Set();
   for(const b of rewardValue){
     const base=BASE_CONFIG.rewards.find(v=>v.id===b?.id);
@@ -1185,8 +1215,8 @@ function applyConfig(value,rewardValue=configuredRewards()){
     rewardIDs.add(b.id);
     if(typeof b.title!=='string'||!b.title.trim()||typeof b.preview!=='string'||!b.preview.trim()||typeof b.conditions!=='string')throw new Error('請填入優惠券標題、未解鎖預告與使用條件。');
     if(b.validUntil&&(!/^\d{4}-\d{2}-\d{2}$/.test(b.validUntil)||!Number.isFinite(Date.parse(b.validUntil+'T00:00:00Z'))||new Date(b.validUntil+'T00:00:00Z').toISOString().slice(0,10)!==b.validUntil))throw new Error('使用期限須為有效的 YYYY-MM-DD 日期。');
-    if(b.approved===true&&!String(b.code||'').trim())throw new Error('啟用優惠券前請填入序號。');
-    nextReward[b.id]={title:b.title.trim().slice(0,120),preview:b.preview.trim().slice(0,120),conditions:b.conditions.slice(0,1000),code:String(b.code||'').trim().slice(0,120),validUntil:String(b.validUntil||''),approved:b.approved===true};
+    if(base.redemption!=='counter'&&b.approved===true&&!String(b.code||'').trim())throw new Error('啟用優惠券前請填入序號。');
+    nextReward[b.id]={title:b.title.trim().slice(0,120),preview:b.preview.trim().slice(0,120),conditions:b.conditions.slice(0,1000),code:String(b.code||'').trim().slice(0,120),validUntil:String(b.validUntil||''),approved:b.approved===true};if(base.redemption==='counter'){nextReward[b.id].code='';nextReward[b.id].approved=true;nextReward[b.id].validUntil='';}
   }
   settings=next;rewardSettings=nextReward;safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(STORAGE_PREFIX+'rewards-v2',rewardSettings);renderUI();renderStudio();if(currentModalDay&&dayState(currentModalDay)==='owned')renderItemDialog();
 }

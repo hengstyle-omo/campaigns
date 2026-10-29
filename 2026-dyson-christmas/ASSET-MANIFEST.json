@@ -2,7 +2,7 @@
   "schema": 1,
   "baselineUpload": "2026-dyson-christmas.zip",
   "baselineSHA256": "6ac71b55a5667913e8c0d366bdef7d53fbd450187968ac025040b575abbb4aad",
-  "version": 62,
+  "version": 64,
   "files": [
     {
       "path": "assets/audio/card-jingle-bells-5s-aac-v48.m4a",
@@ -171,8 +171,8 @@
     },
     {
       "path": "assets/images/scene/day-12-christmas-tree.webp",
-      "bytes": 155052,
-      "sha256": "a41bad77f6bcfa0c6c40d85edb008e631dbc931b44d1febe58fe16c38a097cc7"
+      "bytes": 217942,
+      "sha256": "e850c24dec2079cc255f6815e3920fe1ef1fda0f3c94d6a90a15b63ae4fc9e3d"
     },
     {
       "path": "assets/images/scene/day-13-golden-snowflake.webp",
@@ -243,6 +243,11 @@
       "path": "assets/video/welcome.mp4",
       "bytes": 119810,
       "sha256": "078c7ea2b9fb2a60eb6fb23bee2a399087e41424e6cf7799babeae58fdfcae59"
+    },
+    {
+      "path": "assets/images/rewards/dyson-passport.webp",
+      "bytes": 193020,
+      "sha256": "75833980a1105b298b8ca95013926b81d21c0f2fae0725fb0b3fecdd99c5e38b"
     }
   ],
   "artworkStyle": "A / 原版北歐紋理；Day 21 為指定正面雪屋百貨",
