@@ -511,3 +511,6 @@ button,input,textarea,select{line-height:1.5}
 
 /* v48: visible capture surface for the prepared-frame MP4 compatibility path. */
 .card-recording-preview{width:90px;height:150px;max-height:20vh;object-fit:contain;border-radius:6px;flex:none}
+
+/* Activity notice text shares the existing scrollable introduction dialog. */
+.welcome-notices ol{margin:0;padding-left:1.6em}.welcome-notices li{padding-left:.2em;color:#b9c2cf}.welcome-notices li+li{margin-top:12px}.welcome-notices li p{margin:0;overflow-wrap:anywhere}.welcome-notices li::marker{font-size:14px}

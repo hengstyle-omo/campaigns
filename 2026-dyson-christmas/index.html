@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261028-white-blue-gold"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 璀璨雪境｜25 日聖誕收藏</title><link rel="stylesheet" href="./assets/css/style.css?v=20261029-simple-store-notices"></head>
 <body>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
@@ -8,6 +8,7 @@
  <div class="welcome-content"><section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">留住你的聖誕進度</h3><p>留下 Email，下次回來接續收藏。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>我願意接收 Dyson 優惠與新品資訊（選填）</span></label><p class="card-hint">未填寫也能先體驗。</p><button id="progress-submit" hidden class="gold-button" type="submit">保存</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div></div>
  <nav class="welcome-guide" aria-label="三步玩法"><ol class="welcome-steps"><li>收藏驚喜</li><li>布置雪境</li><li>傳祝福領優惠</li></ol></nav>
  <details class="welcome-rules"><summary id="welcome-rules-title">活動規則</summary><div class="welcome-rules-content"><p>活動期間為 2026/12/01–12/25，以台灣時間（UTC+8）每日 00:00 換日。可領取當天及之前的禮物，未來日期仍鎖定；活動結束後，已收藏項目仍可回看及重新擺放。</p><p>四款產品各附一份優惠券，收藏即可保留對應優惠。製作卡片並下載或分享一次、填寫 Email 保存進度後，即可領取已達成條件的優惠券；整個活動只需完成一次卡片任務。活動期間累積參與 10 個不同台灣日期，再解鎖 Dyson 全品項折抵 $1,000；不需連續，同日補領多份禮物只算參與一天。</p><p>Email 用於保存與找回活動進度，請確認拼寫正確；本活動不驗證信箱持有人。未填 Email 可先體驗，填寫後按「開始收藏」即可保存。已載入進度後，變更行銷意願會立即保存；勾選行銷意願者，可於活動結束後接收 Dyson 優惠與新品資訊，不影響活動參加。</p><p>優惠內容與使用條件以券面說明為準。</p></div></details>
+ <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><ol id="activity-notices-list"><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol></div></details>
  <div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始收藏</button></div>
 </dialog>
 <header class="site-header"><a class="brand" href="#"><img id="brand-logo" class="brand-logo" src="./assets/images/brand/dyson-logo-white.png" alt="Dyson" width="1702" height="591" fetchpriority="high"></a><nav aria-label="功能選單"><button id="progress-open" type="button">讀取進度</button><button id="vouchers-open">我的禮遇 <span id="voucher-count">0</span></button><div class="audio-menu"><button id="audio-open" type="button" aria-expanded="false" aria-controls="audio-panel">音訊<span class="audio-indicator" aria-hidden="true"></span></button>
@@ -72,7 +73,7 @@
 
 
 
-<script src="./assets/js/config.js?v=20261029-style-a-final"></script>
+<script src="./assets/js/config.js?v=20261029-simple-store-notices"></script>
 <script src="./assets/js/analytics.js?v=20261028-white-blue-gold"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>

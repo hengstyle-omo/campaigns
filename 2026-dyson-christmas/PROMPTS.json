@@ -1,6 +1,6 @@
 {
   "mode": "approved built-in imagegen artwork",
-  "artDirection": "A / 原版北歐紋理；米白、深藍、香檳金，細緻顆粒與節制的植物紋樣。",
+  "artDirection": "A / 原版北歐紋理；Day 21 依指定參考改用簡潔正面雪屋型百貨。",
   "changedDays": [
     2,
     3,
@@ -124,8 +124,9 @@
     {
       "day": 21,
       "file": "assets/images/scene/day-21-department-store.webp",
-      "approvedStyle": "A",
-      "sha256": "b4f1a27595ed4d68b3072e71f7c8adf9900e5fadc4d49878388ef6b94445ea71"
+      "approvedStyle": "指定參考：簡潔正面雪屋型百貨",
+      "sha256": "75677610551b50ec918033bae0f8727b7858b95bbff2221cdfeb03e64e012140",
+      "source": "先前 v59 的已完成透明圖"
     },
     {
       "day": 22,

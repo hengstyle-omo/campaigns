@@ -8,7 +8,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 61,
+  "version": 62,
   "cardShareUrl": "https://hlh.tw/2026-dyson-christmas",
   "cardShareText": "我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
   "visualStyle": "paper-relief-v1",
@@ -346,9 +346,9 @@ window.DYSON_GAME_CONFIG = {
       "day": 21,
       "type": "聖誕造景",
       "name": "聖誕百貨",
-      "description": "Dyson 招牌與暖光櫥窗點亮積雪百貨，為你的聖誕雪境添上一間溫暖的店。",
+      "description": "正面的積雪屋頂與深藍遮棚，搭配 dyson 招牌及暖光展示櫥窗，為你的聖誕雪境添上一間溫暖的百貨。",
       "benefit": null,
-      "assetNeed": "A 款北歐紋理插畫透明 WebP，沿用固定檔名",
+      "assetNeed": "已確認的正面雪屋型百貨透明 WebP，保留 dyson 招牌與簡潔櫥窗",
       "layout": {
         "x": 370,
         "y": 785,
@@ -624,7 +624,7 @@ window.DYSON_GAME_CONFIG = {
   "santaTailRevision": "20261023-santa-tail-v34",
   "penguinRevision": "20261023-soft-penguin-v36",
   "softAnimalsRevision": "20261024-sea-otter-face-v48",
-  "departmentStoreRevision": "20261028-snowy-retail",
+  "departmentStoreRevision": "20261029-simple-store-notices",
   "collectionContentRevision": "20261028-hat-meteor-originals",
   "restoredArtworkRevision": "20261027-uploaded-originals",
   "seasonalArtworkRevision": "20261028-tree-redgreen",
@@ -649,7 +649,10 @@ window.DYSON_GAME_CONFIG = {
     22,
     23,
     24
-  ]
+  ],
+  "artworkOverrides": {
+    "21": "simple-front-snowy-department-store"
+  }
 };
 
 window.DYSON_ASSETS = {
@@ -683,7 +686,7 @@ window.DYSON_ASSETS = {
     "18": "./assets/images/scene/day-18-clock-tower.webp?rev=20261029-style-a-final",
     "19": "./assets/images/scene/day-19-candy-cane.webp?rev=20261029-style-a-final",
     "20": "./assets/images/products/bp10-snowglobe.png",
-    "21": "./assets/images/scene/day-21-department-store.webp?rev=20261029-style-a-final",
+    "21": "./assets/images/scene/day-21-department-store.webp?rev=20261029-simple-store-notices",
     "22": "./assets/images/scene/day-22-golden-sleigh.webp?rev=20261029-style-a-final",
     "23": "./assets/images/scene/day-23-cat-santa.webp?rev=20261029-style-a-final",
     "24": "./assets/images/scene/day-24-christmas-star.webp?rev=20261029-style-a-final"

@@ -2,7 +2,7 @@
   "schema": 1,
   "baselineUpload": "2026-dyson-christmas.zip",
   "baselineSHA256": "6ac71b55a5667913e8c0d366bdef7d53fbd450187968ac025040b575abbb4aad",
-  "version": 61,
+  "version": 62,
   "files": [
     {
       "path": "assets/audio/card-jingle-bells-5s-aac-v48.m4a",
@@ -206,8 +206,8 @@
     },
     {
       "path": "assets/images/scene/day-21-department-store.webp",
-      "bytes": 268416,
-      "sha256": "b4f1a27595ed4d68b3072e71f7c8adf9900e5fadc4d49878388ef6b94445ea71"
+      "bytes": 79348,
+      "sha256": "75677610551b50ec918033bae0f8727b7858b95bbff2221cdfeb03e64e012140"
     },
     {
       "path": "assets/images/scene/day-22-golden-sleigh.webp",
@@ -245,7 +245,7 @@
       "sha256": "078c7ea2b9fb2a60eb6fb23bee2a399087e41424e6cf7799babeae58fdfcae59"
     }
   ],
-  "artworkStyle": "A / 原版北歐紋理",
+  "artworkStyle": "A / 原版北歐紋理；Day 21 為指定正面雪屋百貨",
   "changedDays": [
     2,
     3,
@@ -265,5 +265,8 @@
     22,
     23,
     24
-  ]
+  ],
+  "artworkOverrides": {
+    "21": "simple-front-snowy-department-store"
+  }
 }
