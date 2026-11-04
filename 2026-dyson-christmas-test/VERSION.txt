@@ -1,0 +1,4 @@
+November Test 1 / frontend 67 / based on approved v66 A artwork
+2026-11-04
+11月一般使用者每日測試；同日對應12月；獨立參加者分頁與瀏覽器儲存。
+GS service v8、permissions v3、auth v1，另加 environment v1；正式 v66 前端相容。
