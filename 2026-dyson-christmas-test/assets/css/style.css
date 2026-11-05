@@ -284,7 +284,7 @@ button,input,textarea,select{line-height:1.5}
 
 /* Product-linked offers and distinct participation days. */
 .reward-product{display:flex;align-items:center;gap:16px;margin:12px 0;min-width:0}
-.reward-product>canvas,.reward-product-teaser{width:104px;height:130px;flex:0 0 104px;object-fit:contain}
+.reward-product>canvas,.reward-product>img,.reward-product-teaser{width:104px;height:130px;flex:0 0 104px;object-fit:contain}
 .reward-product>div:last-child{min-width:0;flex:1}
 .reward-product-teaser{display:grid;place-items:center;border:1px dashed var(--line);border-radius:8px;color:var(--gold);font-size:14px}
 .voucher-card .reward-product-intro{font-size:14px;line-height:1.7;margin:0 0 10px}
@@ -292,7 +292,7 @@ button,input,textarea,select{line-height:1.5}
 .sim-visits-label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--gold)}
 .sim-visits-label input{width:70px;padding:6px;background:#0d1927;color:var(--text);border:1px solid var(--line);border-radius:5px;font:inherit}
 .sim-visits-label span{font-size:12px;color:var(--muted)}
-@media(max-width:420px){.reward-product{gap:10px}.reward-product>canvas,.reward-product-teaser{width:78px;flex-basis:78px;height:110px}}
+@media(max-width:420px){.reward-product{gap:10px}.reward-product>canvas,.reward-product>img,.reward-product-teaser{width:78px;flex-basis:78px;height:110px}}
 
 /* Single-day simulation and ten distinct participation dates. */
 .sim-date-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--text);margin:10px 0}
@@ -529,3 +529,18 @@ button,input,textarea,select{line-height:1.5}
 /* Three quiet starter props are separate from daily collectibles. */
 .starter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.starter-grid canvas{height:145px}.starter-grid .card-info{min-height:0}.starter-grid .card-day{font-size:11px;letter-spacing:.04em}
 @media(max-width:760px){#starter-section .section-heading{align-items:flex-start;gap:10px}#starter-section .section-heading>span{font-size:12px;max-width:165px}.starter-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.starter-grid canvas{height:95px}.starter-grid .card-info{padding:9px}.starter-grid h3{font-size:14px}.starter-grid .place-button{font-size:12px;padding:7px 2px}.starter-grid .card-day{font-size:10px;line-height:1.4}}
+
+/* v70: three explicit states, larger marks, gold border only for placed items. */
+.day-cell.current,.day-cell.product-day,.day-cell.product-day.current,.day-cell.owned.stored,.day-cell.product-day.owned.stored{border:1px solid #454854;box-shadow:none;background:#0c121d}
+.day-cell.owned.placed,.day-cell.product-day.owned.placed{border:2px solid #edcc91;box-shadow:inset 0 0 0 1px #e4ba7833;background:linear-gradient(145deg,#e5bd7e2c,#d7b88016)}
+.day-cell .calendar-state-icon{width:15px;height:15px;right:4px;top:4px;background-size:15px 15px}
+.calendar-state-icon.stored,.calendar-state-icon.placed{color:#edcf95;border:0;border-radius:0;background:center/15px 15px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23edcf95' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2.5 8 3.3 3.3 7.7-7.6'/%3E%3C/svg%3E")}
+.calendar-key .calendar-state-icon{width:18px;height:18px;background-size:18px 18px}.calendar-key{gap:10px 14px}
+.attendance-history{margin:16px 0;padding:14px;border:1px solid var(--line);border-radius:7px;background:#0d1929}.attendance-history h4{margin:0 0 10px;font-size:15px;color:#edcf95}.attendance-dates{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:0;list-style:none}.attendance-dates li{padding:4px 9px;border:1px solid #d5b37a66;border-radius:4px;color:#f4dfbd;font-size:14px}.attendance-history .attendance-note{font-size:12px;margin-top:12px;min-height:0}
+
+/* v72: independent JPG images on the homepage reward cards. */
+.benefit-card.compact-reward .reward-card-visual{width:100%;height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:6px;background:#f0f0f0;flex-shrink:0}
+.reward-card-visual>img{display:block;width:100%;height:100%;object-fit:contain}
+.benefit-card.compact-reward .reward-card-visual.teaser{background:transparent}
+.reward-card-visual>.reward-product-teaser{width:100%;height:100%;min-height:150px}
+@media(max-width:760px){.benefit-card.compact-reward .reward-card-visual{height:160px}}

@@ -1,0 +1,20 @@
+{
+  "version": 72,
+  "status": "PASS",
+  "browserEnvironment": "local preview with cloud and analytics disabled",
+  "checks": [
+    "starter cabin remove closes item dialog and updates collection button",
+    "Day2 add closes item dialog and has placed state",
+    "Day2 remove closes item dialog and has stored state",
+    "exactly three calendar legend entries",
+    "legend icons measured 18px",
+    "homepage three product JPGs loaded; BP10 remains teaser",
+    "reward dialog product and passport JPGs loaded",
+    "390px mobile frame has no horizontal overflow and JPGs loaded",
+    "JavaScript syntax checks",
+    "new image sources remain separate from unchanged globe sources"
+  ],
+  "gsChanged": false,
+  "sheetChanged": false,
+  "publicSiteDeployed": false
+}
