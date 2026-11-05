@@ -1,4 +1,4 @@
-November Test 1 / frontend 67 / based on approved v66 A artwork
-2026-11-04
-11月一般使用者每日測試；同日對應12月；獨立參加者分頁與瀏覽器儲存。
-GS service v8、permissions v3、auth v1，另加 environment v1；正式 v66 前端相容。
+November Test 3 / frontend 69 / approved A artwork
+2026-11-05
+起始雪境：左小樹、中小屋、右木雪橇；三件預設高度較前版增加20%。
+僅測試前端預設位置調整，GS不變。

@@ -28,7 +28,7 @@ const Core = {
     const valid=new RegExp('^'+year+'-12-(?:0[1-9]|1[0-9]|2[0-5])$');
     return Object.keys(visits||{}).filter(date=>valid.test(date)&&visits[date]===true&&date<=throughDate).sort();
   },
-  freshState(){return {claimed:{},placement:{},layouts:{},visits:{}};},
+  freshState(){return {claimed:{},placement:{201:true,202:true,203:true},layouts:{},visits:{}};},
   normaliseState(raw){
     const state=this.freshState();if(!raw||typeof raw!=='object')return state;
     for(let d=1;d<=25;d++){
@@ -37,7 +37,7 @@ const Core = {
       state.claimed[d]={at:claim.at};state.placement[d]=raw.placement?.[d]===true;
       const l=raw.layouts?.[d];if(l&&Number.isFinite(l.x)&&Number.isFinite(l.y)&&Number.isFinite(l.scale))state.layouts[d]={x:l.x,y:l.y,scale:Math.max(.65,Math.min(1.35,l.scale))};
     }
-    for(const d of [101,102,103,104,105,106,107,108,109,110]){
+    for(const d of [101,102,103,104,105,106,107,108,109,110,201,202,203]){
       if(Object.hasOwn(raw.placement||{},d))state.placement[d]=raw.placement[d]===true;
       const l=raw.layouts?.[d];if(l&&[l.x,l.y,l.scale].every(Number.isFinite))state.layouts[d]={x:l.x,y:l.y,scale:Math.max(.65,Math.min(1.35,l.scale))};
     }
@@ -64,6 +64,7 @@ const safeRead=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))
 const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
 // Ordinary participants use an unverified Email. Admin accounts require a server-verified code and an in-memory, expiring session.
 const BONUS_IDS=[101,102,103,104,105,106,107,108,109,110],bonusCatalog=BASE_CONFIG.bonusItems||[];
+const STARTER_IDS=[201,202,203],starterCatalog=BASE_CONFIG.starterItems||[];
 const CLOUD_CONFIG=window.DYSON_CLOUD_CONFIG;
 const cloudEmail=v=>String(v||'').trim().toLowerCase();
 const isCloudEmail=v=>v.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -75,12 +76,12 @@ const timing={started:performance.now(),sceneReadyMs:null,progressReadMs:null,la
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
 const canPreview=()=>cloud.ready&&cloud.isAdmin&&cloud.canPreview&&!!cloud.adminToken&&Date.now()+cloud.offset<cloud.adminSessionExpiresAt;
 const cloudCacheKey=email=>STORAGE_PREFIX+'cloud-state:'+cloud.endpoint+':'+email;
-function cloudDiff(current,previous){const changes={};for(const raw of [...Object.keys(current.claimed),...BONUS_IDS]){const d=Number(raw),patch={};if(BONUS_IDS.includes(d)&&!cloud.bonusIds.includes(d))continue;if((current.placement[d]===true)!==(previous.placement[d]===true))patch.placement=current.placement[d]===true;const a=current.layouts[d]||null,b=previous.layouts[d]||null;if(JSON.stringify(a)!==JSON.stringify(b))patch.layout=a;if(Object.keys(patch).length)changes[d]=patch;}return changes;}
-function cloudApply(state,changes){for(const [raw,patch] of Object.entries(changes||{})){const d=Number(raw);if((BONUS_IDS.includes(d)&&!cloud.bonusIds.includes(d))||(!state.claimed[d]&&!BONUS_IDS.includes(d)))continue;if(typeof patch.placement==='boolean')state.placement[d]=patch.placement;if(Object.hasOwn(patch,'layout')){if(patch.layout===null)delete state.layouts[d];else state.layouts[d]=patch.layout;}}return Core.normaliseState(state);}
+function cloudDiff(current,previous){const changes={};for(const raw of [...Object.keys(current.claimed),...BONUS_IDS,...STARTER_IDS]){const d=Number(raw),patch={};if(BONUS_IDS.includes(d)&&!cloud.bonusIds.includes(d))continue;if((current.placement[d]===true)!==(previous.placement[d]===true))patch.placement=current.placement[d]===true;const a=current.layouts[d]||null,b=previous.layouts[d]||null;if(JSON.stringify(a)!==JSON.stringify(b))patch.layout=a;if(Object.keys(patch).length)changes[d]=patch;}return changes;}
+function cloudApply(state,changes){for(const [raw,patch] of Object.entries(changes||{})){const d=Number(raw);if((BONUS_IDS.includes(d)&&!cloud.bonusIds.includes(d))||(!state.claimed[d]&&!BONUS_IDS.includes(d)&&!STARTER_IDS.includes(d)))continue;if(typeof patch.placement==='boolean')state.placement[d]=patch.placement;if(Object.hasOwn(patch,'layout')){if(patch.layout===null)delete state.layouts[d];else state.layouts[d]=patch.layout;}}return Core.normaliseState(state);}
 const previewCacheKey=email=>STORAGE_PREFIX+'cloud-preview:'+cloud.endpoint+':'+email;
 function previewNormalise(raw){const state=Core.normaliseState(raw?.state);for(const claim of Object.values(state.claimed))if(Number.isFinite(Date.parse(claim.at)))claim.at=new Date(claim.at).toISOString();return {state,date:typeof raw?.date==='string'?raw.date:null,days:null,cardTask:cardTaskNormalise(raw?.cardTask)};}
 function previewSnapshot(){return previewNormalise({state:preview,date:previewDate,cardTask:previewCardTask});}
-function previewDiff(current,previous){const items={},entry=(s,d)=>s.claimed[d]?{at:s.claimed[d].at,placement:s.placement[d]===true,layout:s.layouts[d]||null}:null;for(let d=1;d<=25;d++){const a=entry(current.state,d),b=entry(previous.state,d);if(JSON.stringify(a)!==JSON.stringify(b))items[d]=a;}const changes={};if(Object.keys(items).length)changes.items=items;if(current.date!==previous.date)changes.view={date:current.date,days:null};const bonus=Object.fromEntries(Object.entries(cloudDiff(current.state,previous.state)).filter(([d])=>BONUS_IDS.includes(Number(d))));if(Object.keys(bonus).length)changes.bonus=bonus;if(JSON.stringify(current.state.visits)!==JSON.stringify(previous.state.visits))changes.visits=current.state.visits;if(current.cardTask&&!previous.cardTask)changes.cardTask=current.cardTask;return changes;}
+function previewDiff(current,previous){const items={},entry=(s,d)=>s.claimed[d]?{at:s.claimed[d].at,placement:s.placement[d]===true,layout:s.layouts[d]||null}:null;for(let d=1;d<=25;d++){const a=entry(current.state,d),b=entry(previous.state,d);if(JSON.stringify(a)!==JSON.stringify(b))items[d]=a;}const changes={};if(Object.keys(items).length)changes.items=items;if(current.date!==previous.date)changes.view={date:current.date,days:null};const bonus=Object.fromEntries(Object.entries(cloudDiff(current.state,previous.state)).filter(([d])=>BONUS_IDS.includes(Number(d))||STARTER_IDS.includes(Number(d))));if(Object.keys(bonus).length)changes.bonus=bonus;if(JSON.stringify(current.state.visits)!==JSON.stringify(previous.state.visits))changes.visits=current.state.visits;if(current.cardTask&&!previous.cardTask)changes.cardTask=current.cardTask;return changes;}
 function previewApply(snapshot,changes){const next=previewNormalise(snapshot);for(const [d,value] of Object.entries(changes?.items||{})){if(value===null){delete next.state.claimed[d];delete next.state.placement[d];delete next.state.layouts[d];}else{next.state.claimed[d]={at:value.at};next.state.placement[d]=value.placement===true;if(value.layout)next.state.layouts[d]=value.layout;else delete next.state.layouts[d];}}if(changes?.bonus)next.state=cloudApply(next.state,changes.bonus);if(changes?.visits)next.state.visits={...changes.visits};if(changes?.view)next.date=changes.view.date;if(changes?.cardTask)next.cardTask=cardTaskNormalise(changes.cardTask);return next;}
 function previewRestore(snapshot){const next=previewNormalise(snapshot);preview=next.state;previewDate=next.date;previewCardTask=next.cardTask;if(previewDate){$('preview-date').value=previewDate;$('sim-date').value=previewDate;}safeWrite(STORAGE_PREFIX+'preview',preview);}
 function previewPending(){return canPreview()&&cloud.previewLoaded?previewDiff(previewSnapshot(),cloud.previewSynced):{};}
@@ -125,7 +126,7 @@ window.addEventListener('message',event=>{let origin;try{origin=new URL(event.or
 const TEST_ENVIRONMENT='november-test-2026';
 let checkedTestEndpoint='';
 function assertTestEnvironment(result){
- if(result.environment!==TEST_ENVIRONMENT||result.environmentVersion!==1||result.clockMode!=='november-to-december'||result.date!==Core.novemberActivityDate(result.realDate))throw new Error('測試服務尚未更新，請先更新 GS、執行 setupNovemberTest，並更新原部署。');
+ if(result.environment!==TEST_ENVIRONMENT||result.environmentVersion!==1||result.starterSceneVersion!==1||result.clockMode!=='november-to-december'||result.date!==Core.novemberActivityDate(result.realDate))throw new Error('測試服務尚未更新，請先更新 GS、執行 setupNovemberTest，並更新原部署。');
 }
 async function ensureTestEnvironment(){
  if(checkedTestEndpoint===cloud.endpoint)return;
@@ -170,7 +171,7 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
  cloud.email=email;cloud.loading=true;cloud.error='';cloud.isAdmin=false;cloud.canPreview=false;cloud.hasExclusive=false;cloud.bonusIds=[];safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});renderCloud();
  try{
   let cached=safeRead(cloudCacheKey(email),{});const payload={action:typeof adminCode==='string'?'adminLogin':'connect',email};if(typeof adminCode==='string')payload.adminCode=adminCode;
-  if(Object.keys(guestState.claimed).length||Object.keys(guestState.visits).length)payload.guestState=guestState;
+  if(Object.keys(guestState.claimed).length||Object.keys(guestState.visits).length||STARTER_IDS.some(d=>guestState.placement[d]===false||guestState.layouts[d]))payload.guestState=guestState;
   const task=cardTaskNormalise(cached.pendingCardTask)||guestTask;if(task)payload.cardTask=task;
   if(typeof consent==='boolean')payload.marketingConsent=consent;
   const result=await cloudSend(payload);delete payload.adminCode;adminCode=undefined;cloudAcceptClock(result);cached=safeRead(cloudCacheKey(email),cached);
@@ -183,7 +184,7 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
   if(cloud.previewLoaded){cloud.previewSynced=previewNormalise(result.preview);const saved=safeRead(previewCacheKey(email),{});previewRestore(previewApply(cloud.previewSynced,saved.pending));}else previewRestore(null);
   safeWrite(STORAGE_PREFIX+'guest-state',Core.freshState());guestCardTask=null;safeWrite(STORAGE_PREFIX+'guest-card-task',null);safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});
   timing.progressReadMs=Math.round(performance.now()-started);cloud.consentStatus=preserveDraft?'行銷意願尚未保存，請重試。':'進度已保存。';
-  cloudCache();renderUI();drawFrame(0,performance.now());ensureItemAssets(ownedDays()).then(()=>{renderUI();drawFrame(0,performance.now());}).catch(()=>{});cloudScheduleSave();
+  cloudCache();renderUI();drawFrame(0,performance.now());ensureItemAssets(sceneDays()).then(()=>{renderUI();drawFrame(0,performance.now());}).catch(()=>{});cloudScheduleSave();
   closeDialog('admin-auth-dialog');$('admin-auth-code').value='';if(payload.action==='adminLogin')status('管理員驗證完成，可使用日期模擬。');if(userInitiated)trackActivity('progress_save',{method:'email'});if(cloud.pendingReward){cloud.pendingReward=false;renderVouchers();showDialog('vouchers-dialog');}return true;
  }catch(error){cloud.error=error.message;status(error.message,{persistent:true});throw error;}
  finally{cloud.loading=false;renderCloud();}
@@ -493,7 +494,7 @@ const state=()=>previewDate?preview:live;
 const realDateISO=()=>Core.taipeiDate(new Date(Date.now()+(cloud.hasClock?cloud.offset:0)));
 const dateISO=()=>previewDate||Core.novemberActivityDate(realDateISO());
 const today=()=>Core.campaignDay(dateISO(),YEAR);
-const itemByDay=d=>BASE_CONFIG.items.find(i=>i.day===Number(d))||bonusCatalog.find(i=>i.day===Number(d));
+const itemByDay=d=>BASE_CONFIG.items.find(i=>i.day===Number(d))||bonusCatalog.find(i=>i.day===Number(d))||starterCatalog.find(i=>i.day===Number(d));
 const bonusDays=()=>cloud.ready?cloud.bonusIds.filter(d=>bonusCatalog.some(i=>i.day===d)):[];
 const calendarName=d=>{const i=item(d);return i.teaser?i.name:i.calendarName||i.name;};
 const calendarMusic=d=>({7:'Jingle Bells · 輕快版',25:'聖誕祝福旋律'})[d]||'';
@@ -522,9 +523,10 @@ const items=()=>BASE_CONFIG.items.map(i=>item(i.day));
 const participationDates=()=>Core.participationDates(state().visits,dateISO(),YEAR);
 // Only admin preview can test all remaining gifts after the campaign closes.
 const claimableToday=()=>previewDate?Math.min(25,today()):today();
-const dayState=d=>BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))?'owned':'future'):Core.dayState(d,claimableToday(),state().claimed);
+const dayState=d=>STARTER_IDS.includes(Number(d))?'owned':BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))?'owned':'future'):Core.dayState(d,claimableToday(),state().claimed);
 const ownedDays=()=>{const t=today();return Object.keys(state().claimed).map(Number).filter(d=>d<=t).sort((a,b)=>a-b).concat(bonusDays());};
-const isPlaced=d=>BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))&&state().placement[d]===true):state().placement[d]===true&&Object.hasOwn(state().claimed,String(d))&&Number(d)<=today();
+const sceneDays=()=>ownedDays().concat(STARTER_IDS);
+const isPlaced=d=>STARTER_IDS.includes(Number(d))?state().placement[d]!==false:BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))&&state().placement[d]===true):state().placement[d]===true&&Object.hasOwn(state().claimed,String(d))&&Number(d)<=today();
 function persist(){if(previewDate)previewPersist();else{cloudCache();cloudScheduleSave();}}
 let statusTimer=null;
 function status(message,{persistent=false}={}){
@@ -664,9 +666,9 @@ function renderCalendar(){
   }
 }
 function renderCollection(){
-  const normalRoot=$('collection-grid'),bonusRoot=$('bonus-grid');normalRoot.replaceChildren();bonusRoot.replaceChildren();const days=ownedDays();$('collection-empty').hidden=days.some(d=>d<=25);$('bonus-section').hidden=!bonusDays().length;
-  for(const d of days){const root=BONUS_IDS.includes(d)?bonusRoot:normalRoot,i=item(d),card=el('article',`collection-card${i.product?' product-card':''}`),visual=el('button');card.dataset.day=String(d);visual.type='button';visual.setAttribute('aria-label',`查看${i.name}`);const thumb=el('canvas');thumb.width=360;thumb.height=270;drawThumbnail(thumb,d);visual.append(thumb);visual.addEventListener('click',()=>openItem(d));
-    const info=el('div','card-info'),date=el('p','card-day',i.bonus?`限定趣味收藏 · ${i.animal||''}`:`DEC ${String(d).padStart(2,'0')}`),heading=el('h3');
+  const normalRoot=$('collection-grid'),bonusRoot=$('bonus-grid'),starterRoot=$('starter-grid');normalRoot.replaceChildren();bonusRoot.replaceChildren();starterRoot.replaceChildren();const days=sceneDays();$('collection-empty').hidden=days.some(d=>d<=25);$('bonus-section').hidden=!bonusDays().length;
+  for(const d of days){const root=STARTER_IDS.includes(d)?starterRoot:BONUS_IDS.includes(d)?bonusRoot:normalRoot,i=item(d),card=el('article',`collection-card${i.product?' product-card':''}`),visual=el('button');card.dataset.day=String(d);visual.type='button';visual.setAttribute('aria-label',`查看${i.name}`);const thumb=el('canvas');thumb.width=360;thumb.height=270;drawThumbnail(thumb,d);visual.append(thumb);visual.addEventListener('click',()=>openItem(d));
+    const info=el('div','card-info'),date=el('p','card-day',i.starter?'起始雪境 · 不計入收藏':i.starter?'基礎造景 · 不計入 25 天收藏':i.bonus?`限定趣味收藏 · ${i.animal||''}`:`DEC ${String(d).padStart(2,'0')}`),heading=el('h3');
     if(i.product){date.append(el('span','product-badge','Dyson 精選'));const open=el('button','card-open',i.name);open.type='button';open.setAttribute('aria-label',`查看${i.name}介紹`);open.addEventListener('click',()=>openItem(d));heading.append(open);}else heading.textContent=i.name;
     info.append(date,heading);
     if(i.product){const tagline=el('p','product-tagline',i.product.tagline||(i.product.features||[]).slice(0,2).join(' · '));tagline.addEventListener('click',()=>openItem(d));info.append(tagline);}
@@ -684,7 +686,7 @@ function updatePlacementUI(d){
   // Keep the clicked button and the list height intact: replacing the collection
   // loses keyboard focus and can invalidate the browser's scroll anchor.
   const placed=isPlaced(d),label=placed?'移除水晶球內':'放入水晶球內';
-  const button=$(BONUS_IDS.includes(Number(d))?'bonus-grid':'collection-grid').querySelector(`[data-day="${Number(d)}"] .place-button`);
+  const button=$(STARTER_IDS.includes(Number(d))?'starter-grid':BONUS_IDS.includes(Number(d))?'bonus-grid':'collection-grid').querySelector(`[data-day="${Number(d)}"] .place-button`);
   if(button){button.textContent=label;button.setAttribute('aria-pressed',String(placed));}
   refreshItemThumbnails(d);
   const cell=$('calendar-grid').querySelector(`[data-day="${Number(d)}"]`);
@@ -708,7 +710,7 @@ function renderUI({placementDay=null}={}){
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
 function openItem(d){if(dayState(d)!=='owned')return;collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');trackActivity('gift_view',giftAnalytics(d));}
 function renderItemDialog(){
-  if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.product?[i.product.model,i.product.color].filter(Boolean).join(' · '):i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
+  if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.starter?'YOUR STARTER SCENE':i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.product?[i.product.model,i.product.color].filter(Boolean).join(' · '):i.starter?'基礎造景 · 不計入 25 天收藏':i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
   const c=el('canvas');c.width=600;c.height=440;drawThumbnail(c,i.day);$('item-visual').replaceChildren(c);
   renderProduct(i);
   $('item-placement').textContent=isPlaced(i.day)?'移除水晶球內':'放入水晶球內';$('item-placement').setAttribute('aria-pressed',String(isPlaced(i.day)));$('item-position').hidden=!isPlaced(i.day)||((!!i.effect||!!i.fixed)&&i.day!==25);$('item-position').textContent=i.day===25?'重播星光秀':'調整擺放位置';renderMusic();
@@ -1017,10 +1019,10 @@ function drawDysonSignature(elapsed,target=ctx,animate=motion,timeline=SHOW_LIVE
   target.restore();
 }
 function placedObjects(){
-  const layer=p=>item(p.day).product?2:1;
+  const layer=p=>item(p.day).starter?0:item(p.day).product?2:1;
   // Shared by the live globe, hit testing and card capture: products stay in
   // front of scenery, while user-selected positions remain fully editable.
-  return ownedDays().filter(d=>isPlaced(d)&&!item(d).effect).map(d=>({day:d,...getLayout(d)})).sort((a,b)=>layer(a)-layer(b)||a.y-b.y||a.day-b.day);
+  return sceneDays().filter(d=>isPlaced(d)&&!item(d).effect).map(d=>({day:d,...getLayout(d)})).sort((a,b)=>layer(a)-layer(b)||a.y-b.y||a.day-b.day);
 }
 // Bounded visual snow, independent of participation and Sheet records.
 const SNOW_PACK_LIMIT=125,SNOW_PACK_RATE=125/540,SNOW_WIND_MULTIPLIER=3.6;
@@ -1216,7 +1218,7 @@ canvas.addEventListener('pointermove',e=>{const pt=pointerPoint(e);if(drag&&drag
 });
 canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const saved=drag;drag=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(saved.moved){if(saved.day===24&&!saved.viewOnly){const star=getLayout(24),near=[2,12].filter(d=>isPlaced(d)).map(d=>getLayout(d)).map(t=>starAboveTreeLayout(star,t)).sort((a,b)=>Math.hypot(star.x-a.x,star.y-a.y)-Math.hypot(star.x-b.x,star.y-b.y))[0];if(near&&Math.hypot(star.x-near.x,star.y-near.y)<85){state().layouts[24]={...star,x:near.x,y:near.y};status('金星已放在聖誕樹頂。');}}persist();return;}if(saved.day){if(editMode)selectItem(saved.day);else openItem(saved.day);}});
 canvas.addEventListener('pointercancel',()=>{drag=null;persist();});canvas.addEventListener('pointerleave',()=>{$('scene-tip').hidden=true;});
-document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]'))return;const moves={ArrowLeft:[-4,0],ArrowRight:[4,0],ArrowUp:[0,-4],ArrowDown:[0,4]};if(editMode&&selectedDay&&moves[e.key]){e.preventDefault();moveSelected(...moves[e.key].map(v=>e.shiftKey?v*3:v));}});
+document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||e.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;const moves={ArrowLeft:[-4,0],ArrowRight:[4,0],ArrowUp:[0,-4],ArrowDown:[0,4]};if(editMode&&selectedDay&&moves[e.key]){e.preventDefault();moveSelected(...moves[e.key].map(v=>e.shiftKey?v*3:v));}});
 function assetLabel(d){if(customAssets.has(d))return '已使用自訂圖片';if(ASSETS.sprites?.[d])return item(d).product?'已內嵌產品透明圖':'獨立透明造景素材';return item(d).effect?'程式動態效果':'已內嵌節慶素材';}
 function renderStudio(){
   const root=$('studio-table-body');root.replaceChildren();
@@ -1869,7 +1871,7 @@ async function initialise(){
   sprites.clear();
   for(const [d,src] of Object.entries(ASSETS.custom||{}))if(ownedDays().includes(Number(d)))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
   sceneReady=true;timing.sceneReadyMs=Math.round(performance.now()-timing.started);renderUI();resize();requestAnimationFrame(loop);
-  ensureItemAssets(ownedDays()).then(()=>{renderUI();drawFrame(0,performance.now());});
+  ensureItemAssets(sceneDays()).then(()=>{renderUI();drawFrame(0,performance.now());});
   openDatabase().then(()=>{sprites.clear();renderUI();drawFrame(0,performance.now());}).catch(()=>{});
  }catch(error){$('scene-loading').hidden=false;$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材尚未載入，請重新整理。';status(error.message,{persistent:true});}
 }

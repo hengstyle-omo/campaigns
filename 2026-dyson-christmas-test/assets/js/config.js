@@ -9,7 +9,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 67,
+  "version": 69,
   "testEnvironment": "november-test-2026",
   "cardShareUrl": "https://hengstyle-omo.github.io/campaigns/2026-dyson-christmas-test/",
   "cardShareText": "【11 月測試版】我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。",
@@ -17,6 +17,48 @@ window.DYSON_GAME_CONFIG = {
   "scheduleRevision": "20261021-four-products-v2",
   "year": 2026,
   "timeZone": "Asia/Taipei",
+  "starterSceneRevision": "20261105-starter-layout",
+  "starterItems": [
+  {
+    "day": 201,
+    "starter": true,
+    "type": "基礎造景",
+    "name": "暖窗小屋",
+    "description": "一間亮著暖光的小屋，陪你開始布置聖誕雪境。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
+    "layout": {
+      "x": 625,
+      "y": 870,
+      "h": 174
+    },
+    "hint": "屬於你的第一片小小雪境。"
+  },
+  {
+    "day": 202,
+    "starter": true,
+    "type": "基礎造景",
+    "name": "雪地小樹",
+    "description": "一棵沒有掛飾的小冷杉，為最初的雪境添一點綠。比 Day2 積雪小冷杉更小、更簡潔，不計入每日收藏或參與天數。",
+    "layout": {
+      "x": 410,
+      "y": 858,
+      "h": 198
+    },
+    "hint": "隨著每日收藏，慢慢長出你的聖誕世界。"
+  },
+  {
+    "day": 203,
+    "starter": true,
+    "type": "基礎造景",
+    "name": "兒童木雪橇",
+    "description": "一台安靜停在雪地的兒童木雪橇。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
+    "layout": {
+      "x": 800,
+      "y": 893,
+      "h": 78
+    },
+    "hint": "等第一場雪落下，一起出發。"
+  }
+],
   "items": [
     {
       "day": 1,
@@ -674,6 +716,9 @@ window.DYSON_ASSETS = {
   "visualStyle": "paper-relief-v1",
   "custom": {},
   "sprites": {
+    "201": "./assets/images/scene/starter-cabin.webp",
+    "202": "./assets/images/scene/starter-fir-tree.webp",
+    "203": "./assets/images/scene/starter-wooden-sled.webp",
     "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261029-style-a-final",
     "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261029-style-a-final",
     "4": "./assets/images/scene/day-04-santa-hat.webp?rev=20261029-style-a-final",
