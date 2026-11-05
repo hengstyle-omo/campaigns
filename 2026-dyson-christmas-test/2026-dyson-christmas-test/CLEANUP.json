@@ -1,0 +1,199 @@
+{
+  "source": "本次上傳 2026-dyson-christmas.zip",
+  "removedFiles": [
+    {
+      "path": "assets/images/bonus/bonus-capybara-bath.png",
+      "bytes": 2291574,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-cat-gift-box-paper-v28.webp",
+      "bytes": 290124,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-cat-gift-box.png",
+      "bytes": 2502007,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-fox-snow-dive.png",
+      "bytes": 1522892,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-golden-dance-paper-v28.webp",
+      "bytes": 206784,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-golden-dance.png",
+      "bytes": 2523249,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-otter-coin-paper-v28.webp",
+      "bytes": 212278,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-otter-gray-plain-v31.webp",
+      "bytes": 181492,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-otter-gray-soft-v37.webp",
+      "bytes": 198792,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-otter-shell.png",
+      "bytes": 2841040,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-penguin-neutral-v30.webp",
+      "bytes": 128812,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-penguin-slide-paper-v28.webp",
+      "bytes": 159944,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-penguin-slide.png",
+      "bytes": 2373394,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-polar-bear-samoyed.png",
+      "bytes": 2046215,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-red-panda-tree.png",
+      "bytes": 3003227,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-shiba-business-paper-v28.webp",
+      "bytes": 189408,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-shiba-business.png",
+      "bytes": 1729641,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-white-sea-lion-paper-v28.webp",
+      "bytes": 85460,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/bonus/bonus-white-sea-lion.png",
+      "bytes": 1579821,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-08-leaping-reindeer.webp",
+      "bytes": 141938,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-08-snow-mound.webp",
+      "bytes": 58382,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-16-christmas-stocking.webp",
+      "bytes": 147010,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-21-christmas-post-office.webp",
+      "bytes": 171006,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-21-department-store-paper-v28.webp",
+      "bytes": 292966,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-23-fat-cat-santa-sack-v30.webp",
+      "bytes": 317832,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-23-fat-orange-santa-box-v29.webp",
+      "bytes": 304634,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-23-orange-cat-santa-paper-v28.webp",
+      "bytes": 234224,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/day-23-santa-claus.webp",
+      "bytes": 142454,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/style-reference.webp",
+      "bytes": 642580,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "assets/images/scene/transparent-atlas.png",
+      "bytes": 97,
+      "reason": "未被現用素材清單引用；舊圖集／參考圖備援已解除。"
+    },
+    {
+      "path": "UPDATE-v48.md",
+      "bytes": 2692,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    },
+    {
+      "path": "ASSET-NOTES-v48.md",
+      "bytes": 2296,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    },
+    {
+      "path": "DEER-PREVIEW.webp",
+      "bytes": 10774,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    },
+    {
+      "path": "DEER-PROMPTS.json",
+      "bytes": 2796,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    },
+    {
+      "path": "animal-prompts.md",
+      "bytes": 22865,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    },
+    {
+      "path": "scene-prompts.md",
+      "bytes": 13529,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    },
+    {
+      "path": "assets/images/products/PRODUCT-PROMPTS.md",
+      "bytes": 9584,
+      "reason": "過期版本說明、舊動物／場景預覽或生成規格。"
+    }
+  ],
+  "removedBytes": 26583813,
+  "currentImageCount": 38,
+  "sceneRenames": {
+    "day-04-christmas-house.webp": "day-04-santa-hat.webp",
+    "day-08-leaping-reindeer-paper-v28.webp": "day-08-leaping-reindeer.webp",
+    "day-11-reindeer.webp": "day-11-shooting-star.webp",
+    "day-21-department-store-dyson-v38.webp": "day-21-department-store.webp",
+    "day-23-fat-cat-santa-tail-v34.webp": "day-23-cat-santa.webp"
+  }
+}

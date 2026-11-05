@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "cases": 39,
+  "checks": [
+    "setup creates only test tab and never clears production or copies admin roles",
+    "rerunning test setup preserves existing test progress and production schema",
+    "test setup refuses missing activity columns without clearing or changing metadata",
+    "read-only environment handshake uses no participant data and writes nothing",
+    "ordinary user sees logical December day without password or admin rights",
+    "Nov 2 permits Day1 and Day2 but rejects Day3 and Day25",
+    "same Email has independent formal and test rows and does not inherit production admin",
+    "production still uses November real date and blocks early claims",
+    "Taiwan midnight opens exactly the next logical day without double-counting same-day visits",
+    "missed gifts can be collected later but do not backfill participation days",
+    "ten distinct test days unlock passport without changing formal rewards",
+    "product voucher still requires card task; test milestone counts persist",
+    "guest claims import without scene or unverified past attendance",
+    "guest future claims and participation dates are rejected",
+    "consent and reward task persist while scene writes are rejected",
+    "test accounts cannot alter admin/exclusive rights using payload fields",
+    "test manager still requires code and a test-bound session",
+    "unsupported environment or missing test action prefix refuses writes",
+    "all test actions fail safely on old GS before participant creation",
+    "missing test setup never falls back to production sheet",
+    "Nov25 opens all gifts; Nov26 stops new claims and visits",
+    "before November and after November remain outside test collection window",
+    "production December read/write records remain byte-for-byte compatible with v66",
+    "production and test schema changes do not cross-affect validation",
+    "frontend and backend date mapping agree across month and Taiwan midnight boundaries",
+    "test storage, IndexedDB, card links, and analytics are isolated from formal site",
+    "server returns attendance and zero claims without scene data",
+    "existing saved scene is never returned or overwritten by attendance updates",
+    "existing daily claims stay available while prior layout is ignored",
+    "guest cannot create ten-day eligibility from fabricated visit dates or positions",
+    "production rejects starter writes and exposes no starter defaults",
+    "admin preview retains date and claims but never stores scene choices",
+    "frontend normalization preserves false starter choices and excludes starter claims",
+    "v70 handshake rejects scene-persisting backend",
+    "nonconsecutive dates unlock passport exactly on the tenth unique attendance",
+    "frontend discards legacy scene at startup but keeps current-session scene through server responses",
+    "scene changes do not queue any account save request",
+    "frontend performs read-only handshake then reserved test connect, and caches handshake only",
+    "frontend stops at failed handshake when old backend is deployed"
+  ],
+  "productionDeploymentChanged": false,
+  "liveSheetChanged": false,
+  "additionalChecks": {
+    "shareCopy": {
+      "status": "PASS",
+      "unicodeAndFiveLinesExact": true,
+      "testUrlPreserved": true,
+      "externalShareSent": false
+    },
+    "browserQA": {
+      "status": "PASS",
+      "backend": "actual GS functions with local mock Sheet",
+      "checks": [
+        "three calendar legend states with enlarged symbols",
+        "larger center cabin with left fir and right sled",
+        "scene preserved while collecting and syncing within page",
+        "reload restores starter defaults while claimed days remain",
+        "actual November participation dates listed",
+        "nine unique dates do not unlock passport",
+        "tenth unique date unlocks passport",
+        "same-day reload remains at ten dates"
+      ]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+v71 Test / 2026-11-05
+Session-only scene; attendance dates and ten-day passport eligibility; three calendar symbols; larger starter cabin; new share text.
+GS service8 / permissions3 / auth1 / environment1 / starterScene1 / scenePersistence=session / attendanceVersion1
+Formal v66 remains unchanged.
+Reward JPG images are independent from globe products; includes all v70 test changes.

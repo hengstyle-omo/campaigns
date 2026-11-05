@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": [
+    "JavaScript syntax in both environments",
+    "all five filenames match uploaded JPGs including case",
+    "five JPEG files decode",
+    "globe asset mapping unchanged",
+    "game config unchanged except release and reward revision",
+    "app unchanged except reward canvas replaced with independent image",
+    "desktop images loaded at 104x130 and passport at 240x300",
+    "390px mobile dialog has no horizontal overflow",
+    "BP10 reveal branch preserved"
+  ],
+  "liveDeploymentChanged": false,
+  "appsScriptChanged": false,
+  "realSheetChanged": false
+}
