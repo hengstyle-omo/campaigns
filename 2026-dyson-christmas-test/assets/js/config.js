@@ -9,7 +9,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 74,
+  "version": 75,
   "testEnvironment": "november-test-2026",
   "cardShareUrl": "https://hengstyle-omo.github.io/campaigns/2026-dyson-christmas-test/",
   "cardShareText": "✦ 𝑫𝒚𝒔𝒐𝒏 𝑪𝒉𝒓𝒊𝒔𝒕𝒎𝒂𝒔 ✦聖 誕 驚 喜 倒 數\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🎁每日解鎖聖誕驚喜\n🎄 收藏每一天的美好\n↗ 開啟你的聖誕旅程！",
@@ -19,46 +19,46 @@ window.DYSON_GAME_CONFIG = {
   "timeZone": "Asia/Taipei",
   "starterSceneRevision": "20261105-attendance-v70",
   "starterItems": [
-  {
-    "day": 201,
-    "starter": true,
-    "type": "基礎造景",
-    "name": "暖窗小屋",
-    "description": "一間亮著暖光的小屋，陪你開始布置聖誕雪境。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
-    "layout": {
-      "x": 625,
-      "y": 870,
-      "h": 200
+    {
+      "day": 201,
+      "starter": true,
+      "type": "基礎造景",
+      "name": "暖窗小屋",
+      "description": "一間亮著暖光的小屋，陪你開始布置聖誕雪境。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
+      "layout": {
+        "x": 625,
+        "y": 870,
+        "h": 200
+      },
+      "hint": "屬於你的第一片小小雪境。"
     },
-    "hint": "屬於你的第一片小小雪境。"
-  },
-  {
-    "day": 202,
-    "starter": true,
-    "type": "基礎造景",
-    "name": "雪地小樹",
-    "description": "一棵沒有掛飾的小冷杉，為最初的雪境添一點綠。比 Day2 積雪小冷杉更小、更簡潔，不計入每日收藏或參與天數。",
-    "layout": {
-      "x": 410,
-      "y": 858,
-      "h": 198
+    {
+      "day": 202,
+      "starter": true,
+      "type": "基礎造景",
+      "name": "雪地小樹",
+      "description": "一棵沒有掛飾的小冷杉，為最初的雪境添一點綠。比 Day2 積雪小冷杉更小、更簡潔，不計入每日收藏或參與天數。",
+      "layout": {
+        "x": 410,
+        "y": 858,
+        "h": 198
+      },
+      "hint": "隨著每日收藏，慢慢長出你的聖誕世界。"
     },
-    "hint": "隨著每日收藏，慢慢長出你的聖誕世界。"
-  },
-  {
-    "day": 203,
-    "starter": true,
-    "type": "基礎造景",
-    "name": "兒童木雪橇",
-    "description": "一台安靜停在雪地的兒童木雪橇。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
-    "layout": {
-      "x": 800,
-      "y": 893,
-      "h": 78
-    },
-    "hint": "等第一場雪落下，一起出發。"
-  }
-],
+    {
+      "day": 203,
+      "starter": true,
+      "type": "基礎造景",
+      "name": "兒童木雪橇",
+      "description": "一台安靜停在雪地的兒童木雪橇。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
+      "layout": {
+        "x": 800,
+        "y": 893,
+        "h": 78
+      },
+      "hint": "等第一場雪落下，一起出發。"
+    }
+  ],
   "items": [
     {
       "day": 1,
@@ -458,53 +458,61 @@ window.DYSON_GAME_CONFIG = {
       "id": "product-hd19",
       "unlock": "product",
       "productDay": 5,
-      "title": "HD19 隨行吹風機折抵 $1,000",
-      "preview": "HD19 隨行吹風機折抵 $1,000",
-      "conditions": "【測試，不可兌換】限HD19 隨行吹風機使用；使用門檻及期限以活動與結帳頁面說明為準。",
+      "title": "Dyson HD19 隨行吹風機折抵 $1,000",
+      "preview": "折抵 $1,000",
+      "conditions": "【測試，不可兌換】限Dyson HD19 隨行吹風機使用。優惠內容及使用條件依券面說明為準。",
       "code": "TEST-HC999999",
       "approved": true,
-      "validUntil": ""
+      "validUntil": "",
+      "displayName": "Dyson HD19 隨行吹風機",
+      "scopeLabel": "指定品項"
     },
     {
       "id": "product-sv50",
       "unlock": "product",
       "productDay": 10,
-      "title": "SV50 鉛筆吸塵器折抵 $1,000",
-      "preview": "SV50 鉛筆吸塵器折抵 $1,000",
-      "conditions": "【測試，不可兌換】限SV50 鉛筆吸塵器使用；使用門檻及期限以活動與結帳頁面說明為準。",
+      "title": "Dyson PencilVac 鉛筆吸塵器折抵 $1,000",
+      "preview": "折抵 $1,000",
+      "conditions": "【測試，不可兌換】限Dyson PencilVac 鉛筆吸塵器使用。優惠內容及使用條件依券面說明為準。",
       "code": "TEST-FC999999",
       "approved": true,
-      "validUntil": ""
+      "validUntil": "",
+      "displayName": "Dyson PencilVac 鉛筆吸塵器",
+      "scopeLabel": "指定品項"
     },
     {
       "id": "product-hj10",
       "unlock": "product",
       "productDay": 15,
-      "title": "HJ10 噴射氣流空氣清淨機折抵 $1,000",
-      "preview": "HJ10 噴射氣流空氣清淨機折抵 $1,000",
-      "conditions": "【測試，不可兌換】限HJ10 噴射氣流空氣清淨機使用；使用門檻及期限以活動與結帳頁面說明為準。",
+      "title": "Dyson HJ10 噴射氣流空氣清淨機折抵 $1,000",
+      "preview": "折抵 $1,000",
+      "conditions": "【測試，不可兌換】限Dyson HJ10 噴射氣流空氣清淨機使用。優惠內容及使用條件依券面說明為準。",
       "code": "TEST-EC999999",
       "approved": true,
-      "validUntil": ""
+      "validUntil": "",
+      "displayName": "Dyson HJ10 噴射氣流空氣清淨機",
+      "scopeLabel": "指定品項"
     },
     {
       "id": "product-bp10",
       "unlock": "product",
       "productDay": 20,
-      "title": "BP10 空氣清淨機專屬折價券",
-      "preview": "BP10 空氣清淨機專屬優惠",
-      "conditions": "【測試，不可兌換】限BP10 空氣清淨機使用；折抵金額、序號與使用條件待公布。",
+      "title": "任一主機折抵 $1,000",
+      "preview": "折抵 $1,000",
+      "conditions": "【測試，不可兌換】適用 Dyson 任一主機。優惠內容及使用條件依券面說明為準。",
       "code": "",
       "approved": false,
-      "validUntil": ""
+      "validUntil": "",
+      "displayName": "",
+      "scopeLabel": "任一主機"
     },
     {
       "id": "visits-10",
       "unlock": "visits",
       "required": 10,
-      "title": "Dyson 護照兌換禮",
-      "preview": "Dyson 護照兌換禮",
-      "conditions": "【測試，不可兌換】活動期間累積參與 10 個不同台灣日期即可取得兌換資格，不需連續。請至 Dyson 櫃位出示此活動畫面兌換護照。",
+      "title": "Dyson 護照夾",
+      "preview": "Dyson 護照夾",
+      "conditions": "【測試，不可兌換】活動期間累積登入滿 10 天，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。無須連續登入，每日最多累積 1 天。",
       "code": "",
       "approved": true,
       "validUntil": "",
@@ -699,7 +707,7 @@ window.DYSON_GAME_CONFIG = {
     "21": "simple-front-snowy-department-store"
   },
   "treeArtworkRevision": "20261029-tree-gingerbread-music",
-  "rewardPresentationRevision": "20261106-date-open-v74",
+  "rewardPresentationRevision": "20261106-reward-copy-v75",
   "starArtworkRevision": "20261029-intro-tree-top-star"
 };
 
@@ -5803,10 +5811,10 @@ window.DYSON_ASSETS = {
     ]
   },
   "rewardImages": {
-  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-date-open-v74",
-  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-date-open-v74",
-  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-date-open-v74",
-  "product-bp10": "./assets/images/rewards/dyson-BP10.jpg?rev=20261106-date-open-v74",
-  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-date-open-v74"
+  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-reward-copy-v75",
+  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-reward-copy-v75",
+  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-reward-copy-v75",
+  "product-bp10": "./assets/images/rewards/dyson.jpg?rev=20261106-reward-copy-v75",
+  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-reward-copy-v75"
 }
 };

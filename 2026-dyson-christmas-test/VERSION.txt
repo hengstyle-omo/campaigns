@@ -1,6 +1,7 @@
-v72 Test / 2026-11-05
-Session-only scene; attendance dates and ten-day passport eligibility; three calendar symbols; larger starter cabin; new share text.
-GS service8 / permissions3 / auth1 / environment1 / starterScene1 / scenePersistence=session / attendanceVersion1
-Formal v66 remains unchanged.
-Reward JPG images are independent from globe products; includes all v70 test changes.
-v72: close object card on removal; independent reward JPGs in homepage cards and reward dialog; three enlarged calendar states.
+v75 Test / 2026-11-06
+Updated four coupon presentations; Day20 uses rewards/dyson.jpg for all-machine coupon.
+One passport attendance section; purchase condition and dynamic attendance; old homepage note removed.
+Coupon eligibility: date-open plus completed card download/share; no mandatory Email.
+Requires v75 GS deployment. Existing v73 test calendar setup needs no rerun.
+Test rewardRulesVersion2 / calendarVersion2 / scenePersistence=session.
+Cumulative v74 and prior test changes. Formal website unchanged.

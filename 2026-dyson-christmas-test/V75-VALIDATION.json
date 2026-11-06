@@ -1,0 +1,94 @@
+{
+  "status": "PASS",
+  "cases": 49,
+  "checks": [
+    "setup creates only test tab and never clears production or copies admin roles",
+    "rerunning test setup preserves existing test progress and production schema",
+    "test setup refuses missing activity columns without clearing or changing metadata",
+    "read-only environment handshake uses no participant data and writes nothing",
+    "ordinary user sees logical December day without password or admin rights",
+    "Nov 2 permits Day1 and Day2 but rejects Day3 and Day25",
+    "same Email has independent formal and test rows and does not inherit production admin",
+    "production still uses November real date and blocks early claims",
+    "Taiwan midnight opens exactly the next logical day without double-counting same-day visits",
+    "missed gifts can be collected later but do not backfill participation days",
+    "ten distinct test days unlock passport without changing formal rewards",
+    "product voucher still requires card task; test milestone counts persist",
+    "guest claims import without scene or unverified past attendance",
+    "guest future claims and participation dates are rejected",
+    "consent and reward task persist while scene writes are rejected",
+    "test accounts cannot alter admin/exclusive rights using payload fields",
+    "test manager still requires code and a test-bound session",
+    "unsupported environment or missing test action prefix refuses writes",
+    "all test actions fail safely on old GS before participant creation",
+    "missing test setup never falls back to production sheet",
+    "Nov25 opens all gifts; Nov26 stops new claims and visits",
+    "before November and after November remain outside test collection window",
+    "production December read/write records remain byte-for-byte compatible with v66",
+    "production and test schema changes do not cross-affect validation",
+    "frontend and backend date mapping agree across month and Taiwan midnight boundaries",
+    "test storage, IndexedDB, card links, and analytics are isolated from formal site",
+    "server returns attendance and zero claims without scene data",
+    "existing saved scene is never returned or overwritten by attendance updates",
+    "existing daily claims stay available while prior layout is ignored",
+    "guest cannot create ten-day eligibility from fabricated visit dates or positions",
+    "production rejects starter writes and exposes no starter defaults",
+    "admin preview retains date and claims but never stores scene choices",
+    "frontend normalization preserves false starter choices and excludes starter claims",
+    "v73 handshake rejects outdated calendar or scene-persisting backend",
+    "nonconsecutive dates unlock passport exactly on the tenth unique attendance",
+    "frontend discards legacy scene at startup but keeps current-session scene through server responses",
+    "scene changes do not queue any account save request",
+    "test headers use November while production headers remain December",
+    "test participation JSON stores actual November and logical game response stays December",
+    "legacy test headers and attendance migrate with backup while roles claims and custom notes remain intact",
+    "migration refuses duplicate November and December headers before modifying data",
+    "malformed attendance aborts migration before renaming old date columns or making backup",
+    "duplicate legacy and actual attendance dates count once after migration",
+    "calendar migration readiness blocks participant writes until setup completes",
+    "v75 Email alone never unlocks coupons; completed card unlocks only date-open coupons without claims",
+    "v75 Day20 all-machine coupon opens exactly on Nov20 and attendance stays independent",
+    "v75 frontend recognizes guest download or share completion without Email while Email alone is insufficient",
+    "frontend performs read-only handshake then reserved test connect, and caches handshake only",
+    "frontend stops at failed handshake when old backend is deployed"
+  ],
+  "productionDeploymentChanged": false,
+  "liveSheetChanged": false,
+  "release": "v75",
+  "browserChecks": [
+    {
+      "case": "Four coupon cards with exact scope/name/amount; Day20 uses dyson.jpg",
+      "status": "PASS"
+    },
+    {
+      "case": "No overview; one passport attendance section and no duplicate passport card",
+      "status": "PASS"
+    },
+    {
+      "case": "Guest PNG download unlocks TEST-HC999999 without Email",
+      "status": "PASS"
+    },
+    {
+      "case": "Future SV50 coupon stays disabled after guest card download",
+      "status": "PASS"
+    },
+    {
+      "case": "Email-only account has zero coupon codes",
+      "status": "PASS"
+    },
+    {
+      "case": "Signed account has 已累積 1／10 天｜無須連續參與",
+      "status": "PASS"
+    },
+    {
+      "case": "Ten distinct mock visits show ten signed cells and purchase-required gift text",
+      "status": "PASS"
+    },
+    {
+      "case": "Passport image is left of explanatory text; all five reward images loaded",
+      "status": "PASS"
+    }
+  ],
+  "imageSource": "User-provided dyson.jpg downloaded unmodified from the specified GitHub repository",
+  "liveDeploymentChanged": false
+}
