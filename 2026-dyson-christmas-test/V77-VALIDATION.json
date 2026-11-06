@@ -1,0 +1,33 @@
+{
+  "release": "v77",
+  "status": "PASS",
+  "functionalCases": 61,
+  "GSChanged": false,
+  "sheetSchemaChanged": false,
+  "formalWebsiteChanged": false,
+  "liveDeploymentChanged": false,
+  "UI": {
+    "desktop": {
+      "dialogClientWidth": 678,
+      "dialogScrollWidth": 678,
+      "rewardImagesLoaded": 5
+    },
+    "mobile390": {
+      "contentWidth": 375,
+      "bodyScrollWidth": 375,
+      "dialogClientWidth": 341,
+      "dialogScrollWidth": 341,
+      "universalLinkWidth": 257,
+      "passportActionWidth": 269
+    }
+  },
+  "initialPage": {
+    "banner": "v77",
+    "outboundCouponLinks": 0,
+    "passportAction": "再累積 10 天解鎖"
+  },
+  "couponSlots": 5,
+  "providedUrls": 1,
+  "pendingUrls": 4,
+  "externalCouponsActuallyClaimed": false
+}

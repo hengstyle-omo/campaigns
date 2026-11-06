@@ -1,9 +1,7 @@
-v76 Test / 2026-11-06
-Aligned five homepage benefit cards using shared grid rows.
-Image frames: desktop/tablet200px, mobile160px; keep aspect ratio without cropping.
-Same-row image edges, buttons, card bottoms aligned.
-Eligibility and GS unchanged from v75; frontend presentation updated. No GS redeploy or setup after completed v75.
-Cumulative v75 and earlier test changes. Formal website unchanged.
-Activity rules: four grouped sections; card download/share coupon condition retained.
-Separate November test notice. Copy revision: 20261106-v76-rules.
-Reward copy: 優惠券$1,000; popup header/body/action layout; 6px reward image corners.
+v77 Test / 2026-11-06
+Coupon link mode: DYSON_COUPON_LINKS in assets/js/config.js.
+Any-machine coupon URL supplied; other four links empty pending user input.
+Product gating: date-open + completed card download/share; passport gating: server-confirmed 10 attendance dates.
+Preview mode never creates outbound coupon links. Blank URLs show disabled pending actions.
+All v76 changes retained. Existing GS and Sheet schema unchanged.
+Revision: 20261106-v77-coupon-links

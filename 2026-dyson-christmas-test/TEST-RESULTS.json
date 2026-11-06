@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "cases": 49,
+  "cases": 61,
   "checks": [
     "setup creates only test tab and never clears production or copies admin roles",
     "rerunning test setup preserves existing test progress and production schema",
@@ -49,6 +49,18 @@
     "v75 Email alone never unlocks coupons; completed card unlocks only date-open coupons without claims",
     "v75 Day20 all-machine coupon opens exactly on Nov20 and attendance stays independent",
     "v75 frontend recognizes guest download or share completion without Email while Email alone is insufficient",
+    "v76 clears a matching stale sync error but preserves unrelated status messages",
+    "v77 only accepts complete HTTPS coupon links without embedded credentials",
+    "v77 future coupon never emits a live link",
+    "v77 date-open coupon requires card download or share before live link",
+    "v77 qualified coupon with missing link shows disabled pending action without legacy code",
+    "v77 qualified universal coupon uses exact supplied URL and tracks click without Email",
+    "v77 administrator simulation never emits real coupon links",
+    "v77 expired product coupon never emits live link",
+    "v77 passport requires confirmed ten-day attendance and shows remaining days",
+    "v77 ten-day passport with missing link shows disabled pending exchange ticket",
+    "v77 supplying passport URL enables redemption entry at ten and over ten days",
+    "v77 ships exactly five link slots with only universal link filled and no example coupon codes",
     "frontend performs read-only handshake then reserved test connect, and caches handshake only",
     "frontend stops at failed handshake when old backend is deployed"
   ],

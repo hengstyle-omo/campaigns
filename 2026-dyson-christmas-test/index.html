@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261106-v76-rewards-rules"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261106-v77-coupon-links"></head>
 <body>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v76</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v77</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
  <h2 id="welcome-title">活動介紹</h2><p id="welcome-description">布置屬於你的聖誕雪境、收藏驚喜、傳送祝福，解鎖<strong>限量優惠券</strong>。</p>
@@ -75,7 +75,7 @@
  <div class="preview-controls"><label>預覽日期<input id="preview-date" type="date" value="2026-12-01" min="2026-11-30" max="2026-12-26"></label><button id="preview-start" class="gold-button">模擬當日</button><button id="preview-fill">收藏至此日（不放入）</button><button id="preview-clear">清空測試進度</button><button id="studio-export">下載活動設定 config.js</button></div>
  <p class="studio-note">產品圖可在下表替換，建議透明 PNG／WebP。HD19、SV50、HJ10、BP10 已使用獨立透明產品圖；BP10 的了解詳情連結待補。HD19、SV50、HJ10 商品專屬券沿用既有序號；任一主機優惠序號與使用期限可於下方設定。護照夾好禮為櫃位兌換，不使用折價序號。</p>
  <div id="asset-persistence" class="studio-note"></div><div class="table-scroll"><table class="studio-table"><thead><tr><th>日期</th><th>預覽</th><th>類型與項目</th><th>當日效果</th><th>產品介紹</th><th>素材</th><th>調整</th></tr></thead><tbody id="studio-table-body"></tbody></table></div>
- <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四張折抵券與累積參與 10 天的 Dyson 護照夾好禮；可調整商品券的預告、內容、序號與期限，以及護照夾好禮的顯示文字，請保留解鎖條件。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇與序號</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>商品優惠券尚未提供序號時，請保留 code 空白、approved 為 false。解鎖後會顯示「序號準備中」。填入序號並設 approved 為 true 後，即可提供複製；未解鎖時只顯示 preview 預告。護照夾好禮不需序號，累積參與10天並保存進度即可出示加贈資格。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
+ <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四張商品優惠券與累積登入 10 天的 Dyson 護照夾好禮。可調整顯示文字與期限，請保留解鎖條件；領券網址請在 config.js 的 DYSON_COUPON_LINKS 補上。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇顯示設定</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>領券網址未提供時會顯示準備中。商品券於指定日期開放並完成卡片下載或分享後可前往領取；護照夾兌換券需填寫 Email 並同步累積登入滿 10 天。管理員模擬僅供預覽，不開啟實際領券連結。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
  <p class="studio-note">連接 Google Sheet 後，正式領取以後端台灣時間檢查。日期模擬只供 Sheet 勾選的管理者測試；限定動物另由「是否有專屬收藏」控制，模擬進度不混入正式收藏。管理員需輸入驗證碼；一般參加者仍以 Email 保存進度，不驗證信箱持有人。</p>
 </dialog>
 <input id="asset-input" type="file" accept="image/png,image/webp,image/jpeg" hidden>
@@ -84,9 +84,9 @@
 
 
 
-<script src="./assets/js/config.js?v=20261106-v76-rewards-rules"></script>
-<script src="./assets/js/analytics.js?v=20261028-white-blue-gold"></script>
+<script src="./assets/js/config.js?v=20261106-v77-coupon-links"></script>
+<script src="./assets/js/analytics.js?v=20261106-v77-coupon-links"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>
-<script src="./assets/js/app.js?v=20261106-v76-rewards-rules"></script>
+<script src="./assets/js/app.js?v=20261106-v77-coupon-links"></script>
 </body></html>
