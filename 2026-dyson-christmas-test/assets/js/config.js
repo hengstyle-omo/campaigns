@@ -9,7 +9,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 72,
+  "version": 73,
   "testEnvironment": "november-test-2026",
   "cardShareUrl": "https://hengstyle-omo.github.io/campaigns/2026-dyson-christmas-test/",
   "cardShareText": "✦ 𝑫𝒚𝒔𝒐𝒏 𝑪𝒉𝒓𝒊𝒔𝒕𝒎𝒂𝒔 ✦聖 誕 驚 喜 倒 數\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🎁每日解鎖聖誕驚喜\n🎄 收藏每一天的美好\n↗ 開啟你的聖誕旅程！",
@@ -699,7 +699,7 @@ window.DYSON_GAME_CONFIG = {
     "21": "simple-front-snowy-department-store"
   },
   "treeArtworkRevision": "20261029-tree-gingerbread-music",
-  "rewardPresentationRevision": "20261105-test-ui-v72",
+  "rewardPresentationRevision": "20261106-confirmed-attendance-v73",
   "starArtworkRevision": "20261029-intro-tree-top-star"
 };
 
@@ -5803,10 +5803,10 @@ window.DYSON_ASSETS = {
     ]
   },
   "rewardImages": {
-  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261105-test-ui-v72",
-  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261105-test-ui-v72",
-  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261105-test-ui-v72",
-  "product-bp10": "./assets/images/rewards/dyson-BP10.jpg?rev=20261105-test-ui-v72",
-  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261105-test-ui-v72"
+  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-confirmed-attendance-v73",
+  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-confirmed-attendance-v73",
+  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-confirmed-attendance-v73",
+  "product-bp10": "./assets/images/rewards/dyson-BP10.jpg?rev=20261106-confirmed-attendance-v73",
+  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-confirmed-attendance-v73"
 }
 };
