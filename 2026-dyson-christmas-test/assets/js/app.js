@@ -32,9 +32,8 @@ const Core = {
   normaliseState(raw){
     const state=this.freshState();if(!raw||typeof raw!=='object')return state;
     for(let d=1;d<=25;d++){
-      if(!Object.hasOwn(raw.claimed||{},String(d)))continue;
-      const claim=raw.claimed[d];if(!claim||typeof claim.at!=='string')continue;
-      state.claimed[d]={at:claim.at};state.placement[d]=raw.placement?.[d]===true;
+      const claim=raw.claimed?.[d];if(claim&&typeof claim.at==='string')state.claimed[d]={at:claim.at};
+      state.placement[d]=raw.placement?.[d]===true;
       const l=raw.layouts?.[d];if(l&&Number.isFinite(l.x)&&Number.isFinite(l.y)&&Number.isFinite(l.scale))state.layouts[d]={x:l.x,y:l.y,scale:Math.max(.65,Math.min(1.35,l.scale))};
     }
     for(const d of [101,102,103,104,105,106,107,108,109,110,201,202,203]){
@@ -217,7 +216,7 @@ async function cloudFlush(){
 async function claimCloud(d){
  if(!cloud.ready){status(cloud.loading?'參與紀錄正在同步，請稍候再領取。':cloud.error||'帳號尚未載入，請先填寫 Email 並成功同步後再領取。',{persistent:!cloud.loading});return false;}
  if(cloud.loading)return false;if(!(await cloudFlush())){openProgress();return false;}cloud.loading=true;renderCloud();
- try{const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});const wasClaimed=!!live.claimed[Number(d)];acceptFormalResult(result);if(!wasClaimed&&live.claimed[Number(d)])trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});renderUI();chime();status(`已收藏「${item(d).name}」，按「放入水晶球內」才會加入場景。`);return true;}
+ try{const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});const wasClaimed=!!live.claimed[Number(d)];acceptFormalResult(result);if(!wasClaimed&&live.claimed[Number(d)])trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});renderUI();chime();return true;}
  catch(error){cloud.error=error.message;status(error.message,{persistent:true});return false;}finally{cloud.loading=false;renderCloud();}
 }
 async function saveMarketingConsent(){
@@ -528,7 +527,7 @@ function rewardProgress(){
   const list=rewards(),progress={count,claimedDays,visits},unlockedCount=list.filter(b=>rewardUnlocked(b,progress)).length,next=list.find(b=>!rewardUnlocked(b,progress))||null;
   return {...progress,unlockedCount,total:list.length,next,unlocked:unlockedCount>0};
 }
-function rewardProgressLabel(p=rewardProgress()){return `已收藏 ${p.count}／25 · ${attendanceStatusText(p.visits)} · 已解鎖 ${p.unlockedCount}／${p.total} 份禮遇`;}
+function rewardProgressLabel(p=rewardProgress()){return `已開放 ${availableDays().length}／25 · ${attendanceStatusText(p.visits)} · 已解鎖 ${p.unlockedCount}／${p.total} 份禮遇`;}
 function nextRewardLabel(p=rewardProgress()){
   if(!cardTaskConfirmed()&&rewards().some(b=>b.unlock==='product'&&rewardQualified(b,p)))return localCardTask()?'優惠已保留，填寫 Email 或完成同步即可領取。':'優惠已保留，製作卡片並下載或分享一次即可領取。';
   if(!p.next)return '五份節慶禮遇已全部解鎖。';
@@ -546,10 +545,12 @@ const attendanceReady=()=>!!previewDate||(cloud.ready&&!!cloud.attendance);
 function attendanceStatusText(count=participationDates().length){return previewDate?`模擬參與 ${count}／10 天`:attendanceReady()?`已記錄 ${count}／10 天`:cloud.loading?'參與紀錄同步中…':'參與紀錄尚未同步';}
 // Only admin preview can test all remaining gifts after the campaign closes.
 const claimableToday=()=>previewDate?Math.min(25,today()):today();
-const dayState=d=>STARTER_IDS.includes(Number(d))?'owned':BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))?'owned':'future'):Core.dayState(d,claimableToday(),state().claimed);
-const ownedDays=()=>{const t=today();return Object.keys(state().claimed).map(Number).filter(d=>d<=t).sort((a,b)=>a-b).concat(bonusDays());};
+const availableDays=()=>Array.from({length:Math.max(0,Math.min(25,claimableToday()))},(_,i)=>i+1);
+// Date-open objects are visible on every visit, regardless of old claim history.
+const dayState=d=>STARTER_IDS.includes(Number(d))?'owned':BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))?'owned':'future'):availableDays().includes(Number(d))?'owned':'future';
+const ownedDays=()=>availableDays().concat(bonusDays());
 const sceneDays=()=>ownedDays().concat(STARTER_IDS);
-const isPlaced=d=>STARTER_IDS.includes(Number(d))?state().placement[d]!==false:BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))&&state().placement[d]===true):state().placement[d]===true&&Object.hasOwn(state().claimed,String(d))&&Number(d)<=today();
+const isPlaced=d=>STARTER_IDS.includes(Number(d))?state().placement[d]!==false:BONUS_IDS.includes(Number(d))?(bonusDays().includes(Number(d))&&state().placement[d]===true):state().placement[d]===true&&availableDays().includes(Number(d));
 function persist(){if(previewDate)previewPersist();else{rememberSessionScene();cloudCache();cloudScheduleSave();}}
 let statusTimer=null;
 function status(message,{persistent=false}={}){
@@ -607,21 +608,22 @@ function claimDay(d){
     if(!Core.claim(live,Number(d),today(),new Date(Date.now()+(cloud.hasClock?cloud.offset:0)).toISOString()))return false;
     if(today()>=1&&today()<=25)live.visits[dateISO()]=true;cloudCache();renderUI();chime();trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});return true;
   }
-  const alreadyUnlocked=rewardProgress().unlockedCount;
+  
   // Re-evaluate the date at the actual click, including clicks across midnight.
-  if(dayState(d)!=='current'||!Core.claim(state(),Number(d),claimableToday(),new Date().toISOString())){renderUI();return false;}
-  persist();chime();renderUI();const progress=rewardProgress();status(`已收藏「${item(d).name}」。按「放入水晶球內」才會加入場景。${progress.unlockedCount>alreadyUnlocked?`第 ${progress.unlockedCount} 份節慶禮遇已解鎖！可至「我的禮遇」查看。`:''}`);return true;
+  if(!Core.claim(state(),Number(d),claimableToday(),new Date().toISOString())){renderUI();return false;}
+  persist();chime();renderUI();return true;
 }
 async function openDay(d){
   if(BONUS_IDS.includes(Number(d))&&!bonusDays().includes(Number(d))){status('此 Email 尚未解鎖這份限定收藏。');return;}
   const s=dayState(d);
   if(s==='future'){status(`12/${d} 的驚喜尚未開啟，請在當天回來。`);return;}
   if(s==='missed'){status('活動領取已結束，已收藏的禮物仍可回看與擺放。');return;}
-  if(s==='current'&&!(await claimDay(d)))return;
   await ensureItemAssets([Number(d)]);openItem(d);
+  // Legacy reward eligibility records may still be saved when viewing an item;
+  // they never gate visibility or the local arrangement of date-open objects.
+  if(item(d).product&&!state().claimed[Number(d)]&&(previewDate||!cloud.email||cloud.ready))Promise.resolve(claimDay(d)).catch(()=>{});
 }
 function togglePlacement(d,{fromCollection=false}={}){
-  if(!previewDate&&cloud.email&&!cloud.ready&&!cloud.cachedView){status('正在背景找回進度，請稍後再調整。');return;}
   if(dayState(d)!=='owned')return;
   const placed=!isPlaced(d);state().placement[d]=placed;trackActivity('globe_item_change',{...giftAnalytics(d),action:placed?'add':'remove',placed_count:ownedDays().filter(isPlaced).length});
   if(placed&&(Number(d)===24||(Number(d)===12&&isPlaced(24))))state().layouts[24]=starAboveTreeLayout(getLayout(24),getLayout(12));
@@ -655,14 +657,14 @@ function renderQuickSimulation(){
   $('quick-sim-toggle').setAttribute('aria-expanded',String(!$('quick-sim-panel').hidden));
   $('quick-sim-exit').disabled=!active;
   if(active)$('sim-date').value=previewDate;
-  $('quick-sim-note').textContent=active&&today()>25?'12/26 管理測試可領取 1～25 號未收藏禮物，不增加簽到天數；正式活動仍於 12/25 結束。':active&&today()<1?'活動尚未開始，所有禮物保持鎖定。':active?'當日及之前的禮物可逐件領取，收藏後再自行放入。每個模擬日期只計一次測試簽到，不影響正式進度。':'選擇日期即開始模擬，依台灣時間開放當日及之前的禮物。';
+  $('quick-sim-note').textContent=active&&today()>25?'12/26 管理測試可領取 1～25 號未收藏禮物，不增加簽到天數；正式活動仍於 12/25 結束。':active&&today()<1?'活動尚未開始，所有禮物保持鎖定。':active?'當日及之前的物件皆可查看及放入。每個模擬日期只計一次測試簽到，不影響正式進度。':'選擇日期即開始模擬，依台灣時間開放當日及之前的禮物。';
 }
 function calendarStateIcon(state){
   const icon=el('span',`calendar-state-icon ${state}`);
   icon.setAttribute('aria-hidden','true');return icon;
 }
 function renderCalendar(){
-  const count=rewardProgress().count,t=today();
+  const count=availableDays().length,t=today();
   $('today-label').textContent=`${dateISO().slice(5).replace('-','/')} · 台灣${previewDate?' · 模擬':''}`;
   $('progress-count').textContent=`${count} / 25`;$('progress-fill').style.width=`${count/25*100}%`;
   const root=$('calendar-grid');root.replaceChildren();
@@ -670,7 +672,7 @@ function renderCalendar(){
     const s=dayState(i.day),b=el('button',`day-cell ${s}${i.product?' product-day':''}`);b.type='button';b.dataset.day=String(i.day);
     const name=calendarName(i.day),music=calendarMusic(i.day);
     const displayState=s==='owned'?(isPlaced(i.day)?'placed':'stored'):s;
-    const stateLabel=s==='owned'?(displayState==='placed'?'已領取，已放入水晶球':'已領取，尚未放入水晶球'):describeState(i.day);
+    const stateLabel=s==='owned'?(displayState==='placed'?'已放入水晶球':'未放入水晶球'):describeState(i.day);
     if(s==='owned')b.classList.add(displayState);
     b.setAttribute('aria-label',`12月${i.day}日，${name}${music?`，另有 ${music}`:''}，${stateLabel}，依台灣時間開啟`);
     b.append(el('span','day-number',String(i.day)),el('span','day-name',name));
@@ -681,10 +683,10 @@ function renderCalendar(){
   }
   const open=$('today-open');open.disabled=false;
   if(t===0){$('today-kicker').textContent='12/01 開始';$('today-title').textContent='第一場雪';open.textContent='尚未開始';open.disabled=true;}
-  else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日收藏測試 · 1～25 號可領取':'聖誕倒數已結束';open.textContent='查看收藏';}
-  else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent=s==='owned'?'回看收藏':'開啟禮盒';}
+  else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日物件測試 · 1～25 號已開放':'聖誕倒數已結束';open.textContent='查看收藏';}
+  else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent='查看今日物件';}
   const key=$('calendar-key');key.replaceChildren();
-  for(const [s,label] of [['future','日期未到'],['stored','已領取・未放入'],['placed','已領取・已放入']]){
+  for(const [s,label] of [['future','日期未到'],['stored','未放入'],['placed','已放入']]){
     const entry=el('span');entry.append(calendarStateIcon(s),el('span','',label));if(s==='placed')entry.append(el('small','calendar-border-note','日期格有金邊'));key.append(entry);
   }
 }
@@ -714,7 +716,7 @@ function updatePlacementUI(d){
   refreshItemThumbnails(d);
   const cell=$('calendar-grid').querySelector(`[data-day="${Number(d)}"]`);
   if(cell&&dayState(d)==='owned'){
-    const stateLabel=placed?'已領取，已放入水晶球':'已領取，尚未放入水晶球',displayState=placed?'placed':'stored',music=calendarMusic(d);
+    const stateLabel=placed?'已放入水晶球':'未放入水晶球',displayState=placed?'placed':'stored',music=calendarMusic(d);
     cell.classList.toggle('placed',placed);cell.classList.toggle('stored',!placed);cell.title=stateLabel;
     cell.setAttribute('aria-label',`12月${d}日，${calendarName(d)}${music?`，另有 ${music}`:''}，${stateLabel}，依台灣時間開啟`);
     const icon=cell.querySelector('.calendar-state-icon');if(icon)icon.className=`calendar-state-icon ${displayState}`;else cell.append(calendarStateIcon(displayState));
@@ -785,7 +787,7 @@ function renderRewardCard(b,progress,full){
   card.setAttribute('aria-label',`${condition}，${unlocked?'已解鎖':'尚未解鎖'}，${unlocked?b.title:b.preview}`);
   if(!full){
     card.classList.add('compact-reward');
-    card.append(el('p','reward-coupon-summary',unlocked?b.title:b.preview));
+    card.append(el('p','reward-coupon-summary',product?'折抵 $1,000':unlocked?b.title:b.preview));
     card.append(el('h3','reward-product-name',product?product.name:condition));
     if(product){const visual=el('div',`reward-card-visual${product.teaser?' teaser':''}`);visual.append(product.teaser?el('div','reward-product-teaser','新品預告'):rewardProductImage(b,product));card.append(visual);}
     if(!product)card.append(el('p','reward-participation',`已參與 ${progress.visits}／${b.required} 天`));
@@ -1889,7 +1891,7 @@ $('studio-export').addEventListener('click',exportConfig);
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeDialog(b.dataset.close)));
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('globe-wrapper'));
-let lastDay=dateISO();setInterval(()=>{if(cloud.isAdmin&&cloud.adminToken&&Date.now()+cloud.offset>=cloud.adminSessionExpiresAt){cloudRequireAdminAuth({message:'管理員驗證已到期，請重新輸入驗證碼。'});return;}if(previewDate||document.hidden)return;const next=dateISO();if(next!==lastDay){lastDay=next;renderUI();if($('item-dialog').open&&currentModalDay&&dayState(currentModalDay)!=='owned')closeDialog('item-dialog');status('新的一天開始了，可領取今天以前的禮物。');if(cloud.ready)cloudConnect(cloud.email).catch(()=>{});}},10000);
+let lastDay=dateISO();setInterval(()=>{if(cloud.isAdmin&&cloud.adminToken&&Date.now()+cloud.offset>=cloud.adminSessionExpiresAt){cloudRequireAdminAuth({message:'管理員驗證已到期，請重新輸入驗證碼。'});return;}if(previewDate||document.hidden)return;const next=dateISO();if(next!==lastDay){lastDay=next;renderUI();if($('item-dialog').open&&currentModalDay&&dayState(currentModalDay)!=='owned')closeDialog('item-dialog');status('新的一天開始了，今天以前的物件皆已開放。');if(cloud.ready)cloudConnect(cloud.email).catch(()=>{});}},10000);
 async function initialise(){
  $('scene-loading').hidden=true;renderUI();resize();
  if(cloud.email)cloudConnect(cloud.email).catch(()=>{});
