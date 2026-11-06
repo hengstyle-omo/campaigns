@@ -127,7 +127,7 @@ function cloudTransport(payload){
   const id=Array.from(crypto.getRandomValues(new Uint8Array(20)),b=>b.toString(16).padStart(2,'0')).join(''),frame=el('iframe');frame.name='dyson-progress-'+id;frame.hidden=true;frame.dataset.cloudTransport='true';frame.title='背景保存收藏進度';
   const form=el('form');form.method='POST';form.action=cloud.endpoint;form.target=frame.name;form.hidden=true;form.dataset.cloudTransport='true';const field=el('input');field.type='hidden';field.name='payload';field.value=JSON.stringify({...payload,requestId:id,clientOrigin:location.origin});form.append(field);
   let finished=false;const finish=(error,result)=>{if(finished)return;finished=true;clearTimeout(timer);cloud.requests.delete(id);frame.remove();form.remove();error?reject(error):resolve(result);};
-  const timer=setTimeout(()=>finish(new Error('雲端尚未回覆，內容已留在此裝置，請稍後重試同步。')),30000);
+  const timer=setTimeout(()=>finish(new Error('同步逾時，尚未確認保存結果。請按「重試同步」。')),30000);
   cloud.requests.set(id,result=>{field.value='';result?.ok?finish(null,result):finish(new Error(result?.error||'暫時無法同步，請稍後重試。'));});document.body.append(frame,form);form.submit();
  });
 }
@@ -166,8 +166,12 @@ function cloudSend(payload){
    if(result.adminAuthenticated===true){if(result.adminToken)cloud.adminToken=result.adminToken;cloud.adminSessionExpiresAt=Number(result.adminSessionExpiresAt)||0;cloud.adminAuthRequired=false;}
    else{cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=false;}
   }
-  return result;
+  clearCloudSyncError();return result;
  });cloud.queue=request.catch(()=>{});return request;
+}
+function clearCloudSyncError(){
+ const previous=cloud.error;cloud.error='';
+ if(previous&&$('status').textContent===previous)status('');
 }
 function cloudAcceptClock(result){
  assertTestEnvironment(result);if(result.serviceVersion!==8||result.rulesVersion!==3||result.permissionsVersion!==3||result.authVersion!==1)throw new Error('請更新管理員驗證版 GS 與原部署。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同。');
@@ -184,7 +188,7 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
  const started=performance.now(),same=email===cloud.email,guestState=Core.accountState(safeRead(STORAGE_PREFIX+'guest-state',{})),guestTask=guestCardTask;
  const preserveDraft=same&&cloud.marketingDirty&&typeof consent!=='boolean';
  if(!same){cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=false;cloud.ready=false;cloud.cachedView=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.synced=Core.freshState();live=Core.sceneState(guestState,sessionScene);previewRestore(null);}
- cloud.email=email;cloud.loading=true;cloud.error='';cloud.isAdmin=false;cloud.canPreview=false;cloud.hasExclusive=false;cloud.bonusIds=[];safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});renderCloud();
+ cloud.email=email;cloud.loading=true;clearCloudSyncError();cloud.isAdmin=false;cloud.canPreview=false;cloud.hasExclusive=false;cloud.bonusIds=[];safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});renderCloud();
  try{
   let cached=safeRead(cloudCacheKey(email),{});const payload={action:typeof adminCode==='string'?'adminLogin':'connect',email};if(typeof adminCode==='string')payload.adminCode=adminCode;
   if(Object.keys(guestState.claimed).length||Object.keys(guestState.visits).length)payload.guestState=Core.transportState(guestState);
@@ -763,17 +767,33 @@ function renderParticipation(progress=rewardProgress()){
   if(previewDate)section.append(el('p','participation-note','以下為管理員模擬結果，不計入帳號實際登入天數。'));
   else if(!ready)section.append(el('p','participation-note',cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。'));
   else if(complete)section.append(el('p','passport-eligible','已集滿 10 天！至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。'));
-  return section;
+  appendPassportCouponAction(section,{ready,complete,count:dates.length});return section;
 }
 function rewardProductImage(b,product){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
+function couponClaimURL(id){
+ const raw=String(window.DYSON_COUPON_LINKS?.[id]||'').trim();
+ if(!raw)return '';try{const url=new URL(raw);return url.protocol==='https:'&&!url.username&&!url.password?url.href:'';}catch{return '';}
+}
+function appendClaimLink(container,id,label){
+ const url=couponClaimURL(id);if(!url){const button=el('button','',id==='visits-10'?'兌換券準備中':'優惠券準備中');button.type='button';button.disabled=true;container.append(button);return;}
+ const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);link.addEventListener('click',()=>trackActivity('coupon_click',{coupon_id:id,link_url:url}));container.append(link);
+}
+function appendPassportCouponAction(container,{ready,complete,count}){
+ const actions=el('div','passport-coupon-actions');
+ if(!ready||!complete){const button=el('button','',`再累積 ${Math.max(0,10-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
+ else if(previewDate){const button=el('button','','模擬預覽 · 已達成 10 天');button.type='button';button.disabled=true;actions.append(button);}
+ else appendClaimLink(actions,'visits-10','領取護照夾兌換券');
+ container.append(actions);
+}
 function appendCouponAction(card,b,progress,full){
-  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
-  if(!full){const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);return;}
-  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
-  if(!unlocked){const button=el('button','gold-button','領取優惠券');button.type='button';button.addEventListener('click',startRewardTask);card.append(button);return;}
-  if(!b.approved||!b.code){card.append(el('p','reward-pending','優惠券準備中。'));return;}
-  const expired=b.validUntil&&dateISO()>b.validUntil;if(b.validUntil)card.append(el('p','reward-expiry',`有效至 ${b.validUntil}${expired?' · 已到期':''}`));
-  const row=el('div','voucher-code'),code=el('code','',b.code),copy=el('button','','複製序號');copy.type='button';copy.disabled=!!expired;copy.setAttribute('aria-label',`複製${b.title}序號`);copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.code);trackActivity('coupon_copy',{coupon_id:b.id});copy.textContent='已複製';}catch{copy.textContent='請選取序號複製';}});row.append(code,copy);card.append(row);
+ const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
+ if(!full){const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);return;}
+ if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
+ if(!unlocked){const button=el('button','gold-button','領取優惠券');button.type='button';button.addEventListener('click',startRewardTask);card.append(button);return;}
+ if(previewDate){const button=el('button','','模擬預覽 · 已符合領券條件');button.type='button';button.disabled=true;card.append(button);return;}
+ const expired=b.validUntil&&dateISO()>b.validUntil;if(b.validUntil)card.append(el('p','reward-expiry',`有效至 ${b.validUntil}${expired?' · 已到期':''}`));
+ if(expired){const button=el('button','','優惠已到期');button.type='button';button.disabled=true;card.append(button);return;}
+ appendClaimLink(card,b.id,'領取優惠券');
 }
 function renderRewardCard(b,progress,full){
   if(b.redemption==='counter')return renderCounterReward(b,progress,full);

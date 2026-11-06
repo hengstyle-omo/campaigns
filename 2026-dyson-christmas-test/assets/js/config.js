@@ -4,12 +4,21 @@ window.DYSON_CLOUD_CONFIG = {
   "endpoint": "https://script.google.com/macros/s/AKfycbyNiw73qY4Q_jBwMO9J5KBxrJsWbLrm_aNJ53MBRXyNcxLq8WHcGHPPr4HLs-jA8DqvBg/exec"
 };
 
+/* 領券連結：只需補上對應的完整 HTTPS 網址；留空時顯示準備中。 */
+window.DYSON_COUPON_LINKS = {
+  "product-hd19": "",
+  "product-sv50": "",
+  "product-hj10": "",
+  "product-bp10": "https://bmai.app/0566ddd3",
+  "visits-10": ""
+};
+
 window.DYSON_GAME_CONFIG = {
   "deerPaperRevision": "20261027-quiet-paper-deer",
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 76,
+  "version": 77,
   "benefitLayoutRevision": "20261106-aligned-benefits-v76",
   "activityRulesRevision": "20261106-v76-rules",
   "testEnvironment": "november-test-2026",
@@ -463,8 +472,8 @@ window.DYSON_GAME_CONFIG = {
       "title": "Dyson HD19 隨行吹風機優惠券$1,000",
       "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】限Dyson HD19 隨行吹風機使用。優惠內容及使用條件依券面說明為準。",
-      "code": "TEST-HC999999",
-      "approved": true,
+      "code": "",
+      "approved": false,
       "validUntil": "",
       "displayName": "Dyson HD19 隨行吹風機",
       "scopeLabel": "指定品項"
@@ -476,8 +485,8 @@ window.DYSON_GAME_CONFIG = {
       "title": "Dyson PencilVac 鉛筆吸塵器優惠券$1,000",
       "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】限Dyson PencilVac 鉛筆吸塵器使用。優惠內容及使用條件依券面說明為準。",
-      "code": "TEST-FC999999",
-      "approved": true,
+      "code": "",
+      "approved": false,
       "validUntil": "",
       "displayName": "Dyson PencilVac 鉛筆吸塵器",
       "scopeLabel": "指定品項"
@@ -489,8 +498,8 @@ window.DYSON_GAME_CONFIG = {
       "title": "Dyson HJ10 噴射氣流空氣清淨機優惠券$1,000",
       "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】限Dyson HJ10 噴射氣流空氣清淨機使用。優惠內容及使用條件依券面說明為準。",
-      "code": "TEST-EC999999",
-      "approved": true,
+      "code": "",
+      "approved": false,
       "validUntil": "",
       "displayName": "Dyson HJ10 噴射氣流空氣清淨機",
       "scopeLabel": "指定品項"
@@ -709,7 +718,7 @@ window.DYSON_GAME_CONFIG = {
     "21": "simple-front-snowy-department-store"
   },
   "treeArtworkRevision": "20261029-tree-gingerbread-music",
-  "rewardPresentationRevision": "20261106-reward-layout-v76",
+  "rewardPresentationRevision": "20261106-reward-links-v77",
   "starArtworkRevision": "20261029-intro-tree-top-star"
 };
 
@@ -5813,10 +5822,10 @@ window.DYSON_ASSETS = {
     ]
   },
   "rewardImages": {
-  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-reward-layout-v76",
-  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-reward-layout-v76",
-  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-reward-layout-v76",
-  "product-bp10": "./assets/images/rewards/dyson.jpg?rev=20261106-reward-layout-v76",
-  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-reward-layout-v76"
+  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-reward-links-v77",
+  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-reward-links-v77",
+  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-reward-links-v77",
+  "product-bp10": "./assets/images/rewards/dyson.jpg?rev=20261106-reward-links-v77",
+  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-reward-links-v77"
 }
 };

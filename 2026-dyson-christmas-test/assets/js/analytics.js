@@ -6,7 +6,7 @@
   const test=window.__DYSON_ANALYTICS_TEST__===true;
   const local=location.protocol==='file:'||['localhost','127.0.0.1','[::1]'].includes(location.hostname);
   const active=config.enabled===true&&/^G-[A-Z0-9]+$/.test(config.measurementId)&&(test||!local);
-  const events=new Set(['campaign_start','progress_save','gift_view','gift_collect','globe_item_change','starlight_show','card_open','card_generate','card_download','card_share','coupon_open','coupon_copy','product_click','globe_control']);
+  const events=new Set(['campaign_start','progress_save','gift_view','gift_collect','globe_item_change','starlight_show','card_open','card_generate','card_download','card_share','coupon_open','coupon_click','coupon_copy','product_click','globe_control']);
   const allowed=new Set(['gift_day','gift_name','gift_type','product_model','action','card_format','status','method','coupon_id','link_url','collected_count','placed_count','unlocked_count','has_voice','has_bgm']);
   const common={page_type:config.page_type,activity_id:config.activity_id,activity_name:config.activity_name,brand_name:config.brand_name};
   function safeURL(value,attribution=false){
