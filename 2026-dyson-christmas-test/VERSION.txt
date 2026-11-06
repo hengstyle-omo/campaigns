@@ -1,7 +1,9 @@
-v75 Test / 2026-11-06
-Updated four coupon presentations; Day20 uses rewards/dyson.jpg for all-machine coupon.
-One passport attendance section; purchase condition and dynamic attendance; old homepage note removed.
-Coupon eligibility: date-open plus completed card download/share; no mandatory Email.
-Requires v75 GS deployment. Existing v73 test calendar setup needs no rerun.
-Test rewardRulesVersion2 / calendarVersion2 / scenePersistence=session.
-Cumulative v74 and prior test changes. Formal website unchanged.
+v76 Test / 2026-11-06
+Aligned five homepage benefit cards using shared grid rows.
+Image frames: desktop/tablet200px, mobile160px; keep aspect ratio without cropping.
+Same-row image edges, buttons, card bottoms aligned.
+Eligibility and GS unchanged from v75; frontend presentation updated. No GS redeploy or setup after completed v75.
+Cumulative v75 and earlier test changes. Formal website unchanged.
+Activity rules: four grouped sections; card download/share coupon condition retained.
+Separate November test notice. Copy revision: 20261106-v76-rules.
+Reward copy: 優惠券$1,000; popup header/body/action layout; 6px reward image corners.

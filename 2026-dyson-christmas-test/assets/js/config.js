@@ -9,7 +9,9 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 75,
+  "version": 76,
+  "benefitLayoutRevision": "20261106-aligned-benefits-v76",
+  "activityRulesRevision": "20261106-v76-rules",
   "testEnvironment": "november-test-2026",
   "cardShareUrl": "https://hengstyle-omo.github.io/campaigns/2026-dyson-christmas-test/",
   "cardShareText": "✦ 𝑫𝒚𝒔𝒐𝒏 𝑪𝒉𝒓𝒊𝒔𝒕𝒎𝒂𝒔 ✦聖 誕 驚 喜 倒 數\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🎁每日解鎖聖誕驚喜\n🎄 收藏每一天的美好\n↗ 開啟你的聖誕旅程！",
@@ -458,8 +460,8 @@ window.DYSON_GAME_CONFIG = {
       "id": "product-hd19",
       "unlock": "product",
       "productDay": 5,
-      "title": "Dyson HD19 隨行吹風機折抵 $1,000",
-      "preview": "折抵 $1,000",
+      "title": "Dyson HD19 隨行吹風機優惠券$1,000",
+      "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】限Dyson HD19 隨行吹風機使用。優惠內容及使用條件依券面說明為準。",
       "code": "TEST-HC999999",
       "approved": true,
@@ -471,8 +473,8 @@ window.DYSON_GAME_CONFIG = {
       "id": "product-sv50",
       "unlock": "product",
       "productDay": 10,
-      "title": "Dyson PencilVac 鉛筆吸塵器折抵 $1,000",
-      "preview": "折抵 $1,000",
+      "title": "Dyson PencilVac 鉛筆吸塵器優惠券$1,000",
+      "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】限Dyson PencilVac 鉛筆吸塵器使用。優惠內容及使用條件依券面說明為準。",
       "code": "TEST-FC999999",
       "approved": true,
@@ -484,8 +486,8 @@ window.DYSON_GAME_CONFIG = {
       "id": "product-hj10",
       "unlock": "product",
       "productDay": 15,
-      "title": "Dyson HJ10 噴射氣流空氣清淨機折抵 $1,000",
-      "preview": "折抵 $1,000",
+      "title": "Dyson HJ10 噴射氣流空氣清淨機優惠券$1,000",
+      "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】限Dyson HJ10 噴射氣流空氣清淨機使用。優惠內容及使用條件依券面說明為準。",
       "code": "TEST-EC999999",
       "approved": true,
@@ -497,8 +499,8 @@ window.DYSON_GAME_CONFIG = {
       "id": "product-bp10",
       "unlock": "product",
       "productDay": 20,
-      "title": "任一主機折抵 $1,000",
-      "preview": "折抵 $1,000",
+      "title": "任一主機優惠券$1,000",
+      "preview": "優惠券$1,000",
       "conditions": "【測試，不可兌換】適用 Dyson 任一主機。優惠內容及使用條件依券面說明為準。",
       "code": "",
       "approved": false,
@@ -707,7 +709,7 @@ window.DYSON_GAME_CONFIG = {
     "21": "simple-front-snowy-department-store"
   },
   "treeArtworkRevision": "20261029-tree-gingerbread-music",
-  "rewardPresentationRevision": "20261106-reward-copy-v75",
+  "rewardPresentationRevision": "20261106-reward-layout-v76",
   "starArtworkRevision": "20261029-intro-tree-top-star"
 };
 
@@ -5811,10 +5813,10 @@ window.DYSON_ASSETS = {
     ]
   },
   "rewardImages": {
-  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-reward-copy-v75",
-  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-reward-copy-v75",
-  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-reward-copy-v75",
-  "product-bp10": "./assets/images/rewards/dyson.jpg?rev=20261106-reward-copy-v75",
-  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-reward-copy-v75"
+  "product-hd19": "./assets/images/rewards/dyson-HD19.jpg?rev=20261106-reward-layout-v76",
+  "product-sv50": "./assets/images/rewards/dyson-SV50.jpg?rev=20261106-reward-layout-v76",
+  "product-hj10": "./assets/images/rewards/dyson-HJ10.jpg?rev=20261106-reward-layout-v76",
+  "product-bp10": "./assets/images/rewards/dyson.jpg?rev=20261106-reward-layout-v76",
+  "passport": "./assets/images/rewards/dyson-passport.jpg?rev=20261106-reward-layout-v76"
 }
 };

@@ -765,7 +765,7 @@ function renderParticipation(progress=rewardProgress()){
   else if(complete)section.append(el('p','passport-eligible','已集滿 10 天！至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。'));
   return section;
 }
-function rewardProductImage(b,product){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機折抵優惠';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
+function rewardProductImage(b,product){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
 function appendCouponAction(card,b,progress,full){
   const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
   if(!full){const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);return;}
@@ -778,12 +778,19 @@ function appendCouponAction(card,b,progress,full){
 function renderRewardCard(b,progress,full){
   if(b.redemption==='counter')return renderCounterReward(b,progress,full);
   const unlocked=rewardUnlocked(b,progress),product=b.displayName?item(b.productDay):null;
-  const card=el('article',`${full?'voucher-card':'benefit-card compact-reward'}${unlocked?' claimed':' locked'}`);card.dataset.rewardId=b.id;card.setAttribute('aria-label',`${b.scopeLabel}，${b.displayName||'Dyson 任一主機'}，折抵 $1,000`);
-  card.append(el('p','reward-coupon-summary','折抵 $1,000'),el('p','reward-scope',b.scopeLabel));
-  if(b.displayName)card.append(el('h3','reward-product-name',b.displayName));
-  const visual=el('div',full?'reward-product':'reward-card-visual');visual.append(rewardProductImage(b,product));
-  if(full&&product){const copy=el('div');copy.append(el('p','reward-product-intro',product.product.intro));const url=validatedProductURL(product.product.url);if(url){const a=el('a','product-link','了解產品詳情 ↗');a.href=url;a.target='_blank';a.rel='noopener noreferrer';copy.append(a);}visual.append(copy);}
-  card.append(visual);appendCouponAction(card,b,progress,full);return card;
+  const card=el('article',`${full?'voucher-card':'benefit-card compact-reward'}${unlocked?' claimed':' locked'}`);card.dataset.rewardId=b.id;card.setAttribute('aria-label',`${b.scopeLabel}，${b.displayName||'Dyson 任一主機'}，優惠券$1,000`);
+  if(!full){
+    card.append(el('p','reward-coupon-summary','優惠券$1,000'),el('p','reward-scope',b.scopeLabel));
+    if(b.displayName)card.append(el('h3','reward-product-name',b.displayName));
+    const visual=el('div','reward-card-visual');visual.append(rewardProductImage(b,product));card.append(visual);appendCouponAction(card,b,progress,false);return card;
+  }
+  const header=el('header','voucher-offer-heading');header.append(el('p','reward-coupon-summary','優惠券$1,000'),el('p','reward-scope',b.scopeLabel));
+  const body=el('div',`voucher-product-body${product?'':' voucher-product-only'}`),visual=el('div','voucher-product-visual');visual.append(rewardProductImage(b,product));body.append(visual);
+  if(product){
+    const copy=el('div','voucher-product-copy');copy.append(el('h3','reward-product-name',b.displayName),el('p','reward-product-intro',product.product.intro));
+    const url=validatedProductURL(product.product.url);if(url){const link=el('a','product-link','了解產品詳情 ↗');link.href=url;link.target='_blank';link.rel='noopener noreferrer';copy.append(link);}body.append(copy);
+  }
+  const actions=el('div','voucher-actions');appendCouponAction(actions,b,progress,true);card.append(header,body,actions);return card;
 }
 function renderCounterReward(b,progress,full){
   if(full)return renderParticipation(progress);
