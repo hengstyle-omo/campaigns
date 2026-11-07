@@ -721,7 +721,7 @@ function syncMobileCollectionPage(){
 function renderMobileCollection(){
   if(!$('mobile-collection').open)return;
   const pages=$('mobile-collection-pages');
-  const days=sceneDays();
+  const days=[...STARTER_IDS,...availableDays().reverse(),...bonusDays()];
   const key=JSON.stringify(days.map(day=>[day,item(day).name]));
   if(key===mobileCollectionKey){
     for(const button of pages.querySelectorAll('.mobile-tile-toggle'))updateMobileTile(button,Number(button.closest('[data-day]').dataset.day));
@@ -807,7 +807,7 @@ mobileViewport.addEventListener('change',event=>{
 
 function renderBenefits(){
   const progress=rewardProgress(),root=$('benefit-grid');root.replaceChildren();
-  for(const b of rewards())root.append(renderRewardCard(b,progress,false));
+  for(const b of rewards().filter(reward=>reward.redemption!=='counter'))root.append(renderRewardCard(b,progress,false));
   $('voucher-count').textContent=String(progress.unlockedCount);
   if($('vouchers-dialog').open)renderVouchers();
 }
@@ -862,11 +862,9 @@ function passportProgressText(count){
   return count>=10?'保存紀錄 · 已達成 10 天':`保存紀錄 · 已累積 ${count}／10 天`;
 }
 function renderHomePassport(){
-  const ready=attendanceReady(),count=participationDates().length;
-  $('home-passport-status').textContent=passportProgressText(count);
-  const meter=$('home-passport-meter');
-  meter.hidden=!ready;
-  meter.value=Math.min(10,count);
+  const ready=attendanceReady(),dates=participationDisplayDates();
+  $('home-passport-status').textContent=passportProgressText(dates.length);
+  renderAttendanceGrid($('home-passport-days'),dates);
   $('home-passport-save').hidden=ready;
   $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
   $('home-passport-open').hidden=!ready;
@@ -912,15 +910,28 @@ function setupActivityDialog(){
     });
   }
 }
+function renderAttendanceGrid(grid,dates){
+  const earned=dates.slice(0,10),key=earned.join(',');
+  if(grid.dataset.dates===key)return;
+  const cells=[];
+  for(let index=0;index<10;index++){
+    const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);
+    if(date)cell.append(el('span','participation-check','✓'),el('span','participation-date',date.slice(5).replace('-','/')));
+    cell.setAttribute('aria-label',date?`第 ${index+1} 次，${date} 已簽到`:`第 ${index+1} 次，尚未簽到`);
+    cells.push(cell);
+  }
+  grid.replaceChildren(...cells);
+  grid.dataset.dates=key;
+}
 function renderParticipation(progress=rewardProgress()){
-  const ready=attendanceReady(),dates=participationDisplayDates(),earned=dates.slice(0,10),complete=ready&&dates.length>=10;
+  const ready=attendanceReady(),dates=participationDisplayDates(),complete=ready&&dates.length>=10;
   const section=el('section',`participation${complete?' complete':''}`);section.setAttribute('aria-label',previewDate?'管理員模擬足跡，不計入帳號保存紀錄':'聖誕足跡');
   const header=el('div','passport-attendance-header'),visual=el('div','passport-visual');visual.append(passportImage());
   const copy=el('div','passport-attendance-copy');
   copy.append(el('h4','','護照夾好禮'),el('p','participation-count',passportProgressText(progress.visits)),passportDescription());
   header.append(visual,copy);section.append(header);
   const grid=el('ol','participation-grid');grid.setAttribute('aria-label','前 10 次登入日期');
-  for(let index=0;index<10;index++){const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);cell.append(el('span','participation-check',date?'✓':String(index+1)),el('span','participation-date',date?date.slice(5).replace('-','/'):`第 ${index+1} 次`));cell.setAttribute('aria-label',date?`第 ${index+1} 次，${date} 已簽到`:`第 ${index+1} 次，尚未簽到`);grid.append(cell);}
+  renderAttendanceGrid(grid,dates);
   section.append(grid,el('p','participation-note','※ 無須連續登入，每日最多累積 1 天，同日補領多份禮物也只計算 1 天。'));
   if(previewDate)section.append(el('p','participation-note','以下為管理員模擬結果，不計入帳號實際登入天數。'));
   else if(!ready)section.append(el('p','participation-note',cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。'));
@@ -949,7 +960,7 @@ function appendPassportCouponAction(container,{ready,complete,count}){
 }
 function appendCouponAction(card,b,progress,full){
  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
- if(!full){const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-rewards'));card.append(button);return;}
+ if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-coupons'));card.append(button);return;}
  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
  if(!unlocked){const button=el('button','gold-button','領取優惠券');button.type='button';button.addEventListener('click',startRewardTask);card.append(button);return;}
  if(previewDate){const button=el('button','','模擬預覽 · 已符合領券條件');button.type='button';button.disabled=true;card.append(button);return;}
@@ -958,7 +969,6 @@ function appendCouponAction(card,b,progress,full){
  appendClaimLink(card,b.id,'領取優惠券');
 }
 function renderRewardCard(b,progress,full){
-  if(b.redemption==='counter')return renderCounterReward(b,progress,full);
   const unlocked=rewardUnlocked(b,progress),product=b.displayName?item(b.productDay):null;
   const card=el('article',`${full?'voucher-card':'benefit-card compact-reward'}${unlocked?' claimed':' locked'}`);card.dataset.rewardId=b.id;card.setAttribute('aria-label',`${b.scopeLabel}，${b.displayName||'Dyson 任一主機'}，優惠券$1,000`);
   if(!full){
@@ -967,20 +977,13 @@ function renderRewardCard(b,progress,full){
     const visual=el('div','reward-card-visual');visual.append(rewardProductImage(b,product));card.append(visual);appendCouponAction(card,b,progress,false);return card;
   }
   const header=el('header','voucher-offer-heading');header.append(el('p','reward-coupon-summary','優惠券$1,000'),el('p','reward-scope',b.scopeLabel));
+  header.append(el('p','reward-open-date',`12/${String(b.productDay).padStart(2,'0')} 開放`));
   const body=el('div',`voucher-product-body${product?'':' voucher-product-only'}`),visual=el('div','voucher-product-visual');visual.append(rewardProductImage(b,product));body.append(visual);
   if(product){
     const copy=el('div','voucher-product-copy');copy.append(el('h3','reward-product-name',b.displayName),el('p','reward-product-intro',product.product.intro));
     const url=validatedProductURL(product.product.url);if(url){const link=el('a','product-link','了解產品詳情 ↗');link.href=url;link.target='_blank';link.rel='noopener noreferrer';copy.append(link);}body.append(copy);
   }
   const actions=el('div','voucher-actions');appendCouponAction(actions,b,progress,true);card.append(header,body,actions);return card;
-}
-function renderCounterReward(b,progress,full){
-  if(full)return renderParticipation(progress);
-  const card=el('article',`benefit-card compact-reward passport-reward${rewardUnlocked(b,progress)?' claimed':' locked'}`);card.dataset.rewardId=b.id;
-  card.append(el('h3','reward-product-name','累積參與 10 天，解鎖 Dyson 專屬好禮！'));
-  const description=el('p','passport-description');description.append('集滿 10 天，至 Dyson 專櫃不限金額消費，即加贈 ',el('strong','','Dyson 護照夾'),'。');card.append(description);
-  const visual=el('div','passport-visual');visual.append(passportImage());card.append(visual,el('p','reward-participation',passportProgressText(progress.visits)));
-  const button=el('button','','查看兌換方式');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-passport'));card.append(button);return card;
 }
 function validatedProductURL(value){
   const text=String(value||'').trim();if(!text)return '';try{const url=new URL(text);if(url.protocol!=='https:')return '';return url.href;}catch{return '';}

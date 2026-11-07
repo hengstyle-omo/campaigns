@@ -1,2 +1,2 @@
-v81 Test / 2026-11-07
-Shared activity and rewards dialog, saved passport progress on the home page, equal mobile actions.
+v82 Test / 2026-11-07
+Stable mobile globe sizing, ten attendance cells, starter-first arrangement and separate activity, coupons and rewards.
