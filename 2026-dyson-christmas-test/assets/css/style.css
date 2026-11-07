@@ -396,7 +396,7 @@ button,input,textarea,select{line-height:1.5}
 /* v36: calendar-side introduction entry and rules within that introduction. */
 .calendar-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px}.calendar-heading-main{min-width:0}.calendar-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:7px 10px}.calendar-title-row h2{margin:0}
 .calendar-about{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;padding:5px 0;border:0;border-radius:0;background:transparent;color:var(--gold);font-size:13px;text-underline-offset:4px}.calendar-about:hover{background:transparent;text-decoration:underline}
-.welcome-rules{padding-top:14px;margin-top:16px;border-top:1px solid var(--line)}.welcome-rules h3{font-size:14px;font-weight:500;color:var(--gold);margin-bottom:6px}.welcome-rules p{font-size:13px;line-height:1.8;color:#b9c2cf}
+
 @media(max-width:1000px){.calendar-heading{grid-template-columns:minmax(0,1fr);gap:10px}.calendar-title-row{justify-content:space-between;gap:7px}.calendar-tools{flex-direction:row;align-items:center;justify-content:space-between;margin-left:0;width:100%;gap:8px;flex-wrap:wrap}}
 
 /* v38: logical reading order is write, preview, then format and sharing. */
@@ -433,8 +433,8 @@ button,input,textarea,select{line-height:1.5}
 .welcome-media-toolbar .welcome-status{flex:1;min-width:0;margin:0;min-height:1.5em;font-size:12px;line-height:1.6;text-align:left}
 .welcome-media-toolbar #welcome-play{position:static;transform:none;margin:0;padding:5px 9px;font-size:12px;flex:none}
 .welcome-steps{gap:22px}.welcome-steps strong{font-size:16px;line-height:1.6}.welcome-steps span{font-size:14px;line-height:1.7;margin-top:3px}
-.welcome-rules{padding-top:14px;margin-top:0}.welcome-rules summary{color:var(--gold);font-size:14px;font-weight:500;cursor:pointer;padding:3px 0}
-.welcome-rules-content{padding:9px 0 5px}.welcome-rules-content p{font-size:14px;line-height:1.8;margin:0 0 9px}
+
+
 .welcome-footer{position:sticky;bottom:-24px;margin:16px -24px -24px;padding:14px 24px 20px;border-top:1px solid var(--line);background:#142030;z-index:2}
 @media(max-width:760px){.welcome-dialog{padding:18px}.welcome-content{grid-template-columns:minmax(0,1fr);gap:18px;margin:16px 0}.welcome-content .welcome-media{width:min(100%,230px);margin:auto}.welcome-steps{gap:15px}.welcome-steps strong{font-size:15px}.welcome-footer{bottom:-18px;margin:14px -18px -18px;padding:12px 18px 16px}}
 
@@ -481,7 +481,7 @@ button,input,textarea,select{line-height:1.5}
 .welcome-steps{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 8px;margin:0;padding:0;font-size:13px;line-height:1.6;color:#ead6b4}
 .welcome-steps li{display:block}
 .welcome-steps li+li:before{content:'→';color:var(--muted);margin-right:8px}
-.welcome-rules{padding-top:10px}
+
 .welcome-footer{bottom:-22px;margin:14px -22px -22px;padding:12px 22px 16px}
 .welcome-dialog.progress-only .welcome-content{display:block;margin:14px 0}
 .welcome-dialog.progress-only .welcome-media,.welcome-dialog.progress-only .welcome-guide{display:none}
@@ -513,7 +513,7 @@ button,input,textarea,select{line-height:1.5}
 .card-recording-preview{width:90px;height:150px;max-height:20vh;object-fit:contain;border-radius:6px;flex:none}
 
 /* Activity notice text shares the existing scrollable introduction dialog. */
-.welcome-notices ol{margin:0;padding-left:1.6em}.welcome-notices li{padding-left:.2em;color:#b9c2cf}.welcome-notices li+li{margin-top:12px}.welcome-notices li p{margin:0;overflow-wrap:anywhere}.welcome-notices li::marker{font-size:14px}
+
 
 /* Counter gift uses the supplied artwork without recoloring. */
 .passport-visual{display:flex;align-items:center;justify-content:center;margin:14px 0;padding:0;border-radius:10px;background:transparent;overflow:hidden}.passport-visual img{display:block;width:100%;max-width:240px;height:auto;object-fit:contain}.compact-reward .passport-visual{max-width:220px;margin:12px auto}.passport-eligible{color:var(--gold);font-weight:700;line-height:1.7}.passport-reward h3,.passport-reward p{overflow-wrap:anywhere}
@@ -570,8 +570,8 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:760px){#benefit-grid>.compact-reward>.reward-card-visual,#benefit-grid>.compact-reward>.passport-visual{height:160px}}
 
 /* v76: grouped activity rules */
-.activity-rules-section + .activity-rules-section{margin-top:18px}
-.activity-rules-section h3{margin:0 0 6px}
+
+
 .activity-rules-section strong{color:var(--cream,#f1e8d7)}
 
 /* v76: clear coupon hierarchy and consistent reward image corners */
@@ -754,7 +754,7 @@ button,input,textarea,select{line-height:1.5}
 .activity-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .activity-dialog-heading h2 { margin: 0; font-size: clamp(19px, 4.8vw, 26px); }
 .activity-dialog-heading .dialog-close { position: static; flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; }
-.activity-jumps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.activity-jumps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
 .activity-jumps a {
   display: grid; place-items: center; min-height: 44px; padding: 6px; border: 1px solid var(--line);
   border-radius: 6px; background: #101d2c; color: var(--gold); font-size: 14px; text-decoration: none;
@@ -777,10 +777,10 @@ button,input,textarea,select{line-height:1.5}
 .activity-steps span, .activity-dialog-body > section > .voucher-instructions { font-size: 13px; color: #b9c2cf; }
 .activity-rewards { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
 .reward-open-date { flex-basis: 100%; margin: 0; font-size: 13px; color: #b9c2cf; }
-#activity-passport:focus, .activity-section-title:focus { outline: none; }
+.activity-section-title:focus { outline: none; }
 
 @media (max-width: 760px) {
-  .home-passport { margin: 0 10px 10px; }
+  .home-passport { margin: 10px 10px 0; }
   .site-header nav > :is(#progress-open,#vouchers-open), .site-header nav #audio-open { padding-inline: 7px; font-size: 12px; }
   .mobile-collection-heading > span { text-align: right; font-size: 11px; }
   .activity-dialog-top { padding-inline: 13px; }
@@ -792,3 +792,39 @@ button,input,textarea,select{line-height:1.5}
   .home-passport button { padding-inline: 5px; font-size: 11px; }
   .site-header nav { gap: 5px; }
 }
+
+
+/* v83: both disclosures use the same spacing, type and indicator. */
+.welcome-rules,
+.home-passport-redemption { border-top: 1px solid var(--line); }
+.welcome-rules > summary,
+.home-passport-redemption > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 44px; padding: 8px 0; list-style: none; cursor: pointer;
+  color: var(--gold); font: inherit; font-size: 14px; font-weight: 500; line-height: 1.5;
+}
+.welcome-rules > summary::-webkit-details-marker,
+.home-passport-redemption > summary::-webkit-details-marker { display: none; }
+.welcome-rules > summary::after,
+.home-passport-redemption > summary::after {
+  content: ""; flex: 0 0 8px; width: 8px; height: 8px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  margin-right: 4px; transform: rotate(45deg);
+}
+.welcome-rules[open] > summary::after,
+.home-passport-redemption[open] > summary::after { transform: rotate(225deg); }
+.welcome-rules-content {
+  padding: 2px 0 12px; color: #b9c2cf; font: inherit;
+  font-size: 14px; line-height: 1.75; overflow-wrap: anywhere;
+}
+.welcome-rules-content :is(h3,p,ol,li) { margin: 0; font-size: inherit; line-height: inherit; }
+.welcome-rules-content h3 { color: var(--gold); font-weight: 600; margin-bottom: 4px; }
+.welcome-rules-content ol { padding: 0; list-style-position: inside; }
+.welcome-rules-content li p { display: inline; }
+.welcome-rules-content :is(section+section,li+li,p+p) { margin-top: 10px; }
+
+.home-passport-redemption { grid-column: 1 / -1; }
+.home-passport-redemption-body { display: grid; gap: 9px; padding-bottom: 4px; }
+.home-passport-gift { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: center; gap: 10px; }
+.home-passport-gift img { display: block; width: 64px; height: auto; border-radius: 5px; }
+.home-passport-redemption .passport-coupon-actions { margin: 0; padding-top: 8px; }

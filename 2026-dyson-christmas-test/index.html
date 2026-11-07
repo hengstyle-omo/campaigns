@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261107-v82-rewards"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261108-v83-inline-passport"></head>
 <body>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v82</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v83</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
  <h2 id="welcome-title">活動介紹</h2><p id="welcome-description">布置屬於你的聖誕雪境、收藏驚喜、傳送祝福，解鎖<strong>限量優惠券</strong>。</p>
@@ -44,20 +44,31 @@
    <p id="status" class="status" role="status" aria-live="polite"></p>
   </section>
   <aside class="calendar-panel">
-   <button id="mobile-calendar-toggle" class="mobile-calendar-toggle" type="button" aria-expanded="false" aria-controls="calendar-body">
-    <strong>每日解鎖</strong><span id="mobile-calendar-count">已開放 0／25</span><span class="mobile-calendar-arrow" aria-hidden="true">⌄</span>
-   </button>
    <section class="home-passport" aria-labelledby="home-passport-title">
     <div class="home-passport-copy">
      <h3 id="home-passport-title">護照夾好禮</h3>
      <p id="home-passport-status" aria-live="polite">保存紀錄 · 累積登入 10 天</p>
     </div>
     <button id="home-passport-save" type="button">輸入 Email 保存紀錄</button>
-    <button id="home-passport-open" type="button" hidden>查看兌換方式</button>
     <ol id="home-passport-days" class="participation-grid" aria-label="前 10 次登入日期"></ol>
+    <details class="home-passport-redemption">
+     <summary>查看兌換方式</summary>
+     <div class="home-passport-redemption-body">
+      <div class="home-passport-gift">
+       <img id="home-passport-image" alt="Dyson 護照夾" width="1080" height="1080" loading="lazy">
+       <p>填寫 Email 保存紀錄，活動期間累積登入滿 10 天後，至 Dyson 專櫃<strong>不限金額消費，即加贈 Dyson 護照夾。</strong></p>
+      </div>
+      <p>無須連續登入。每個台灣日期最多累積 1 天，同日補領多份禮物也只計算 1 天。</p>
+      <p id="home-passport-note" hidden></p>
+      <div id="home-passport-actions" class="passport-coupon-actions"></div>
+     </div>
+    </details>
    </section>
+   <button id="mobile-calendar-toggle" class="mobile-calendar-toggle" type="button" aria-expanded="false" aria-controls="calendar-body">
+    <strong>每日解鎖</strong><span id="mobile-calendar-count">已開放 0／25</span><span class="mobile-calendar-arrow" aria-hidden="true">⌄</span>
+   </button>
    <div id="calendar-body" class="calendar-body">
-   <div class="calendar-heading"><div class="calendar-heading-main"><p class="eyebrow">DECEMBER 01 — 25</p><div class="calendar-title-row"><h2>聖誕倒數日曆</h2><button id="welcome-open" class="calendar-about" type="button">活動介紹 <span aria-hidden="true">↗</span></button></div></div><div class="calendar-tools"><span id="today-label" class="date-pill"></span><button id="quick-sim-toggle" type="button" aria-expanded="false" aria-controls="quick-sim-panel">模擬日期</button></div></div>
+   <div class="calendar-heading"><div class="calendar-heading-main"><p class="eyebrow">DECEMBER 01 — 25</p><div class="calendar-title-row"><h2>聖誕倒數日曆</h2></div></div><div class="calendar-tools"><span id="today-label" class="date-pill"></span><button id="quick-sim-toggle" type="button" aria-expanded="false" aria-controls="quick-sim-panel">模擬日期</button></div></div>
    <div id="today-card" class="today-card"><p id="today-kicker" class="eyebrow"></p><h3 id="today-title"></h3><button id="today-open" class="gold-button"></button></div>
    <section id="quick-sim-panel" class="quick-sim-panel" aria-label="模擬日期" hidden>
     <div class="sim-panel-heading"><span>日期模擬 · 台灣時間</span></div>
@@ -110,7 +121,6 @@
   <nav class="activity-jumps" aria-label="活動內容跳轉">
    <a href="#activity-intro">活動介紹</a>
    <a href="#activity-coupons">優惠券</a>
-   <a href="#activity-rewards">我的禮遇</a>
   </nav>
  </header>
  <div class="activity-dialog-body">
@@ -128,10 +138,6 @@
    <p class="voucher-instructions">符合優惠開放條件後，完成專屬卡片製作並下載或分享，即可領取優惠券。</p>
    <div id="vouchers-list"></div>
    <p class="voucher-footnote">※ 優惠內容及使用條件依券面說明為準。</p>
-  </section>
-  <section class="activity-rewards" aria-labelledby="activity-rewards">
-   <h3 id="activity-rewards" class="activity-section-title" tabindex="-1">我的禮遇</h3>
-   <div id="activity-passport" tabindex="-1" aria-label="護照夾好禮"></div>
   </section>
  </div>
 </dialog>
@@ -154,5 +160,5 @@
 <script src="./assets/js/analytics.js?v=20261106-v78-coupon-links"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>
-<script src="./assets/js/app.js?v=20261107-v82-rewards"></script>
+<script src="./assets/js/app.js?v=20261108-v83-inline-passport"></script>
 </body></html>

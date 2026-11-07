@@ -1,2 +1,2 @@
-v82 Test / 2026-11-07
-Stable mobile globe sizing, ten attendance cells, starter-first arrangement and separate activity, coupons and rewards.
+v83 Test / 2026-11-08
+Inline passport redemption and shared activity disclosures.

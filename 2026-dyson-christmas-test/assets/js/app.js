@@ -581,7 +581,6 @@ function openWelcome({progressOnly=false}={}){
 }
 function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
 function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
-$('welcome-open').addEventListener('click',()=>openActivityDialog());
 $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
@@ -867,16 +866,13 @@ function renderHomePassport(){
   renderAttendanceGrid($('home-passport-days'),dates);
   $('home-passport-save').hidden=ready;
   $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
-  $('home-passport-open').hidden=!ready;
+  const note=$('home-passport-note');
+  note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。';
+  note.hidden=!note.textContent;
+  renderPassportCouponAction(ready,dates.length);
 }
-function passportDescription(){
-  const p=el('p','passport-description');p.append('填寫 Email 保存進度，活動期間累積登入滿 10 天，即可至 Dyson 專櫃');
-  p.append(el('strong','','不限金額消費，加贈 Dyson 護照夾！'));return p;
-}
-function passportImage(){const image=el('img');image.src=ASSETS.rewardImages.passport;image.alt='Dyson 護照夾';image.loading='lazy';image.width=1080;image.height=1080;return image;}
 function renderVouchers(){
   const root=$('vouchers-list'),progress=rewardProgress();
-  $('activity-passport').replaceChildren(renderParticipation(progress));
   root.replaceChildren(...rewards().filter(reward=>reward.redemption!=='counter').map(reward=>renderRewardCard(reward,progress,true)));
 }
 function jumpActivitySection(id){
@@ -923,21 +919,6 @@ function renderAttendanceGrid(grid,dates){
   grid.replaceChildren(...cells);
   grid.dataset.dates=key;
 }
-function renderParticipation(progress=rewardProgress()){
-  const ready=attendanceReady(),dates=participationDisplayDates(),complete=ready&&dates.length>=10;
-  const section=el('section',`participation${complete?' complete':''}`);section.setAttribute('aria-label',previewDate?'管理員模擬足跡，不計入帳號保存紀錄':'聖誕足跡');
-  const header=el('div','passport-attendance-header'),visual=el('div','passport-visual');visual.append(passportImage());
-  const copy=el('div','passport-attendance-copy');
-  copy.append(el('h4','','護照夾好禮'),el('p','participation-count',passportProgressText(progress.visits)),passportDescription());
-  header.append(visual,copy);section.append(header);
-  const grid=el('ol','participation-grid');grid.setAttribute('aria-label','前 10 次登入日期');
-  renderAttendanceGrid(grid,dates);
-  section.append(grid,el('p','participation-note','※ 無須連續登入，每日最多累積 1 天，同日補領多份禮物也只計算 1 天。'));
-  if(previewDate)section.append(el('p','participation-note','以下為管理員模擬結果，不計入帳號實際登入天數。'));
-  else if(!ready)section.append(el('p','participation-note',cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。'));
-  else if(complete)section.append(el('p','passport-eligible','已集滿 10 天！至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。'));
-  appendPassportCouponAction(section,{ready,complete,count:dates.length});return section;
-}
 function rewardProductImage(b,product){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
 function couponClaimURL(id){
  const raw=String(window.DYSON_COUPON_LINKS?.[id]||'').trim();
@@ -947,16 +928,24 @@ function appendClaimLink(container,id,label){
  const url=couponClaimURL(id);if(!url){const button=el('button','',id==='visits-10'?'兌換券準備中':'優惠券準備中');button.type='button';button.disabled=true;container.append(button);return;}
  const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);link.addEventListener('click',()=>trackActivity('coupon_click',{coupon_id:id,link_url:url}));container.append(link);
 }
-function appendPassportCouponAction(container,{ready,complete,count}){
- const actions=el('div','passport-coupon-actions');
+function renderPassportCouponAction(ready,count){
+ const actions=$('home-passport-actions');
+ const complete=ready&&count>=10;
+ const key=JSON.stringify([ready,Math.min(count,10),!!previewDate,!!cloud.email,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
+ if(actions.dataset.state===key)return;
+ actions.dataset.state=key;
+ actions.replaceChildren();
  if(!ready){
    const button=el('button','',cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄');
    button.type='button';button.addEventListener('click',openProgress);actions.append(button);
  }
  else if(!complete){const button=el('button','',`再累積 ${Math.max(0,10-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
  else if(previewDate){const button=el('button','','模擬預覽 · 已達成 10 天');button.type='button';button.disabled=true;actions.append(button);}
- else appendClaimLink(actions,'visits-10','領取護照夾兌換券');
- container.append(actions);
+ else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券');
+ else {
+   const button=el('button','','兌換資格確認中');
+   button.type='button';button.disabled=true;actions.append(button);
+ }
 }
 function appendCouponAction(card,b,progress,full){
  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
@@ -2035,7 +2024,7 @@ $('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
 $('home-passport-save').addEventListener('click',openProgress);
-$('home-passport-open').addEventListener('click',()=>openActivityDialog('activity-passport'));
+$('home-passport-image').src=ASSETS.rewardImages.passport;
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));
