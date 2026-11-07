@@ -105,20 +105,20 @@ function localCardTask(){return previewDate?previewCardTask:cloud.pendingCardTas
 function cardTaskConfirmed(){return !!cardTaskNormalise(localCardTask());}
 function renderCloud(){
  const active=cloudEnabled(),admin=canPreview(),busy=cloud.loading||!!cloud.marketingSaving,pending=!!cloud.pendingCardTask||Object.keys(previewPending()).length>0,saving=!!cloud.saving||cloud.ready&&pending;
- $('progress-open').textContent=cloud.loading?'背景同步中…':cloud.ready?(cloud.error?'進度待同步':saving?'保存中…':'參與紀錄'):'記錄參與';
+ $('progress-open').textContent=cloud.loading?'背景同步中…':cloud.ready?(cloud.error?'紀錄待同步':saving?'保存中…':'保存紀錄'):'保存紀錄';
  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);$('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
- $('progress-open').setAttribute('aria-label',cloud.ready?'查看登入日期與護照夾資格':'輸入 Email 記錄參與天數');
+ $('progress-open').setAttribute('aria-label',cloud.ready?'查看保存紀錄與護照夾資格':'輸入 Email 保存紀錄');
  $('admin-auth-email').textContent=cloud.email;$('admin-auth-submit').disabled=busy;$('admin-auth-cancel').disabled=busy;$('admin-auth-code').disabled=busy;$('admin-auth-form').setAttribute('aria-busy',String(busy));if($('admin-auth-dialog').open)$('admin-auth-message').textContent=cloud.loading?'正在驗證…':cloud.error||'請輸入管理員驗證碼。';
  $('progress-submit').textContent='保存';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
  $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
  $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
  $('progress-retry').hidden=!cloud.error||!active;
- const message=cloud.error||(cloud.loading?'正在背景同步進度，你可以先瀏覽與製作卡片。':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus|| (cloud.saving?'正在背景保存進度…':cloud.ready?'參與紀錄已保存，可用相同 Email 查看集點日期。':''));
+ const message=cloud.error||(cloud.loading?'正在背景同步進度，你可以先瀏覽與製作卡片。':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus|| (cloud.saving?'正在背景保存進度…':cloud.ready?'紀錄已保存，可用相同 Email 查看集點日期。':''));
  $('progress-message').textContent=message;$('progress-message').classList.toggle('is-busy',busy||saving&&!cloud.error);
  for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!admin;
  if(!admin){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
  $('cloud-settings').hidden=!admin;$('cloud-endpoint').value=cloud.endpoint;$('cloud-summary').textContent=active?'進度服務已設定。':'請先設定進度服務網址。';
- const returning=cloud.ready||cloud.email;$('welcome-progress-title').textContent=returning?'查看你的參與紀錄':'記錄你的參與天數';
+ renderHomePassport();
 }
 function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;openWelcome({progressOnly:true});renderCloud();$('progress-email').focus();}
 function cloudTransport(payload){
@@ -219,7 +219,7 @@ async function cloudFlush(){
  }catch(error){cloud.error=error.message;cloudCache();return false;}finally{cloud.saving=null;if(!cloud.error)cloudScheduleSave();renderCloud();renderBenefits();}})();renderCloud();return cloud.saving;
 }
 async function claimCloud(d){
- if(!cloud.ready){status(cloud.loading?'參與紀錄正在同步，請稍候再領取。':cloud.error||'帳號尚未載入，請先填寫 Email 並成功同步後再領取。',{persistent:!cloud.loading});return false;}
+ if(!cloud.ready){status(cloud.loading?'保存紀錄正在同步，請稍候再領取。':cloud.error||'帳號尚未載入，請先填寫 Email 並成功同步後再領取。',{persistent:!cloud.loading});return false;}
  if(cloud.loading)return false;if(!(await cloudFlush())){openProgress();return false;}cloud.loading=true;renderCloud();
  try{const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});const wasClaimed=!!live.claimed[Number(d)];acceptFormalResult(result);if(!wasClaimed&&live.claimed[Number(d)])trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});renderUI();chime();return true;}
  catch(error){cloud.error=error.message;status(error.message,{persistent:true});return false;}finally{cloud.loading=false;renderCloud();}
@@ -569,7 +569,7 @@ async function playWelcome(){
   catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
 }
 function openWelcome({progressOnly=false}={}){
-  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'留住你的聖誕進度':'活動介紹';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
+  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'保存紀錄':'活動介紹';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
   video.poster='./assets/video/welcome-poster.webp?rev=20261027-5';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
@@ -581,7 +581,7 @@ function openWelcome({progressOnly=false}={}){
 }
 function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
 function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
-$('welcome-open').addEventListener('click',()=>{openWelcome();$('welcome-dialog').scrollTop=0;});
+$('welcome-open').addEventListener('click',()=>openActivityDialog());
 $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
@@ -854,8 +854,22 @@ function renderProduct(i){
   if(url)link.href=url;else link.removeAttribute('href');
 }
 function passportProgressText(count){
-  if(!attendanceReady())return '參與紀錄尚未同步｜無須連續參與';
-  return `${previewDate?'模擬累積':'已累積'} ${Math.min(10,count)}／10 天｜無須連續參與`;
+  if(!attendanceReady()){
+    if(cloud.loading)return '保存紀錄 · 同步中…';
+    return cloud.email?'保存紀錄 · 尚未同步':'保存紀錄 · 累積登入 10 天';
+  }
+  if(previewDate)return `模擬累積 ${Math.min(10,count)}／10 天`;
+  return count>=10?'保存紀錄 · 已達成 10 天':`保存紀錄 · 已累積 ${count}／10 天`;
+}
+function renderHomePassport(){
+  const ready=attendanceReady(),count=participationDates().length;
+  $('home-passport-status').textContent=passportProgressText(count);
+  const meter=$('home-passport-meter');
+  meter.hidden=!ready;
+  meter.value=Math.min(10,count);
+  $('home-passport-save').hidden=ready;
+  $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
+  $('home-passport-open').hidden=!ready;
 }
 function passportDescription(){
   const p=el('p','passport-description');p.append('填寫 Email 保存進度，活動期間累積登入滿 10 天，即可至 Dyson 專櫃');
@@ -863,14 +877,47 @@ function passportDescription(){
 }
 function passportImage(){const image=el('img');image.src=ASSETS.rewardImages.passport;image.alt='Dyson 護照夾';image.loading='lazy';image.width=1080;image.height=1080;return image;}
 function renderVouchers(){
-  const root=$('vouchers-list'),progress=rewardProgress();root.replaceChildren();
-  for(const b of rewards())root.append(b.redemption==='counter'?renderParticipation(progress):renderRewardCard(b,progress,true));
+  const root=$('vouchers-list'),progress=rewardProgress();
+  $('activity-passport').replaceChildren(renderParticipation(progress));
+  root.replaceChildren(...rewards().filter(reward=>reward.redemption!=='counter').map(reward=>renderRewardCard(reward,progress,true)));
+}
+function jumpActivitySection(id){
+  const dialog=$('vouchers-dialog'),target=$(id);
+  const offset=id==='activity-intro'?0:dialog.scrollTop+target.getBoundingClientRect().top-
+    dialog.getBoundingClientRect().top-$('activity-dialog-top').offsetHeight-10;
+  dialog.scrollTo({top:Math.max(0,offset),behavior:'instant'});
+  target.focus({preventScroll:true});
+}
+function openActivityDialog(id='activity-intro'){
+  renderVouchers();
+  showDialog('vouchers-dialog');
+  jumpActivitySection(id);
+}
+function setupActivityDialog(){
+  const ruleCopies=[];
+  for(const source of $('welcome-dialog').querySelectorAll('.welcome-rules')){
+    const copy=source.cloneNode(true);
+    if(copy.id)copy.id='activity-'+copy.id;
+    for(const node of copy.querySelectorAll('[id]'))node.id='activity-'+node.id;
+    for(const node of copy.querySelectorAll('[aria-labelledby]')){
+      node.setAttribute('aria-labelledby',node.getAttribute('aria-labelledby').split(/\s+/).map(id=>'activity-'+id).join(' '));
+    }
+    ruleCopies.push(copy);
+  }
+  $('activity-details').replaceChildren(...ruleCopies);
+  for(const link of $('activity-dialog-top').querySelectorAll('.activity-jumps a')){
+    link.addEventListener('click',event=>{
+      event.preventDefault();
+      jumpActivitySection(link.getAttribute('href').slice(1));
+    });
+  }
 }
 function renderParticipation(progress=rewardProgress()){
   const ready=attendanceReady(),dates=participationDisplayDates(),earned=dates.slice(0,10),complete=ready&&dates.length>=10;
-  const section=el('section',`participation${complete?' complete':''}`);section.setAttribute('aria-label',previewDate?'管理員模擬足跡，不計入帳號參與紀錄':'聖誕足跡');
+  const section=el('section',`participation${complete?' complete':''}`);section.setAttribute('aria-label',previewDate?'管理員模擬足跡，不計入帳號保存紀錄':'聖誕足跡');
   const header=el('div','passport-attendance-header'),visual=el('div','passport-visual');visual.append(passportImage());
-  const copy=el('div','passport-attendance-copy');copy.append(el('h3','','累積登入 10 天，解鎖專屬好禮'),passportDescription(),el('p','participation-count',passportProgressText(progress.visits)));
+  const copy=el('div','passport-attendance-copy');
+  copy.append(el('h4','','護照夾好禮'),el('p','participation-count',passportProgressText(progress.visits)),passportDescription());
   header.append(visual,copy);section.append(header);
   const grid=el('ol','participation-grid');grid.setAttribute('aria-label','前 10 次登入日期');
   for(let index=0;index<10;index++){const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);cell.append(el('span','participation-check',date?'✓':String(index+1)),el('span','participation-date',date?date.slice(5).replace('-','/'):`第 ${index+1} 次`));cell.setAttribute('aria-label',date?`第 ${index+1} 次，${date} 已簽到`:`第 ${index+1} 次，尚未簽到`);grid.append(cell);}
@@ -891,14 +938,18 @@ function appendClaimLink(container,id,label){
 }
 function appendPassportCouponAction(container,{ready,complete,count}){
  const actions=el('div','passport-coupon-actions');
- if(!ready||!complete){const button=el('button','',`再累積 ${Math.max(0,10-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
+ if(!ready){
+   const button=el('button','',cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄');
+   button.type='button';button.addEventListener('click',openProgress);actions.append(button);
+ }
+ else if(!complete){const button=el('button','',`再累積 ${Math.max(0,10-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
  else if(previewDate){const button=el('button','','模擬預覽 · 已達成 10 天');button.type='button';button.disabled=true;actions.append(button);}
  else appendClaimLink(actions,'visits-10','領取護照夾兌換券');
  container.append(actions);
 }
 function appendCouponAction(card,b,progress,full){
  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
- if(!full){const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);return;}
+ if(!full){const button=el('button','','查看我的禮遇');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-rewards'));card.append(button);return;}
  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
  if(!unlocked){const button=el('button','gold-button','領取優惠券');button.type='button';button.addEventListener('click',startRewardTask);card.append(button);return;}
  if(previewDate){const button=el('button','','模擬預覽 · 已符合領券條件');button.type='button';button.disabled=true;card.append(button);return;}
@@ -929,7 +980,7 @@ function renderCounterReward(b,progress,full){
   card.append(el('h3','reward-product-name','累積參與 10 天，解鎖 Dyson 專屬好禮！'));
   const description=el('p','passport-description');description.append('集滿 10 天，至 Dyson 專櫃不限金額消費，即加贈 ',el('strong','','Dyson 護照夾'),'。');card.append(description);
   const visual=el('div','passport-visual');visual.append(passportImage());card.append(visual,el('p','reward-participation',passportProgressText(progress.visits)));
-  const button=el('button','','查看登入進度');button.type='button';button.addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});card.append(button);return card;
+  const button=el('button','','查看兌換方式');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-passport'));card.append(button);return card;
 }
 function validatedProductURL(value){
   const text=String(value||'').trim();if(!text)return '';try{const url=new URL(text);if(url.protocol!=='https:')return '';return url.href;}catch{return '';}
@@ -1978,7 +2029,10 @@ document.addEventListener('pointerdown',e=>{if(!e.target.closest('.audio-menu'))
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('audio-panel').hidden){e.preventDefault();closeAudioPanel(true);}});
 document.addEventListener('focusin',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
 $('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();if(sound)chime();});
-$('vouchers-open').addEventListener('click',()=>{renderVouchers();showDialog('vouchers-dialog');});
+setupActivityDialog();
+$('vouchers-open').addEventListener('click',()=>openActivityDialog());
+$('home-passport-save').addEventListener('click',openProgress);
+$('home-passport-open').addEventListener('click',()=>openActivityDialog('activity-passport'));
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));

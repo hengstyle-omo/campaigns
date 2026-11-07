@@ -550,9 +550,9 @@ button,input,textarea,select{line-height:1.5}
 .calendar-key .calendar-border-note{font-size:12px;color:#b8a783;margin-left:2px}
 
 /* v75: concise reward scope and combined passport attendance header. */
-.reward-scope{font-size:14px;line-height:1.6;color:var(--gold);margin:3px 0 10px;min-height:0!important}.voucher-card>.reward-coupon-summary{font-size:22px;font-weight:700;color:var(--gold);margin:0;line-height:1.5}.voucher-instructions{margin:20px 0 24px}.voucher-instructions h3{font-size:19px;color:var(--gold);margin:0 0 8px}.voucher-instructions p,.voucher-footnote{font-size:14px;line-height:1.8;color:var(--muted)}.voucher-card .reward-product{margin:14px 0}.passport-description{font-size:14px;line-height:1.85;min-height:0!important;margin:10px 0}.passport-description strong{color:var(--text)}.passport-attendance-header{display:grid;grid-template-columns:minmax(120px,180px) minmax(0,1fr);align-items:center;gap:24px;margin-bottom:22px}.passport-attendance-header .passport-visual{margin:0;padding:0}.passport-attendance-copy{min-width:0}.passport-attendance-copy h3{font-size:21px;line-height:1.6;margin:0;color:var(--gold)}.passport-attendance-copy .participation-count{font-size:16px;color:var(--gold);display:block;margin-top:12px}.compact-reward .reward-product-name{min-height:0}.voucher-footnote{margin:18px 0 0}.passport-reward .reward-product-name{color:var(--gold)}
-@media(max-width:600px){.passport-attendance-header{grid-template-columns:100px minmax(0,1fr);gap:14px;align-items:start}.passport-attendance-copy h3{font-size:18px}.passport-attendance-copy .passport-description{font-size:13px}.passport-attendance-copy .participation-count{font-size:14px}.passport-attendance-header .passport-visual{padding:0}}
-@media(max-width:380px){.passport-attendance-header{grid-template-columns:1fr}.passport-attendance-header .passport-visual{max-width:130px}.passport-attendance-copy h3{font-size:18px}}
+.reward-scope{font-size:14px;line-height:1.6;color:var(--gold);margin:3px 0 10px;min-height:0!important}.voucher-card>.reward-coupon-summary{font-size:22px;font-weight:700;color:var(--gold);margin:0;line-height:1.5}.voucher-instructions{margin:20px 0 24px}.voucher-instructions h3{font-size:19px;color:var(--gold);margin:0 0 8px}.voucher-instructions p,.voucher-footnote{font-size:14px;line-height:1.8;color:var(--muted)}.voucher-card .reward-product{margin:14px 0}.passport-description{font-size:14px;line-height:1.85;min-height:0!important;margin:10px 0}.passport-description strong{color:var(--text)}.passport-attendance-header{display:grid;grid-template-columns:minmax(120px,180px) minmax(0,1fr);align-items:center;gap:24px;margin-bottom:22px}.passport-attendance-header .passport-visual{margin:0;padding:0}.passport-attendance-copy{min-width:0}.passport-attendance-copy h4{font-size:21px;line-height:1.6;margin:0;color:var(--gold)}.passport-attendance-copy .participation-count{font-size:16px;color:var(--gold);display:block;margin-top:12px}.compact-reward .reward-product-name{min-height:0}.voucher-footnote{margin:18px 0 0}.passport-reward .reward-product-name{color:var(--gold)}
+@media(max-width:600px){.passport-attendance-header{grid-template-columns:100px minmax(0,1fr);gap:14px;align-items:start}.passport-attendance-copy h4{font-size:18px}.passport-attendance-copy .passport-description{font-size:13px}.passport-attendance-copy .participation-count{font-size:14px}.passport-attendance-header .passport-visual{padding:0}}
+@media(max-width:380px){.passport-attendance-header{grid-template-columns:1fr}.passport-attendance-header .passport-visual{max-width:130px}.passport-attendance-copy h4{font-size:18px}}
 
 /* v76: shared rows align all five homepage benefit cards without cropping images. */
 #benefit-grid{row-gap:12px}
@@ -651,11 +651,11 @@ button,input,textarea,select{line-height:1.5}
   .mobile-calendar-arrow { font-size: 20px; line-height: 1; }
   .mobile-calendar-toggle[aria-expanded="true"] .mobile-calendar-arrow { transform: rotate(180deg); }
   .calendar-body { display: block; padding: 4px 14px 15px; }
-  .mobile-calendar-toggle[aria-expanded="false"] + .calendar-body { display: none; }
+  .mobile-calendar-toggle[aria-expanded="false"] ~ .calendar-body { display: none; }
   .calendar-card-entry, #starter-section, #collection-section, #bonus-section { display: none; }
 
   .mobile-workspace-actions, .mobile-collection-actions {
-    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px; padding: 8px max(12px, env(safe-area-inset-right, 0px)) calc(9px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
     background: #101e2c; border-top: 1px solid var(--line);
   }
@@ -731,4 +731,68 @@ button,input,textarea,select{line-height:1.5}
   #card-dialog .card-field { margin-bottom: 8px; }
   #card-dialog .card-field :is(input,textarea) { font-size: 16px; }
   #card-dialog #card-message { min-height: 74px; height: 82px; }
+}
+
+/* v81: saved attendance on the home page and shared activity navigation. */
+.home-passport {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 7px 9px;
+  margin-bottom: 14px; padding: 10px 12px;
+  background: #182838; border: 1px solid var(--line); border-radius: 8px;
+}
+.home-passport h3 { margin: 0 0 2px; font-size: 15px; color: #f3d4a1; }
+.home-passport p { margin: 0; font-size: 13px; line-height: 1.45; color: #d6c8b5; }
+.home-passport button { min-height: 44px; padding: 6px 8px; font-size: 12px; }
+.home-passport progress {
+  grid-column: 1 / -1; display: block; width: 100%; height: 5px;
+  accent-color: var(--gold); background: #101d2b; border: 0; border-radius: 8px; overflow: hidden;
+}
+.home-passport progress::-webkit-progress-bar { background: #101d2b; }
+.home-passport progress::-webkit-progress-value { background: var(--gold); }
+.home-passport progress::-moz-progress-bar { background: var(--gold); }
+
+#vouchers-dialog.activity-dialog { padding: 0; }
+.activity-dialog-top {
+  position: sticky; top: 0; z-index: 2; padding: 13px 20px 10px;
+  background: #172536; border-bottom: 1px solid var(--line);
+}
+.activity-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.activity-dialog-heading h2 { margin: 0; font-size: clamp(19px, 4.8vw, 26px); }
+.activity-dialog-heading .dialog-close { position: static; flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; }
+.activity-jumps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.activity-jumps a {
+  display: grid; place-items: center; min-height: 44px; padding: 6px; border: 1px solid var(--line);
+  border-radius: 6px; background: #101d2c; color: var(--gold); font-size: 14px; text-decoration: none;
+}
+.activity-jumps a:hover { border-color: var(--gold); }
+.activity-dialog-body { padding: 18px 20px 22px; }
+.activity-section-title { margin: 0 0 12px; color: var(--gold); font-size: 20px; }
+.activity-steps { display: grid; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; counter-reset: activity-step; }
+.activity-steps li {
+  display: grid; grid-template-columns: 26px 1fr; column-gap: 8px; align-items: center;
+  padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; background: #142232;
+  counter-increment: activity-step;
+}
+.activity-steps li::before {
+  grid-row: 1 / span 2; display: grid; place-items: center; width: 24px; height: 24px;
+  border: 1px solid var(--line); border-radius: 50%; color: var(--gold);
+  content: counter(activity-step); font-size: 12px;
+}
+.activity-steps strong { font-size: 15px; }
+.activity-steps span, .activity-dialog-body > section > .voucher-instructions { font-size: 13px; color: #b9c2cf; }
+.activity-rewards { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.activity-offers-title { margin: 20px 0 0; font-size: 17px; color: var(--gold); }
+#activity-passport:focus, .activity-section-title:focus { outline: none; }
+
+@media (max-width: 760px) {
+  .home-passport { margin: 0 10px 10px; }
+  .site-header nav > :is(#progress-open,#vouchers-open), .site-header nav #audio-open { padding-inline: 7px; font-size: 12px; }
+  .mobile-collection-heading > span { text-align: right; font-size: 11px; }
+  .activity-dialog-top { padding-inline: 13px; }
+  .activity-dialog-body { padding: 14px 13px 20px; }
+}
+@media (max-width: 380px) {
+  .home-passport { gap: 6px; padding-inline: 8px; }
+  .home-passport p { font-size: 12px; }
+  .home-passport button { padding-inline: 5px; font-size: 11px; }
+  .site-header nav { gap: 5px; }
 }

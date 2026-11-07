@@ -1,3 +1,2 @@
-v80 Test / 2026-11-07
-Mobile calendar disclosure, live globe with 3 × 2 collection pages, and fixed card editor entry.
-Frontend update for the 11-month test site.
+v81 Test / 2026-11-07
+Shared activity and rewards dialog, saved passport progress on the home page, equal mobile actions.

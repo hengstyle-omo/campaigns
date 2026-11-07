@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261107-v80-mobile"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261107-v81-activity"></head>
 <body>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v80</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v81</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
  <h2 id="welcome-title">活動介紹</h2><p id="welcome-description">布置屬於你的聖誕雪境、收藏驚喜、傳送祝福，解鎖<strong>限量優惠券</strong>。</p>
- <div class="welcome-content"><section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">記錄你的參與天數</h3><p>留下 Email，記錄參與日期，累積登入 10 天後，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>我願意接收 Dyson 優惠與新品資訊（選填）</span></label><p class="card-hint">未填寫也能先體驗。</p><button id="progress-submit" hidden class="gold-button" type="submit">保存</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div></div>
+ <div class="welcome-content"><section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">保存紀錄</h3><p>留下 Email，記錄參與日期，累積登入 10 天後，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>我願意接收 Dyson 優惠與新品資訊（選填）</span></label><p class="card-hint">未填寫也能先體驗。</p><button id="progress-submit" hidden class="gold-button" type="submit">保存</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div></div>
  <details class="welcome-rules"><summary id="welcome-rules-title">活動規則</summary><div class="welcome-rules-content">
   <section class="activity-rules-section" aria-labelledby="rules-period"><h3 id="rules-period">活動期間與雪境布置</h3><p>活動期間為 2026/12/01–12/25，以台灣時間（UTC+8）每日 00:00 換日。每天開放當天及之前的聖誕物件，可自由放入水晶球布置；尚未到來的日期仍維持鎖定。活動結束後，仍可回看已開放物件並重新布置。</p></section>
   <section class="activity-rules-section" aria-labelledby="rules-coupons"><h3 id="rules-coupons">領取 Dyson 聖誕專屬優惠券</h3><p>符合優惠開放條件後，完成專屬卡片製作並<strong>下載或分享</strong>，即可領取符合條件的優惠券。優惠內容及使用條件依券面說明為準。</p></section>
@@ -21,7 +21,7 @@
  <p id="admin-auth-description">此帳號需要驗證碼，才能載入進度與日期模擬。</p><p id="admin-auth-email" class="admin-auth-email"></p>
  <form id="admin-auth-form"><label for="admin-auth-code">管理員驗證碼<input id="admin-auth-code" type="password" minlength="16" maxlength="128" autocomplete="current-password" required></label><p id="admin-auth-message" role="status" aria-live="polite"></p><div class="admin-auth-actions"><button id="admin-auth-cancel" type="button">切換 Email</button><button id="admin-auth-submit" class="gold-button" type="submit">驗證並繼續</button></div></form>
 </dialog>
-<header class="site-header"><a class="brand" href="#"><img id="brand-logo" class="brand-logo" src="./assets/images/brand/dyson-logo-white.png" alt="Dyson" width="1702" height="591" fetchpriority="high"></a><nav aria-label="功能選單"><button id="progress-open" type="button">讀取進度</button><button id="vouchers-open">我的禮遇 <span id="voucher-count">0</span></button><div class="audio-menu"><button id="audio-open" type="button" aria-expanded="false" aria-controls="audio-panel">音訊<span class="audio-indicator" aria-hidden="true"></span></button>
+<header class="site-header"><a class="brand" href="#"><img id="brand-logo" class="brand-logo" src="./assets/images/brand/dyson-logo-white.png" alt="Dyson" width="1702" height="591" fetchpriority="high"></a><nav aria-label="功能選單"><button id="progress-open" type="button">保存紀錄</button><button id="vouchers-open" type="button">活動介紹與禮遇 <span id="voucher-count">0</span></button><div class="audio-menu"><button id="audio-open" type="button" aria-expanded="false" aria-controls="audio-panel">音訊<span class="audio-indicator" aria-hidden="true"></span></button>
 <section id="audio-panel" class="audio-panel" aria-labelledby="audio-title" hidden>
  <div class="audio-panel-heading"><h2 id="audio-title">音訊</h2><button id="audio-close" type="button" aria-label="收起音訊面板">×</button></div>
  <div class="audio-effects"><span id="effects-label">操作音效</span><button id="sound-toggle" type="button" aria-pressed="false" aria-labelledby="effects-label sound-toggle">關閉</button></div>
@@ -47,6 +47,15 @@
    <button id="mobile-calendar-toggle" class="mobile-calendar-toggle" type="button" aria-expanded="false" aria-controls="calendar-body">
     <strong>每日解鎖</strong><span id="mobile-calendar-count">已開放 0／25</span><span class="mobile-calendar-arrow" aria-hidden="true">⌄</span>
    </button>
+   <section class="home-passport" aria-labelledby="home-passport-title">
+    <div class="home-passport-copy">
+     <h3 id="home-passport-title">護照夾好禮</h3>
+     <p id="home-passport-status" aria-live="polite">保存紀錄 · 累積登入 10 天</p>
+    </div>
+    <button id="home-passport-save" type="button">輸入 Email 保存紀錄</button>
+    <button id="home-passport-open" type="button" hidden>查看兌換方式</button>
+    <progress id="home-passport-meter" max="10" value="0" aria-label="護照夾好禮進度" hidden></progress>
+   </section>
    <div id="calendar-body" class="calendar-body">
    <div class="calendar-heading"><div class="calendar-heading-main"><p class="eyebrow">DECEMBER 01 — 25</p><div class="calendar-title-row"><h2>聖誕倒數日曆</h2><button id="welcome-open" class="calendar-about" type="button">活動介紹 <span aria-hidden="true">↗</span></button></div></div><div class="calendar-tools"><span id="today-label" class="date-pill"></span><button id="quick-sim-toggle" type="button" aria-expanded="false" aria-controls="quick-sim-panel">模擬日期</button></div></div>
    <div id="today-card" class="today-card"><p id="today-kicker" class="eyebrow"></p><h3 id="today-title"></h3><button id="today-open" class="gold-button"></button></div>
@@ -70,12 +79,12 @@
  <footer><span>dyson · 2026 聖誕收藏</span><button id="studio-open">企劃預覽與 25 天內容管理</button></footer>
 </main>
 <nav class="mobile-workspace-actions" aria-label="雪境快捷操作">
- <button id="mobile-collection-open" type="button" aria-haspopup="dialog" aria-controls="mobile-collection">收藏</button>
+ <button id="mobile-collection-open" type="button" aria-haspopup="dialog" aria-controls="mobile-collection">布置水晶球</button>
  <button id="mobile-card-open" class="gold-button" type="button" aria-haspopup="dialog" disabled>製作卡片</button>
 </nav>
 <dialog id="mobile-collection" class="mobile-collection" aria-labelledby="mobile-collection-title">
  <section class="mobile-collection-tray">
-  <div class="mobile-collection-heading"><h2 id="mobile-collection-title">我的收藏</h2><span>點圖放入／移出</span></div>
+  <div class="mobile-collection-heading"><h2 id="mobile-collection-title">選擇布置物件</h2><span>點一下放入，再點一下移出</span></div>
   <div id="mobile-collection-pages" class="mobile-collection-pages" aria-label="收藏分頁"></div>
   <div class="mobile-collection-pagination">
    <button id="mobile-collection-prev" type="button" aria-label="上一頁收藏">‹</button>
@@ -92,7 +101,37 @@
 <div class="card-save-actions"><button id="card-download" type="button" class="gold-button" disabled>下載卡片圖片</button><button id="card-share" type="button" disabled>分享卡片</button></div><p id="card-status" class="card-status" role="status" aria-live="polite"></p></div></form></dialog>
 <dialog id="item-dialog" aria-labelledby="item-title"><button class="dialog-close" data-close="item-dialog" aria-label="關閉">×</button><p id="item-day" class="eyebrow"></p><div id="item-visual" class="item-visual"></div><p id="item-kind" class="small-label"></p><h2 id="item-title"></h2><p id="item-description"></p><section id="item-product" class="product-intro" aria-label="產品介紹" hidden><h3 id="product-features-title">產品亮點</h3><ul id="product-features"></ul><a id="product-link" class="product-link" target="_blank" rel="noopener noreferrer" hidden>了解產品詳情 ↗</a><span id="product-link-pending" class="product-link-pending">產品詳情準備中</span></section><p id="item-music" class="item-music" hidden></p><button id="item-placement" class="gold-button"></button><button id="item-position" class="secondary-button">調整擺放位置</button></dialog>
 <dialog id="music-credits-dialog" aria-labelledby="music-credits-title"><button class="dialog-close" data-close="music-credits-dialog" aria-label="關閉">×</button><p class="eyebrow">MUSIC CREDITS</p><h2 id="music-credits-title">聖誕旋律與授權</h2><p class="dialog-subtitle">以下為 Kevin MacLeod 提供的 CC BY 4.0 授權錄音，依授權標示作者與來源。可免費用於商業活動。</p><div id="music-credits-list"></div></dialog>
-<dialog id="vouchers-dialog" aria-labelledby="vouchers-title"><button class="dialog-close" data-close="vouchers-dialog" aria-label="關閉">×</button><p class="eyebrow">FESTIVE PRIVILEGES</p><h2 id="vouchers-title">我的節慶禮遇</h2><section class="voucher-instructions" aria-label="優惠券領取說明"><p>符合優惠開放條件後，完成專屬卡片製作並下載或分享，即可領取優惠券。</p></section><div id="vouchers-list"></div><p class="voucher-footnote">※ 優惠內容及使用條件依券面說明為準。</p></dialog>
+<dialog id="vouchers-dialog" class="activity-dialog" aria-labelledby="vouchers-title">
+ <header id="activity-dialog-top" class="activity-dialog-top">
+  <div class="activity-dialog-heading">
+   <h2 id="vouchers-title">活動介紹與禮遇</h2>
+   <button class="dialog-close" data-close="vouchers-dialog" type="button" aria-label="關閉">×</button>
+  </div>
+  <nav class="activity-jumps" aria-label="活動內容跳轉">
+   <a href="#activity-intro">活動介紹</a>
+   <a href="#activity-rewards">我的禮遇</a>
+  </nav>
+ </header>
+ <div class="activity-dialog-body">
+  <section aria-labelledby="activity-intro">
+   <h3 id="activity-intro" class="activity-section-title" tabindex="-1">活動介紹</h3>
+   <ol class="activity-steps">
+    <li><strong>每日解鎖</strong><span>查看今天與之前開放的聖誕物件。</span></li>
+    <li><strong>布置水晶球</strong><span>挑選喜歡的物件，即時放入你的雪境。</span></li>
+    <li><strong>製作卡片</strong><span>將布置好的雪境做成卡片，下載或分享。</span></li>
+   </ol>
+   <div id="activity-details"></div>
+  </section>
+  <section class="activity-rewards" aria-labelledby="activity-rewards">
+   <h3 id="activity-rewards" class="activity-section-title" tabindex="-1">我的禮遇</h3>
+   <div id="activity-passport" tabindex="-1" aria-label="護照夾好禮"></div>
+   <h4 class="activity-offers-title">商品優惠</h4>
+   <p class="voucher-instructions">符合優惠開放條件後，完成專屬卡片製作並下載或分享，即可領取優惠券。</p>
+   <div id="vouchers-list"></div>
+   <p class="voucher-footnote">※ 優惠內容及使用條件依券面說明為準。</p>
+  </section>
+ </div>
+</dialog>
 
 <dialog id="studio-dialog" class="studio-dialog" aria-labelledby="studio-title"><button class="dialog-close" data-close="studio-dialog" aria-label="關閉">×</button><p class="eyebrow">CAMPAIGN STUDIO · PREVIEW</p><h2 id="studio-title">25 天內容與場景預覽</h2><p class="dialog-subtitle">此為企劃預覽入口，並非具登入驗證的管理後台。模擬收藏與擺放保存在同一參加者列的獨立模擬欄位。</p>
 <details id="cloud-settings" hidden><summary>管理設定：連接 Google Sheet</summary><p>先將 DysonProgress.gs 貼入 Sheet 的 Apps Script，設定 GitHub 網域、執行 setup，部署為網頁應用程式。</p><label for="cloud-endpoint">部署網址（/exec）</label><input id="cloud-endpoint" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"><button id="cloud-save-export" type="button" class="gold-button">套用並下載 config.js</button><p id="cloud-summary"></p><p id="cloud-settings-status" role="status"></p></details>
@@ -112,5 +151,5 @@
 <script src="./assets/js/analytics.js?v=20261106-v78-coupon-links"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>
-<script src="./assets/js/app.js?v=20261107-v80-mobile"></script>
+<script src="./assets/js/app.js?v=20261107-v81-activity"></script>
 </body></html>
