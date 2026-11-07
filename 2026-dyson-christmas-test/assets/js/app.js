@@ -661,6 +661,7 @@ function calendarStateIcon(state){
 function renderCalendar(){
   const count=availableDays().length,t=today();
   $('today-label').textContent=`${dateISO().slice(5).replace('-','/')} · 台灣${previewDate?' · 模擬':''}`;
+  $('mobile-calendar-count').textContent=`已開放 ${count}／25`;
   $('progress-count').textContent=`${count} / 25`;$('progress-fill').style.width=`${count/25*100}%`;
   const root=$('calendar-grid');root.replaceChildren();
   for(const i of items()){
@@ -696,6 +697,114 @@ function renderCollection(){
     card.append(visual,info);root.append(card);
   }
 }
+const mobileViewport=window.matchMedia('(max-width: 760px)');
+const MOBILE_COLLECTION_PAGE_SIZE=6;
+let mobileCollectionPage=0;
+let mobileCollectionKey='';
+
+function updateMobileTile(button,day){
+  const placed=isPlaced(day);
+  button.setAttribute('aria-pressed',String(placed));
+  button.setAttribute('aria-label',item(day).name+'，'+(placed?'已放入水晶球，點按移出':'未放入水晶球，點按放入'));
+}
+
+function syncMobileCollectionPage(){
+  const pages=$('mobile-collection-pages');
+  const count=pages.children.length;
+  if(!pages.clientWidth||!count)return;
+  mobileCollectionPage=Math.max(0,Math.min(count-1,Math.round(pages.scrollLeft/pages.clientWidth)));
+  $('mobile-collection-page').textContent=`${mobileCollectionPage+1}／${count} 頁`;
+  $('mobile-collection-prev').disabled=mobileCollectionPage===0;
+  $('mobile-collection-next').disabled=mobileCollectionPage===count-1;
+}
+
+function renderMobileCollection(){
+  if(!$('mobile-collection').open)return;
+  const pages=$('mobile-collection-pages');
+  const days=sceneDays();
+  const key=JSON.stringify(days.map(day=>[day,item(day).name]));
+  if(key===mobileCollectionKey){
+    for(const button of pages.querySelectorAll('.mobile-tile-toggle'))updateMobileTile(button,Number(button.closest('[data-day]').dataset.day));
+    return;
+  }
+  mobileCollectionKey=key;
+  const fragment=document.createDocumentFragment();
+  for(let start=0;start<days.length;start+=MOBILE_COLLECTION_PAGE_SIZE){
+    const page=el('div','mobile-collection-page');
+    const pageNumber=start/MOBILE_COLLECTION_PAGE_SIZE+1;
+    page.setAttribute('role','group');
+    page.setAttribute('aria-label',`收藏第 ${pageNumber} 頁`);
+    for(const day of days.slice(start,start+MOBILE_COLLECTION_PAGE_SIZE)){
+      const tile=el('div','mobile-collection-tile');
+      tile.dataset.day=String(day);
+      const toggle=el('button','mobile-tile-toggle');
+      toggle.type='button';
+      updateMobileTile(toggle,day);
+      const thumbnail=el('canvas');
+      thumbnail.width=180;
+      thumbnail.height=112;
+      thumbnail.setAttribute('aria-hidden','true');
+      drawThumbnail(thumbnail,day);
+      const check=el('span','mobile-tile-check','✓');
+      check.setAttribute('aria-hidden','true');
+      toggle.append(thumbnail,check);
+      toggle.addEventListener('click',()=>togglePlacement(day,{fromCollection:true}));
+      const detail=el('button','mobile-tile-detail',item(day).name);
+      detail.type='button';
+      detail.setAttribute('aria-label',`查看 ${item(day).name} 介紹`);
+      detail.addEventListener('click',()=>openItem(day));
+      tile.append(toggle,detail);
+      page.append(tile);
+    }
+    fragment.append(page);
+  }
+  pages.replaceChildren(fragment);
+  pages.scrollLeft=Math.min(mobileCollectionPage,Math.max(0,pages.children.length-1))*pages.clientWidth;
+  syncMobileCollectionPage();
+}
+
+function moveMobileCollectionPage(offset){
+  const pages=$('mobile-collection-pages');
+  const index=Math.max(0,Math.min(pages.children.length-1,mobileCollectionPage+offset));
+  pages.scrollTo({left:index*pages.clientWidth,behavior:'instant'});
+  syncMobileCollectionPage();
+}
+
+function openMobileCollection(){
+  const dialog=$('mobile-collection');
+  if(!mobileViewport.matches||dialog.open)return;
+  dialog.prepend($('globe-stage'));
+  document.body.classList.add('mobile-collection-active');
+  showDialog('mobile-collection');
+  renderMobileCollection();
+  syncMobileCollectionPage();
+  resize();
+}
+
+function restoreMobileGlobe(){
+  if($('mobile-collection').open)return;
+  if($('globe-stage').parentElement!==$('globe-section')){
+    $('globe-section').prepend($('globe-stage'));
+    resize();
+  }
+  document.body.classList.remove('mobile-collection-active');
+}
+
+$('mobile-calendar-toggle').addEventListener('click',event=>{
+  const button=event.currentTarget;
+  button.setAttribute('aria-expanded',String(button.getAttribute('aria-expanded')!=='true'));
+});
+$('mobile-collection-open').addEventListener('click',openMobileCollection);
+$('mobile-collection').addEventListener('close',restoreMobileGlobe);
+$('mobile-collection-pages').addEventListener('scroll',syncMobileCollectionPage,{passive:true});
+$('mobile-collection-prev').addEventListener('click',()=>moveMobileCollectionPage(-1));
+$('mobile-collection-next').addEventListener('click',()=>moveMobileCollectionPage(1));
+mobileViewport.addEventListener('change',event=>{
+  if(event.matches)return;
+  closeDialog('mobile-collection');
+  restoreMobileGlobe();
+});
+
 function renderBenefits(){
   const progress=rewardProgress(),root=$('benefit-grid');root.replaceChildren();
   for(const b of rewards())root.append(renderRewardCard(b,progress,false));
@@ -708,6 +817,8 @@ function updatePlacementUI(d){
   const placed=isPlaced(d),label=placed?'移除水晶球內':'放入水晶球內';
   const button=$(STARTER_IDS.includes(Number(d))?'starter-grid':BONUS_IDS.includes(Number(d))?'bonus-grid':'collection-grid').querySelector(`[data-day="${Number(d)}"] .place-button`);
   if(button){button.textContent=label;button.setAttribute('aria-pressed',String(placed));}
+  const mobileButton=$('mobile-collection-pages').querySelector(`[data-day="${Number(d)}"] .mobile-tile-toggle`);
+  if(mobileButton)updateMobileTile(mobileButton,d);
   refreshItemThumbnails(d);
   const cell=$('calendar-grid').querySelector(`[data-day="${Number(d)}"]`);
   if(cell&&dayState(d)==='owned'){
@@ -720,12 +831,12 @@ function updatePlacementUI(d){
 function renderUI({placementDay=null}={}){
   const real=realDateISO(),effective=dateISO();$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，優惠與護照資格不可兌換。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
   $('preview-banner').hidden=!previewDate;
-  if(placementDay!==null)updatePlacementUI(placementDay);else{renderCalendar();renderCollection();renderBenefits();}
+  if(placementDay!==null)updatePlacementUI(placementDay);else{renderCalendar();renderCollection();renderMobileCollection();renderBenefits();}
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
   $('edit-toggle').setAttribute('aria-pressed',String(editMode));canvas.classList.toggle('editing',editMode);
   $('motion-toggle').setAttribute('aria-pressed',String(motion));$('motion-toggle').textContent=motion?'暫停動態':'開啟動態';
   $('wind-button').setAttribute('aria-pressed',String(wind));$('wind-button').textContent=wind?'暴風雪中':'dyson 氣流';$('wind-button').title=wind?'關閉暴風雪':'開啟暴風雪';$('wind-button').setAttribute('aria-label',`dyson 氣流，暴風雪${wind?'已開啟':'已關閉'}`);
-  $('card-open').disabled=!sceneReady||cardCapturing;renderCloud();
+  updateCardEntries();renderCloud();
 }
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
 function openItem(d){if(dayState(d)!=='owned')return;collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');trackActivity('gift_view',giftAnalytics(d));}
@@ -1376,7 +1487,7 @@ async function captureCardScene(){
   if(!sceneReady||cardCapturing||cardSaving||cardExportBusy||cardRecordingBusy())return false;
   const sceneKey=cardSceneSignature();
   if(cardSnapshot&&sceneKey===cardSceneKey){renderChristmasCard();return true;}
-  cardCapturing=true;updateCardButtons();$('card-open').disabled=true;$('card-status').textContent='正在拍下你的聖誕雪境…';
+  cardCapturing=true;updateCardButtons();updateCardEntries();$('card-status').textContent='正在拍下你的聖誕雪境…';
   try{
     await ensureItemAssets(placedObjects().map(p=>p.day));
     if(!cardBackground)cardBackground=await imageLoad($('empty-globe').src);
@@ -1389,11 +1500,13 @@ async function captureCardScene(){
     }finally{editMode=editing;drawFrame(0,performance.now());}
     cardCapturing=false;renderChristmasCard();return true;
   }catch(err){$('card-status').textContent='暫時無法拍下水晶球，請重新開啟檔案後再試。';status('聖誕卡片照片製作失敗，請稍後再試。',{persistent:true});return false;}
-  finally{cardCapturing=false;$('card-open').disabled=!sceneReady;updateCardButtons();}
+  finally{cardCapturing=false;updateCardEntries();updateCardButtons();}
 }
 async function openChristmasCard(){
   if(!sceneReady||cardCapturing)return;
-  collapseSimulation();showDialog('card-dialog');cardDetectMP4().then(()=>updateCardButtons());trackActivity('card_open',{placed_count:ownedDays().filter(isPlaced).length});await captureCardScene();
+  collapseSimulation();const wasOpen=$('card-dialog').open;showDialog('card-dialog');
+  if(mobileViewport.matches&&!wasOpen)$('card-dialog').scrollTop=0;
+  cardDetectMP4().then(()=>updateCardButtons());trackActivity('card_open',{placed_count:ownedDays().filter(isPlaced).length});await captureCardScene();
 }
 function downloadChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardExportBusy)return false;
@@ -1414,7 +1527,11 @@ async function shareChristmasCard(){
   catch(err){if(err.name==='AbortError')$('card-status').textContent='已取消分享，卡片仍可下載或再次分享。';else {downloadChristmasCard();$('card-status').textContent='目前無法開啟分享，已準備下載卡片檔案。';}}
   finally{cardSaving=false;updateCardButtons();}
 }
-$('card-open').addEventListener('click',openChristmasCard);
+function updateCardEntries(){
+  const disabled=!sceneReady||cardCapturing;
+  for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).disabled=disabled;
+}
+for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).addEventListener('click',openChristmasCard);
 $('card-form').addEventListener('submit',e=>e.preventDefault());
 for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('input',e=>{if(!e.isComposing)renderChristmasCard();});
@@ -1822,7 +1939,12 @@ async function exportConfig(){
     $('config-status').textContent='已下載活動設定與自訂素材。請取代網站 assets/js/config.js；參加者資料與模擬進度不會匯出。';return true;
   }catch(err){$('config-status').textContent=`匯出失敗：${err.message}`;return false;}finally{button.disabled=false;}
 }
-$('today-open').addEventListener('click',()=>{if(today()===26)$('collection-section').scrollIntoView({behavior:'smooth'});else if(today()>=1)openDay(today());});
+$('today-open').addEventListener('click',()=>{
+  if(today()===26){
+    if(mobileViewport.matches)openMobileCollection();
+    else $('collection-section').scrollIntoView({behavior:'smooth'});
+  }else if(today()>=1)openDay(today());
+});
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
 $('shake-button').addEventListener('click',()=>shake());$('wind-button').addEventListener('click',()=>{wind=!wind;if(wind)chime();renderUI();});
 $('edit-toggle').addEventListener('click',()=>{editMode=!editMode;if(!editMode)selectItem(null);else status('選取球內物件後拖曳。動物與一般造景可往球內上方移動，產品與雪丘保持靠近球底。');renderUI();});
@@ -1831,8 +1953,12 @@ $('reset-layout').addEventListener('click',()=>{state().layouts={};persist();upd
 $('scale-control').addEventListener('input',e=>{if(!selectedDay)return;const l=getLayout(selectedDay);l.scale=Number(e.target.value);state().layouts[selectedDay]=constrain(selectedDay,l);persist();drawFrame(0,performance.now());});
 $('selected-reset').addEventListener('click',()=>{if(!selectedDay)return;delete state().layouts[selectedDay];persist();updateSelection();});
 $('selected-detail').addEventListener('click',()=>{if(selectedDay)openItem(selectedDay);});
-$('item-placement').addEventListener('click',()=>{if(currentModalDay)togglePlacement(currentModalDay);});
-$('item-position').addEventListener('click',()=>{if(!currentModalDay||!isPlaced(currentModalDay))return;const d=currentModalDay;if(d===25){startShow();return;}editMode=true;selectItem(d);closeDialog('item-dialog');renderUI();$('globe-wrapper').scrollIntoView({behavior:'smooth',block:'center'});});
+$('item-placement').addEventListener('click',()=>{
+  if(!currentModalDay)return;
+  togglePlacement(currentModalDay);
+  if(mobileViewport.matches&&!$('mobile-collection').open)$('globe-wrapper').scrollIntoView({block:'start'});
+});
+$('item-position').addEventListener('click',()=>{if(!currentModalDay||!isPlaced(currentModalDay))return;const d=currentModalDay;if(d===25){startShow();return;}editMode=true;selectItem(d);closeDialog('item-dialog');closeDialog('mobile-collection');restoreMobileGlobe();renderUI();$('globe-wrapper').scrollIntoView({behavior:'smooth',block:'center'});});
 function renderAudioEntry(){
   $('sound-toggle').textContent=sound?'開啟':'關閉';$('sound-toggle').setAttribute('aria-pressed',String(sound));
   $('audio-open').classList.toggle('audio-active',sound||musicPlaying);

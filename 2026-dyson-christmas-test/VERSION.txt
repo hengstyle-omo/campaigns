@@ -1,7 +1,3 @@
-v77 Test / 2026-11-06
-Coupon link mode: DYSON_COUPON_LINKS in assets/js/config.js.
-Any-machine coupon URL supplied; other four links empty pending user input.
-Product gating: date-open + completed card download/share; passport gating: server-confirmed 10 attendance dates.
-Preview mode never creates outbound coupon links. Blank URLs show disabled pending actions.
-All v76 changes retained. Existing GS and Sheet schema unchanged.
-Revision: 20261106-v77-coupon-links
+v80 Test / 2026-11-07
+Mobile calendar disclosure, live globe with 3 × 2 collection pages, and fixed card editor entry.
+Frontend update for the 11-month test site.
