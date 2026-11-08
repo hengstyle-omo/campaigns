@@ -1,4 +1,4 @@
-/** v70 test: session-only scene, verified attendance history and passport eligibility. Production v66 behavior preserved. */
+/** v84 campaign: supports ten-column participant tables; November Sheet headers and stored attendance dates; session-only scene. Production v66 behavior preserved. */
 /** Admin code + Email identity / schema v10 / service v8 (independent admin and exclusive-collection permissions). Ordinary participants use an unverified Email identifier. Admin rows additionally require a server-verified code/session. */
 const DYSON_CONFIG={YEAR:2026,TIME_ZONE:'Asia/Taipei',ALLOWED_ORIGINS:['https://hengstyle-omo.github.io'],SHEET_NAME:'Participants_2026',LEGACY_PREVIEW:'Preview_2026',LEGACY_BONUS:'Bonus_Access_2026',CONSENT_VERSION:'dyson-christmas-2026-v1',CATALOG_REVISION:'20261021-four-products-v2'};
 const DYSON_COL={visits:36,visitCount:37,catalog:38,admin:39,task:40,taskAt:41,taskFormat:42,taskMethod:43,previewDate:44,preview:45,exclusive:46};
@@ -26,7 +26,7 @@ function dysonActivityDate_(now){
 }
 function dysonEnvironmentInfo_(now){
  const realDate=Utilities.formatDate(now,DYSON_CONFIG.TIME_ZONE,'yyyy-MM-dd');
- return {environment:DYSON_REQUEST_ENV,environmentVersion:1,...(dysonIsNovemberTest_()?{starterSceneVersion:1,scenePersistence:'session',attendanceVersion:1}:{}),realDate,date:dysonActivityDate_(now),clockMode:dysonIsNovemberTest_()?'november-to-december':'real',testWindowActive:dysonIsNovemberTest_()&&realDate.startsWith('2026-11-')};
+ return {environment:DYSON_REQUEST_ENV,environmentVersion:1,campaignUpdateVersion:84,...(dysonIsNovemberTest_()?{starterSceneVersion:1,scenePersistence:'session',attendanceVersion:1,rewardRulesVersion:2,simpleParticipantVersion:1,testCalendarVersion:2,sheetDateMonth:'2026-11',calendarReady:PropertiesService.getScriptProperties().getProperty('DYSON_NOV_TEST_CALENDAR_VERSION')==='2'}:{}),realDate,date:dysonActivityDate_(now),clockMode:dysonIsNovemberTest_()?'november-to-december':'real',testWindowActive:dysonIsNovemberTest_()&&realDate.startsWith('2026-11-')};
 }
 // Run this once from the existing bound Sheet. It never copies or clears
 // production participants, roles, progress, or production schema properties.
@@ -36,33 +36,36 @@ function setupNovemberTest(){
  try{
   const book=dysonBook_();let sheet=book.getSheetByName(DYSON_NOV_TEST.SHEET_NAME);
   if(!sheet)sheet=book.insertSheet(DYSON_NOV_TEST.SHEET_NAME);
+  if(sheet.getLastRow()&&sheet.getRange(1,1,1,Math.max(1,sheet.getLastColumn())).getValues()[0].includes('參與日期')){dysonSimpleSetup_(book,sheet);return;}
   const headers=dysonHeaders_();
   if(sheet.getLastRow()===0){if(sheet.getMaxColumns()<headers.length)sheet.insertColumnsAfter(sheet.getMaxColumns(),headers.length-sheet.getMaxColumns());sheet.getRange(1,1,1,headers.length).setNumberFormat('@').setValues([headers]).setFontWeight('bold');sheet.setFrozenRows(1);sheet.setFrozenColumns(2);}
-  // Validate the whole existing schema before updating environment metadata.
-  dysonSchema_(sheet);
+  // Preflight every column and attendance value before any migration write.
+  dysonMigrateNovemberDates_(sheet);
+  PropertiesService.getScriptProperties().setProperty('DYSON_NOV_TEST_CALENDAR_VERSION','2');
   const props=dysonSchemaProperties_();props.setProperty('DYSON_SCHEMA_GENERATION',String(Number(props.getProperty('DYSON_SCHEMA_GENERATION')||0)+1));props.setProperty('DYSON_SCHEMA_VERSION','10');
   const schema=dysonSchema_(sheet);dysonCheckboxes_(sheet,2,sheet.getMaxRows()-1,schema);SpreadsheetApp.flush();
-  console.log('11 月一般使用者測試已啟用：Participants_Test_2026。正式分頁與既有測試進度均未清空。請將原有效部署更新成新版本。');
+  console.log('v73 測試已啟用：Participants_Test_2026，日期欄為11/01～11/25，參與日期_JSON記錄實際11月。既有資料已保留，正式分頁未改動。請將原有效部署更新成新版本。');
  }finally{lock.releaseLock();DYSON_REQUEST_ENV=previous;}
 }
 let DYSON_BOOK=null;
 function dysonBook_(){if(DYSON_BOOK)return DYSON_BOOK;const id=PropertiesService.getScriptProperties().getProperty('DYSON_SPREADSHEET_ID');if(!id)throw new Error('請先在試算表內執行 setupV10。');return DYSON_BOOK=SpreadsheetApp.openById(id);}
 // Sheet columns are resolved by header. The canonical array below is an internal
 // record shape only; none of its indexes are physical spreadsheet column indexes.
-function dysonFields_(){return ['Email','首次參加_台灣時間','最近參加_台灣時間','同意行銷','行銷意願更新_台灣時間','同意文字版本'].concat(Array.from({length:25},(_,i)=>'12/'+String(i+1).padStart(2,'0'))).concat(['已領取數','已解鎖禮遇數','球內擺放_JSON','物件位置_JSON','資料版本','參與日期_JSON','參與天數','產品日程版本','是否管理者','卡片任務完成','卡片任務時間_台灣時間','卡片任務格式','卡片任務方式','模擬日期','模擬進度_JSON','是否有專屬收藏']);}
-function dysonHeaders_(){return ['Email','是否管理者','是否有專屬收藏','同意行銷','已領取數','參與天數','已解鎖禮遇數','卡片任務完成','首次參加_台灣時間','最近參加_台灣時間'].concat(Array.from({length:25},(_,i)=>'12/'+String(i+1).padStart(2,'0'))).concat(['卡片任務時間_台灣時間','卡片任務格式','卡片任務方式','行銷意願更新_台灣時間','同意文字版本','參與日期_JSON','球內擺放_JSON','物件位置_JSON','模擬日期','模擬進度_JSON','資料版本','產品日程版本']);}
+function dysonFields_(){return ['Email','首次參加_台灣時間','最近參加_台灣時間','同意行銷','行銷意願更新_台灣時間','同意文字版本'].concat(Array.from({length:25},(_,i)=>(dysonIsNovemberTest_()?'11/':'12/')+String(i+1).padStart(2,'0'))).concat(['已領取數','已解鎖禮遇數','球內擺放_JSON','物件位置_JSON','資料版本','參與日期_JSON','參與天數','產品日程版本','是否管理者','卡片任務完成','卡片任務時間_台灣時間','卡片任務格式','卡片任務方式','模擬日期','模擬進度_JSON','是否有專屬收藏']);}
+function dysonHeaders_(){return ['Email','是否管理者','是否有專屬收藏','同意行銷','已領取數','參與天數','已解鎖禮遇數','卡片任務完成','首次參加_台灣時間','最近參加_台灣時間'].concat(Array.from({length:25},(_,i)=>(dysonIsNovemberTest_()?'11/':'12/')+String(i+1).padStart(2,'0'))).concat(['卡片任務時間_台灣時間','卡片任務格式','卡片任務方式','行銷意願更新_台灣時間','同意文字版本','參與日期_JSON','球內擺放_JSON','物件位置_JSON','模擬日期','模擬進度_JSON','資料版本','產品日程版本']);}
 function dysonHeaderName_(value,timeZone){
  if(Object.prototype.toString.call(value)==='[object Date]'&&Number.isFinite(value.getTime()))return Utilities.formatDate(value,timeZone,'MM/dd');
- const text=String(value==null?'':value).replace(/[\u200B-\u200D\uFEFF]/g,'').trim(),day=text.match(/^12\/(\d{1,2})$/);
- return day?'12/'+day[1].padStart(2,'0'):text;
+ const text=String(value==null?'':value).replace(/[\u200B-\u200D\uFEFF]/g,'').trim(),day=text.match(/^(11|12)\/(\d{1,2})$/);
+ return day?day[1]+'/'+day[2].padStart(2,'0'):text;
 }
 function dysonHeaderMap_(labels){
  const map=Object.create(null),known=new Set(dysonFields_());
- labels.forEach((label,i)=>{if(!known.has(label))return;if(map[label]!==undefined)throw new Error('欄名重複：'+label+'。請先修正標題，不要刪除資料。');map[label]=i;});return map;
+ labels.forEach((label,i)=>{if(dysonIsNovemberTest_()&&/^12\/(?:0[1-9]|1[0-9]|2[0-5])$/.test(label))label=label.replace(/^12\//,'11/');if(!known.has(label))return;if(map[label]!==undefined)throw new Error('欄名重複：'+label+'。請先修正標題，不要刪除資料。');map[label]=i;});return map;
 }
 function dysonSchema_(sheet){
  const props=dysonSchemaProperties_(),version=props.getProperty('DYSON_SCHEMA_VERSION'),generation=props.getProperty('DYSON_SCHEMA_GENERATION')||'0';
  const timeZone=dysonBook_().getSpreadsheetTimeZone(),width=Math.max(1,sheet.getLastColumn()),labels=sheet.getRange(1,1,1,width).getValues()[0].map(v=>dysonHeaderName_(v,timeZone)),map=dysonHeaderMap_(labels),fields=dysonFields_(),missing=fields.filter(f=>map[f]===undefined);
+ if(dysonIsNovemberTest_()&&labels.includes('參與日期'))return dysonSimpleSchema_(sheet,labels,version,generation);
  const requiredMissing=missing.filter(f=>!(f==='是否有專屬收藏'&&['7','8'].includes(version)));
  if(requiredMissing.length)throw new Error('缺少欄位：'+missing.join('、')+'。請保留欄名，並執行 setupV10。');
  return {width,map,labels,fields,version,generation};
@@ -70,14 +73,15 @@ function dysonSchema_(sheet){
 function dysonAssertSchema_(schema){
  const props=dysonSchemaProperties_();if(!['7','8','9','10'].includes(props.getProperty('DYSON_SCHEMA_VERSION'))||props.getProperty('DYSON_SCHEMA_VERSION')!==schema.version||(props.getProperty('DYSON_SCHEMA_GENERATION')||'0')!==schema.generation)throw new Error('正在調整資料欄位，請稍後重試同步。');
 }
-function dysonDecodeRow_(values,schema){return schema.fields.map(f=>values[schema.map[f]]??'');}
-function dysonReadRow_(sheet,n,schema){return dysonDecodeRow_(sheet.getRange(n,1,1,schema.width).getValues()[0],schema);}
+function dysonDecodeRow_(values,schema,n){return schema.simple?dysonSimpleDecode_(values,schema,n):schema.fields.map(f=>values[schema.map[f]]??'');}
+function dysonReadRow_(sheet,n,schema){return dysonDecodeRow_(sheet.getRange(n,1,1,schema.width).getValues()[0],schema,n);}
 function dysonEnsureRow_(sheet,n){if(n>sheet.getMaxRows())sheet.insertRowsAfter(sheet.getMaxRows(),n-sheet.getMaxRows());}
 function dysonCheckboxes_(sheet,start,count,schema){
  if(count<1)return;const rule=SpreadsheetApp.newDataValidation().requireCheckbox().build();
  for(const field of ['是否管理者','是否有專屬收藏','同意行銷','卡片任務完成'].filter(f=>schema.map[f]!==undefined))sheet.getRange(start,schema.map[field]+1,count,1).setDataValidation(rule);
 }
 function dysonWriteRow_(sheet,n,row,schema){
+ if(schema.simple)return dysonSimpleWrite_(sheet,n,row,schema);
  const isNew=n>sheet.getLastRow();dysonEnsureRow_(sheet,n);
  // Write only recognized columns. Custom note/formula columns remain untouched.
  const cells=schema.fields.map((f,i)=>({column:schema.map[f]+1,value:row[i]??''})).filter(c=>Number.isFinite(c.column)).sort((a,b)=>a.column-b.column);
@@ -138,6 +142,7 @@ function dysonMigrateLegacy_(sheet){
  props.setProperty('DYSON_V7_MIGRATED','yes');
 }
 function dysonSheet_(){
+ if(dysonIsNovemberTest_()&&PropertiesService.getScriptProperties().getProperty('DYSON_NOV_TEST_CALENDAR_VERSION')!=='2')throw new Error('請先執行 setupNovemberTest，將測試日期欄更新為11/01～11/25，再更新原部署。');
  if(!['7','8','9','10'].includes(dysonSchemaProperties_().getProperty('DYSON_SCHEMA_VERSION')))throw new Error(dysonIsNovemberTest_()?'請先執行 setupNovemberTest 並更新原部署。':'請先執行 setupV10；若正在調整欄位，請稍後重試。');
  const sheet=dysonBook_().getSheetByName(dysonIsNovemberTest_()?DYSON_NOV_TEST.SHEET_NAME:DYSON_CONFIG.SHEET_NAME);if(!sheet)throw new Error(dysonIsNovemberTest_()?'找不到測試分頁，請先執行 setupNovemberTest。':'找不到參加者分頁，請執行 setupV10。');return sheet;
 }
@@ -156,7 +161,7 @@ function dysonFind_(sheet,email,schema){
  schema=schema||dysonSchema_(sheet);email=dysonEmail_(email);
  const last=sheet.getLastRow();if(last<2)return null;
  const emails=sheet.getRange(2,schema.map.Email+1,last-1,1).getValues(),matches=[];
- for(let i=0;i<emails.length;i++)if(dysonStoredEmail_(emails[i][0])===email){const n=i+2,row=dysonReadRow_(sheet,n,schema);matches.push({n,row,needsIdentity:!row[1]||row[0]!==dysonEmailCell_(email)});}
+ for(let i=0;i<emails.length;i++)if(dysonStoredEmail_(emails[i][0])===email){const n=i+2,row=dysonReadRow_(sheet,n,schema);matches.push({n,row,needsIdentity:!row[1]||row[0]!==dysonEmailCell_(email)||row.simpleDerivedDirty===true});}
  if(!matches.length)return null;if(matches.length===1)return matches[0];
  const manual=matches.filter(r=>dysonPermissionOnlyRow_(r.row)),active=matches.filter(r=>!dysonPermissionOnlyRow_(r.row));
  // Preserve one earlier duplicate's progress and one manual role source. Never
@@ -212,7 +217,7 @@ function dysonConsent_(value){return value===true||(typeof value==='string'&&val
 function dysonTask_(value){if(!value||typeof value!=='object'||!['png','gif','mp4'].includes(value.format)||!['download','share'].includes(value.method))return null;return {completed:true,format:value.format,method:value.method};}
 function dysonTaskFromRow_(row){return dysonConsent_(row[DYSON_COL.task])?{completed:true,at:String(row[DYSON_COL.taskAt]||''),format:String(row[DYSON_COL.taskFormat]||''),method:String(row[DYSON_COL.taskMethod]||'')}:null;}
 function dysonGuest_(state,guest,row,now){
- if(!guest||typeof guest!=='object')return false;let changed=false;const date=dysonActivityDate_(now);
+ if(!guest||typeof guest!=='object')return false;let changed=false;
  for(const [key,claim] of Object.entries(guest.claimed||{})){
   const d=Number(key),at=new Date(claim?.at);if(!Number.isInteger(d)||d<1||d>25||!Number.isFinite(at.getTime())||at>now)continue;
   const visited=dysonActivityDate_(at),gift=DYSON_CONFIG.YEAR+'-12-'+String(d).padStart(2,'0');
@@ -221,9 +226,6 @@ function dysonGuest_(state,guest,row,now){
   const l=guest.layouts?.[d];if(!dysonIsNovemberTest_()&&l&&[l.x,l.y,l.scale].every(Number.isFinite))state.layouts[d]=dysonLayout_(l);changed=true;
  }
 
- // Passport attendance is recorded on the server when an Email actually visits.
- // Preserve formal v66 behavior; test v70 never accepts guest-supplied past visits.
- if(!dysonIsNovemberTest_())for(const day of Object.keys(guest.visits||{}))if(guest.visits[day]===true&&dysonCampaignDate_(day)&&day<=date&&!state.visits[day]){state.visits[day]=true;changed=true;}
  return changed;
 }
 function dysonLayout_(l){if(!l||![l.x,l.y,l.scale].every(Number.isFinite))throw new Error('物件位置不正確。');return {x:Math.max(0,Math.min(1168,l.x)),y:Math.max(0,Math.min(1346,l.y)),scale:Math.max(.65,Math.min(1.35,l.scale))};}
@@ -256,15 +258,27 @@ function dysonPreviewV7_(row,changes,hasExclusive=false){
  row[DYSON_COL.previewDate]=snapshot.date||'';row[DYSON_COL.preview]=JSON.stringify({state:dysonIsNovemberTest_()?{claimed:state.claimed,visits:state.visits}:state,cardTask:snapshot.cardTask});return snapshot;
 }
 function dysonPublicState_(state,hasExclusive){const result=JSON.parse(JSON.stringify(state));if(dysonIsNovemberTest_()){result.placement={};result.layouts={};}if(!hasExclusive)for(const d of DYSON_BONUS_KEYS){delete result.placement[d];delete result.layouts[d];}return result;}
-function dysonRewards_(state,task){if(!task&&!dysonIsNovemberTest_())return [];const ids=[];for(const [d,id] of [[5,'product-hd19'],[10,'product-sv50'],[15,'product-hj10'],[20,'product-bp10']])if(task&&state.claimed[d])ids.push(id);if(Object.keys(state.visits||{}).length>=10)ids.push('visits-10');return ids;}
+const DYSON_PRODUCT_REWARDS=[[5,'product-hd19'],[10,'product-sv50'],[15,'product-hj10'],[20,'product-bp10']];
+function dysonRewards_(state,now){
+ const date=dysonActivityDate_(now),ids=[];
+ for(const [day,id] of DYSON_PRODUCT_REWARDS)if(date>=DYSON_CONFIG.YEAR+'-12-'+String(day).padStart(2,'0'))ids.push(id);
+ if(dysonAttendance_(state,now).eligible)ids.push('visits-10');
+ return ids;
+}
+function dysonRewardLinks_(ids){
+ if(dysonIsNovemberTest_()||!ids.length)return {};
+ const links=dysonJSON_(PropertiesService.getScriptProperties().getProperty('DYSON_COUPON_LINKS'));
+ return Object.fromEntries(ids.filter(id=>typeof links[id]==='string'&&/^https:\/\//i.test(links[id].trim())).map(id=>[id,links[id].trim()]));
+}
 function dysonAttendance_(state,now){const campaignDates=Object.keys(state.visits||{}).filter(d=>state.visits[d]===true&&dysonCampaignDate_(d)&&d<=dysonActivityDate_(now)).sort();return {dates:campaignDates.map(d=>dysonIsNovemberTest_()?d.replace('2026-12-','2026-11-'):d),campaignDates,count:campaignDates.length,required:10,eligible:campaignDates.length>=10};}
 function dysonResult_(row,now){
- const state=dysonState_(row);state.visits=dysonVisits_(row[36]);const admin=dysonConsent_(row[DYSON_COL.admin]),hasExclusive=dysonConsent_(row[DYSON_COL.exclusive]),task=dysonTaskFromRow_(row),unlocked=dysonRewards_(state,task);
+ const state=dysonState_(row);state.visits=dysonVisits_(row[36]);const admin=dysonConsent_(row[DYSON_COL.admin]),hasExclusive=dysonConsent_(row[DYSON_COL.exclusive]),task=dysonTaskFromRow_(row),unlocked=dysonRewards_(state,now);
  const preview=admin?dysonPreviewV7_(row):null;if(preview)preview.state=dysonPublicState_(preview.state,hasExclusive);
- return {serviceVersion:8,serviceRevision:dysonIsNovemberTest_()?'20261105-v70-session-attendance':'20261102-isolated-november-test',permissionsVersion:3,authVersion:1,year:DYSON_CONFIG.YEAR,rulesVersion:3,...dysonEnvironmentInfo_(now),...(dysonIsNovemberTest_()?{attendance:dysonAttendance_(state,now)}:{}),serverTime:now.toISOString(),state:dysonPublicState_(state,hasExclusive),hasExclusiveCollection:hasExclusive,bonusIds:hasExclusive?DYSON_BONUS_KEYS:[],canPreview:admin,isAdmin:admin,cardTask:task,count:Object.keys(state.claimed).length,participationCount:Object.keys(state.visits).length,unlockedRewardIds:unlocked,unlockedCount:unlocked.length,marketingConsent:dysonConsent_(row[3]),version:Number(row[35]||0),...(admin?{previewSync:true,preview}:{})};
+ return {serviceVersion:8,serviceRevision:'20261109-v84-campaign',permissionsVersion:3,authVersion:1,year:DYSON_CONFIG.YEAR,rulesVersion:3,...dysonEnvironmentInfo_(now),attendance:dysonAttendance_(state,now),rewardLinks:dysonRewardLinks_(unlocked),serverTime:now.toISOString(),state:dysonPublicState_(state,hasExclusive),hasExclusiveCollection:hasExclusive,bonusIds:hasExclusive?DYSON_BONUS_KEYS:[],canPreview:admin,isAdmin:admin,cardTask:task,count:Object.keys(state.claimed).length,participationCount:Object.keys(state.visits).length,unlockedRewardIds:unlocked,unlockedCount:unlocked.length,marketingConsent:dysonConsent_(row[3]),version:Number(row[35]||0),...(admin?{previewSync:true,preview}:{})};
 }
 function dysonRequest_(request){
  dysonSelectEnvironment_(request.environment);
+ if(dysonIsNovemberTest_()&&PropertiesService.getScriptProperties().getProperty('DYSON_NOV_TEST_ENABLED')==='false')throw new Error('測試環境已關閉。');
  if(request.action==='environmentCheck')return {serviceVersion:8,permissionsVersion:3,authVersion:1,rulesVersion:3,year:2026,serverTime:new Date().toISOString(),...dysonEnvironmentInfo_(new Date())};
  // Reserved actions fail on every older GS before any participant access, even
  // if the endpoint is rolled back after the initial read-only handshake.
@@ -272,6 +286,7 @@ function dysonRequest_(request){
   if(!dysonIsNovemberTest_())throw new Error('測試操作必須使用測試環境。');
   request={...request,action:request.action.slice(5)};
  }else if(dysonIsNovemberTest_())throw new Error('測試環境需要專用操作，請更新測試前端。');
+ else if(typeof request.action==='string'&&request.action.startsWith('prod:'))request={...request,action:request.action.slice(5)};
  const started=Date.now();let action=request.action;if(!['connect','adminLogin','claim','save','consent','previewSave','cardComplete'].includes(action))throw new Error('不支援此操作。');
  const email=dysonEmail_(request.email),now=new Date(),date=dysonActivityDate_(now),stamp=dysonStamp_(now),sheet=dysonSheet_(),size=dysonFields_().length;
  let schema=dysonSchema_(sheet);
@@ -284,8 +299,8 @@ function dysonRequest_(request){
  if(action==='connect'&&found){
   const row=found.row,state=dysonState_(row);state.visits=dysonVisits_(row[36]);
   const taskNeeded=request.cardTask&&!dysonConsent_(row[DYSON_COL.task]),consentNeeded=typeof request.marketingConsent==='boolean'&&(!row[4]||dysonConsent_(row[3])!==request.marketingConsent);
-  const guestNeeded=request.guestState&&(Object.keys(request.guestState.claimed||{}).some(d=>!state.claimed[d])||Object.keys(request.guestState.visits||{}).some(d=>!state.visits[d]));
-  const visitNeeded=dysonCampaignDate_(date)&&!state.visits[date],countsNeeded=Number(row[32]||0)!==dysonRewards_(state,dysonTaskFromRow_(row)).length;
+  const guestNeeded=request.guestState&&Object.keys(request.guestState.claimed||{}).some(d=>!state.claimed[d]);
+  const visitNeeded=dysonCampaignDate_(date)&&!state.visits[date],countsNeeded=Number(row[32]||0)!==dysonRewards_(state,now).length;
   if(!found.needsIdentity&&!found.permissionsChanged&&!taskNeeded&&!consentNeeded&&!guestNeeded&&!visitNeeded&&!countsNeeded&&row[38]===DYSON_CONFIG.CATALOG_REVISION){return {...dysonResult_(row,now),...authorization.fields,consentSaved:typeof request.marketingConsent==='boolean',durationMs:Date.now()-started,readOnly:true};}
  }
  const lock=LockService.getScriptLock();if(!lock.tryLock(8000))throw new Error('正在保存其他進度，內容已保留，請稍後重試。');
@@ -317,8 +332,8 @@ function dysonRequest_(request){
     if(!dysonConsent_(row[DYSON_COL.task])){row[DYSON_COL.task]=true;row[DYSON_COL.taskAt]=stamp;row[DYSON_COL.taskFormat]=task.format;row[DYSON_COL.taskMethod]=task.method;}
    }
    if(dysonCampaignDate_(date))state.visits[date]=true;
-   row[31]=Object.keys(state.claimed).length;row[32]=dysonRewards_(state,dysonTaskFromRow_(row)).length;
-   if(!dysonIsNovemberTest_()){row[33]=JSON.stringify(state.placement);row[34]=JSON.stringify(state.layouts);}row[36]=JSON.stringify(state.visits);row[37]=Object.keys(state.visits).length;
+   row[31]=Object.keys(state.claimed).length;row[32]=dysonRewards_(state,now).length;
+   if(!dysonIsNovemberTest_()){row[33]=JSON.stringify(state.placement);row[34]=JSON.stringify(state.layouts);}row[36]=JSON.stringify(dysonStoredVisits_(state.visits));row[37]=Object.keys(state.visits).length;
   }
   row[2]=stamp;row[35]=Number(row[35]||0)+1;
   dysonWriteRow_(sheet,n,row,schema);SpreadsheetApp.flush();
@@ -399,8 +414,31 @@ function dysonCampaignDate_(date) {
 
 function dysonVisits_(value) {
   const raw = dysonJSON_(value), visits = {};
-  for (const date of Object.keys(raw)) if (dysonCampaignDate_(date) && raw[date] === true) visits[date] = true;
+  for (const storedDate of Object.keys(raw)){const date=dysonIsNovemberTest_()?storedDate.replace(/^2026-11-/,'2026-12-'):storedDate;if(dysonCampaignDate_(date)&&raw[storedDate]===true)visits[date]=true;}
   return visits;
+}
+
+
+// Only the test Sheet uses real November attendance dates on disk. The game
+// still addresses logical December days internally; production is unchanged.
+function dysonStoredVisits_(visits){if(!dysonIsNovemberTest_())return visits;const stored={};for(const date of Object.keys(visits||{}))if(dysonCampaignDate_(date)&&visits[date]===true)stored[date.replace(/^2026-12-/,'2026-11-')]=true;return stored;}
+function dysonMigrateNovemberDates_(sheet){
+ if(!dysonIsNovemberTest_())throw new Error('日期轉換僅適用11月測試分頁。');
+ const schema=dysonSchema_(sheet),changes=[],headerChanges=[];
+ schema.labels.forEach((label,i)=>{if(/^12\/(?:0[1-9]|1[0-9]|2[0-5])$/.test(label))headerChanges.push({column:i+1,label:label.replace(/^12\//,'11/')});});
+ const count=sheet.getLastRow()-1,rows=count>0?sheet.getRange(2,1,count,schema.width).getValues():[];
+ rows.forEach((values,i)=>{
+  const value=values[schema.map['參與日期_JSON']];if(value===null||value===undefined||value==='')return;
+  let raw;try{raw=JSON.parse(String(value));}catch(_){throw new Error('測試分頁第'+(i+2)+'列參與日期_JSON無法解析；尚未轉換任何欄位或資料。');}
+  if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(d=>!/^2026-(?:11|12)-(?:0[1-9]|1[0-9]|2[0-5])$/.test(d)||raw[d]!==true))throw new Error('測試分頁第'+(i+2)+'列參與日期_JSON含有非活動日期；尚未轉換任何欄位或資料。');
+  const dates=dysonStoredVisits_(dysonVisits_(value)),json=JSON.stringify(dates),days=Object.keys(dates).length;
+  if(json!==String(value)||Number(values[schema.map['參與天數']]||0)!==days)changes.push({row:i+2,json,days});
+ });
+ if(!headerChanges.length&&!changes.length)return;
+ const book=dysonBook_();
+ if(sheet.getLastRow()>1){const stem=DYSON_NOV_TEST.SHEET_NAME+'_backup_v73_'+Utilities.formatDate(new Date(),DYSON_CONFIG.TIME_ZONE,'yyyyMMdd_HHmmss');let name=stem,serial=1;while(book.getSheetByName(name))name=stem+'_'+serial++;sheet.copyTo(book).setName(name).hideSheet();PropertiesService.getScriptProperties().setProperty('DYSON_NOV_TEST_V73_BACKUP',name);}
+ for(const c of headerChanges)sheet.getRange(1,c.column).setNumberFormat('@').setValues([[c.label]]);
+ for(const c of changes){sheet.getRange(c.row,schema.map['參與日期_JSON']+1).setValues([[c.json]]);sheet.getRange(c.row,schema.map['參與天數']+1).setValues([[c.days]]);}
 }
 
 function dysonCatalog_(state, row, index) {
@@ -418,4 +456,106 @@ function dysonReply_(origin, requestId, result) {
   const target = JSON.stringify(origin);
   return HtmlService.createHtmlOutput('<!doctype html><meta charset="utf-8"><script>window.top.postMessage(' + message + ',' + target + ');</script>')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+
+// v78: ten visible participant fields. Technical metadata is isolated in a
+// hidden test-only sheet; formal Participants_2026 and its schema are unchanged.
+const DYSON_SIMPLE_HEADERS=['Email','是否管理者','是否有專屬收藏','同意行銷','參與日期','參與天數','卡片任務完成','護照夾資格','首次參加_台灣時間','最近參加_台灣時間'];
+const DYSON_SIMPLE_SYSTEM='_Dyson_Test_System_2026';
+const DYSON_SIMPLE_META_COLUMNS=[4,5,35,38,41,42,43,44,45];
+function dysonSimpleSchema_(sheet,labels,version,generation){
+ const map=Object.create(null);labels.forEach((h,i)=>{if(!DYSON_SIMPLE_HEADERS.includes(h))return;if(map[h]!==undefined)throw new Error('欄名重複：'+h+'。原資料未變更。');map[h]=i;});
+ const missing=DYSON_SIMPLE_HEADERS.filter(h=>map[h]===undefined);if(missing.length)throw new Error('10欄參與表缺少欄位：'+missing.join('、')+'。請還原表頭。');
+ return {simple:true,width:labels.length,labels,map,fields:dysonFields_(),version,generation};
+}
+function dysonSimpleDateCell_(schema,n){
+ let index=schema.map['參與日期']+1,column='';while(index>0){index--;column=String.fromCharCode(65+index%26)+column;index=Math.floor(index/26);}
+ return DYSON_NOV_TEST.SHEET_NAME+'!'+column+(n||'')+'「參與日期」';
+}
+function dysonSimpleDates_(value,location='參與日期'){
+ const clean=v=>String(v).normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/[‐‑‒–—−]/g,'-').trim();
+ const fail=(detail,v)=>{throw new Error(location+'：'+detail+(v===undefined?'':' 問題值：'+JSON.stringify(String(v).slice(0,160)))+'；原參與資料未變更。');};
+ if(value===null||value===undefined||clean(value)==='')return [];
+ let values;
+ if(Object.prototype.toString.call(value)==='[object Date]'){
+  if(!Number.isFinite(value.getTime()))fail('日期無法辨識',value);
+  values=[Utilities.formatDate(value,DYSON_CONFIG.TIME_ZONE,'yyyy-MM-dd')];
+ }else{
+  const text=clean(value);
+  if(text[0]==='['||text[0]==='{'){
+   let parsed;try{parsed=JSON.parse(text);}catch(_){fail('日期清單無法解析，請使用 YYYY-MM-DD 並以頓號分隔',text);}
+   values=Array.isArray(parsed)?parsed:Object.keys(parsed).filter(k=>parsed[k]===true);
+  }else values=text.split(/[、,，;；\s]+/).filter(Boolean);
+ }
+ const normalized=values.map(v=>{
+  if(typeof v!=='string')fail('日期必須為文字 YYYY-MM-DD',v);
+  const text=clean(v),match=text.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if(!match)fail('日期格式不正確，請使用例如 2026-11-01',v);
+  const date=match[1]+'-'+match[2].padStart(2,'0')+'-'+match[3].padStart(2,'0');
+  if(!/^2026-11-(?:0[1-9]|1[0-9]|2[0-5])$/.test(date))fail('測試版參與日期須在2026-11-01～2026-11-25，不會自動把12月轉為實際登入日',v);
+  return date;
+ });
+ const dates=[...new Set(normalized)].sort(),today=Utilities.formatDate(new Date(),DYSON_CONFIG.TIME_ZONE,'yyyy-MM-dd');
+ const future=dates.find(d=>d>today);if(future)fail('參與日期含有尚未到來的日期，請移除未來範例日期',future);
+ return dates;
+}
+function dysonSimpleSystem_(create=false){
+ const book=dysonBook_();let sheet=book.getSheetByName(DYSON_SIMPLE_SYSTEM);
+ if(!sheet&&create){sheet=book.insertSheet(DYSON_SIMPLE_SYSTEM);sheet.getRange(1,1,1,2).setValues([['Email','系統資料_JSON']]);sheet.hideSheet();}
+ if(sheet&&sheet.getLastRow()){const h=sheet.getRange(1,1,1,2).getValues()[0];if(h[0]!=='Email'||h[1]!=='系統資料_JSON')throw new Error('測試系統資料分頁表頭不相容，原資料未變更。');}
+ return sheet;
+}
+function dysonSimpleMetaRead_(email){
+ const sheet=dysonSimpleSystem_();if(!sheet||sheet.getLastRow()<2)return {};
+ const rows=sheet.getRange(2,1,sheet.getLastRow()-1,2).getValues(),matches=rows.filter(r=>dysonStoredEmail_(r[0])===email);
+ if(matches.length>1)throw new Error('測試系統資料有重複Email，請先確認；原資料未變更。');
+ if(!matches.length||!matches[0][1])return {};let data;try{data=JSON.parse(String(matches[0][1]));}catch(_){throw new Error('測試系統資料無法解析，原資料未變更。');}
+ if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('測試系統資料格式不正確，原資料未變更。');return data;
+}
+function dysonSimpleMetaWrite_(email,row){
+ const sheet=dysonSimpleSystem_(true),count=sheet.getLastRow(),matches=[];
+ if(count>1){const emails=sheet.getRange(2,1,count-1,1).getValues();for(let i=0;i<emails.length;i++)if(dysonStoredEmail_(emails[i][0])===email)matches.push(i+2);}
+ if(matches.length>1)throw new Error('測試系統資料有重複Email，原資料未變更。');
+ const data={schema:1};for(const i of DYSON_SIMPLE_META_COLUMNS)data[i]=row[i]??'';
+ const n=matches[0]||count+1;dysonEnsureRow_(sheet,n);sheet.getRange(n,1,1,2).setValues([[dysonEmailCell_(email),JSON.stringify(data)]]);
+}
+function dysonSimpleDecode_(values,schema,n){
+ const row=new Array(dysonFields_().length).fill(''),get=h=>values[schema.map[h]]??'',email=dysonStoredEmail_(get('Email'));
+ if(!email)return row;const data=dysonSimpleMetaRead_(email);
+ for(const i of DYSON_SIMPLE_META_COLUMNS)row[i]=data[i]??'';
+ for(const h of ['Email','是否管理者','是否有專屬收藏','同意行銷','卡片任務完成','首次參加_台灣時間','最近參加_台灣時間'])row[dysonFields_().indexOf(h)]=get(h);
+ const dates=dysonSimpleDates_(get('參與日期'),dysonSimpleDateCell_(schema,n));row[33]='{}';row[34]='{}';row[36]=JSON.stringify(Object.fromEntries(dates.map(d=>[d,true])));row[37]=dates.length;
+ row[31]=0;row[35]=Number(row[35]||0);row[38]=row[38]||DYSON_CONFIG.CATALOG_REVISION;
+ // A manually retained TRUE is authoritative in the private Sheet. Legacy
+ // ten-column rows may not have task format/method metadata yet.
+ if(dysonConsent_(row[DYSON_COL.task])){row[DYSON_COL.taskFormat]=row[DYSON_COL.taskFormat]||'png';row[DYSON_COL.taskMethod]=row[DYSON_COL.taskMethod]||'download';}
+ const state={claimed:{},visits:dysonVisits_(row[36])};row[32]=dysonRewards_(state,new Date()).length;
+ row.simpleDerivedDirty=Number(get('參與天數')||0)!==dates.length||String(get('護照夾資格'))!==(dates.length>=10?'已滿10天':'未達成');return row;
+}
+function dysonSimpleWrite_(sheet,n,row,schema){
+ const email=dysonStoredEmail_(row[0]),dates=dysonSimpleDates_(row[36],dysonSimpleDateCell_(schema,n)),values={Email:dysonEmailCell_(email),'是否管理者':dysonConsent_(row[DYSON_COL.admin]),'是否有專屬收藏':dysonConsent_(row[DYSON_COL.exclusive]),'同意行銷':dysonConsent_(row[3]),'參與日期':dates.join('、'),'參與天數':dates.length,'卡片任務完成':dysonConsent_(row[DYSON_COL.task]),'護照夾資格':dates.length>=10?'已滿10天':'未達成','首次參加_台灣時間':row[1],'最近參加_台灣時間':row[2]};
+ // Metadata first: a failed auxiliary write must not pretend the main row saved.
+ dysonSimpleMetaWrite_(email,row);const isNew=n>sheet.getLastRow();dysonEnsureRow_(sheet,n);
+ const cells=DYSON_SIMPLE_HEADERS.map(h=>({column:schema.map[h]+1,value:values[h]})).sort((a,b)=>a.column-b.column);
+ for(let i=0;i<cells.length;){const start=i;while(i+1<cells.length&&cells[i+1].column===cells[i].column+1)i++;sheet.getRange(n,cells[start].column,1,i-start+1).setValues([cells.slice(start,i+1).map(c=>c.value)]);i++;}
+ if(isNew)dysonCheckboxes_(sheet,n,1,schema);
+}
+function dysonSimpleSetup_(book,sheet){
+ const props=PropertiesService.getScriptProperties(),labels=sheet.getRange(1,1,1,Math.max(1,sheet.getLastColumn())).getValues()[0].map(v=>dysonHeaderName_(v,book.getSpreadsheetTimeZone()));
+ const schema=dysonSimpleSchema_(sheet,labels,'10','0'),emails=new Set();
+ const rows=sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,schema.width).getValues():[];
+ for(const [index,values] of rows.entries()){
+  const email=dysonStoredEmail_(values[schema.map.Email]);if(!email)continue;dysonEmail_(email);if(emails.has(email))throw new Error('同一Email有多筆資料，請先保留單一資料列；尚未變更資料。');emails.add(email);dysonSimpleDates_(values[schema.map['參與日期']],dysonSimpleDateCell_(schema,index+2));
+ }
+ if(!props.getProperty('DYSON_SIMPLE_TEST_BACKUP')){const name='Participants_Test_Backup_v78_'+Utilities.getUuid().replace(/-/g,'').slice(0,10),backup=sheet.copyTo(book).setName(name);backup.hideSheet();props.setProperty('DYSON_SIMPLE_TEST_BACKUP',name);}
+ dysonSimpleSystem_(true);props.setProperty('DYSON_NOV_TEST_CALENDAR_VERSION','2');const p=dysonSchemaProperties_();p.setProperty('DYSON_SCHEMA_VERSION','10');p.setProperty('DYSON_SCHEMA_GENERATION',String(Number(p.getProperty('DYSON_SCHEMA_GENERATION')||0)+1));dysonCheckboxes_(sheet,2,sheet.getMaxRows()-1,schema);SpreadsheetApp.flush();
+}
+function setupSimpleNovemberTest(){
+ const previous=DYSON_REQUEST_ENV;dysonSelectEnvironment_(DYSON_NOV_TEST.ID);const lock=LockService.getScriptLock();lock.waitLock(20000);
+ try{const props=PropertiesService.getScriptProperties();let book;if(props.getProperty('DYSON_SPREADSHEET_ID'))book=dysonBook_();else{book=SpreadsheetApp.getActiveSpreadsheet();if(!book)throw new Error('請從活動Google Sheet的Apps Script執行。');props.setProperty('DYSON_SPREADSHEET_ID',book.getId());DYSON_BOOK=book;}
+  let sheet=book.getSheetByName(DYSON_NOV_TEST.SHEET_NAME);if(!sheet)sheet=book.insertSheet(DYSON_NOV_TEST.SHEET_NAME);
+  if(sheet.getLastRow()===0)sheet.getRange(1,1,1,DYSON_SIMPLE_HEADERS.length).setNumberFormat('@').setValues([DYSON_SIMPLE_HEADERS]);
+  dysonSimpleSetup_(book,sheet);console.log('v79：10欄測試參與表已就緒。原資料已備份、正式分頁未變更。請更新原有效部署。');
+ }finally{lock.releaseLock();DYSON_REQUEST_ENV=previous;}
 }
