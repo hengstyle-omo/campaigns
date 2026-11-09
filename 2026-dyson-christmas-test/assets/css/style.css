@@ -775,7 +775,8 @@ button,input,textarea,select{line-height:1.5}
 }
 .activity-steps strong { font-size: 15px; }
 .activity-steps span, .activity-dialog-body > section > .voucher-instructions { font-size: 13px; color: #b9c2cf; }
-.activity-rewards { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+#activity-details { border-bottom: 1px solid var(--line); }
+.activity-rewards { margin-top: 12px; }
 .reward-open-date { flex-basis: 100%; margin: 0; font-size: 13px; color: #b9c2cf; }
 .activity-section-title:focus { outline: none; }
 
@@ -828,3 +829,26 @@ button,input,textarea,select{line-height:1.5}
 .home-passport-gift { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: center; gap: 10px; }
 .home-passport-gift img { display: block; width: 64px; height: auto; border-radius: 5px; }
 .home-passport-redemption .passport-coupon-actions { margin: 0; padding-top: 8px; }
+
+
+/* v85: place the single attendance panel below the globe controls on desktop. */
+@media(min-width:761px){
+ #globe-section > .home-passport { margin: 12px 0 0; }
+}
+#vouchers-dialog .voucher-passport {
+ margin: 16px 0 0; padding: 22px; background: #0e1825;
+ border: 1px solid var(--line); border-radius: 6px;
+}
+.voucher-passport .voucher-product-visual { height: auto; aspect-ratio: 1; }
+.voucher-passport .reward-product-image { aspect-ratio: 1; }
+#voucher-passport-status { color: var(--gold); font-size: 14px; margin: 0; }
+@media(max-width:540px){
+ #vouchers-dialog .voucher-passport { padding: 18px; }
+}
+
+.welcome-progress .progress-privacy-notice { margin-top: 0; }
+.progress-privacy-notice a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Keep the welcome disclosures and their following content close together. */
+.welcome-rules + .welcome-footer { margin-top: 0; }
+.welcome-rules + .november-test-notice { margin-top: 8px; }

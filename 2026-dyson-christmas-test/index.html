@@ -1,17 +1,37 @@
 <!doctype html>
-<html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261108-v83-inline-passport"></head>
+<html lang="zh-Hant" data-activity-environment="test">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261109-v85-layout"></head>
 <body>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v83</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v85</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
  <h2 id="welcome-title">活動介紹</h2><p id="welcome-description">布置屬於你的聖誕雪境、收藏驚喜、傳送祝福，解鎖<strong>限量優惠券</strong>。</p>
- <div class="welcome-content"><section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">保存紀錄</h3><p>留下 Email，記錄參與日期，累積登入 10 天後，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>我願意接收 Dyson 優惠與新品資訊（選填）</span></label><p class="card-hint">未填寫也能先體驗。</p><button id="progress-submit" hidden class="gold-button" type="submit">保存</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div></div>
- <details class="welcome-rules"><summary id="welcome-rules-title">活動規則</summary><div class="welcome-rules-content">
-  <section class="activity-rules-section" aria-labelledby="rules-period"><h3 id="rules-period">活動期間與雪境布置</h3><p>活動期間為 2026/12/01–12/25，以台灣時間（UTC+8）每日 00:00 換日。每天開放當天及之前的聖誕物件，可自由放入水晶球布置；尚未到來的日期仍維持鎖定。活動結束後，仍可回看已開放物件並重新布置。</p></section>
-  <section class="activity-rules-section" aria-labelledby="rules-coupons"><h3 id="rules-coupons">領取 Dyson 聖誕專屬優惠券</h3><p>符合優惠開放條件後，完成專屬卡片製作並<strong>下載或分享</strong>，即可領取符合條件的優惠券。優惠內容及使用條件依券面說明為準。</p></section>
-  <section class="activity-rules-section" aria-labelledby="rules-passport"><h3 id="rules-passport">累積登入 10 天，解鎖專屬好禮</h3><p>填寫 Email 保存活動進度，並於活動期間累積登入滿 10 天，即可至 Dyson 專櫃<strong>不限金額消費，加贈 Dyson 護照夾！</strong></p><p>無須連續登入，每個台灣日期最多累積 1 天；同日補領多份禮物也只計算 1 天。</p></section>
-  <section class="activity-rules-section" aria-labelledby="rules-progress"><h3 id="rules-progress">保存進度與資訊接收</h3><p>未填 Email 也能先體驗活動。若要記錄參與日期及好禮資格，請填寫正確的 Email 並按「開始收藏」，下次使用相同 Email 接續進度。</p><p>水晶球內的物件擺放與位置僅於當次頁面有效，重新開啟會回到預設雪境。</p><p>接收 Dyson 優惠與新品資訊為選填，不影響活動參加；已載入進度後，變更行銷意願會立即保存。</p></section>
+ <div class="welcome-content"><section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">保存紀錄</h3><p>留下 Email，記錄參與日期，累積登入 5 天後，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>我願意接收 Dyson 優惠與新品資訊（選填）</span></label><p class="card-hint progress-privacy-notice">請參閱<a href="https://docs.google.com/document/d/1t16XzusKmtd05-ndbZZWI5BFOdslWheB/edit" target="_blank" rel="noopener noreferrer">個人資料告知暨同意書</a>。</p><p class="card-hint">未填寫也能先體驗。</p><button id="progress-submit" hidden class="gold-button" type="submit">保存紀錄</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div></div>
+ <details class="welcome-rules"><summary id="welcome-rules-title">01 活動辦法</summary><div class="welcome-rules-content">
+  <section class="activity-rules-section" aria-labelledby="rules-period">
+   <h3 id="rules-period">活動時間｜2026.12.01－12.25</h3>
+   <p>每日解鎖聖誕驚喜，打造專屬 Dyson 聖誕水晶球！</p>
+   <p>活動期間每日 00:00（UTC+8）解鎖全新聖誕裝飾，可自由選擇當日及先前已解鎖的物件，打造專屬聖誕雪境。尚未開放的日期將維持鎖定，已解鎖的裝飾可於活動期間隨時使用，重新布置水晶球。</p>
+  </section>
+  <section class="activity-rules-section" aria-labelledby="rules-coupons">
+   <h3 id="rules-coupons">聖誕禮遇｜領取 Dyson 專屬優惠券</h3>
+   <p>完成指定解鎖條件，製作專屬聖誕卡片並下載或分享，即可領取符合資格的 Dyson 專屬優惠券。</p>
+   <p>※ 優惠內容及使用條件依各優惠券說明為準。</p>
+  </section>
+  <section class="activity-rules-section" aria-labelledby="rules-passport">
+   <h3 id="rules-passport">累積參與｜滿 5 天再享專屬好禮</h3>
+   <p>活動期間填寫 Email 保存參與進度，累積登入滿 5 天，即可獲得 Dyson 專屬好禮資格！</p>
+   <p>憑符合資格的活動紀錄，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾乙份。</p>
+   <p>※ 累積天數無須連續，每日最多計算 1 天，同日解鎖多份禮物亦僅計算 1 天。</p>
+   <p>※ 好禮兌換期限至 2026/12/31 止，每人限贈乙次，不得重複領取。</p>
+  </section>
+  <section class="activity-rules-section" aria-labelledby="rules-progress">
+   <h3 id="rules-progress">活動紀錄｜保存專屬聖誕進度</h3>
+   <p>無須填寫 Email 即可體驗聖誕水晶球活動。</p>
+   <p>如欲保存參與天數及好禮資格，請填寫正確 Email 並點選「開始收藏」。下次使用相同 Email，即可接續活動進度。</p>
+   <p>水晶球內的裝飾擺放位置僅保留於當次操作頁面，重新進入活動時將恢復預設布置。</p>
+   <p>Dyson 新品與優惠資訊訂閱採自由選擇，不影響活動參與及好禮資格；已保存進度者，調整訂閱意願後將即時更新。</p>
+  </section>
  </div></details>
  <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><ol id="activity-notices-list"><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol></div></details>
  <p class="november-test-notice">測試版提醒：本頁以 11/01–11/25 模擬 12/01–12/25，進度僅供測試，優惠券及護照夾資格不可兌換。</p><div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始收藏</button></div>
@@ -44,19 +64,19 @@
    <p id="status" class="status" role="status" aria-live="polite"></p>
   </section>
   <aside class="calendar-panel">
-   <section class="home-passport" aria-labelledby="home-passport-title">
+   <section id="home-passport" class="home-passport" aria-labelledby="home-passport-title">
     <div class="home-passport-copy">
      <h3 id="home-passport-title">護照夾好禮</h3>
-     <p id="home-passport-status" aria-live="polite">保存紀錄 · 累積登入 10 天</p>
+     <p id="home-passport-status" aria-live="polite">保存紀錄 · 累積登入 5 天</p>
     </div>
     <button id="home-passport-save" type="button">輸入 Email 保存紀錄</button>
-    <ol id="home-passport-days" class="participation-grid" aria-label="前 10 次登入日期"></ol>
+    <ol id="home-passport-days" class="participation-grid" aria-label="前 5 次登入日期"></ol>
     <details class="home-passport-redemption">
      <summary>查看兌換方式</summary>
      <div class="home-passport-redemption-body">
       <div class="home-passport-gift">
        <img id="home-passport-image" alt="Dyson 護照夾" width="1080" height="1080" loading="lazy">
-       <p>填寫 Email 保存紀錄，活動期間累積登入滿 10 天後，至 Dyson 專櫃<strong>不限金額消費，即加贈 Dyson 護照夾。</strong></p>
+       <p>填寫 Email 保存紀錄，活動期間累積登入滿 5 天後，至 Dyson 專櫃<strong>不限金額消費，即加贈 Dyson 護照夾。</strong></p>
       </div>
       <p>無須連續登入。每個台灣日期最多累積 1 天，同日補領多份禮物也只計算 1 天。</p>
       <p id="home-passport-note" hidden></p>
@@ -135,9 +155,21 @@
   </section>
   <section class="activity-rewards" aria-labelledby="activity-coupons">
    <h3 id="activity-coupons" class="activity-section-title" tabindex="-1">優惠券</h3>
-   <p class="voucher-instructions">符合優惠開放條件後，完成專屬卡片製作並下載或分享，即可領取優惠券。</p>
+   <p class="voucher-instructions">優惠券依商品日期開放。完成指定解鎖條件，製作聖誕卡片並下載或分享後，即可領取符合資格的優惠券。</p>
    <div id="vouchers-list"></div>
    <p class="voucher-footnote">※ 優惠內容及使用條件依券面說明為準。</p>
+   <article class="voucher-card voucher-passport" aria-labelledby="voucher-passport-title">
+    <div class="voucher-product-body">
+     <div class="voucher-product-visual"><img id="voucher-passport-image" class="reward-product-image" alt="Dyson 護照夾" width="1080" height="1080" loading="lazy" decoding="async"></div>
+     <div class="voucher-product-copy">
+      <h3 id="voucher-passport-title" class="reward-product-name">累積參與 5 天｜Dyson 護照夾好禮</h3>
+      <p class="reward-product-intro">填寫 Email 保存參與進度，累積登入滿 5 天。憑符合資格的活動紀錄，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾乙份。</p>
+      <p class="reward-product-intro">兌換期限至 2026/12/31 止，每人限贈乙次。</p>
+      <p id="voucher-passport-status" aria-live="polite"></p>
+     </div>
+    </div>
+    <div id="voucher-passport-actions" class="passport-coupon-actions"></div>
+   </article>
   </section>
  </div>
 </dialog>
@@ -147,7 +179,7 @@
  <div class="preview-controls"><label>預覽日期<input id="preview-date" type="date" value="2026-12-01" min="2026-11-30" max="2026-12-26"></label><button id="preview-start" class="gold-button">模擬當日</button><button id="preview-fill">收藏至此日（不放入）</button><button id="preview-clear">清空測試進度</button><button id="studio-export">下載活動設定 config.js</button></div>
  <p class="studio-note">產品圖可在下表替換，建議透明 PNG／WebP。HD19、SV50、HJ10、BP10 已使用獨立透明產品圖；BP10 的了解詳情連結待補。HD19、SV50、HJ10 商品專屬券沿用既有序號；任一主機優惠序號與使用期限可於下方設定。護照夾好禮為櫃位兌換，不使用折價序號。</p>
  <div id="asset-persistence" class="studio-note"></div><div class="table-scroll"><table class="studio-table"><thead><tr><th>日期</th><th>預覽</th><th>類型與項目</th><th>當日效果</th><th>產品介紹</th><th>素材</th><th>調整</th></tr></thead><tbody id="studio-table-body"></tbody></table></div>
- <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四張商品優惠券與累積登入 10 天的 Dyson 護照夾好禮。可調整顯示文字與期限，請保留解鎖條件；領券網址請在 config.js 的 DYSON_COUPON_LINKS 補上。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇顯示設定</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>領券網址未提供時會顯示準備中。商品券於指定日期開放並完成卡片下載或分享後可前往領取；護照夾兌換券需填寫 Email 並同步累積登入滿 10 天。管理員模擬僅供預覽，不開啟實際領券連結。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
+ <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四張商品優惠券與累積登入 5 天的 Dyson 護照夾好禮。可調整顯示文字與期限，請保留解鎖條件；領券網址請在 config.js 的 DYSON_COUPON_LINKS 補上。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇顯示設定</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>領券網址未提供時會顯示準備中。商品券於指定日期開放並完成卡片下載或分享後可前往領取；護照夾兌換券需填寫 Email 並同步累積登入滿 5 天。管理員模擬僅供預覽，不開啟實際領券連結。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
  <p class="studio-note">連接 Google Sheet 後，正式領取以後端台灣時間檢查。日期模擬只供 Sheet 勾選的管理者測試；限定動物另由「是否有專屬收藏」控制，模擬進度不混入正式收藏。管理員需輸入驗證碼；一般參加者仍以 Email 保存進度，不驗證信箱持有人。</p>
 </dialog>
 <input id="asset-input" type="file" accept="image/png,image/webp,image/jpeg" hidden>
@@ -156,9 +188,9 @@
 
 
 
-<script src="./assets/js/config.js?v=20261106-v78-coupon-links"></script>
+<script src="./assets/js/config.js?v=20261109-v85-signin5"></script>
 <script src="./assets/js/analytics.js?v=20261106-v78-coupon-links"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>
-<script src="./assets/js/app.js?v=20261108-v83-inline-passport"></script>
+<script src="./assets/js/app.js?v=20261109-v85-signin5"></script>
 </body></html>

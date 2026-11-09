@@ -61,11 +61,13 @@ const Core = {
 const $=id=>document.getElementById(id);
 const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 const BASE_CONFIG=window.DYSON_GAME_CONFIG;
+const PASSPORT_DAYS=BASE_CONFIG.participationDaysRequired;
 const ASSETS=window.DYSON_ASSETS;
 const FINAL_ARTWORK_DAYS=BASE_CONFIG.finalArtworkDays||[];
 const brandLogo=$('brand-logo'),logoVariant=BASE_CONFIG.logoVariant==='black'?'black':'white';
 if(brandLogo)brandLogo.src=ASSETS.brandLogos?.[logoVariant]||ASSETS.brandLogos?.white||brandLogo.getAttribute('src');
-const YEAR=BASE_CONFIG.year,STORAGE_PREFIX=`dyson-advent-${YEAR}-november-test-v1-`;
+const YEAR=BASE_CONFIG.year,IS_TEST=document.documentElement.dataset.activityEnvironment!=='production';
+const STORAGE_PREFIX=IS_TEST?`dyson-advent-${YEAR}-november-test-v1-`:`dyson-advent-${YEAR}-v1-`;
 const safeRead=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
 const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
 // Ordinary participants use an unverified Email. Admin accounts require a server-verified code and an in-memory, expiring session.
@@ -77,7 +79,7 @@ const isCloudEmail=v=>v.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const cardTaskNormalise=v=>v?.completed===true&&['png','gif','mp4'].includes(v.format)&&['download','share'].includes(v.method)?{completed:true,format:v.format,method:v.method,at:String(v.at||'')}:null;
 let guestCardTask=cardTaskNormalise(safeRead(STORAGE_PREFIX+'guest-card-task',null)),previewCardTask=null;
 const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{}),rememberedEmail=cloudEmail(savedCloudProfile.email);
-const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:isCloudEmail(rememberedEmail)?rememberedEmail:'',ready:false,cachedView:false,loading:false,adminToken:'',adminSessionExpiresAt:0,adminAuthRequired:false,canPreview:false,isAdmin:false,hasExclusive:false,bonusIds:[],attendance:null,consent:savedCloudProfile.consent===true,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),cardTask:null,pendingCardTask:null,offset:0,hasClock:false,pendingDay:null,pendingReward:false,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null,cardTask:null}};
+const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:isCloudEmail(rememberedEmail)?rememberedEmail:'',ready:false,cachedView:false,loading:false,adminToken:'',adminSessionExpiresAt:0,adminAuthRequired:false,canPreview:false,isAdmin:false,hasExclusive:false,bonusIds:[],attendance:null,unlockedRewards:[],rewardLinks:{},consent:savedCloudProfile.consent===true,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),cardTask:null,pendingCardTask:null,offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null,cardTask:null}};
 const timing={started:performance.now(),sceneReadyMs:null,progressReadMs:null,lastSaveMs:null};
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
 const canPreview=()=>cloud.ready&&cloud.isAdmin&&cloud.canPreview&&!!cloud.adminToken&&Date.now()+cloud.offset<cloud.adminSessionExpiresAt;
@@ -101,17 +103,15 @@ function cloudCache(){
  if(canPreview()&&cloud.previewLoaded)safeWrite(previewCacheKey(cloud.email),{catalogRevision:BASE_CONFIG.scheduleRevision,pending:previewPending()});
 }
 function previewPersist(){previewScene={placement:{...preview.placement},layouts:JSON.parse(JSON.stringify(preview.layouts))};safeWrite(STORAGE_PREFIX+'preview',Core.transportState(preview));cloudScheduleSave();}
-function localCardTask(){return previewDate?previewCardTask:cloud.pendingCardTask||cloud.cardTask||(!cloud.email?guestCardTask:null);}
-function cardTaskConfirmed(){return !!cardTaskNormalise(localCardTask());}
 function renderCloud(){
  const active=cloudEnabled(),admin=canPreview(),busy=cloud.loading||!!cloud.marketingSaving,pending=!!cloud.pendingCardTask||Object.keys(previewPending()).length>0,saving=!!cloud.saving||cloud.ready&&pending;
- $('progress-open').textContent=cloud.loading?'背景同步中…':cloud.ready?(cloud.error?'紀錄待同步':saving?'保存中…':'保存紀錄'):'保存紀錄';
+ $('progress-open').textContent='保存紀錄';
  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);$('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
  $('progress-open').setAttribute('aria-label',cloud.ready?'查看保存紀錄與護照夾資格':'輸入 Email 保存紀錄');
  $('admin-auth-email').textContent=cloud.email;$('admin-auth-submit').disabled=busy;$('admin-auth-cancel').disabled=busy;$('admin-auth-code').disabled=busy;$('admin-auth-form').setAttribute('aria-busy',String(busy));if($('admin-auth-dialog').open)$('admin-auth-message').textContent=cloud.loading?'正在驗證…':cloud.error||'請輸入管理員驗證碼。';
- $('progress-submit').textContent='保存';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
+ $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始收藏';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
  $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
- $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;
+ $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;
  $('progress-retry').hidden=!cloud.error||!active;
  const message=cloud.error||(cloud.loading?'正在背景同步進度，你可以先瀏覽與製作卡片。':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus|| (cloud.saving?'正在背景保存進度…':cloud.ready?'紀錄已保存，可用相同 Email 查看集點日期。':''));
  $('progress-message').textContent=message;$('progress-message').classList.toggle('is-busy',busy||saving&&!cloud.error);
@@ -120,7 +120,7 @@ function renderCloud(){
  $('cloud-settings').hidden=!admin;$('cloud-endpoint').value=cloud.endpoint;$('cloud-summary').textContent=active?'進度服務已設定。':'請先設定進度服務網址。';
  renderHomePassport();
 }
-function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.consent;openWelcome({progressOnly:true});renderCloud();$('progress-email').focus();}
+function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;openWelcome({progressOnly:true});renderCloud();$('progress-email').focus();}
 function cloudTransport(payload){
  if(!cloudEnabled())return Promise.reject(new Error('請從已設定進度服務的 HTTPS 活動網址保存。'));
  return new Promise((resolve,reject)=>{
@@ -132,21 +132,13 @@ function cloudTransport(payload){
  });
 }
 window.addEventListener('message',event=>{let origin;try{origin=new URL(event.origin);}catch{return;}if(origin.protocol!=='https:'||!(origin.hostname==='script.google.com'||origin.hostname==='script.googleusercontent.com'||origin.hostname.endsWith('.googleusercontent.com')))return;const m=event.data;if(m?.channel==='dyson-progress-v1'&&typeof m.requestId==='string')cloud.requests.get(m.requestId)?.(m.result);});
-const TEST_ENVIRONMENT='november-test-2026';
-let checkedTestEndpoint='';
-function assertTestEnvironment(result){
- if(result.environment!==TEST_ENVIRONMENT||result.environmentVersion!==1||result.starterSceneVersion!==1||result.scenePersistence!=='session'||result.attendanceVersion!==1||result.testCalendarVersion!==2||result.sheetDateMonth!=='2026-11'||result.clockMode!=='november-to-december'||result.date!==Core.novemberActivityDate(result.realDate))throw new Error('測試服務尚未更新，請先更新 v75 GS、執行 setupNovemberTest 轉換測試日期欄，再更新原部署。');
- if(result.rewardRulesVersion!==2)throw new Error('請更新 v75 GS 並將原 Apps Script 部署更新為新版本，以套用新版領券條件。');
- if(result.calendarReady!==true)throw new Error('請在 Apps Script 執行 setupNovemberTest，將測試表日期改為11/01～11/25，再更新原部署。');
-}
-async function ensureTestEnvironment(){
- if(checkedTestEndpoint===cloud.endpoint)return;
- // Read-only handshake. Old GS rejects this action before reading or writing any
- // participant, so a not-yet-updated service cannot save test data as production.
-  let result;
-  try{result=await cloudTransport({action:'environmentCheck',environment:TEST_ENVIRONMENT});}
-  catch(error){if(/^不支援此操作[。.]?$/.test(error.message)){const failure=new Error('測試服務尚未更新：請以 v75 GS 取代程式、執行 setupNovemberTest，並將網站使用的原部署更新為新版本。帳號參與日期尚未同步。');failure.code='TEST_BACKEND_OUTDATED';throw failure;}throw error;}
-  assertTestEnvironment(result);checkedTestEndpoint=cloud.endpoint;
+const ENVIRONMENT=IS_TEST?'november-test-2026':'production';
+function assertCampaignEnvironment(result){
+ if(result.environment!==ENVIRONMENT||result.environmentVersion!==1||result.campaignUpdateVersion!==85||result.passportDaysRequired!==PASSPORT_DAYS||result.year!==YEAR||
+    result.clockMode!==(IS_TEST?'november-to-december':'real')||result.date!==(IS_TEST?Core.novemberActivityDate(result.realDate):result.realDate)){
+   throw new Error('活動與進度服務版本不一致，請更新 v85（簽到 5 天）Apps Script 部署。');
+ }
+ if(IS_TEST&&result.calendarReady!==true)throw new Error('請先初始化 11 月測試表。');
 }
 function cloudRequireAdminAuth(result){
  cloudCache();clearTimeout(cloud.timer);cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=true;cloud.ready=false;cloud.cachedView=false;cloud.isAdmin=false;cloud.canPreview=false;cloud.hasExclusive=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.cardTask=null;live=Core.freshState();cloud.synced=Core.freshState();
@@ -154,10 +146,18 @@ function cloudRequireAdminAuth(result){
  for(const id of ['studio-dialog','item-dialog','vouchers-dialog','card-dialog'])closeDialog(id);
  stopShow(false);pauseMusic(true);renderUI();$('admin-auth-code').value='';showDialog('admin-auth-dialog');$('admin-auth-message').textContent=cloud.error;setTimeout(()=>$('admin-auth-code').focus(),0);
 }
+let checkedEndpoint='';
 function cloudSend(payload){
  const request=cloud.queue.then(async()=>{
-  await ensureTestEnvironment();const token=payload.email===cloud.email?cloud.adminToken:'';
-  const result=await cloudTransport({...payload,action:'test:'+payload.action,environment:TEST_ENVIRONMENT,...(token?{adminToken:token}:{})});assertTestEnvironment(result);
+  if(checkedEndpoint!==cloud.endpoint){
+    const endpoint=cloud.endpoint;
+    const info=await cloudTransport({action:'environmentCheck',environment:ENVIRONMENT});
+    assertCampaignEnvironment(info);
+    checkedEndpoint=endpoint;
+  }
+  const token=payload.email===cloud.email?cloud.adminToken:'';
+  const action=(IS_TEST?'test:':'prod:')+payload.action;
+  const result=await cloudTransport({...payload,action,environment:ENVIRONMENT,...(token?{adminToken:token}:{})});assertCampaignEnvironment(result);
   // A backend challenge must never be interpreted as an empty participant state.
   if(result.adminAuthRequired===true){cloudRequireAdminAuth(result);const error=new Error(cloud.error);error.code='ADMIN_AUTH_REQUIRED';throw error;}
   if(result.authVersion!==1||result.serviceVersion!==8||result.permissionsVersion!==3)throw new Error('請先更新管理員驗證版 GS，並將原部署更新為新版本。');
@@ -174,8 +174,10 @@ function clearCloudSyncError(){
  if(previous&&$('status').textContent===previous)status('');
 }
 function cloudAcceptClock(result){
- assertTestEnvironment(result);if(result.serviceVersion!==8||result.rulesVersion!==3||result.permissionsVersion!==3||result.authVersion!==1)throw new Error('請更新管理員驗證版 GS 與原部署。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同。');
+ assertCampaignEnvironment(result);if(result.serviceVersion!==8||result.rulesVersion!==3||result.permissionsVersion!==3||result.authVersion!==1)throw new Error('請更新管理員驗證版 GS 與原部署。');if(result.year!==YEAR)throw new Error('活動年度與進度服務不同。');
  cloud.attendance=result.attendance||null;
+ cloud.unlockedRewards=Array.isArray(result.unlockedRewardIds)?result.unlockedRewardIds:[];
+ cloud.rewardLinks=result.rewardLinks||{};
  cloud.isAdmin=result.isAdmin===true&&result.adminAuthenticated===true&&!!cloud.adminToken;cloud.canPreview=cloud.isAdmin&&result.canPreview===true;cloud.hasExclusive=result.hasExclusiveCollection===true;cloud.bonusIds=cloud.hasExclusive&&Array.isArray(result.bonusIds)?result.bonusIds.filter(d=>BONUS_IDS.includes(d)):[];
  if(!cloud.isAdmin){cloud.previewLoaded=false;previewRestore(null);}
  if(Number.isFinite(Date.parse(result.serverTime))){cloud.offset=Date.parse(result.serverTime)-Date.now();cloud.hasClock=true;}
@@ -187,11 +189,11 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
  if(cloud.email&&email!==cloud.email)resetSessionScene();else rememberSessionScene();
  const started=performance.now(),same=email===cloud.email,guestState=Core.accountState(safeRead(STORAGE_PREFIX+'guest-state',{})),guestTask=guestCardTask;
  const preserveDraft=same&&cloud.marketingDirty&&typeof consent!=='boolean';
- if(!same){cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=false;cloud.ready=false;cloud.cachedView=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.synced=Core.freshState();live=Core.sceneState(guestState,sessionScene);previewRestore(null);}
+ if(!same){cloud.consent=false;cloud.attendance=null;cloud.unlockedRewards=[];cloud.rewardLinks={};cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=false;cloud.ready=false;cloud.cachedView=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.synced=Core.freshState();live=Core.sceneState(guestState,sessionScene);previewRestore(null);}
  cloud.email=email;cloud.loading=true;clearCloudSyncError();cloud.isAdmin=false;cloud.canPreview=false;cloud.hasExclusive=false;cloud.bonusIds=[];safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});renderCloud();
  try{
   let cached=safeRead(cloudCacheKey(email),{});const payload={action:typeof adminCode==='string'?'adminLogin':'connect',email};if(typeof adminCode==='string')payload.adminCode=adminCode;
-  if(Object.keys(guestState.claimed).length||Object.keys(guestState.visits).length)payload.guestState=Core.transportState(guestState);
+  if(Object.keys(guestState.claimed).length)payload.guestState={claimed:guestState.claimed};
   const task=cardTaskNormalise(cached.pendingCardTask)||guestTask;if(task)payload.cardTask=task;
   if(typeof consent==='boolean')payload.marketingConsent=consent;
   const result=await cloudSend(payload);delete payload.adminCode;adminCode=undefined;cloudAcceptClock(result);cached=safeRead(cloudCacheKey(email),cached);
@@ -204,7 +206,7 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
   safeWrite(STORAGE_PREFIX+'guest-state',Core.transportState(Core.freshState()));guestCardTask=null;safeWrite(STORAGE_PREFIX+'guest-card-task',null);safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});
   timing.progressReadMs=Math.round(performance.now()-started);cloud.consentStatus=preserveDraft?'行銷意願尚未保存，請重試。':'進度已保存。';
   cloudCache();renderUI();drawFrame(0,performance.now());ensureItemAssets(sceneDays()).then(()=>{renderUI();drawFrame(0,performance.now());}).catch(()=>{});cloudScheduleSave();
-  closeDialog('admin-auth-dialog');$('admin-auth-code').value='';if(payload.action==='adminLogin')status('管理員驗證完成，可使用日期模擬。');if(userInitiated)trackActivity('progress_save',{method:'email'});if(cloud.pendingReward){cloud.pendingReward=false;renderVouchers();showDialog('vouchers-dialog');}return true;
+  closeDialog('admin-auth-dialog');$('admin-auth-code').value='';if(payload.action==='adminLogin')status('管理員驗證完成，可使用日期模擬。');if(userInitiated)trackActivity('progress_save',{method:'email'});return true;
  }catch(error){cloud.error=error.message;status(error.message,{persistent:true});throw error;}
  finally{cloud.loading=false;renderCloud();}
 }
@@ -242,8 +244,11 @@ function markCardTask(format,method){
  else{cloud.pendingCardTask=cloud.pendingCardTask||task;const cached=safeRead(cloudCacheKey(cloud.email),{});safeWrite(cloudCacheKey(cloud.email),{...cached,pendingCardTask:cloud.pendingCardTask});}
  renderBenefits();
 }
-function startRewardTask(){closeDialog('vouchers-dialog');openChristmasCard();}
 $('progress-open').addEventListener('click',openProgress);
+$('progress-email').addEventListener('input',()=>{
+ cloud.marketingDirty=false;cloud.marketingDraft=null;
+ $('progress-marketing').checked=cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;
+});
 $('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();});
 $('progress-form').addEventListener('submit',event=>{event.preventDefault();startWelcomeCollection();});
 $('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();});
@@ -256,7 +261,7 @@ $('admin-auth-cancel').addEventListener('click',()=>{$('admin-auth-code').value=
 $('admin-auth-dialog').addEventListener('close',()=>{$('admin-auth-code').value='';});
 $('progress-switch').addEventListener('click',async()=>{
  if(cloud.marketingSaving&&!(await cloud.marketingSaving))return;if(!(await cloudFlush()))return;
- clearTimeout(cloud.timer);cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=false;$('admin-auth-code').value='';closeDialog('admin-auth-dialog');cloud.ready=false;cloud.cachedView=false;cloud.canPreview=false;cloud.isAdmin=false;cloud.hasExclusive=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.email='';cloud.consent=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='';cloud.error='';cloud.hasClock=false;resetSessionScene();cloud.attendance=null;live=Core.freshState();cloud.synced=Core.freshState();safeWrite(STORAGE_PREFIX+'cloud-profile',{});for(const id of ['studio-dialog','item-dialog'])closeDialog(id);renderUI();$('progress-email').value='';renderCloud();$('progress-email').focus();
+ clearTimeout(cloud.timer);cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=false;$('admin-auth-code').value='';closeDialog('admin-auth-dialog');cloud.ready=false;cloud.cachedView=false;cloud.canPreview=false;cloud.isAdmin=false;cloud.hasExclusive=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.email='';cloud.consent=false;cloud.cardTask=null;cloud.pendingCardTask=null;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='';cloud.error='';cloud.hasClock=false;resetSessionScene();cloud.attendance=null;cloud.unlockedRewards=[];cloud.rewardLinks={};live=Core.freshState();cloud.synced=Core.freshState();safeWrite(STORAGE_PREFIX+'cloud-profile',{});for(const id of ['studio-dialog','item-dialog'])closeDialog(id);renderUI();$('progress-email').value='';renderCloud();$('progress-email').focus();
 });
 $('cloud-save-export').addEventListener('click',async()=>{if(!canPreview())return;const value=$('cloud-endpoint').value.trim();if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(value)){$('cloud-settings-status').textContent='請填入有效 /exec 網址。';return;}if(!(await cloudFlush()))return;cloud.endpoint=value;safeWrite(STORAGE_PREFIX+'cloud-endpoint',value);await exportConfig();});
 window.addEventListener('online',()=>{if(cloud.ready)cloudFlush();else if(cloud.email)cloudConnect(cloud.email).catch(()=>{});});
@@ -507,7 +512,7 @@ const SCENE_W=1168,SCENE_H=1346;
 const imageLoad=src=>new Promise((resolve,reject)=>{const i=new Image();if(/^https?:/i.test(src))i.crossOrigin='anonymous';i.onload=()=>resolve(i);i.onerror=()=>reject(new Error('圖片無法讀取，請改用本機上傳或可跨來源讀取的圖片網址。'));i.src=src;});
 const state=()=>previewDate?preview:live;
 const realDateISO=()=>Core.taipeiDate(new Date(Date.now()+(cloud.hasClock?cloud.offset:0)));
-const dateISO=()=>previewDate||Core.novemberActivityDate(realDateISO());
+const dateISO=()=>previewDate||(IS_TEST?Core.novemberActivityDate(realDateISO()):realDateISO());
 const today=()=>Core.campaignDay(dateISO(),YEAR);
 const itemByDay=d=>BASE_CONFIG.items.find(i=>i.day===Number(d))||bonusCatalog.find(i=>i.day===Number(d))||starterCatalog.find(i=>i.day===Number(d));
 const bonusDays=()=>cloud.ready?cloud.bonusIds.filter(d=>bonusCatalog.some(i=>i.day===d)):[];
@@ -522,14 +527,15 @@ function item(d){
 const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required,redemption:b.redemption,...(b.redemption==='counter'?{code:'',approved:true}:{} )}));
 const rewards=()=>configuredRewards();
 const rewardQualified=(b,p)=>b.unlock==='product'?availableDays().includes(b.productDay):p.visits>=b.required;
-const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&(b.redemption==='counter'?(!!previewDate||(cloud.ready&&cloud.attendance?.eligible===true)):cardTaskConfirmed());
+const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&(previewDate
+  ?(b.redemption==='counter'||!!previewCardTask)
+  :(cloud.ready&&(b.redemption==='counter'?cloud.attendance?.eligible===true:cloud.unlockedRewards.includes(b.id))));
 function rewardProgress(){
   const t=today(),claimedDays=Object.keys(state().claimed).map(Number).filter(d=>d<=t),count=claimedDays.length,visits=participationDates().length;
   const list=rewards(),progress={count,claimedDays,visits},unlockedCount=list.filter(b=>rewardUnlocked(b,progress)).length,next=list.find(b=>!rewardUnlocked(b,progress))||null;
   return {...progress,unlockedCount,total:list.length,next,unlocked:unlockedCount>0};
 }
 function rewardProgressLabel(p=rewardProgress()){return `已開放 ${availableDays().length}／25 · ${attendanceStatusText(p.visits)} · 已解鎖 ${p.unlockedCount}／${p.total} 份禮遇`;}
-function nextRewardLabel(p=rewardProgress()){return p.next?.unlock==='visits'?'累積登入 10 天，解鎖專屬好禮。':'符合優惠開放條件後，完成專屬卡片製作並下載或分享，即可領券。';}
 
 const items=()=>BASE_CONFIG.items.map(i=>item(i.day));
 const participationDates=()=>{
@@ -537,9 +543,9 @@ const participationDates=()=>{
   if(!cloud.ready||!cloud.attendance||!Array.isArray(cloud.attendance.campaignDates))return [];
   return Core.participationDates(Object.fromEntries(cloud.attendance.campaignDates.map(d=>[d,true])),dateISO(),YEAR);
 };
-const participationDisplayDates=()=>previewDate?participationDates():participationDates().map(d=>d.replace('2026-12-','2026-11-'));
+const participationDisplayDates=()=>previewDate||!IS_TEST?participationDates():participationDates().map(d=>d.replace('2026-12-','2026-11-'));
 const attendanceReady=()=>!!previewDate||(cloud.ready&&!!cloud.attendance);
-function attendanceStatusText(count=participationDates().length){return previewDate?`模擬參與 ${count}／10 天`:attendanceReady()?`已記錄 ${count}／10 天`:cloud.loading?'參與紀錄同步中…':'參與紀錄尚未同步';}
+function attendanceStatusText(count=participationDates().length){return previewDate?`模擬參與 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`:attendanceReady()?`已記錄 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`:cloud.loading?'參與紀錄同步中…':'參與紀錄尚未同步';}
 // Only admin preview can test all remaining gifts after the campaign closes.
 const claimableToday=()=>previewDate?Math.min(25,today()):today();
 const availableDays=()=>Array.from({length:Math.max(0,Math.min(25,claimableToday()))},(_,i)=>i+1);
@@ -798,7 +804,15 @@ $('mobile-collection').addEventListener('close',restoreMobileGlobe);
 $('mobile-collection-pages').addEventListener('scroll',syncMobileCollectionPage,{passive:true});
 $('mobile-collection-prev').addEventListener('click',()=>moveMobileCollectionPage(-1));
 $('mobile-collection-next').addEventListener('click',()=>moveMobileCollectionPage(1));
+function placeHomePassport(){
+  const passport=$('home-passport');
+  const anchor=mobileViewport.matches?$('mobile-calendar-toggle'):document.querySelector('#globe-section .globe-actions');
+  if(mobileViewport.matches){
+    if(anchor.previousElementSibling!==passport)anchor.before(passport);
+  }else if(anchor.nextElementSibling!==passport)anchor.after(passport);
+}
 mobileViewport.addEventListener('change',event=>{
+  placeHomePassport();
   if(event.matches)return;
   closeDialog('mobile-collection');
   restoreMobileGlobe();
@@ -828,7 +842,7 @@ function updatePlacementUI(d){
   }
 }
 function renderUI({placementDay=null}={}){
-  const real=realDateISO(),effective=dateISO();$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，優惠與護照資格不可兌換。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
+  const real=realDateISO(),effective=dateISO();if(IS_TEST)$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，優惠與護照資格不可兌換。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
   $('preview-banner').hidden=!previewDate;
   if(placementDay!==null)updatePlacementUI(placementDay);else{renderCalendar();renderCollection();renderMobileCollection();renderBenefits();}
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
@@ -855,21 +869,23 @@ function renderProduct(i){
 function passportProgressText(count){
   if(!attendanceReady()){
     if(cloud.loading)return '保存紀錄 · 同步中…';
-    return cloud.email?'保存紀錄 · 尚未同步':'保存紀錄 · 累積登入 10 天';
+    return cloud.email?'保存紀錄 · 尚未同步':`保存紀錄 · 累積登入 ${PASSPORT_DAYS} 天`;
   }
-  if(previewDate)return `模擬累積 ${Math.min(10,count)}／10 天`;
-  return count>=10?'保存紀錄 · 已達成 10 天':`保存紀錄 · 已累積 ${count}／10 天`;
+  if(previewDate)return `模擬累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
+  return count>=PASSPORT_DAYS?`保存紀錄 · 已達成 ${PASSPORT_DAYS} 天`:`保存紀錄 · 已累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
 }
 function renderHomePassport(){
   const ready=attendanceReady(),dates=participationDisplayDates();
-  $('home-passport-status').textContent=passportProgressText(dates.length);
+  const progressText=passportProgressText(dates.length);
+  $('home-passport-status').textContent=progressText;
+  $('voucher-passport-status').textContent=progressText;
   renderAttendanceGrid($('home-passport-days'),dates);
   $('home-passport-save').hidden=ready;
   $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
   const note=$('home-passport-note');
   note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。';
   note.hidden=!note.textContent;
-  renderPassportCouponAction(ready,dates.length);
+  for(const id of ['home-passport-actions','voucher-passport-actions'])renderPassportCouponAction($(id),ready,dates.length);
 }
 function renderVouchers(){
   const root=$('vouchers-list'),progress=rewardProgress();
@@ -907,10 +923,10 @@ function setupActivityDialog(){
   }
 }
 function renderAttendanceGrid(grid,dates){
-  const earned=dates.slice(0,10),key=earned.join(',');
+  const earned=dates.slice(0,PASSPORT_DAYS),key=earned.join(',');
   if(grid.dataset.dates===key)return;
   const cells=[];
-  for(let index=0;index<10;index++){
+  for(let index=0;index<PASSPORT_DAYS;index++){
     const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);
     if(date)cell.append(el('span','participation-check','✓'),el('span','participation-date',date.slice(5).replace('-','/')));
     cell.setAttribute('aria-label',date?`第 ${index+1} 次，${date} 已簽到`:`第 ${index+1} 次，尚未簽到`);
@@ -921,26 +937,27 @@ function renderAttendanceGrid(grid,dates){
 }
 function rewardProductImage(b,product){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
 function couponClaimURL(id){
- const raw=String(window.DYSON_COUPON_LINKS?.[id]||'').trim();
+ const raw=String(cloud.rewardLinks[id]||'').trim();
  if(!raw)return '';try{const url=new URL(raw);return url.protocol==='https:'&&!url.username&&!url.password?url.href:'';}catch{return '';}
 }
 function appendClaimLink(container,id,label){
  const url=couponClaimURL(id);if(!url){const button=el('button','',id==='visits-10'?'兌換券準備中':'優惠券準備中');button.type='button';button.disabled=true;container.append(button);return;}
- const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);link.addEventListener('click',()=>trackActivity('coupon_click',{coupon_id:id,link_url:url}));container.append(link);
+ const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);link.addEventListener('click',()=>trackActivity('coupon_click',{coupon_id:id}));container.append(link);
 }
-function renderPassportCouponAction(ready,count){
- const actions=$('home-passport-actions');
- const complete=ready&&count>=10;
- const key=JSON.stringify([ready,Math.min(count,10),!!previewDate,!!cloud.email,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
+function renderPassportCouponAction(actions,ready,count){
+ const complete=ready&&count>=PASSPORT_DAYS;
+ const expired=!IS_TEST&&!previewDate&&dateISO()>`${YEAR}-12-31`;
+ const key=JSON.stringify([ready,Math.min(count,PASSPORT_DAYS),!!previewDate,!!cloud.email,expired,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
  if(actions.dataset.state===key)return;
  actions.dataset.state=key;
  actions.replaceChildren();
- if(!ready){
+ if(expired){const button=el('button','','已逾兌換期限');button.type='button';button.disabled=true;actions.append(button);}
+ else if(!ready){
    const button=el('button','',cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄');
    button.type='button';button.addEventListener('click',openProgress);actions.append(button);
  }
- else if(!complete){const button=el('button','',`再累積 ${Math.max(0,10-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
- else if(previewDate){const button=el('button','','模擬預覽 · 已達成 10 天');button.type='button';button.disabled=true;actions.append(button);}
+ else if(!complete){const button=el('button','',`再累積 ${Math.max(0,PASSPORT_DAYS-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
+ else if(previewDate||IS_TEST){const button=el('button','',`${previewDate?'模擬預覽':'測試版'} · 已達成 ${PASSPORT_DAYS} 天`);button.type='button';button.disabled=true;actions.append(button);}
  else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券');
  else {
    const button=el('button','','兌換資格確認中');
@@ -951,8 +968,17 @@ function appendCouponAction(card,b,progress,full){
  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
  if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-coupons'));card.append(button);return;}
  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
- if(!unlocked){const button=el('button','gold-button','領取優惠券');button.type='button';button.addEventListener('click',startRewardTask);card.append(button);return;}
- if(previewDate){const button=el('button','','模擬預覽 · 已符合領券條件');button.type='button';button.disabled=true;card.append(button);return;}
+ if(!unlocked){
+   const waitingForEmail=!previewDate&&!cloud.ready;
+   const waitingForCardSync=!previewDate&&!!cloud.pendingCardTask;
+   const button=el('button','gold-button',waitingForEmail?'保存紀錄':waitingForCardSync?'同步卡片紀錄':'製作卡片');
+   button.type='button';
+   if(waitingForEmail)button.addEventListener('click',openProgress);
+   else if(waitingForCardSync)button.addEventListener('click',()=>cloudFlush());
+   else button.addEventListener('click',()=>{closeDialog('vouchers-dialog');openChristmasCard();});
+   card.append(button);return;
+ }
+ if(previewDate||IS_TEST){const button=el('button','',previewDate?'模擬預覽 · 已符合領券條件':'測試版 · 已開放，僅供預覽');button.type='button';button.disabled=true;card.append(button);return;}
  const expired=b.validUntil&&dateISO()>b.validUntil;if(b.validUntil)card.append(el('p','reward-expiry',`有效至 ${b.validUntil}${expired?' · 已到期':''}`));
  if(expired){const button=el('button','','優惠已到期');button.type='button';button.disabled=true;card.append(button);return;}
  appendClaimLink(card,b.id,'領取優惠券');
@@ -1403,7 +1429,7 @@ function renderStudio(){
 }
 async function openDatabase(){
   if(!window.indexedDB)return;
-  try{assetDb=await new Promise((resolve,reject)=>{const req=indexedDB.open('dyson-advent-november-test-photo-assets-v1',1);req.onupgradeneeded=()=>req.result.createObjectStore('images');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});assetStorage='indexedDB';
+  try{assetDb=await new Promise((resolve,reject)=>{const req=indexedDB.open(IS_TEST?'dyson-advent-november-test-photo-assets-v1':'dyson-advent-production-photo-assets-v1',1);req.onupgradeneeded=()=>req.result.createObjectStore('images');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});assetStorage='indexedDB';
     let records=await new Promise((resolve,reject)=>{const req=assetDb.transaction('images','readonly').objectStore('images').getAll();req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
     if(!safeRead(scheduleKey+'-assets',false)){
       const moved=records.filter(r=>SCHEDULE_MOVES[r.day]).map(r=>({...r,day:SCHEDULE_MOVES[r.day]}));
@@ -1435,7 +1461,7 @@ function applyConfig(value,rewardValue=configuredRewards()){
   const nextReward={},rewardIDs=new Set();
   for(const b of rewardValue){
     const base=BASE_CONFIG.rewards.find(v=>v.id===b?.id);
-    if(!base||rewardIDs.has(b.id)||b.required!==base.required||b.productDay!==base.productDay||b.unlock!==base.unlock)throw new Error('請保留四款產品與累積參與 10 天的禮遇識別及解鎖條件。');
+    if(!base||rewardIDs.has(b.id)||b.required!==base.required||b.productDay!==base.productDay||b.unlock!==base.unlock)throw new Error(`請保留四款產品與累積參與 ${PASSPORT_DAYS} 天的禮遇識別及解鎖條件。`);
     rewardIDs.add(b.id);
     if(typeof b.title!=='string'||!b.title.trim()||typeof b.preview!=='string'||!b.preview.trim()||typeof b.conditions!=='string')throw new Error('請填入優惠券標題、未解鎖預告與使用條件。');
     if(b.validUntil&&(!/^\d{4}-\d{2}-\d{2}$/.test(b.validUntil)||!Number.isFinite(Date.parse(b.validUntil+'T00:00:00Z'))||new Date(b.validUntil+'T00:00:00Z').toISOString().slice(0,10)!==b.validUntil))throw new Error('使用期限須為有效的 YYYY-MM-DD 日期。');
@@ -2024,7 +2050,8 @@ $('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
 $('home-passport-save').addEventListener('click',openProgress);
-$('home-passport-image').src=ASSETS.rewardImages.passport;
+for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
+placeHomePassport();
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));
