@@ -505,8 +505,9 @@ window.DYSON_GAME_CONFIG = {
       "code": "",
       "approved": false,
       "validUntil": "",
-      "displayName": "",
-      "scopeLabel": "任一主機"
+      "displayName": "任一主機",
+      "scopeLabel": "",
+      "intro": "Dyson 精選科技，為生活增添更多美好驚喜。聖誕限定專屬優惠券，適用於 Dyson 任一主機，讓心儀好物成為今年最值得收藏的聖誕禮物。"
     },
     {
       "id": "visits-10",

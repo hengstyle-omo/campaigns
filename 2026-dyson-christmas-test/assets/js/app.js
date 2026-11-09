@@ -879,8 +879,6 @@ function renderHomePassport(){
   $('voucher-passport-status').textContent=progressText;
   renderAttendanceGrid($('home-passport-days'),dates);
   renderAttendanceGrid($('voucher-passport-days'),dates);
-  $('home-passport-save').hidden=ready;
-  $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
   const note=$('home-passport-note');
   note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。';
   note.hidden=!note.textContent;
@@ -959,7 +957,7 @@ function renderAttendanceGrid(grid,dates){
   grid.replaceChildren(...cells);
   grid.dataset.dates=key;
 }
-function rewardProductImage(b,product){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
+function rewardProductImage(b){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
 function couponClaimURL(id){
  const raw=String(cloud.rewardLinks[id]||'').trim();
  if(!raw)return '';try{const url=new URL(raw);return url.protocol==='https:'&&!url.username&&!url.password?url.href:'';}catch{return '';}
@@ -1008,21 +1006,39 @@ function appendCouponAction(card,b,progress,full){
  appendClaimLink(card,b.id,'領取優惠券');
 }
 function renderRewardCard(b,progress,full){
-  const unlocked=rewardUnlocked(b,progress),product=b.displayName?item(b.productDay):null;
-  const card=el('article',`${full?'voucher-card':'benefit-card compact-reward'}${unlocked?' claimed':' locked'}`);card.dataset.rewardId=b.id;card.setAttribute('aria-label',`${b.scopeLabel}，${b.displayName||'Dyson 任一主機'}，優惠券$1,000`);
+  const unlocked=rewardUnlocked(b,progress);
+  const product=b.intro?null:item(b.productDay)?.product;
+  const displayName=b.displayName||'任一主機';
+  const card=el('article',`${full?'voucher-card':'benefit-card compact-reward'}${unlocked?' claimed':' locked'}`);
+  card.dataset.rewardId=b.id;
+  card.setAttribute('aria-label',[b.scopeLabel,displayName,'優惠券$1,000'].filter(Boolean).join('，'));
+  const summary=el('p','reward-coupon-summary','優惠券$1,000');
+  const scope=b.scopeLabel?el('p','reward-scope',b.scopeLabel):null;
+  const title=el('h3','reward-product-name',displayName);
   if(!full){
-    card.append(el('p','reward-coupon-summary','優惠券$1,000'),el('p','reward-scope',b.scopeLabel));
-    if(b.displayName)card.append(el('h3','reward-product-name',b.displayName));
-    const visual=el('div','reward-card-visual');visual.append(rewardProductImage(b,product));card.append(visual);appendCouponAction(card,b,progress,false);return card;
+    card.append(summary);
+    if(scope)card.append(scope);
+    card.append(title);
+    const visual=el('div','reward-card-visual');
+    visual.append(rewardProductImage(b));card.append(visual);
+    appendCouponAction(card,b,progress,false);
+    return card;
   }
-  const header=el('header','voucher-offer-heading');header.append(el('p','reward-coupon-summary','優惠券$1,000'),el('p','reward-scope',b.scopeLabel));
+  const header=el('header','voucher-offer-heading');header.append(summary);
+  if(scope)header.append(scope);
   header.append(el('p','reward-open-date',`12/${String(b.productDay).padStart(2,'0')} 開放`));
-  const body=el('div',`voucher-product-body${product?'':' voucher-product-only'}`),visual=el('div','voucher-product-visual');visual.append(rewardProductImage(b,product));body.append(visual);
-  if(product){
-    const copy=el('div','voucher-product-copy');copy.append(el('h3','reward-product-name',b.displayName),el('p','reward-product-intro',product.product.intro));
-    const url=validatedProductURL(product.product.url);if(url){const link=el('a','product-link','了解產品詳情 ↗');link.href=url;link.target='_blank';link.rel='noopener noreferrer';copy.append(link);}body.append(copy);
-  }
-  const actions=el('div','voucher-actions');appendCouponAction(actions,b,progress,true);card.append(header,body,actions);return card;
+  const body=el('div','voucher-product-body'),visual=el('div','voucher-product-visual');
+  visual.append(rewardProductImage(b));
+  const copy=el('div','voucher-product-copy');copy.append(title);
+  const intro=b.intro||product?.intro;
+  if(intro)copy.append(el('p','reward-product-intro',intro));
+  const url=validatedProductURL(product?.url);
+  if(url){const link=el('a','product-link','了解產品詳情 ↗');link.href=url;link.target='_blank';link.rel='noopener noreferrer';copy.append(link);}
+  body.append(visual,copy);
+  const actions=el('div','voucher-actions');
+  appendCouponAction(actions,b,progress,true);
+  card.append(header,body,actions);
+  return card;
 }
 function validatedProductURL(value){
   const text=String(value||'').trim();if(!text)return '';try{const url=new URL(text);if(url.protocol!=='https:')return '';return url.href;}catch{return '';}
@@ -2073,7 +2089,6 @@ document.addEventListener('focusin',e=>{if(!e.target.closest('.audio-menu'))clos
 $('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();if(sound)chime();});
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
-$('home-passport-save').addEventListener('click',openProgress);
 for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
 placeHomePassport();
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
