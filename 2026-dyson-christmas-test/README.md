@@ -1,10 +1,16 @@
-# Dyson 聖誕活動 v84 測試差異包
+# Dyson 聖誕活動 v85 差異包（簽到 5 天）
 
-1. 在測試 Google Sheet 的 Apps Script 貼上 `GS/DysonProgress.gs`。既有 v79 測試表可直接沿用。新測試表先執行 `setupSimpleNovemberTest`。
-2. 到「部署 → 管理部署 → 編輯」，將測試站所用 Web App 更新為新版本。保留原 `/exec` 網址。測試期間，指令碼屬性 `DYSON_NOV_TEST_ENABLED` 留空或設為 `true`。
-3. 在 v83 測試版之上，以包內同名路徑覆蓋 `index.html`、`assets/js/app.js`、`assets/js/config.js`。若站台使用不同的 Apps Script，請將它的 `/exec` 網址填回 `config.js` 的 `endpoint`。
-4. 以台灣 11/01–11/25 對應 12 月同日驗收，資料寫入 `Participants_Test_2026`。商品券與護照夾只顯示測試結果。
+## 更新順序
 
-「保存紀錄」維持原名。行銷同意獨立選填，初始未勾選。已保存的選擇會在同一 Email 載入後顯示。個人 Email 可直接填寫，無驗證流程。
+1. 在 Apps Script 以 `GS/DysonProgress.gs` 取代同名程式，將活動站所用的 Web App 部署更新至新版本。若測試站與正式站各用獨立部署，分別在要更新的環境執行。原有 v84 表格及指令碼屬性可沿用。
+2. 把對應資料夾內的 `index.html`、`assets/css/style.css`、`assets/js/app.js`、`assets/js/config.js` 與 `VERSION.txt` 覆蓋到原站同一路徑。測試站使用 `2026-dyson-christmas-test/`，正式站使用 `2026-dyson-christmas/`。上傳前請核對 `config.js` 的 Apps Script 部署網址，沿用該環境的 `/exec`。
+3. 本包以測試 v83 或正式 v84 完整包的現有素材為基礎，保留站上的圖片、音樂、影片和媒體程式。全新部署先解壓對應完整包，再覆蓋本差異包的同名路徑。
+4. 正式商品券及護照夾兌換網址沿用 Apps Script 指令碼屬性 `DYSON_COUPON_LINKS`。尚未填寫的網址會顯示準備中。測試站顯示流程與資格預覽。
 
-商品券依開放日顯示，卡片可自由製作、下載或分享。每日簽到以後端當天的台灣日期為準。測試資料與正式資料各自保存。
+## v85
+
+- 桌機首頁的護照夾簽到區移至「搖晃水晶球／dyson 氣流／調整位置」下方。手機版仍在「每日解鎖」上方。
+- 「活動與好禮」更新為新版「01 活動辦法」。優惠券區增加護照夾照片、介紹、同一份簽到進度與兌換入口。
+- 商品券依原商品開放日，並要求保存 Email 及完成卡片下載或分享其中一項。後端確認卡片紀錄後才回傳商品券網址。護照夾維持累積 5 天，至台灣時間 2026/12/31 23:59:59 開放兌換入口。每人限贈乙次依專櫃或兌換平台的核銷紀錄執行。
+
+護照夾資格依活動期間累積的 5 個不同台灣日期計算。既有簽到日期可沿用。`DYSON_COUPON_LINKS` 的護照夾設定鍵仍使用 `visits-10`，原網址可沿用。
