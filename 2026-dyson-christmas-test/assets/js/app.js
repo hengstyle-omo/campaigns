@@ -703,7 +703,7 @@ function renderCollection(){
   }
 }
 const mobileViewport=window.matchMedia('(max-width: 760px)');
-const MOBILE_COLLECTION_PAGE_SIZE=6;
+const MOBILE_COLLECTION_PAGE_SIZE=9;
 let mobileCollectionPage=0;
 let mobileCollectionKey='';
 
@@ -778,7 +778,7 @@ function moveMobileCollectionPage(offset){
 function openMobileCollection(){
   const dialog=$('mobile-collection');
   if(!mobileViewport.matches||dialog.open)return;
-  dialog.prepend($('globe-stage'));
+  dialog.querySelector('.mobile-collection-top').after($('globe-stage'));
   document.body.classList.add('mobile-collection-active');
   showDialog('mobile-collection');
   renderMobileCollection();
@@ -804,22 +804,13 @@ $('mobile-collection').addEventListener('close',restoreMobileGlobe);
 $('mobile-collection-pages').addEventListener('scroll',syncMobileCollectionPage,{passive:true});
 $('mobile-collection-prev').addEventListener('click',()=>moveMobileCollectionPage(-1));
 $('mobile-collection-next').addEventListener('click',()=>moveMobileCollectionPage(1));
-function placeActivitySections(){
-  const calendar=$('game-calendar');
-  if(mobileViewport.matches){
-    const experience=$('game-experience');
-    if(calendar.parentElement!==experience)experience.append(calendar);
-  }else if($('benefit-section').nextElementSibling!==calendar){
-    $('benefit-section').after(calendar);
-  }
+function placeHomePassport(){
   const passport=$('home-passport');
-  const anchor=mobileViewport.matches?$('mobile-calendar-toggle'):document.querySelector('#globe-section .globe-actions');
-  if(mobileViewport.matches){
-    if(anchor.previousElementSibling!==passport)anchor.before(passport);
-  }else if(anchor.nextElementSibling!==passport)anchor.after(passport);
+  const anchor=$(mobileViewport.matches?'game-experience':'benefit-section');
+  if(anchor.nextElementSibling!==passport)anchor.after(passport);
 }
 mobileViewport.addEventListener('change',event=>{
-  placeActivitySections();
+  placeHomePassport();
   if(event.matches)return;
   closeDialog('mobile-collection');
   restoreMobileGlobe();
@@ -901,17 +892,26 @@ function renderVouchers(){
 }
 function jumpActivitySection(id){
   const dialog=$('vouchers-dialog'),target=$(id);
-  const offset=id==='activity-intro'?0:dialog.scrollTop+target.getBoundingClientRect().top-
+  const offset=dialog.scrollTop+target.getBoundingClientRect().top-
     dialog.getBoundingClientRect().top-$('activity-dialog-top').offsetHeight-10;
   dialog.scrollTo({top:Math.max(0,offset),behavior:'instant'});
   target.focus({preventScroll:true});
 }
-function openActivityDialog(id='activity-intro'){
+function openActivityDialog(id){
   renderVouchers();
   showDialog('vouchers-dialog');
-  jumpActivitySection(id);
+  if(id){
+    jumpActivitySection(id);
+  }else{
+    $('vouchers-dialog').scrollTop=0;
+    $('vouchers-title').focus({preventScroll:true});
+  }
 }
 function setupActivityDialog(){
+  const missionTemplate=$('activity-missions-template');
+  for(const container of document.querySelectorAll('[data-activity-missions]')){
+    container.append(missionTemplate.content.cloneNode(true));
+  }
   const ruleCopies=[];
   for(const source of $('welcome-dialog').querySelectorAll('.welcome-rules')){
     const copy=source.cloneNode(true);
@@ -2075,7 +2075,7 @@ setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
 $('home-passport-save').addEventListener('click',openProgress);
 for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
-placeActivitySections();
+placeHomePassport();
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));

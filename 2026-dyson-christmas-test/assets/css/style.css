@@ -493,8 +493,11 @@ button,input,textarea,select{line-height:1.5}
  #welcome-skip{font-size:12px;padding:6px 8px}
  #welcome-description{margin-bottom:12px;font-size:14px}
  .welcome-content{grid-template-columns:minmax(0,1fr);gap:16px;margin:0 0 12px}
- .welcome-content .welcome-progress{grid-column:1;grid-row:1}
- .welcome-content .welcome-media{grid-column:1;grid-row:2;width:min(100%,160px)}
+ .welcome-content .welcome-media{grid-column:1;grid-row:1;width:min(100%,200px)}
+ .welcome-content .welcome-intro{grid-column:1;grid-row:2}
+ .welcome-content .welcome-progress{grid-column:1;grid-row:3}
+ .welcome-topline{position:sticky;top:0;z-index:3;justify-content:space-between;background:#101e2c}
+ .welcome-dialog.progress-only .welcome-topline{justify-content:flex-end}
  .welcome-progress h3{font-size:18px}
  .welcome-progress>p{margin-bottom:8px}
  .welcome-progress .progress-consent{font-size:13px}
@@ -664,7 +667,7 @@ button,input,textarea,select{line-height:1.5}
     min-height: 44px; padding: 7px 8px; font-size: 15px;
   }
   #mobile-collection[open] {
-    display: grid; grid-template-rows: auto auto 1fr;
+    display: grid; grid-template-rows: auto auto auto 1fr;
     width: 100%; height: 100vh; height: 100dvh; max-width: none; max-height: none;
     inset: 0; margin: 0; padding: 0; border: 0; border-radius: 0;
     background: #101e2c; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
@@ -673,10 +676,15 @@ button,input,textarea,select{line-height:1.5}
     display: grid; place-items: center; padding: 4px;
   }
   .mobile-collection #globe-wrapper {
-    width: min(100%, clamp(180px, calc(100vw - 92px), 310px));
+    width: min(100%, clamp(150px, calc(100vw - 92px), 310px), clamp(150px, calc((100dvh - 380px) * .867), 310px));
     margin: 0; box-shadow: none;
   }
-  .mobile-collection-actions { align-self: end; }
+  .mobile-collection-top {
+    position: sticky; top: 0; z-index: 3; display: flex; justify-content: flex-end;
+    padding: env(safe-area-inset-top, 0px) 12px 0; background: #101e2c;
+  }
+  .mobile-collection-top .dialog-close { position: static; }
+  .mobile-collection-actions { align-self: end; grid-template-columns: 1fr; }
   .mobile-collection #snow-canvas { pointer-events: none; }
   .mobile-collection-tray {
     width: min(100%, 510px); justify-self: center; min-width: 0; padding: 4px 12px 0;
@@ -691,7 +699,7 @@ button,input,textarea,select{line-height:1.5}
   .mobile-collection-pages::-webkit-scrollbar { display: none; }
   .mobile-collection-page {
     display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
-    grid-template-rows: repeat(2, minmax(0,1fr)); gap: 5px;
+    grid-template-rows: repeat(3, minmax(0,1fr)); gap: 5px;
     flex: 0 0 100%; min-width: 0; scroll-snap-align: start;
   }
   .mobile-collection-tile {
@@ -721,7 +729,10 @@ button,input,textarea,select{line-height:1.5}
     padding: 18px 14px calc(22px + env(safe-area-inset-bottom, 0px));
     overscroll-behavior: contain;
   }
-  #card-dialog .dialog-close { position: sticky; top: 0; float: right; z-index: 3; background: #101e2c; }
+  :is(#card-dialog,#item-dialog,#music-credits-dialog,#studio-dialog,#admin-auth-dialog) > .dialog-close {
+    position: sticky; top: 0; float: right; z-index: 3; background: #101e2c;
+  }
+  dialog .dialog-close, #welcome-skip, #audio-close { min-width: 44px; min-height: 44px; }
   #card-dialog h2 { margin-right: 44px; }
   #card-dialog .card-workspace { gap: 12px; margin-top: 12px; }
   #card-dialog .card-preview-area { grid-row: 1; max-width: min(300px, 100%); }
@@ -772,41 +783,30 @@ button,input,textarea,select{line-height:1.5}
 }
 .activity-jumps .mission-primary span { color: inherit; }
 .welcome-dialog .activity-jumps { margin-bottom: 16px; }
-.welcome-dialog.progress-only .activity-jumps { display: none; }
+.welcome-dialog.progress-only [data-activity-missions] { display: none; }
 .ticket-icon { margin-inline-end: 6px; vertical-align: -2px; }
 .activity-attendance { margin-top: 20px; }
 #voucher-passport-days { margin: 12px 0 0; }
 .game-area-title { margin: 0 0 10px; color: var(--gold); font-size: clamp(18px, 3vw, 23px); text-align: center; }
 @media (min-width: 761px) {
-  #game-experience { display: block; }
-  #game-experience .globe-section { max-width: 680px; margin-inline: auto; }
-  #game-calendar { position: static; margin-top: 24px; scroll-margin-top: 88px; }
+  #game-calendar { scroll-margin-top: 88px; }
+  #benefit-section + .home-passport { margin-top: 24px; }
+  .welcome-content .welcome-intro { grid-column: 1 / -1; grid-row: 1; }
+  .welcome-content .welcome-media, .welcome-content .welcome-progress { grid-row: 2; }
 }
 @media (max-width: 760px) {
   .activity-jumps { grid-template-columns: minmax(0, 1fr); gap: 6px; }
 }
 .activity-dialog-body { padding: 18px 20px 22px; }
 .activity-section-title { margin: 0 0 12px; color: var(--gold); font-size: 20px; }
-.activity-steps { display: grid; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; counter-reset: activity-step; }
-.activity-steps li {
-  display: grid; grid-template-columns: 26px 1fr; column-gap: 8px; align-items: center;
-  padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; background: #142232;
-  counter-increment: activity-step;
-}
-.activity-steps li::before {
-  grid-row: 1 / span 2; display: grid; place-items: center; width: 24px; height: 24px;
-  border: 1px solid var(--line); border-radius: 50%; color: var(--gold);
-  content: counter(activity-step); font-size: 12px;
-}
-.activity-steps strong { font-size: 15px; }
-.activity-steps span, .activity-dialog-body > section > .voucher-instructions { font-size: 13px; color: #b9c2cf; }
+.activity-dialog-body > section > .voucher-instructions { font-size: 13px; color: #b9c2cf; }
 #activity-details { border-bottom: 1px solid var(--line); }
 .activity-rewards { margin-top: 12px; }
 .reward-open-date { flex-basis: 100%; margin: 0; font-size: 13px; color: #b9c2cf; }
 .activity-section-title:focus { outline: none; }
 
 @media (max-width: 760px) {
-  .home-passport { margin: 10px 10px 0; }
+  .home-passport { margin: 16px 0 0; }
   .site-header nav > :is(#progress-open,#vouchers-open), .site-header nav #audio-open { padding-inline: 7px; font-size: 12px; }
   .mobile-collection-heading > span { text-align: right; font-size: 11px; }
   .activity-dialog-top { padding-inline: 13px; }
@@ -856,10 +856,6 @@ button,input,textarea,select{line-height:1.5}
 .home-passport-redemption .passport-coupon-actions { margin: 0; padding-top: 8px; }
 
 
-/* v85: place the single attendance panel below the globe controls on desktop. */
-@media(min-width:761px){
- #globe-section > .home-passport { margin: 12px 0 0; }
-}
 #vouchers-dialog .voucher-passport {
  margin: 16px 0 0; padding: 22px; background: #0e1825;
  border: 1px solid var(--line); border-radius: 6px;
@@ -877,3 +873,5 @@ button,input,textarea,select{line-height:1.5}
 /* Keep the welcome disclosures and their following content close together. */
 .welcome-rules + .welcome-footer { margin-top: 0; }
 .welcome-rules + .november-test-notice { margin-top: 8px; }
+
+@media (min-width: 761px) { .mobile-admin-close { display: none; } }

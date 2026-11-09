@@ -1,11 +1,8 @@
 <!doctype html>
 <html lang="zh-Hant" data-activity-environment="test">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261109-v85-missions"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261109-v85-shared-activity"></head>
 <body>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v85</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
-<dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
- <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
- <h2 id="welcome-title">活動介紹</h2><p id="welcome-description">布置屬於你的聖誕雪境、收藏驚喜、傳送祝福，解鎖<strong>限量優惠券</strong>。</p>
+<template id="activity-missions-template">
  <nav class="activity-jumps" aria-label="聖誕闖關任務">
    <p class="mission-title">聖誕闖關任務</p>
    <p class="mission-intro">解鎖每日驚喜、製作聖誕卡片、累積打卡領好禮</p>
@@ -13,7 +10,18 @@
    <a href="#activity-coupons"><strong>02｜優惠券</strong><span>製作聖誕卡片，解鎖 Dyson $1,000 優惠券</span></a>
    <a href="#activity-attendance"><strong>03｜每日打卡</strong><span>累積登入 5 天，解鎖 Dyson 護照夾</span></a>
   </nav>
- <div class="welcome-content"><section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">保存紀錄</h3><p>免填 Email 即可體驗。留下 Email 可記錄參與日期，累積登入 5 天後，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><div class="progress-consent-row"><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>接收 Dyson 優惠與新品（選填）</span></label><a href="https://docs.google.com/document/d/1t16XzusKmtd05-ndbZZWI5BFOdslWheB/edit" target="_blank" rel="noopener noreferrer" aria-label="個人資料告知暨同意書">個資告知</a></div><button id="progress-submit" hidden class="gold-button" type="submit">保存紀錄</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section><div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div></div>
+</template>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v85</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+ <div class="welcome-topline"><span class="welcome-label">玩法與雪境靈感</span><button id="welcome-skip" type="button" aria-label="關閉活動介紹">關閉 ×</button></div>
+ <div class="welcome-content">
+  <div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div>
+  <div class="welcome-intro">
+ <h2 id="welcome-title">活動介紹</h2><p id="welcome-description">布置屬於你的聖誕雪境、收藏驚喜、傳送祝福，解鎖<strong>限量優惠券</strong>。</p>
+ <div data-activity-missions></div>
+  </div>
+  <section id="welcome-progress" class="welcome-progress"><h3 id="welcome-progress-title">保存紀錄</h3><p>免填 Email 即可體驗。留下 Email 可記錄參與日期，累積登入 5 天後，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。</p><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label for="progress-email">你的 Email<input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><div class="progress-consent-row"><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>接收 Dyson 優惠與新品（選填）</span></label><a href="https://docs.google.com/document/d/1t16XzusKmtd05-ndbZZWI5BFOdslWheB/edit" target="_blank" rel="noopener noreferrer" aria-label="個人資料告知暨同意書">個資告知</a></div><button id="progress-submit" hidden class="gold-button" type="submit">保存紀錄</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></section>
+ </div>
  <details class="welcome-rules"><summary id="welcome-rules-title">活動辦法</summary><div class="welcome-rules-content">
   <section class="activity-rules-section" aria-labelledby="rules-period">
    <h3 id="rules-period">活動時間｜2026.12.01－12.25</h3>
@@ -44,6 +52,7 @@
  <p class="november-test-notice">測試版提醒：本頁以 11/01–11/25 模擬 12/01–12/25，進度僅供測試，優惠券及護照夾資格不可兌換。</p><div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始收藏</button></div>
 </dialog>
 <dialog id="admin-auth-dialog" class="admin-auth-dialog" aria-labelledby="admin-auth-title" aria-describedby="admin-auth-description">
+ <button class="dialog-close mobile-admin-close" data-close="admin-auth-dialog" type="button" aria-label="關閉管理員驗證">×</button>
  <p class="eyebrow">ADMIN ACCESS</p><h2 id="admin-auth-title">管理員驗證</h2>
  <p id="admin-auth-description">此帳號需要驗證碼，才能載入進度與日期模擬。</p><p id="admin-auth-email" class="admin-auth-email"></p>
  <form id="admin-auth-form"><label for="admin-auth-code">管理員驗證碼<input id="admin-auth-code" type="password" minlength="16" maxlength="128" autocomplete="current-password" required></label><p id="admin-auth-message" role="status" aria-live="polite"></p><div class="admin-auth-actions"><button id="admin-auth-cancel" type="button">切換 Email</button><button id="admin-auth-submit" class="gold-button" type="submit">驗證並繼續</button></div></form>
@@ -72,26 +81,6 @@
    <p id="status" class="status" role="status" aria-live="polite"></p>
   </section>
   <section id="game-calendar" class="calendar-panel" aria-labelledby="game-calendar-title">
-   <section id="home-passport" class="home-passport" aria-labelledby="home-passport-title">
-    <div class="home-passport-copy">
-     <h3 id="home-passport-title">每日打卡｜護照夾好禮</h3>
-     <p id="home-passport-status" aria-live="polite">已打卡 0／5 天</p>
-    </div>
-    <button id="home-passport-save" type="button">輸入 Email 保存紀錄</button>
-    <ol id="home-passport-days" class="participation-grid" aria-label="前 5 次登入日期"></ol>
-    <details class="home-passport-redemption">
-     <summary>查看兌換方式</summary>
-     <div class="home-passport-redemption-body">
-      <div class="home-passport-gift">
-       <img id="home-passport-image" alt="Dyson 護照夾" width="1080" height="1080" loading="lazy">
-       <p>填寫 Email 保存紀錄，活動期間累積登入滿 5 天後，至 Dyson 專櫃<strong>不限金額消費，即加贈 Dyson 護照夾。</strong></p>
-      </div>
-      <p>無須連續登入。每個台灣日期最多累積 1 天，同日補領多份禮物也只計算 1 天。</p>
-      <p id="home-passport-note" hidden></p>
-      <div id="home-passport-actions" class="passport-coupon-actions"></div>
-     </div>
-    </details>
-   </section>
    <button id="mobile-calendar-toggle" class="mobile-calendar-toggle" type="button" aria-expanded="false" aria-controls="calendar-body">
     <strong>每日解鎖</strong><span id="mobile-calendar-count">已開放 0／25</span><span class="mobile-calendar-arrow" aria-hidden="true">⌄</span>
    </button>
@@ -115,6 +104,26 @@
  <section id="collection-section" class="collection-section"><div class="section-heading"><div><p class="eyebrow">YOUR LITTLE WORLD</p><h2>我的聖誕收藏</h2></div><span>點選回看，或切換球內展示</span></div><div id="collection-grid" class="collection-grid"></div><div id="collection-empty" class="empty-state">第一份驚喜，從 12 月 1 日開始。<br>每一次開啟，都為雪境留下一點新的光。</div></section>
  <section id="bonus-section" class="collection-section" hidden><div class="section-heading"><div><p class="eyebrow">A LITTLE SECRET FOR YOU</p><h2>你的限定收藏</h2></div><span>送給你的小驚喜，自行放入水晶球</span></div><div id="bonus-grid" class="collection-grid"></div></section>
  <section id="benefit-section" class="benefit-section"><div class="section-heading"><div><p class="eyebrow"><svg class="ticket-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v2m0 2v2m0 2v2"/></svg>優惠券</p><h2>聖誕優惠券</h2></div></div><div id="benefit-grid" class="benefit-grid"></div></section>
+   <section id="home-passport" class="home-passport" aria-labelledby="home-passport-title">
+    <div class="home-passport-copy">
+     <h3 id="home-passport-title">每日打卡｜護照夾好禮</h3>
+     <p id="home-passport-status" aria-live="polite">已打卡 0／5 天</p>
+    </div>
+    <button id="home-passport-save" type="button">輸入 Email 保存紀錄</button>
+    <ol id="home-passport-days" class="participation-grid" aria-label="前 5 次登入日期"></ol>
+    <details class="home-passport-redemption">
+     <summary>查看兌換方式</summary>
+     <div class="home-passport-redemption-body">
+      <div class="home-passport-gift">
+       <img id="home-passport-image" alt="Dyson 護照夾" width="1080" height="1080" loading="lazy">
+       <p>填寫 Email 保存紀錄，活動期間累積登入滿 5 天後，至 Dyson 專櫃<strong>不限金額消費，即加贈 Dyson 護照夾。</strong></p>
+      </div>
+      <p>無須連續登入。每個台灣日期最多累積 1 天，同日補領多份禮物也只計算 1 天。</p>
+      <p id="home-passport-note" hidden></p>
+      <div id="home-passport-actions" class="passport-coupon-actions"></div>
+     </div>
+    </details>
+   </section>
  <footer><span>dyson · 2026 聖誕收藏</span><button id="studio-open">企劃預覽與 25 天內容管理</button></footer>
 </main>
 <nav class="mobile-workspace-actions" aria-label="雪境快捷操作">
@@ -122,6 +131,9 @@
  <button id="mobile-card-open" class="gold-button" type="button" aria-haspopup="dialog" disabled>製作卡片</button>
 </nav>
 <dialog id="mobile-collection" class="mobile-collection" aria-labelledby="mobile-collection-title">
+ <div class="mobile-collection-top">
+  <button id="mobile-collection-close" class="dialog-close" type="button" data-close="mobile-collection" aria-label="關閉布置，返回雪境" autofocus>×</button>
+ </div>
  <section class="mobile-collection-tray">
   <div class="mobile-collection-heading"><h2 id="mobile-collection-title">選擇布置物件</h2><span>點一下放入，再點一下移出</span></div>
   <div id="mobile-collection-pages" class="mobile-collection-pages" aria-label="收藏分頁"></div>
@@ -132,7 +144,6 @@
   </div>
  </section>
  <div class="mobile-collection-actions">
-  <button id="mobile-collection-close" type="button" data-close="mobile-collection" autofocus>返回雪境</button>
   <button id="mobile-collection-card" class="gold-button" type="button" aria-haspopup="dialog" disabled>製作卡片</button>
  </div>
 </dialog>
@@ -143,27 +154,13 @@
 <dialog id="vouchers-dialog" class="activity-dialog" aria-labelledby="vouchers-title">
  <header id="activity-dialog-top" class="activity-dialog-top">
   <div class="activity-dialog-heading">
-   <h2 id="vouchers-title">活動與好禮</h2>
+   <h2 id="vouchers-title" tabindex="-1">活動與好禮</h2>
    <button class="dialog-close" data-close="vouchers-dialog" type="button" aria-label="關閉">×</button>
   </div>
-  <nav class="activity-jumps" aria-label="聖誕闖關任務">
-   <p class="mission-title">聖誕闖關任務</p>
-   <p class="mission-intro">解鎖每日驚喜、製作聖誕卡片、累積打卡領好禮</p>
-   <a class="mission-primary" href="#game-calendar"><strong>01｜遊戲區</strong><span>每日解鎖，打造專屬聖誕水晶球</span></a>
-   <a href="#activity-coupons"><strong>02｜優惠券</strong><span>製作聖誕卡片，解鎖 Dyson $1,000 優惠券</span></a>
-   <a href="#activity-attendance"><strong>03｜每日打卡</strong><span>累積登入 5 天，解鎖 Dyson 護照夾</span></a>
-  </nav>
+  <div data-activity-missions></div>
  </header>
  <div class="activity-dialog-body">
-  <section aria-labelledby="activity-intro">
-   <h3 id="activity-intro" class="activity-section-title" tabindex="-1">遊戲區｜活動介紹</h3>
-   <ol class="activity-steps">
-    <li><strong>每日解鎖</strong><span>查看今天與之前開放的聖誕物件。</span></li>
-    <li><strong>布置水晶球</strong><span>挑選喜歡的物件，即時放入你的雪境。</span></li>
-    <li><strong>製作卡片</strong><span>將布置好的雪境做成卡片，下載或分享。</span></li>
-   </ol>
-   <div id="activity-details"></div>
-  </section>
+  <div id="activity-details"></div>
   <section class="activity-rewards" aria-labelledby="activity-coupons">
    <h3 id="activity-coupons" class="activity-section-title" tabindex="-1"><svg class="ticket-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v2m0 2v2m0 2v2"/></svg>優惠券</h3>
    <p class="voucher-instructions">Dyson $1,000 優惠券依指定日期開放。符合開放條件後，下載或分享你製作的聖誕卡片，即可領取對應優惠券。</p>
@@ -207,5 +204,5 @@
 <script src="./assets/js/analytics.js?v=20261106-v78-coupon-links"></script>
 <script src="./assets/js/media-codecs.js"></script>
 <script src="./assets/js/media-mp4.js?v=20261028-white-blue-gold"></script>
-<script src="./assets/js/app.js?v=20261109-v85-missions"></script>
+<script src="./assets/js/app.js?v=20261109-v85-shared-activity"></script>
 </body></html>
