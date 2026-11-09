@@ -61,6 +61,7 @@ const Core = {
 const $=id=>document.getElementById(id);
 const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 const BASE_CONFIG=window.DYSON_GAME_CONFIG;
+const PASSPORT_DAYS=BASE_CONFIG.participationDaysRequired;
 const ASSETS=window.DYSON_ASSETS;
 const FINAL_ARTWORK_DAYS=BASE_CONFIG.finalArtworkDays||[];
 const brandLogo=$('brand-logo'),logoVariant=BASE_CONFIG.logoVariant==='black'?'black':'white';
@@ -133,9 +134,9 @@ function cloudTransport(payload){
 window.addEventListener('message',event=>{let origin;try{origin=new URL(event.origin);}catch{return;}if(origin.protocol!=='https:'||!(origin.hostname==='script.google.com'||origin.hostname==='script.googleusercontent.com'||origin.hostname.endsWith('.googleusercontent.com')))return;const m=event.data;if(m?.channel==='dyson-progress-v1'&&typeof m.requestId==='string')cloud.requests.get(m.requestId)?.(m.result);});
 const ENVIRONMENT=IS_TEST?'november-test-2026':'production';
 function assertCampaignEnvironment(result){
- if(result.environment!==ENVIRONMENT||result.environmentVersion!==1||result.campaignUpdateVersion!==84||result.year!==YEAR||
+ if(result.environment!==ENVIRONMENT||result.environmentVersion!==1||result.campaignUpdateVersion!==85||result.passportDaysRequired!==PASSPORT_DAYS||result.year!==YEAR||
     result.clockMode!==(IS_TEST?'november-to-december':'real')||result.date!==(IS_TEST?Core.novemberActivityDate(result.realDate):result.realDate)){
-   throw new Error('活動與進度服務版本不一致，請更新 v84 Apps Script 部署。');
+   throw new Error('活動與進度服務版本不一致，請更新 v85（簽到 5 天）Apps Script 部署。');
  }
  if(IS_TEST&&result.calendarReady!==true)throw new Error('請先初始化 11 月測試表。');
 }
@@ -526,7 +527,9 @@ function item(d){
 const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required,redemption:b.redemption,...(b.redemption==='counter'?{code:'',approved:true}:{} )}));
 const rewards=()=>configuredRewards();
 const rewardQualified=(b,p)=>b.unlock==='product'?availableDays().includes(b.productDay):p.visits>=b.required;
-const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&(!!previewDate||(cloud.ready&&(b.redemption==='counter'?cloud.attendance?.eligible===true:cloud.unlockedRewards.includes(b.id))));
+const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&(previewDate
+  ?(b.redemption==='counter'||!!previewCardTask)
+  :(cloud.ready&&(b.redemption==='counter'?cloud.attendance?.eligible===true:cloud.unlockedRewards.includes(b.id))));
 function rewardProgress(){
   const t=today(),claimedDays=Object.keys(state().claimed).map(Number).filter(d=>d<=t),count=claimedDays.length,visits=participationDates().length;
   const list=rewards(),progress={count,claimedDays,visits},unlockedCount=list.filter(b=>rewardUnlocked(b,progress)).length,next=list.find(b=>!rewardUnlocked(b,progress))||null;
@@ -542,7 +545,7 @@ const participationDates=()=>{
 };
 const participationDisplayDates=()=>previewDate||!IS_TEST?participationDates():participationDates().map(d=>d.replace('2026-12-','2026-11-'));
 const attendanceReady=()=>!!previewDate||(cloud.ready&&!!cloud.attendance);
-function attendanceStatusText(count=participationDates().length){return previewDate?`模擬參與 ${count}／10 天`:attendanceReady()?`已記錄 ${count}／10 天`:cloud.loading?'參與紀錄同步中…':'參與紀錄尚未同步';}
+function attendanceStatusText(count=participationDates().length){return previewDate?`模擬參與 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`:attendanceReady()?`已記錄 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`:cloud.loading?'參與紀錄同步中…':'參與紀錄尚未同步';}
 // Only admin preview can test all remaining gifts after the campaign closes.
 const claimableToday=()=>previewDate?Math.min(25,today()):today();
 const availableDays=()=>Array.from({length:Math.max(0,Math.min(25,claimableToday()))},(_,i)=>i+1);
@@ -801,7 +804,15 @@ $('mobile-collection').addEventListener('close',restoreMobileGlobe);
 $('mobile-collection-pages').addEventListener('scroll',syncMobileCollectionPage,{passive:true});
 $('mobile-collection-prev').addEventListener('click',()=>moveMobileCollectionPage(-1));
 $('mobile-collection-next').addEventListener('click',()=>moveMobileCollectionPage(1));
+function placeHomePassport(){
+  const passport=$('home-passport');
+  const anchor=mobileViewport.matches?$('mobile-calendar-toggle'):document.querySelector('#globe-section .globe-actions');
+  if(mobileViewport.matches){
+    if(anchor.previousElementSibling!==passport)anchor.before(passport);
+  }else if(anchor.nextElementSibling!==passport)anchor.after(passport);
+}
 mobileViewport.addEventListener('change',event=>{
+  placeHomePassport();
   if(event.matches)return;
   closeDialog('mobile-collection');
   restoreMobileGlobe();
@@ -858,21 +869,23 @@ function renderProduct(i){
 function passportProgressText(count){
   if(!attendanceReady()){
     if(cloud.loading)return '保存紀錄 · 同步中…';
-    return cloud.email?'保存紀錄 · 尚未同步':'保存紀錄 · 累積登入 10 天';
+    return cloud.email?'保存紀錄 · 尚未同步':`保存紀錄 · 累積登入 ${PASSPORT_DAYS} 天`;
   }
-  if(previewDate)return `模擬累積 ${Math.min(10,count)}／10 天`;
-  return count>=10?'保存紀錄 · 已達成 10 天':`保存紀錄 · 已累積 ${count}／10 天`;
+  if(previewDate)return `模擬累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
+  return count>=PASSPORT_DAYS?`保存紀錄 · 已達成 ${PASSPORT_DAYS} 天`:`保存紀錄 · 已累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
 }
 function renderHomePassport(){
   const ready=attendanceReady(),dates=participationDisplayDates();
-  $('home-passport-status').textContent=passportProgressText(dates.length);
+  const progressText=passportProgressText(dates.length);
+  $('home-passport-status').textContent=progressText;
+  $('voucher-passport-status').textContent=progressText;
   renderAttendanceGrid($('home-passport-days'),dates);
   $('home-passport-save').hidden=ready;
   $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
   const note=$('home-passport-note');
   note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。';
   note.hidden=!note.textContent;
-  renderPassportCouponAction(ready,dates.length);
+  for(const id of ['home-passport-actions','voucher-passport-actions'])renderPassportCouponAction($(id),ready,dates.length);
 }
 function renderVouchers(){
   const root=$('vouchers-list'),progress=rewardProgress();
@@ -910,10 +923,10 @@ function setupActivityDialog(){
   }
 }
 function renderAttendanceGrid(grid,dates){
-  const earned=dates.slice(0,10),key=earned.join(',');
+  const earned=dates.slice(0,PASSPORT_DAYS),key=earned.join(',');
   if(grid.dataset.dates===key)return;
   const cells=[];
-  for(let index=0;index<10;index++){
+  for(let index=0;index<PASSPORT_DAYS;index++){
     const date=earned[index],cell=el('li',`participation-cell${date?' signed':''}`);
     if(date)cell.append(el('span','participation-check','✓'),el('span','participation-date',date.slice(5).replace('-','/')));
     cell.setAttribute('aria-label',date?`第 ${index+1} 次，${date} 已簽到`:`第 ${index+1} 次，尚未簽到`);
@@ -931,19 +944,20 @@ function appendClaimLink(container,id,label){
  const url=couponClaimURL(id);if(!url){const button=el('button','',id==='visits-10'?'兌換券準備中':'優惠券準備中');button.type='button';button.disabled=true;container.append(button);return;}
  const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);link.addEventListener('click',()=>trackActivity('coupon_click',{coupon_id:id}));container.append(link);
 }
-function renderPassportCouponAction(ready,count){
- const actions=$('home-passport-actions');
- const complete=ready&&count>=10;
- const key=JSON.stringify([ready,Math.min(count,10),!!previewDate,!!cloud.email,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
+function renderPassportCouponAction(actions,ready,count){
+ const complete=ready&&count>=PASSPORT_DAYS;
+ const expired=!IS_TEST&&!previewDate&&dateISO()>`${YEAR}-12-31`;
+ const key=JSON.stringify([ready,Math.min(count,PASSPORT_DAYS),!!previewDate,!!cloud.email,expired,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
  if(actions.dataset.state===key)return;
  actions.dataset.state=key;
  actions.replaceChildren();
- if(!ready){
+ if(expired){const button=el('button','','已逾兌換期限');button.type='button';button.disabled=true;actions.append(button);}
+ else if(!ready){
    const button=el('button','',cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄');
    button.type='button';button.addEventListener('click',openProgress);actions.append(button);
  }
- else if(!complete){const button=el('button','',`再累積 ${Math.max(0,10-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
- else if(previewDate||IS_TEST){const button=el('button','',previewDate?'模擬預覽 · 已達成 10 天':'測試版 · 已達成 10 天');button.type='button';button.disabled=true;actions.append(button);}
+ else if(!complete){const button=el('button','',`再累積 ${Math.max(0,PASSPORT_DAYS-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
+ else if(previewDate||IS_TEST){const button=el('button','',`${previewDate?'模擬預覽':'測試版'} · 已達成 ${PASSPORT_DAYS} 天`);button.type='button';button.disabled=true;actions.append(button);}
  else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券');
  else {
    const button=el('button','','兌換資格確認中');
@@ -955,9 +969,13 @@ function appendCouponAction(card,b,progress,full){
  if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-coupons'));card.append(button);return;}
  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
  if(!unlocked){
-   const button=el('button','gold-button',cloud.ready?'尚未開放':'保存紀錄');
-   button.type='button';button.disabled=cloud.ready;
-   if(!cloud.ready)button.addEventListener('click',openProgress);
+   const waitingForEmail=!previewDate&&!cloud.ready;
+   const waitingForCardSync=!previewDate&&!!cloud.pendingCardTask;
+   const button=el('button','gold-button',waitingForEmail?'保存紀錄':waitingForCardSync?'同步卡片紀錄':'製作卡片');
+   button.type='button';
+   if(waitingForEmail)button.addEventListener('click',openProgress);
+   else if(waitingForCardSync)button.addEventListener('click',()=>cloudFlush());
+   else button.addEventListener('click',()=>{closeDialog('vouchers-dialog');openChristmasCard();});
    card.append(button);return;
  }
  if(previewDate||IS_TEST){const button=el('button','',previewDate?'模擬預覽 · 已符合領券條件':'測試版 · 已開放，僅供預覽');button.type='button';button.disabled=true;card.append(button);return;}
@@ -1443,7 +1461,7 @@ function applyConfig(value,rewardValue=configuredRewards()){
   const nextReward={},rewardIDs=new Set();
   for(const b of rewardValue){
     const base=BASE_CONFIG.rewards.find(v=>v.id===b?.id);
-    if(!base||rewardIDs.has(b.id)||b.required!==base.required||b.productDay!==base.productDay||b.unlock!==base.unlock)throw new Error('請保留四款產品與累積參與 10 天的禮遇識別及解鎖條件。');
+    if(!base||rewardIDs.has(b.id)||b.required!==base.required||b.productDay!==base.productDay||b.unlock!==base.unlock)throw new Error(`請保留四款產品與累積參與 ${PASSPORT_DAYS} 天的禮遇識別及解鎖條件。`);
     rewardIDs.add(b.id);
     if(typeof b.title!=='string'||!b.title.trim()||typeof b.preview!=='string'||!b.preview.trim()||typeof b.conditions!=='string')throw new Error('請填入優惠券標題、未解鎖預告與使用條件。');
     if(b.validUntil&&(!/^\d{4}-\d{2}-\d{2}$/.test(b.validUntil)||!Number.isFinite(Date.parse(b.validUntil+'T00:00:00Z'))||new Date(b.validUntil+'T00:00:00Z').toISOString().slice(0,10)!==b.validUntil))throw new Error('使用期限須為有效的 YYYY-MM-DD 日期。');
@@ -2032,7 +2050,8 @@ $('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
 $('home-passport-save').addEventListener('click',openProgress);
-$('home-passport-image').src=ASSETS.rewardImages.passport;
+for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
+placeHomePassport();
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));

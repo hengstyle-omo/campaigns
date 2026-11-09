@@ -844,3 +844,6 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:540px){
  #vouchers-dialog .voucher-passport { padding: 18px; }
 }
+
+.welcome-progress .progress-privacy-notice { margin-top: 0; }
+.progress-privacy-notice a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }

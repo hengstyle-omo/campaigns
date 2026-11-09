@@ -9,7 +9,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 84,
+  "version": 85,
   "benefitLayoutRevision": "20261106-aligned-benefits-v76",
   "activityRulesRevision": "20261106-v76-rules",
   "testEnvironment": "november-test-2026",
@@ -511,10 +511,10 @@ window.DYSON_GAME_CONFIG = {
     {
       "id": "visits-10",
       "unlock": "visits",
-      "required": 10,
+      "required": 5,
       "title": "Dyson 護照夾",
       "preview": "Dyson 護照夾",
-      "conditions": "【測試，不可兌換】活動期間累積登入滿 10 天，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。無須連續登入，每日最多累積 1 天。",
+      "conditions": "【測試，不可兌換】活動期間累積登入滿 5 天，至 Dyson 專櫃不限金額消費，即加贈 Dyson 護照夾。無須連續登入，每日最多累積 1 天。",
       "code": "",
       "approved": true,
       "validUntil": "",
@@ -526,7 +526,7 @@ window.DYSON_GAME_CONFIG = {
   "rulesVersion": 2,
   "claimPolicy": "through-today",
   "bp10RevealDate": "2026-12-16",
-  "participationDaysRequired": 10,
+  "participationDaysRequired": 5,
   "bonusItems": [
     {
       "day": 101,
