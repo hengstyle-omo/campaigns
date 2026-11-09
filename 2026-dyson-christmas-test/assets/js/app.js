@@ -575,7 +575,7 @@ async function playWelcome(){
   catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
 }
 function openWelcome({progressOnly=false}={}){
-  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'保存紀錄':'活動介紹';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
+  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
   video.poster='./assets/video/welcome-poster.webp?rev=20261027-5';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
@@ -907,7 +907,9 @@ function openActivityDialog(id){
 function setupActivityDialog(){
   const missionTemplate=$('activity-missions-template');
   for(const container of document.querySelectorAll('[data-activity-missions]')){
-    container.append(missionTemplate.content.cloneNode(true));
+    const copy=missionTemplate.content.cloneNode(true);
+    copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
+    container.append(copy);
   }
   const ruleCopies=[];
   for(const source of $('welcome-dialog').querySelectorAll('.welcome-rules')){
