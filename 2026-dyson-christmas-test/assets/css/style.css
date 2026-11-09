@@ -755,11 +755,36 @@ button,input,textarea,select{line-height:1.5}
 .activity-dialog-heading h2 { margin: 0; font-size: clamp(19px, 4.8vw, 26px); }
 .activity-dialog-heading .dialog-close { position: static; flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; }
 .activity-jumps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.activity-jumps > p, .activity-jumps .mission-primary { grid-column: 1 / -1; }
+.activity-jumps > p { margin: 0; }
+.activity-jumps .mission-title { color: var(--gold); font-weight: 700; }
+.activity-jumps .mission-intro { color: #b9c2cf; font-size: 13px; }
 .activity-jumps a {
-  display: grid; place-items: center; min-height: 44px; padding: 6px; border: 1px solid var(--line);
-  border-radius: 6px; background: #101d2c; color: var(--gold); font-size: 14px; text-decoration: none;
+  display: grid; align-content: center; min-height: 52px; padding: 7px 11px;
+  border: 1px solid var(--line); border-radius: 6px; background: #101d2c;
+  color: var(--gold); font-size: 13px; line-height: 1.4; text-decoration: none;
 }
+.activity-jumps a span { color: var(--text); }
 .activity-jumps a:hover { border-color: var(--gold); }
+.activity-jumps .mission-primary {
+  min-height: 63px; background: #e6c38b; color: #172332;
+  font-size: 15px; font-weight: 700;
+}
+.activity-jumps .mission-primary span { color: inherit; }
+.welcome-dialog .activity-jumps { margin-bottom: 16px; }
+.welcome-dialog.progress-only .activity-jumps { display: none; }
+.ticket-icon { margin-inline-end: 6px; vertical-align: -2px; }
+.activity-attendance { margin-top: 20px; }
+#voucher-passport-days { margin: 12px 0 0; }
+.game-area-title { margin: 0 0 10px; color: var(--gold); font-size: clamp(18px, 3vw, 23px); text-align: center; }
+@media (min-width: 761px) {
+  #game-experience { display: block; }
+  #game-experience .globe-section { max-width: 680px; margin-inline: auto; }
+  #game-calendar { position: static; margin-top: 24px; scroll-margin-top: 88px; }
+}
+@media (max-width: 760px) {
+  .activity-jumps { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
 .activity-dialog-body { padding: 18px 20px 22px; }
 .activity-section-title { margin: 0 0 12px; color: var(--gold); font-size: 20px; }
 .activity-steps { display: grid; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; counter-reset: activity-step; }
@@ -846,8 +871,8 @@ button,input,textarea,select{line-height:1.5}
  #vouchers-dialog .voucher-passport { padding: 18px; }
 }
 
-.welcome-progress .progress-privacy-notice { margin-top: 0; }
-.progress-privacy-notice a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }
+.progress-consent-row { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+.progress-consent-row a { color: var(--gold); font-size: 12px; text-decoration: underline; text-underline-offset: 2px; }
 
 /* Keep the welcome disclosures and their following content close together. */
 .welcome-rules + .welcome-footer { margin-top: 0; }

@@ -804,7 +804,14 @@ $('mobile-collection').addEventListener('close',restoreMobileGlobe);
 $('mobile-collection-pages').addEventListener('scroll',syncMobileCollectionPage,{passive:true});
 $('mobile-collection-prev').addEventListener('click',()=>moveMobileCollectionPage(-1));
 $('mobile-collection-next').addEventListener('click',()=>moveMobileCollectionPage(1));
-function placeHomePassport(){
+function placeActivitySections(){
+  const calendar=$('game-calendar');
+  if(mobileViewport.matches){
+    const experience=$('game-experience');
+    if(calendar.parentElement!==experience)experience.append(calendar);
+  }else if($('benefit-section').nextElementSibling!==calendar){
+    $('benefit-section').after(calendar);
+  }
   const passport=$('home-passport');
   const anchor=mobileViewport.matches?$('mobile-calendar-toggle'):document.querySelector('#globe-section .globe-actions');
   if(mobileViewport.matches){
@@ -812,7 +819,7 @@ function placeHomePassport(){
   }else if(anchor.nextElementSibling!==passport)anchor.after(passport);
 }
 mobileViewport.addEventListener('change',event=>{
-  placeHomePassport();
+  placeActivitySections();
   if(event.matches)return;
   closeDialog('mobile-collection');
   restoreMobileGlobe();
@@ -869,10 +876,10 @@ function renderProduct(i){
 function passportProgressText(count){
   if(!attendanceReady()){
     if(cloud.loading)return '保存紀錄 · 同步中…';
-    return cloud.email?'保存紀錄 · 尚未同步':`保存紀錄 · 累積登入 ${PASSPORT_DAYS} 天`;
+    return cloud.email?'保存紀錄 · 尚未同步':`已打卡 0／${PASSPORT_DAYS} 天`;
   }
   if(previewDate)return `模擬累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
-  return count>=PASSPORT_DAYS?`保存紀錄 · 已達成 ${PASSPORT_DAYS} 天`:`保存紀錄 · 已累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
+  return `已打卡 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
 }
 function renderHomePassport(){
   const ready=attendanceReady(),dates=participationDisplayDates();
@@ -880,6 +887,7 @@ function renderHomePassport(){
   $('home-passport-status').textContent=progressText;
   $('voucher-passport-status').textContent=progressText;
   renderAttendanceGrid($('home-passport-days'),dates);
+  renderAttendanceGrid($('voucher-passport-days'),dates);
   $('home-passport-save').hidden=ready;
   $('home-passport-save').textContent=cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄';
   const note=$('home-passport-note');
@@ -915,10 +923,26 @@ function setupActivityDialog(){
     ruleCopies.push(copy);
   }
   $('activity-details').replaceChildren(...ruleCopies);
-  for(const link of $('activity-dialog-top').querySelectorAll('.activity-jumps a')){
+  for(const link of document.querySelectorAll('.activity-jumps a')){
     link.addEventListener('click',event=>{
       event.preventDefault();
-      jumpActivitySection(link.getAttribute('href').slice(1));
+      const id=link.getAttribute('href').slice(1);
+      const fromWelcome=link.closest('#welcome-dialog');
+      if(fromWelcome)finishWelcome();
+      if(id==='game-calendar'){
+        closeDialog('vouchers-dialog');
+        if(mobileViewport.matches){
+          openMobileCollection();
+        }else{
+          const heading=$('game-calendar-title');
+          heading.focus({preventScroll:true});
+          $('game-calendar').scrollIntoView({block:'start',behavior:'instant'});
+        }
+      }else if(fromWelcome){
+        openActivityDialog(id);
+      }else{
+        jumpActivitySection(id);
+      }
     });
   }
 }
@@ -2051,7 +2075,7 @@ setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
 $('home-passport-save').addEventListener('click',openProgress);
 for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
-placeHomePassport();
+placeActivitySections();
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));
