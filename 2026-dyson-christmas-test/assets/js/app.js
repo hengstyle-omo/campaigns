@@ -223,7 +223,7 @@ async function cloudFlush(){
 async function claimCloud(d){
  if(!cloud.ready){status(cloud.loading?'保存紀錄正在同步，請稍候再領取。':cloud.error||'帳號尚未載入，請先填寫 Email 並成功同步後再領取。',{persistent:!cloud.loading});return false;}
  if(cloud.loading)return false;if(!(await cloudFlush())){openProgress();return false;}cloud.loading=true;renderCloud();
- try{const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});const wasClaimed=!!live.claimed[Number(d)];acceptFormalResult(result);if(!wasClaimed&&live.claimed[Number(d)])trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});renderUI();chime();return true;}
+ try{const result=await cloudSend({action:'claim',email:cloud.email,day:Number(d)});const wasClaimed=!!live.claimed[Number(d)];acceptFormalResult(result);if(!wasClaimed&&live.claimed[Number(d)])trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});renderUI();return true;}
  catch(error){cloud.error=error.message;status(error.message,{persistent:true});return false;}finally{cloud.loading=false;renderCloud();}
 }
 async function saveMarketingConsent(){
@@ -503,7 +503,7 @@ function trackActivity(name,params={}){if(!analyticsAllowed())return false;try{r
 function giftAnalytics(d){const i=itemByDay(Number(d));return i?{gift_day:Number(d),gift_name:i.name,gift_type:i.product?'product':Number(d)>25?'animal':i.effect?'effect':'scenery',...(i.product?{product_model:i.product.model}:{})}:{};}
 function trackCampaignStart(){if(!campaignStarted&&trackActivity('campaign_start'))campaignStarted=true;}
 
-let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,sound=false,wind=false;
+let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,wind=false;
 let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
 let assetDb=null,assetStorage='memory',assetUploadDay=null,drag=null;
 const builtinAssets=new Map(),customAssets=new Map(),sprites=new Map(),spriteErrors=new Set();
@@ -596,7 +596,6 @@ $('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)re
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
 $('welcome-dialog').addEventListener('close',cleanupWelcome);
 
-function chime(){if(!sound)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=chime.context??=new AC();if(ac.state==='suspended')ac.resume();[659.25,830.61,987.77].forEach((hz,k)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=hz;g.gain.setValueAtTime(0,ac.currentTime+k*.08);g.gain.linearRampToValueAtTime(.035,ac.currentTime+k*.08+.015);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+k*.08+.8);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+k*.08);o.stop(ac.currentTime+k*.08+.85);});}catch{}}
 function describeState(d){return {future:'尚未開啟',current:'可領取',missed:'已錯過',owned:'已收藏'}[dayState(d)];}
 function starAboveTreeLayout(star,tree){return {...star,x:tree.x,y:tree.y-tree.h*tree.scale+star.h*star.scale*.48};}
 function getLayout(d){
@@ -608,12 +607,12 @@ function claimDay(d){
   if(!previewDate){
     if(cloud.email)return claimCloud(d);
     if(!Core.claim(live,Number(d),today(),new Date(Date.now()+(cloud.hasClock?cloud.offset:0)).toISOString()))return false;
-    if(today()>=1&&today()<=25)live.visits[dateISO()]=true;cloudCache();renderUI();chime();trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});return true;
+    if(today()>=1&&today()<=25)live.visits[dateISO()]=true;cloudCache();renderUI();trackActivity('gift_collect',{...giftAnalytics(d),collected_count:Object.keys(live.claimed).length});return true;
   }
   
   // Re-evaluate the date at the actual click, including clicks across midnight.
   if(!Core.claim(state(),Number(d),claimableToday(),new Date().toISOString())){renderUI();return false;}
-  persist();chime();renderUI();return true;
+  persist();renderUI();return true;
 }
 async function openDay(d){
   if(BONUS_IDS.includes(Number(d))&&!bonusDays().includes(Number(d))){status('此 Email 尚未解鎖這份限定收藏。');return;}
@@ -1405,7 +1404,7 @@ function drawFrame(dt=0,now=0){
 }
 function loop(now){const dt=lastFrame?Math.min((now-lastFrame)/16.667,2):0;lastFrame=now;if(!document.hidden&&!cardExportBusy)drawFrame(dt,now);requestAnimationFrame(loop);}
 function resize(){const r=$('globe-wrapper').getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);width=r.width;height=r.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);drawFrame(0,performance.now());}
-function shake(power=4){turbulence=power;[...snow,...goldFlakes].forEach(p=>{p.vx=(Math.random()-.5)*5;p.vy=-(2+Math.random()*5);});if(motion){const wrapper=$('globe-wrapper');wrapper.classList.remove('shake');void wrapper.offsetWidth;wrapper.classList.add('shake');}chime();}
+function shake(power=4){turbulence=power;[...snow,...goldFlakes].forEach(p=>{p.vx=(Math.random()-.5)*5;p.vy=-(2+Math.random()*5);});if(motion){const wrapper=$('globe-wrapper');wrapper.classList.remove('shake');void wrapper.offsetWidth;wrapper.classList.add('shake');}}
 function pointerPoint(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*SCENE_W/r.width,y:(e.clientY-r.top)*SCENE_H/r.height};}
 function hitTest(p){for(const hit of [...hitRegions].reverse()){const r=hit.rect;if(p.x<r.x||p.x>r.x+r.w||p.y<r.y||p.y>r.y+r.h)continue;const b=hit.sprite.bounds;const sx=Math.floor(b.x+(p.x-r.x)/r.w*b.w),sy=Math.floor(b.y+(p.y-r.y)/r.h*b.h);try{if(hit.sprite.image.getContext('2d').getImageData(sx,sy,1,1).data[3]<32)continue;}catch{}return hit.day;}return null;}
 const placementGlass=el('canvas').getContext('2d'),placementAnchors=new Map();globePath(placementGlass);
@@ -2055,7 +2054,7 @@ $('today-open').addEventListener('click',()=>{
   }else if(today()>=1)openDay(today());
 });
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
-$('shake-button').addEventListener('click',()=>shake());$('wind-button').addEventListener('click',()=>{wind=!wind;if(wind)chime();renderUI();});
+$('shake-button').addEventListener('click',()=>shake());$('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();});
 $('edit-toggle').addEventListener('click',()=>{editMode=!editMode;if(!editMode)selectItem(null);else status('選取球內物件後拖曳。動物與一般造景可往球內上方移動，產品與雪丘保持靠近球底。');renderUI();});
 $('motion-toggle').addEventListener('click',()=>{motion=!motion;if(!motion)wind=false;renderUI();drawFrame(0,performance.now());});
 $('reset-layout').addEventListener('click',()=>{state().layouts={};persist();updateSelection();status('已還原預設位置，收藏與領取紀錄保留。');});
@@ -2069,9 +2068,8 @@ $('item-placement').addEventListener('click',()=>{
 });
 $('item-position').addEventListener('click',()=>{if(!currentModalDay||!isPlaced(currentModalDay))return;const d=currentModalDay;if(d===25){startShow();return;}editMode=true;selectItem(d);closeDialog('item-dialog');closeDialog('mobile-collection');restoreMobileGlobe();renderUI();$('globe-wrapper').scrollIntoView({behavior:'smooth',block:'center'});});
 function renderAudioEntry(){
-  $('sound-toggle').textContent=sound?'開啟':'關閉';$('sound-toggle').setAttribute('aria-pressed',String(sound));
-  $('audio-open').classList.toggle('audio-active',sound||musicPlaying);
-  $('audio-open').setAttribute('aria-label',`音訊，音樂${musicPlaying?'播放中':'關閉'}，操作音效${sound?'開啟':'關閉'}`);
+  $('audio-open').classList.toggle('audio-active',musicPlaying);
+  $('audio-open').setAttribute('aria-label',`音訊，音樂${musicPlaying?'播放中':'關閉'}`);
 }
 function closeAudioPanel(restoreFocus=false){
   const panel=$('audio-panel'),hadFocus=panel.contains(document.activeElement);
@@ -2086,7 +2084,6 @@ $('audio-close').addEventListener('click',()=>closeAudioPanel(true));
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('audio-panel').hidden){e.preventDefault();closeAudioPanel(true);}});
 document.addEventListener('focusin',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
-$('sound-toggle').addEventListener('click',()=>{sound=!sound;renderAudioEntry();if(sound)chime();});
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
 for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
