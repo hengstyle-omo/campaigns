@@ -78,6 +78,8 @@ const cloudEmail=v=>String(v||'').trim().toLowerCase();
 const isCloudEmail=v=>v.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const cardTaskNormalise=v=>v?.completed===true&&['png','gif','mp4'].includes(v.format)&&['download','share'].includes(v.method)?{completed:true,format:v.format,method:v.method,at:String(v.at||'')}:null;
 let guestCardTask=cardTaskNormalise(safeRead(STORAGE_PREFIX+'guest-card-task',null)),previewCardTask=null;
+const couponTaskKey=STORAGE_PREFIX+'coupon-card-task';
+let deviceCouponTask=cardTaskNormalise(safeRead(couponTaskKey,null))||guestCardTask;
 const savedCloudProfile=safeRead(STORAGE_PREFIX+'cloud-profile',{}),rememberedEmail=cloudEmail(savedCloudProfile.email);
 const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endpoint',''),email:isCloudEmail(rememberedEmail)?rememberedEmail:'',ready:false,cachedView:false,loading:false,adminToken:'',adminSessionExpiresAt:0,adminAuthRequired:false,canPreview:false,isAdmin:false,hasExclusive:false,bonusIds:[],attendance:null,unlockedRewards:[],rewardLinks:{},consent:savedCloudProfile.consent===true,marketingDirty:false,marketingDraft:null,marketingSaving:null,consentStatus:'',synced:Core.freshState(),cardTask:null,pendingCardTask:null,offset:0,hasClock:false,pendingDay:null,timer:null,saving:null,error:'',queue:Promise.resolve(),requests:new Map(),previewLoaded:false,previewSynced:{state:Core.freshState(),date:null,days:null,cardTask:null}};
 const timing={started:performance.now(),sceneReadyMs:null,progressReadMs:null,lastSaveMs:null};
@@ -109,7 +111,7 @@ function renderCloud(){
  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);$('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
  $('progress-open').setAttribute('aria-label',cloud.ready?'查看保存紀錄與護照夾資格':'輸入 Email 保存紀錄');
  $('admin-auth-email').textContent=cloud.email;$('admin-auth-submit').disabled=busy;$('admin-auth-cancel').disabled=busy;$('admin-auth-code').disabled=busy;$('admin-auth-form').setAttribute('aria-busy',String(busy));if($('admin-auth-dialog').open)$('admin-auth-message').textContent=cloud.loading?'正在驗證…':cloud.error||'請輸入管理員驗證碼。';
- $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始收藏';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
+ $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始布置雪球';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
  $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
  $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;
  $('progress-retry').hidden=!cloud.error||!active;
@@ -238,6 +240,10 @@ async function startWelcomeCollection(){
 }
 function markCardTask(format,method){
  const task=cardTaskNormalise({completed:true,format,method,at:new Date().toISOString()});if(!task)return;
+ if(!previewDate&&!deviceCouponTask){
+   deviceCouponTask=task;
+   safeWrite(couponTaskKey,task);
+ }
  if(previewDate){if(!previewCardTask){previewCardTask=task;previewPersist();}}
  else if(cloud.ready){if(!cloud.cardTask&&!cloud.pendingCardTask){cloud.pendingCardTask=task;cloudCache();cloudFlush();}}
  else if(!cloud.email){guestCardTask=guestCardTask||task;safeWrite(STORAGE_PREFIX+'guest-card-task',guestCardTask);}
@@ -527,9 +533,12 @@ function item(d){
 const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required,redemption:b.redemption,...(b.redemption==='counter'?{code:'',approved:true}:{} )}));
 const rewards=()=>configuredRewards();
 const rewardQualified=(b,p)=>b.unlock==='product'?availableDays().includes(b.productDay):p.visits>=b.required;
-const rewardUnlocked=(b,p)=>rewardQualified(b,p)&&(previewDate
-  ?(b.redemption==='counter'||!!previewCardTask)
-  :(cloud.ready&&(b.redemption==='counter'?cloud.attendance?.eligible===true:cloud.unlockedRewards.includes(b.id))));
+const couponCardTask=()=>previewDate?previewCardTask:deviceCouponTask||cloud.cardTask||cloud.pendingCardTask;
+function rewardUnlocked(reward,progress){
+  if(!rewardQualified(reward,progress))return false;
+  if(reward.redemption==='counter')return !!previewDate||cloud.ready&&cloud.attendance?.eligible===true;
+  return !!couponCardTask();
+}
 function rewardProgress(){
   const t=today(),claimedDays=Object.keys(state().claimed).map(Number).filter(d=>d<=t),count=claimedDays.length,visits=participationDates().length;
   const list=rewards(),progress={count,claimedDays,visits},unlockedCount=list.filter(b=>rewardUnlocked(b,progress)).length,next=list.find(b=>!rewardUnlocked(b,progress))||null;
@@ -571,18 +580,18 @@ async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
   if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
-  try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始收藏');}
-  catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始收藏。':'點一下播放介紹，或直接開始收藏。');}
+  try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始布置雪球');}
+  catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始布置雪球。':'點一下播放介紹，或直接開始布置雪球。');}
 }
 function openWelcome({progressOnly=false}={}){
-  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('welcome-start').textContent=progressOnly?'保存':'開始收藏';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
+  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('progress-email-caption').textContent=progressOnly?'你的 Email':'Email（選填）';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
-  video.poster='./assets/video/welcome-poster.webp?rev=20261027-5';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
+  video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
   if(progressOnly)return;
-  welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始收藏。');}},8000);
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始收藏。');}
+  welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始布置雪球。');}},8000);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始布置雪球。');}
   else playWelcome();
 }
 function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
@@ -590,9 +599,9 @@ function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
 $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
-$('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始收藏');});
-$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261027-5';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
-$('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始收藏。');});
+$('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始布置雪球');});
+$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
+$('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始布置雪球。');});
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
 $('welcome-dialog').addEventListener('close',cleanupWelcome);
 
@@ -879,13 +888,17 @@ function renderHomePassport(){
   renderAttendanceGrid($('home-passport-days'),dates);
   renderAttendanceGrid($('voucher-passport-days'),dates);
   const note=$('home-passport-note');
-  note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error||'請填寫 Email 並成功同步，才能記錄登入天數。';
+  note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error;
   note.hidden=!note.textContent;
   for(const id of ['home-passport-actions','voucher-passport-actions'])renderPassportCouponAction($(id),ready,dates.length);
 }
 function renderVouchers(){
   const root=$('vouchers-list'),progress=rewardProgress();
-  root.replaceChildren(...rewards().filter(reward=>reward.redemption!=='counter').map(reward=>renderRewardCard(reward,progress,true)));
+  const products=rewards().filter(reward=>reward.redemption!=='counter');
+  root.replaceChildren(...products.map(reward=>renderRewardCard(reward,progress,true)));
+  if(!IS_TEST&&!previewDate&&products.some(reward=>rewardUnlocked(reward,progress)&&(!reward.validUntil||dateISO()<=reward.validUntil)&&!couponClaimURL(reward.id))){
+    loadProductCouponLinks();
+  }
 }
 function jumpActivitySection(id){
   const dialog=$('vouchers-dialog'),target=$(id);
@@ -959,8 +972,30 @@ function renderAttendanceGrid(grid,dates){
   grid.dataset.dates=key;
 }
 function rewardProductImage(b){const image=el('img','reward-product-image');image.src=ASSETS.rewardImages[b.id];image.alt=b.displayName||'Dyson 任一主機優惠券';image.loading='lazy';image.decoding='async';image.width=240;image.height=300;return image;}
+let productCouponLookup=null;
+const productCouponLookupKey=()=>JSON.stringify([cloud.endpoint,dateISO()]);
+async function loadProductCouponLinks(retry=false){
+ const key=productCouponLookupKey(),task=couponCardTask();
+ if(!task||IS_TEST||previewDate||(!retry&&productCouponLookup?.key===key))return;
+ const lookup={key,links:null,failed:false};
+ productCouponLookup=lookup;
+ try{
+   const result=await cloudTransport({action:'prod:couponLinks',environment:ENVIRONMENT,cardTask:task});
+   assertCampaignEnvironment(result);
+   lookup.links=result.rewardLinks||{};
+   if(productCouponLookup===lookup&&Number.isFinite(Date.parse(result.serverTime))){
+     cloud.offset=Date.parse(result.serverTime)-Date.now();
+     cloud.hasClock=true;
+     lookup.key=productCouponLookupKey();
+   }
+ }catch{
+   lookup.failed=true;
+ }
+ if(productCouponLookup===lookup&&$('vouchers-dialog').open)renderVouchers();
+}
 function couponClaimURL(id){
- const raw=String(cloud.rewardLinks[id]||'').trim();
+ const guestLink=productCouponLookup?.key===productCouponLookupKey()?productCouponLookup.links?.[id]:'';
+ const raw=String(cloud.rewardLinks[id]||guestLink||'').trim();
  if(!raw)return '';try{const url=new URL(raw);return url.protocol==='https:'&&!url.username&&!url.password?url.href:'';}catch{return '';}
 }
 function appendClaimLink(container,id,label){
@@ -992,18 +1027,29 @@ function appendCouponAction(card,b,progress,full){
  if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-coupons'));card.append(button);return;}
  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
  if(!unlocked){
-   const waitingForEmail=!previewDate&&!cloud.ready;
-   const waitingForCardSync=!previewDate&&!!cloud.pendingCardTask;
-   const button=el('button','gold-button',waitingForEmail?'保存紀錄':waitingForCardSync?'同步卡片紀錄':'製作卡片');
+   const button=el('button','gold-button','製作卡片領優惠');
    button.type='button';
-   if(waitingForEmail)button.addEventListener('click',openProgress);
-   else if(waitingForCardSync)button.addEventListener('click',()=>cloudFlush());
-   else button.addEventListener('click',()=>{closeDialog('vouchers-dialog');openChristmasCard();});
+   button.disabled=!sceneReady||cardCapturing;
+   button.addEventListener('click',()=>{closeDialog('vouchers-dialog');openChristmasCard();});
    card.append(button);return;
  }
  if(previewDate||IS_TEST){const button=el('button','',previewDate?'模擬預覽 · 已符合領券條件':'測試版 · 已開放，僅供預覽');button.type='button';button.disabled=true;card.append(button);return;}
  const expired=b.validUntil&&dateISO()>b.validUntil;if(b.validUntil)card.append(el('p','reward-expiry',`有效至 ${b.validUntil}${expired?' · 已到期':''}`));
  if(expired){const button=el('button','','優惠已到期');button.type='button';button.disabled=true;card.append(button);return;}
+ if(!couponClaimURL(b.id)){
+   const lookup=productCouponLookup?.key===productCouponLookupKey()?productCouponLookup:null;
+   if(!lookup?.links){
+     const button=el('button','',lookup?.failed?'重試載入優惠券':'正在載入優惠券…');
+     button.type='button';
+     button.disabled=!lookup?.failed;
+     if(lookup?.failed)button.addEventListener('click',()=>{
+       loadProductCouponLinks(true);
+       renderVouchers();
+     });
+     card.append(button);
+     return;
+   }
+ }
  appendClaimLink(card,b.id,'領取優惠券');
 }
 function renderRewardCard(b,progress,full){
@@ -1575,6 +1621,7 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
 function updateCardButtons(){
   const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardSaving||cardExportBusy||cardRecordingBusy();
   $('card-download').disabled=disabled;$('card-share').disabled=disabled;
+  $('card-view-coupons').hidden=!couponCardTask()||!rewards().some(reward=>reward.unlock==='product'&&rewardQualified(reward));
   updateCardMediaControls();
 }
 function renderChristmasCard(){
@@ -1621,7 +1668,7 @@ async function openChristmasCard(){
 function downloadChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardExportBusy)return false;
   const url=URL.createObjectURL(blob),link=el('a');link.href=url;link.download=`dyson-christmas-card.${cardFormat()}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
-  markCardTask(cardFormat(),'download');trackActivity('card_download',{card_format:cardFormat()});
+  markCardTask(cardFormat(),'download');updateCardButtons();trackActivity('card_download',{card_format:cardFormat()});
   $('card-status').textContent='已準備下載卡片檔案。可將檔案傳給想祝福的人。';return true;
 }
 function cardShareMetadata(){
@@ -1648,7 +1695,8 @@ for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('compositionend',renderChristmasCard);
   $(`card-${name}`).addEventListener('blur',()=>{cardTouched=true;renderChristmasCard();});
 }
-$('card-download').addEventListener('click',downloadChristmasCard);$('card-share').addEventListener('click',shareChristmasCard);
+$('card-download').addEventListener('click',downloadChristmasCard);$('card-view-coupons').addEventListener('click',()=>{closeDialog('card-dialog');openActivityDialog('activity-coupons');});
+$('card-share').addEventListener('click',shareChristmasCard);
 // Five-second, readability-first card exports. All encoding stays on this device.
 const CARD_SECONDS=5,CARD_LIMITS={gif:4*1024*1024,mp4:4*1024*1024};
 let cardMotionBase=null,cardMotionFlags=null,cardExportBusy=false,cardExportToken=0,cardExportStop=null;

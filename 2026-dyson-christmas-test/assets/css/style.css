@@ -324,7 +324,7 @@ button,input,textarea,select{line-height:1.5}
 .welcome-dialog{width:min(560px,calc(100vw - 28px));max-height:calc(100dvh - 28px);padding:22px;border:1px solid #cba36380;border-radius:18px;background:linear-gradient(155deg,#213044,#111925);box-shadow:0 24px 100px #0009;overflow:auto}
 .welcome-dialog::backdrop{background:#07101cde;backdrop-filter:blur(7px)}
 .welcome-topline{display:flex;align-items:center;justify-content:flex-end}
-#welcome-skip{flex-shrink:0;font-size:13px;padding:8px 10px}
+#welcome-skip{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;font-size:26px;line-height:1}
 .welcome-dialog h2{font-size:clamp(20px,5vw,27px);margin:14px 0 7px;color:#f2d7ab}
 .welcome-media{position:relative;aspect-ratio:1;width:min(100%,48dvh);margin:auto;background:#0e1621;border:1px solid #e5bd7e40;border-radius:10px;overflow:hidden}
 #welcome-video{display:block;width:100%;height:100%;object-fit:contain}
@@ -485,7 +485,6 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:760px){
  .welcome-dialog{padding:16px;max-height:calc(100dvh - 20px);width:calc(100vw - 24px);max-width:540px;scroll-padding-bottom:82px}
  .welcome-dialog h2{font-size:23px;margin:5px 0}
- #welcome-skip{font-size:12px;padding:6px 8px}
  .welcome-content{grid-template-columns:minmax(0,1fr);gap:16px;margin:0 0 12px}
  .welcome-content .welcome-media{grid-column:1;grid-row:1;width:min(100%,200px)}
  .welcome-content .welcome-intro{grid-column:1;grid-row:2}
@@ -642,8 +641,6 @@ button,input,textarea,select{line-height:1.5}
   }
   .mobile-calendar-toggle strong { font-size: 16px; }
   #mobile-calendar-count { margin-left: auto; color: var(--gold); font-size: 13px; }
-  .mobile-calendar-arrow { font-size: 20px; line-height: 1; }
-  .mobile-calendar-toggle[aria-expanded="true"] .mobile-calendar-arrow { transform: rotate(180deg); }
   .calendar-body { display: block; padding: 4px 14px 15px; }
   .mobile-calendar-toggle[aria-expanded="false"] ~ .calendar-body { display: none; }
   .calendar-card-entry, #starter-section, #collection-section, #bonus-section { display: none; }
@@ -782,9 +779,6 @@ button,input,textarea,select{line-height:1.5}
 .game-area-title { margin: 0 0 10px; color: var(--gold); font-size: clamp(18px, 3vw, 23px); text-align: center; }
 @media (min-width: 761px) {
   #game-calendar { scroll-margin-top: 88px; }
-  #benefit-section + .home-passport { margin-top: 24px; }
-  .welcome-content .welcome-intro { grid-column: 1 / -1; grid-row: 1; }
-  .welcome-content .welcome-media, .welcome-content .welcome-progress { grid-row: 2; }
 }
 @media (max-width: 760px) {
   .activity-jumps { grid-template-columns: minmax(0, 1fr); gap: 6px; }
@@ -824,12 +818,14 @@ button,input,textarea,select{line-height:1.5}
   color: var(--gold); font: inherit; font-size: 14px; font-weight: 500; line-height: 1.5;
 }
 .welcome-rules > summary::-webkit-details-marker { display: none; }
-.welcome-rules > summary::after {
+.welcome-rules > summary::after, .mobile-calendar-arrow {
   content: ""; flex: 0 0 8px; width: 8px; height: 8px;
   border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
   margin-right: 4px; transform: rotate(45deg);
 }
-.welcome-rules[open] > summary::after { transform: rotate(225deg); }
+.mobile-calendar-arrow { color: var(--gold); }
+.welcome-rules[open] > summary::after,
+.mobile-calendar-toggle[aria-expanded="true"] .mobile-calendar-arrow { transform: rotate(225deg); }
 .welcome-rules-content {
   padding: 2px 0 12px; color: #b9c2cf; font: inherit;
   font-size: 14px; line-height: 1.75; overflow-wrap: anywhere;
@@ -869,7 +865,71 @@ button,input,textarea,select{line-height:1.5}
 .progress-consent-row a { color: var(--gold); font-size: 12px; text-decoration: underline; text-underline-offset: 2px; }
 
 /* Keep the welcome disclosures and their following content close together. */
-.welcome-rules + .welcome-footer { margin-top: 0; }
 .welcome-rules + .november-test-notice { margin-top: 8px; }
 
-@media (min-width: 761px) { .mobile-admin-close { display: none; } }
+#admin-auth-dialog > .dialog-close { min-width: 44px; min-height: 44px; }
+
+.welcome-intro { min-width: 0; }
+.welcome-intro .activity-intro-description { display: none; }
+.welcome-intro .activity-jumps { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 16px; }
+.welcome-intro .activity-jumps a {
+  grid-column: auto;
+  min-height: 85px;
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 12px;
+}
+.welcome-intro .activity-jumps strong { margin-bottom: 4px; font-size: 14px; }
+.welcome-intro .activity-jumps span { overflow-wrap: anywhere; }
+.welcome-content .welcome-progress { padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #101d2c; }
+#welcome-dialog #welcome-progress-title { display: none; }
+.welcome-dialog.progress-only .welcome-content .welcome-progress { padding: 0; border: 0; background: none; }
+.welcome-dialog .welcome-footer { margin: 12px 0 0; padding: 0; border: 0; background: none; }
+.welcome-dialog #progress-form > label:first-child { color: var(--text); font-weight: 600; }
+.welcome-dialog #progress-form input[type=email] { font-weight: 400; }
+.welcome-dialog .progress-consent-row { flex-wrap: wrap; }
+.welcome-media-toolbar { min-height: 0; }
+.home-passport-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+.home-passport-redemption .passport-coupon-actions { padding: 0; border: 0; justify-content: flex-start; }
+#home-passport-note { flex: 1 1 240px; color: var(--muted); }
+
+@media (min-width: 761px) {
+  .welcome-dialog:not(.progress-only) { width: min(960px, calc(100vw - 40px)); max-width: none; padding: 24px; }
+  .welcome-dialog:not(.progress-only) .welcome-content {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 8px 24px;
+  }
+  .welcome-content #welcome-title { grid-column: 1; grid-row: 1; margin-top: 0; }
+  .welcome-content .welcome-media { grid-column: 1; grid-row: 2; width: 100%; align-self: start; }
+  .welcome-content .welcome-intro { grid-column: 2; grid-row: 1 / span 2; }
+  .welcome-dialog .welcome-footer { position: static; }
+  #welcome-start { width: auto; min-width: 180px; }
+  .home-passport {
+    max-width: 960px;
+    grid-template-columns: clamp(160px, 20%, 180px) minmax(0, 1fr);
+    margin: 24px auto 14px;
+    padding: 20px;
+    gap: 12px 24px;
+  }
+  .home-passport h3 { font-size: 18px; }
+}
+
+@media (max-width: 760px) {
+  .welcome-dialog:not(.progress-only) { height: calc(100dvh - 20px); }
+  .welcome-dialog:not(.progress-only) :is(.welcome-content, .welcome-intro) { display: contents; }
+  .welcome-dialog:not(.progress-only) .welcome-topline { margin-bottom: -36px; }
+  .welcome-dialog:not(.progress-only) #welcome-title { padding-inline-end: 48px; }
+  .welcome-content .welcome-media { width: 100%; }
+  #welcome-video { max-height: 34dvh; }
+  .welcome-intro .activity-jumps { margin-top: 10px; margin-bottom: 12px; }
+  .welcome-dialog .welcome-footer {
+    position: sticky;
+    bottom: 0;
+    padding: 8px 0;
+    background: #142030;
+  }
+  .welcome-dialog:not(.progress-only) .welcome-footer { top: calc(100dvh - 99px); }
+}
+

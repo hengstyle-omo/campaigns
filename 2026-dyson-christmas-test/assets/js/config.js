@@ -466,8 +466,8 @@ window.DYSON_GAME_CONFIG = {
       "code": "",
       "approved": false,
       "validUntil": "",
-      "displayName": "Dyson HD19 隨行吹風機",
-      "scopeLabel": "指定品項"
+      "displayName": "HD19 隨行吹風機",
+      "scopeLabel": "dyson指定品項"
     },
     {
       "id": "product-sv50",
@@ -479,8 +479,8 @@ window.DYSON_GAME_CONFIG = {
       "code": "",
       "approved": false,
       "validUntil": "",
-      "displayName": "Dyson PencilVac 鉛筆吸塵器",
-      "scopeLabel": "指定品項"
+      "displayName": "PencilVac 鉛筆吸塵器",
+      "scopeLabel": "dyson指定品項"
     },
     {
       "id": "product-hj10",
@@ -492,8 +492,8 @@ window.DYSON_GAME_CONFIG = {
       "code": "",
       "approved": false,
       "validUntil": "",
-      "displayName": "Dyson HJ10 噴射氣流空氣清淨機",
-      "scopeLabel": "指定品項"
+      "displayName": "HJ10 噴射氣流空氣清淨機",
+      "scopeLabel": "dyson指定品項"
     },
     {
       "id": "product-bp10",
@@ -505,7 +505,7 @@ window.DYSON_GAME_CONFIG = {
       "code": "",
       "approved": false,
       "validUntil": "",
-      "displayName": "任一主機",
+      "displayName": "dyson任一主機",
       "scopeLabel": "",
       "intro": "Dyson 精選科技，為生活增添更多美好驚喜。聖誕限定專屬優惠券，適用於 Dyson 任一主機，讓心儀好物成為今年最值得收藏的聖誕禮物。"
     },
