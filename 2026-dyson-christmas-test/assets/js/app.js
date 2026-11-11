@@ -572,7 +572,7 @@ function status(message,{persistent=false}={}){
 function closeDialog(id){const d=$(id);if(d.open)d.close();}
 function showDialog(id){const d=$(id);if(!d.open){d.showModal();if(id==='vouchers-dialog')trackActivity('coupon_open',{unlocked_count:rewardProgress().unlockedCount});}}
 
-// Intro media is requested only on the first visit or an explicit replay.
+// The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
 let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=false;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
@@ -580,31 +580,52 @@ async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
   if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
-  try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');}
-  catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始佈置水晶球。':'點一下播放介紹，或直接開始佈置水晶球。');}
+  try{await video.play();if(attempt!==welcomeAttempt||!welcomeMediaOpen()){if(!welcomeMediaOpen())video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');}
+  catch{if(attempt!==welcomeAttempt||!welcomeMediaOpen())return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始佈置水晶球。':'點一下播放介紹，或直接開始佈置水晶球。');}
 }
+function moveActivityOverview(target){
+  $(target).append($('welcome-content'));
+  const navigationEnabled=target==='activity-overview';
+  for(const link of $('welcome-content').querySelectorAll('.activity-jumps a')){
+    link.tabIndex=navigationEnabled?0:-1;
+    if(navigationEnabled)link.removeAttribute('aria-disabled');
+    else link.setAttribute('aria-disabled','true');
+  }
+}
+function welcomeMediaOpen(){return $('welcome-video').closest('dialog')?.open===true;}
 function openWelcome({progressOnly=false}={}){
+  moveActivityOverview('welcome-overview');
   welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-dialog').setAttribute('closedby',progressOnly?'closerequest':'none');$('welcome-skip').parentElement.hidden=!progressOnly;$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('progress-email-caption').textContent=progressOnly?'你的 Email':'Email（選填）';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').hidden=true;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
   video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
   if(progressOnly)return;
-  welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
+  welcomeTimer=setTimeout(()=>{if(welcomeMediaOpen()&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');}
   else playWelcome();
 }
 function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
-function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
+function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');closeDialog('vouchers-dialog');}
 $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');});
 $('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';video.load();$('welcome-play').hidden=true;welcomeMessage('布置屬於你的聖誕雪境。');});
-$('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始佈置水晶球。');});
+$('welcome-video').addEventListener('error',()=>{if(!welcomeMediaOpen())return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始佈置水晶球。');});
 $('welcome-dialog').addEventListener('keydown',event=>{if(event.key==='Escape'&&!welcomeProgressOnly){event.preventDefault();event.stopPropagation();}});
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();if(welcomeProgressOnly)finishWelcome();});
-$('welcome-dialog').addEventListener('close',cleanupWelcome);
+$('welcome-dialog').addEventListener('close',()=>{
+  if(!$('welcome-dialog').open&&$('welcome-content').closest('#welcome-dialog'))cleanupWelcome();
+});
+$('vouchers-dialog').addEventListener('close',()=>{
+  if(!$('vouchers-dialog').open&&$('welcome-content').closest('#vouchers-dialog')){
+    ++welcomeAttempt;
+    clearTimeout(welcomeTimer);
+    $('welcome-video').pause();
+    moveActivityOverview('welcome-overview');
+  }
+});
 
 function describeState(d){return {future:'尚未開啟',current:'可領取',missed:'已錯過',owned:'已收藏'}[dayState(d)];}
 function starAboveTreeLayout(star,tree){return {...star,x:tree.x,y:tree.y-tree.h*tree.scale+star.h*star.scale*.48};}
@@ -909,8 +930,20 @@ function jumpActivitySection(id){
   target.focus({preventScroll:true});
 }
 function openActivityDialog(id){
+  moveActivityOverview('activity-overview');
+  welcomeProgressOnly=false;
+  $('welcome-title').textContent='Dyson 聖誕雪境';
+  $('progress-email-caption').textContent='Email（選填）';
+  if(!$('progress-email').value)$('progress-email').value=cloud.email;
+  renderCloud();
   renderVouchers();
   showDialog('vouchers-dialog');
+  $('welcome-play').hidden=true;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    $('welcome-play').textContent='播放介紹';
+    $('welcome-play').hidden=false;
+    welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');
+  }else playWelcome();
   if(id){
     jumpActivitySection(id);
   }else{
@@ -923,18 +956,7 @@ function setupActivityDialog(){
   for(const container of document.querySelectorAll('[data-activity-missions]')){
     const copy=missionTemplate.content.cloneNode(true);
     copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
-    if(container.closest('#welcome-dialog')){
-      const navigation=copy.querySelector('.activity-jumps');
-      const cards=document.createElement('div');
-      cards.className='activity-jumps';
-      for(const link of navigation.querySelectorAll('a')){
-        const card=document.createElement('div');
-        card.className='mission-card';
-        card.append(...link.childNodes);
-        cards.append(card);
-      }
-      navigation.replaceWith(cards);
-    }
+    for(const link of copy.querySelectorAll('.activity-jumps a'))link.classList.add('mission-card');
     container.append(copy);
   }
   const ruleCopies=[];
@@ -953,7 +975,7 @@ function setupActivityDialog(){
       event.preventDefault();
       const id=link.getAttribute('href').slice(1);
       const fromWelcome=link.closest('#welcome-dialog');
-      if(fromWelcome)finishWelcome();
+      if(fromWelcome)return;
       if(id==='game-calendar'){
         closeDialog('vouchers-dialog');
         if(mobileViewport.matches){
@@ -963,8 +985,6 @@ function setupActivityDialog(){
           heading.focus({preventScroll:true});
           $('game-calendar').scrollIntoView({block:'start',behavior:'instant'});
         }
-      }else if(fromWelcome){
-        openActivityDialog(id);
       }else{
         jumpActivitySection(id);
       }

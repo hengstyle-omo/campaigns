@@ -776,7 +776,6 @@ button,input,textarea,select{line-height:1.5}
 .ticket-icon { margin-inline-end: 6px; vertical-align: -2px; }
 .activity-attendance { margin-top: 20px; }
 #voucher-passport-days { margin: 12px 0 0; }
-.game-area-title { margin: 0 0 10px; color: var(--gold); font-size: clamp(18px, 3vw, 23px); text-align: center; }
 @media (min-width: 761px) {
   #game-calendar { scroll-margin-top: 88px; }
 }
@@ -894,15 +893,15 @@ button,input,textarea,select{line-height:1.5}
 .mission-card strong { color: var(--text); font-size: 16px; }
 .mission-card span { color: var(--muted); font-size: 14px; }
 .welcome-content .welcome-progress { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: #101d2c; }
-#welcome-dialog #welcome-progress-title { display: none; }
+#welcome-progress-title { display: none; }
 .welcome-dialog.progress-only .welcome-content .welcome-progress { padding: 0; border: 0; background: none; }
-.welcome-dialog .welcome-footer { position: static; margin: 14px 0 0; padding: 0; border: 0; background: none; }
-.welcome-dialog #progress-form > label:first-child { color: var(--text); font-weight: 600; }
-.welcome-dialog #progress-form input[type=email] { font-weight: 400; }
-.welcome-dialog .progress-consent-row { flex-wrap: wrap; }
+:is(.welcome-dialog, .activity-dialog) .welcome-footer { position: static; margin: 14px 0 0; padding: 0; border: 0; background: none; }
+:is(.welcome-dialog, .activity-dialog) #progress-form > label:first-child { color: var(--text); font-weight: 600; }
+:is(.welcome-dialog, .activity-dialog) #progress-form input[type=email] { font-weight: 400; }
+:is(.welcome-dialog, .activity-dialog) .progress-consent-row { flex-wrap: wrap; }
 .welcome-dialog:not(.progress-only) .welcome-topline { display: none; }
 .welcome-media-toolbar { min-height: 0; margin-top: 0; }
-.welcome-dialog:not(.progress-only) .welcome-content {
+:is(.welcome-dialog:not(.progress-only), .activity-dialog) .welcome-content {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   grid-template-rows: auto 1fr;
@@ -916,14 +915,14 @@ button,input,textarea,select{line-height:1.5}
   margin: 0;
   padding: 0;
 }
-.welcome-dialog:not(.progress-only) .welcome-media {
+:is(.welcome-dialog:not(.progress-only), .activity-dialog) .welcome-media {
   grid-column: 1;
   grid-row: 2;
   width: 100%;
   margin: 0;
   align-self: start;
 }
-.welcome-dialog:not(.progress-only) .welcome-intro { grid-column: 2; grid-row: 2; }
+:is(.welcome-dialog:not(.progress-only), .activity-dialog) .welcome-intro { grid-column: 2; grid-row: 2; }
 #welcome-video { max-height: none; }
 #welcome-start { width: 100%; min-height: 48px; }
 .home-passport-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
@@ -936,15 +935,16 @@ button,input,textarea,select{line-height:1.5}
   .home-passport {
     max-width: 1080px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto;
     margin: 24px auto 14px;
     padding: 24px;
     gap: 16px 32px;
   }
   #home-passport-image {
     grid-column: 1;
-    grid-row: 1 / span 2;
-    width: min(100%, 340px);
+    grid-row: auto;
+    width: 100%;
+    max-width: none;
     justify-self: center;
     align-self: center;
   }
@@ -958,18 +958,77 @@ button,input,textarea,select{line-height:1.5}
 
 @media (max-width: 760px) {
   .welcome-dialog:not(.progress-only) { height: auto; padding: 16px; scroll-padding-bottom: 16px; }
-  .welcome-dialog:not(.progress-only) .welcome-content { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  :is(.welcome-dialog:not(.progress-only), .activity-dialog) .welcome-content { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .welcome-dialog:not(.progress-only) #welcome-title { grid-column: 1; grid-row: auto; }
-  .welcome-dialog:not(.progress-only) .welcome-media {
+  :is(.welcome-dialog:not(.progress-only), .activity-dialog) .welcome-media {
     grid-column: 1;
     grid-row: auto;
     width: min(100%, 26dvh);
     margin: 0 auto;
   }
-  .welcome-dialog:not(.progress-only) .welcome-intro { grid-column: 1; grid-row: auto; }
+  :is(.welcome-dialog:not(.progress-only), .activity-dialog) .welcome-intro { grid-column: 1; grid-row: auto; }
   .welcome-intro .activity-jumps { margin-bottom: 12px; gap: 6px; }
   .welcome-intro .mission-card { padding: 10px 4px; gap: 5px; }
   .mission-card strong { font-size: 15px; }
   .mission-card span { font-size: 13px; }
   .welcome-content .welcome-progress { padding: 12px; }
+}
+
+/* v85: one overview for both dialogs and full-width passport imagery. */
+.home-passport-details { display: contents; }
+.welcome-intro .activity-jumps .mission-card {
+  grid-column: auto;
+  min-height: 0;
+  color: var(--text);
+  font-weight: 400;
+  text-decoration: none;
+}
+.welcome-intro .activity-jumps .mission-card strong { margin: 0; font-size: 16px; }
+.welcome-intro .activity-jumps .mission-card span { color: var(--muted); font-size: 14px; }
+.welcome-intro .activity-jumps .mission-card .mission-number { color: var(--gold); }
+.welcome-dialog .mission-card { pointer-events: none; }
+#vouchers-dialog.activity-dialog {
+  width: min(1040px, calc(100vw - 40px));
+  max-width: none;
+  background: linear-gradient(155deg, #213044, #111925);
+  border-radius: 18px;
+}
+#vouchers-dialog .activity-dialog-top { padding: 18px 24px 12px; }
+#vouchers-dialog .activity-dialog-body { padding: 18px 24px 24px; }
+#vouchers-dialog #welcome-title { display: none; }
+#vouchers-dialog .welcome-content { grid-template-rows: 1fr; }
+#vouchers-dialog .welcome-content .welcome-media,
+#vouchers-dialog .welcome-content .welcome-intro { grid-row: 1; }
+.shop-entry { display: flex; justify-content: center; margin: 28px 0; }
+.shop-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--gold);
+  background: #101d2c;
+  text-decoration: none;
+}
+.shop-home-link:hover { border-color: var(--gold); }
+@media (min-width: 761px) {
+  .home-passport-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    min-width: 0;
+    height: 100%;
+  }
+}
+@media (max-width: 760px) {
+  #vouchers-dialog.activity-dialog { width: calc(100vw - 24px); max-width: 540px; }
+  #vouchers-dialog .activity-dialog-top { padding: 12px 16px 8px; }
+  #vouchers-dialog .activity-dialog-body { padding: 14px 16px 20px; }
+  #vouchers-dialog .welcome-content { grid-template-rows: auto auto; }
+  #vouchers-dialog .welcome-content .welcome-intro { grid-row: 2; }
+  .welcome-intro .activity-jumps .mission-card strong { font-size: 15px; }
+  .welcome-intro .activity-jumps .mission-card span { font-size: 13px; }
 }
