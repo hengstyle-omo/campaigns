@@ -14,7 +14,7 @@ window.DYSON_GAME_CONFIG = {
   "activityRulesRevision": "20261106-v76-rules",
   "testEnvironment": "november-test-2026",
   "cardShareUrl": "https://hengstyle-omo.github.io/campaigns/2026-dyson-christmas-test/",
-  "cardShareText": "✦ 𝑫𝒚𝒔𝒐𝒏 𝑪𝒉𝒓𝒊𝒔𝒕𝒎𝒂𝒔 ✦聖 誕 驚 喜 倒 數\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🎁每日解鎖聖誕驚喜\n🎄 收藏每一天的美好\n↗ 開啟你的聖誕旅程！",
+  "cardShareText": "✦ 𝑫𝒚𝒔𝒐𝒏 𝑪𝒉𝒓𝒊𝒔𝒕𝒎𝒂𝒔 ✦聖 誕 驚 喜 倒 數\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🎁每日解鎖聖誕驚喜\n🎄 收藏每一天的美好\n\n▼ 開啟你的聖誕旅程！",
   "visualStyle": "paper-relief-v1",
   "scheduleRevision": "20261021-four-products-v2",
   "year": 2026,

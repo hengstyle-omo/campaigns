@@ -933,10 +933,9 @@ button,input,textarea,select{line-height:1.5}
 @media (min-width: 761px) {
   .welcome-dialog:not(.progress-only) { width: min(1040px, calc(100vw - 40px)); max-width: none; padding: 24px; }
   .home-passport {
-    max-width: 720px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: auto;
-    margin: 24px auto 14px;
+    margin: 24px 0 14px;
     padding: 24px;
     gap: 16px 32px;
   }
@@ -944,7 +943,7 @@ button,input,textarea,select{line-height:1.5}
     grid-column: 1;
     grid-row: auto;
     width: 100%;
-    max-width: none;
+    max-width: 320px;
     justify-self: center;
     align-self: center;
   }
@@ -952,7 +951,7 @@ button,input,textarea,select{line-height:1.5}
   .home-passport-redemption { grid-column: 2; align-content: start; }
   .home-passport h3 { font-size: 20px; line-height: 1.5; }
   .home-passport p { font-size: 14px; line-height: 1.7; }
-  #home-passport-days { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  #home-passport-days { grid-template-columns: repeat(5, minmax(0, 72px)); gap: 8px; }
   #home-passport-days .participation-cell { width: 100%; }
 }
 

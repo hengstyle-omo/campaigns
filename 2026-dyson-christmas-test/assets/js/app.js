@@ -1734,6 +1734,8 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
 function updateCardButtons(){
   const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardSaving||cardExportBusy||cardRecordingBusy();
   $('card-download').disabled=disabled;$('card-share').disabled=disabled;
+  $('card-copy-share-text').hidden=disabled;
+  if(disabled)$('card-share-text').hidden=true;
   $('card-view-coupons').hidden=!couponCardTask()||!rewards().some(reward=>reward.unlock==='product'&&rewardQualified(reward));
   updateCardMediaControls();
 }
@@ -1791,11 +1793,12 @@ function cardShareMetadata(){
 async function shareChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardSaving||cardExportBusy)return;
   const file=typeof File==='function'?new File([blob],`dyson-christmas-card.${cardFormat()}`,{type:blob.type}):null;
-  let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.({files:[file]}));}catch{}
-  if(!supported){downloadChristmasCard();$('card-status').textContent='此裝置未提供此格式的檔案分享，已準備下載。儲存後即可透過 LINE 等應用程式傳送。';return;}
+  const shareData={files:[file],...cardShareMetadata()};
+  let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.(shareData));}catch{}
+  if(!supported){downloadChristmasCard();$('card-status').textContent='已準備下載卡片。可複製分享文案，再到 LINE 等應用程式貼上並附上卡片。';return;}
   cardSaving=true;updateCardButtons();
-  try{await navigator.share({files:[file],...cardShareMetadata()});markCardTask(cardFormat(),'share');trackActivity('card_share',{card_format:cardFormat(),method:'native'});$('card-status').textContent='已交由裝置的分享功能處理。';}
-  catch(err){if(err.name==='AbortError')$('card-status').textContent='已取消分享，卡片仍可下載或再次分享。';else {downloadChristmasCard();$('card-status').textContent='目前無法開啟分享，已準備下載卡片檔案。';}}
+  try{await navigator.share(shareData);markCardTask(cardFormat(),'share');trackActivity('card_share',{card_format:cardFormat(),method:'native'});$('card-status').textContent='已交由裝置的分享功能處理。';}
+  catch(err){if(err.name==='AbortError')$('card-status').textContent='已取消分享，卡片仍可下載或再次分享。';else {downloadChristmasCard();$('card-status').textContent='已準備下載卡片。可複製分享文案，再到 LINE 等應用程式貼上並附上卡片。';}}
   finally{cardSaving=false;updateCardButtons();}
 }
 function updateCardEntries(){
@@ -1811,6 +1814,21 @@ for(const name of ['recipient','message','signature']){
 }
 $('card-download').addEventListener('click',downloadChristmasCard);$('card-view-coupons').addEventListener('click',()=>{closeDialog('card-dialog');openActivityDialog('activity-coupons');});
 $('card-share').addEventListener('click',shareChristmasCard);
+$('card-copy-share-text').addEventListener('click',async()=>{
+  const {text}=cardShareMetadata();
+  const field=$('card-share-text');
+  try{
+    await navigator.clipboard.writeText(text);
+    field.hidden=true;
+    $('card-status').textContent='已複製分享文案與活動連結。';
+  }catch{
+    field.value=text;
+    field.hidden=false;
+    field.focus();
+    field.select();
+    $('card-status').textContent='請複製下方的分享文案與活動連結。';
+  }
+});
 // Five-second, readability-first card exports. All encoding stays on this device.
 const CARD_SECONDS=5,CARD_LIMITS={gif:4*1024*1024,mp4:4*1024*1024};
 let cardMotionBase=null,cardMotionFlags=null,cardExportBusy=false,cardExportToken=0,cardExportStop=null;
