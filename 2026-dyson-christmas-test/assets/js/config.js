@@ -66,7 +66,7 @@ window.DYSON_GAME_CONFIG = {
       "day": 1,
       "type": "雪境光效",
       "name": "第一場雪",
-      "description": "放入後飄起豐富白雪，雪花落地會逐漸累積成柔軟薄雪；開啟氣流或搖晃可揚起表面細雪。移除後恢復原本薄雪底。",
+      "description": "放入後飄起豐富白雪，雪花落地會逐漸累積成柔軟薄雪；開啟氣流可揚起表面細雪。移除後恢復原本薄雪底。",
       "benefit": null,
       "assetNeed": "粒子效果，不需產品圖片",
       "effect": "snow",

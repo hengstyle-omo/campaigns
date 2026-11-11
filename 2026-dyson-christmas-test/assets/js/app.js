@@ -207,7 +207,7 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
   if(cloud.previewLoaded){cloud.previewSynced=previewNormalise(result.preview);const saved=safeRead(previewCacheKey(email),{});previewRestore(cloud.previewSynced);}else previewRestore(null);
   safeWrite(STORAGE_PREFIX+'guest-state',Core.transportState(Core.freshState()));guestCardTask=null;safeWrite(STORAGE_PREFIX+'guest-card-task',null);safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});
   timing.progressReadMs=Math.round(performance.now()-started);cloud.consentStatus=preserveDraft?'行銷意願尚未保存，請重試。':'進度已保存。';
-  cloudCache();renderUI();drawFrame(0,performance.now());ensureItemAssets(sceneDays()).then(()=>{renderUI();drawFrame(0,performance.now());}).catch(()=>{});cloudScheduleSave();
+  cloudCache();renderUI();drawFrame(0,performance.now());cloudScheduleSave();
   closeDialog('admin-auth-dialog');$('admin-auth-code').value='';if(payload.action==='adminLogin')status('管理員驗證完成，可使用日期模擬。');if(userInitiated)trackActivity('progress_save',{method:'email'});return true;
  }catch(error){cloud.error=error.message;status(error.message,{persistent:true});throw error;}
  finally{cloud.loading=false;renderCloud();}
@@ -510,7 +510,7 @@ function giftAnalytics(d){const i=itemByDay(Number(d));return i?{gift_day:Number
 function trackCampaignStart(){if(!campaignStarted&&trackActivity('campaign_start'))campaignStarted=true;}
 
 let motion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,wind=false;
-let sceneReady=false,width=0,height=0,lastFrame=0,turbulence=0,showUntil=0;
+let sceneReady=false,width=0,height=0,lastFrame=0,showUntil=0;
 let assetDb=null,assetStorage='memory',assetUploadDay=null,drag=null;
 const builtinAssets=new Map(),customAssets=new Map(),sprites=new Map(),spriteErrors=new Set();
 const canvas=$('snow-canvas'),ctx=canvas.getContext('2d');
@@ -722,8 +722,8 @@ function renderCalendar(){
   }
 }
 function renderCollection(){
-  const normalRoot=$('collection-grid'),bonusRoot=$('bonus-grid'),starterRoot=$('starter-grid');normalRoot.replaceChildren();bonusRoot.replaceChildren();starterRoot.replaceChildren();const days=sceneDays();$('collection-empty').hidden=days.some(d=>d<=25);$('bonus-section').hidden=!bonusDays().length;
-  for(const d of days){const root=STARTER_IDS.includes(d)?starterRoot:BONUS_IDS.includes(d)?bonusRoot:normalRoot,i=item(d),card=el('article',`collection-card${i.product?' product-card':''}`),visual=el('button');card.dataset.day=String(d);visual.type='button';visual.setAttribute('aria-label',`查看${i.name}`);const thumb=el('canvas');thumb.width=360;thumb.height=270;drawThumbnail(thumb,d);visual.append(thumb);visual.addEventListener('click',()=>openItem(d));
+  const normalRoot=$('collection-grid'),bonusRoot=$('bonus-grid'),starterRoot=$('starter-grid');replaceCollectionThumbnails(normalRoot);replaceCollectionThumbnails(bonusRoot);replaceCollectionThumbnails(starterRoot);const days=sceneDays();$('collection-empty').hidden=days.some(d=>d<=25);$('bonus-section').hidden=!bonusDays().length;
+  for(const d of days){const root=STARTER_IDS.includes(d)?starterRoot:BONUS_IDS.includes(d)?bonusRoot:normalRoot,i=item(d),card=el('article',`collection-card${i.product?' product-card':''}`),visual=el('button');card.dataset.day=String(d);visual.type='button';visual.setAttribute('aria-label',`查看${i.name}`);const thumb=el('canvas');thumb.width=360;thumb.height=270;observeCollectionThumbnail(thumb,d);visual.append(thumb);visual.addEventListener('click',()=>openItem(d));
     const info=el('div','card-info'),date=el('p','card-day',i.starter?'起始雪境 · 不計入收藏':i.starter?'基礎造景 · 不計入 25 天收藏':i.bonus?`限定趣味收藏 · ${i.animal||''}`:`DEC ${String(d).padStart(2,'0')}`),heading=el('h3');
     if(i.product){date.append(el('span','product-badge','Dyson 精選'));const open=el('button','card-open',i.name);open.type='button';open.setAttribute('aria-label',`查看${i.name}介紹`);open.addEventListener('click',()=>openItem(d));heading.append(open);}else heading.textContent=i.name;
     info.append(date,heading);
@@ -779,7 +779,7 @@ function renderMobileCollection(){
       thumbnail.width=180;
       thumbnail.height=112;
       thumbnail.setAttribute('aria-hidden','true');
-      drawThumbnail(thumbnail,day);
+      observeCollectionThumbnail(thumbnail,day);
       const check=el('span','mobile-tile-check','✓');
       check.setAttribute('aria-hidden','true');
       toggle.append(thumbnail,check);
@@ -793,7 +793,7 @@ function renderMobileCollection(){
     }
     fragment.append(page);
   }
-  pages.replaceChildren(fragment);
+  replaceCollectionThumbnails(pages,fragment);
   pages.scrollLeft=Math.min(mobileCollectionPage,Math.max(0,pages.children.length-1))*pages.clientWidth;
   syncMobileCollectionPage();
 }
@@ -1127,7 +1127,10 @@ function loadSprite(d){
   d=Number(d);
   const i=item(d);if(i.effect)return null;
   const image=customAssets.get(d)?.image||builtinAssets.get(d);
-  if(!image&&(ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d])){if(!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]).then(()=>{if(sceneReady&&builtinAssets.has(Number(d))){renderUI();if($('item-dialog').open)renderItemDialog();drawFrame(0,performance.now());}});return null;}
+  if(!image&&(ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d])){
+    if(!itemAssetLoads.has(d)&&!spriteErrors.has('asset-'+d))ensureItemAssets([d]);
+    return null;
+  }
   if(i.bonus&&!image)return null;
   // A cached raster belongs to its actual source, not just a calendar day.
   if(!image){spriteErrors.add('missing-source-'+d);return null;}
@@ -1149,18 +1152,41 @@ async function ensureItemAssets(days){
   if(builtinAssets.has(d)||spriteErrors.has('asset-'+d))return;if(itemAssetLoads.has(d))return itemAssetLoads.get(d);
   if(BONUS_IDS.includes(d)&&!bonusDays().includes(d))return;
   const src=ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d]||ASSETS.effectThumbnails?.[d];if(!src)return;
-  const promise=imageLoad(src).then(image=>{builtinAssets.set(d,image);sprites.delete(d);refreshItemThumbnails(d);}).catch(error=>{spriteErrors.add('asset-'+d);spriteErrors.add(`item-${d}: ${error.message}`);}).finally(()=>itemAssetLoads.delete(d));itemAssetLoads.set(d,promise);return promise;
+  const promise=imageLoad(src).then(image=>{builtinAssets.set(d,image);sprites.delete(d);refreshItemThumbnails(d);if(sceneReady&&isPlaced(d)&&globeVisible)drawFrame(0,performance.now());}).catch(error=>{spriteErrors.add('asset-'+d);spriteErrors.add(`item-${d}: ${error.message}`);}).finally(()=>itemAssetLoads.delete(d));itemAssetLoads.set(d,promise);return promise;
  }));
 }
 async function loadBonusAssets(){return ensureItemAssets(bonusDays());}
 function drawSprite(target,d,x,bottom,h){const sprite=loadSprite(d);if(!sprite)return null;const b=sprite.bounds,w=h*b.w/b.h;target.drawImage(sprite.image,b.x,b.y,b.w,b.h,x-w/2,bottom-h,w,h);return {x:x-w/2,y:bottom-h,w,h};}
+const collectionThumbnailObserver=typeof IntersectionObserver==='function'
+  ?new IntersectionObserver((entries,observer)=>{
+    for(const {target,isIntersecting} of entries){
+      if(!isIntersecting||!target.hasAttribute('data-pending-thumbnail'))continue;
+      observer.unobserve(target);
+      const day=Number(target.dataset.pendingThumbnail);
+      delete target.dataset.pendingThumbnail;
+      drawThumbnail(target,day);
+    }
+  },{rootMargin:'160px 0px'})
+  :null;
+function observeCollectionThumbnail(target,day){
+  if(!collectionThumbnailObserver){drawThumbnail(target,day);return;}
+  target.dataset.pendingThumbnail=String(day);
+  collectionThumbnailObserver.observe(target);
+}
+function replaceCollectionThumbnails(root,...children){
+  for(const target of root.querySelectorAll('[data-pending-thumbnail]')){
+    collectionThumbnailObserver.unobserve(target);
+    delete target.dataset.pendingThumbnail;
+  }
+  root.replaceChildren(...children);
+}
 function refreshItemThumbnails(d){
   for(const target of document.querySelectorAll(`canvas[data-thumbnail-day="${Number(d)}"]`))drawThumbnail(target,Number(d));
 }
 function drawThumbnail(target,d){
   d=Number(d);target.dataset.thumbnailDay=String(d);
   const c=target.getContext('2d');c.clearRect(0,0,target.width,target.height);const i=item(d);
-  if(i.effect){const image=builtinAssets.get(Number(d));if(image&&ASSETS.effectThumbnails?.[d]){const scale=Math.min(target.width*.86/image.naturalWidth,target.height*.86/image.naturalHeight),w=image.naturalWidth*scale,h=image.naturalHeight*scale;c.drawImage(image,(target.width-w)/2,(target.height-h)/2,w,h);return;}if(!image&&ASSETS.effectThumbnails?.[d]&&!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]).then(()=>{if(sceneReady&&builtinAssets.has(Number(d))){renderUI();if($('item-dialog').open)renderItemDialog();}});c.save();c.fillStyle='#e2c48e';c.textAlign='center';c.textBaseline='middle';c.font=`${Math.round(target.height*.35)}px Georgia,serif`;c.fillText(i.effect==='snow'?'❄':i.effect==='goldSnow'?'✧':i.effect==='warmth'?'✺':'✦',target.width/2,target.height/2);c.restore();return;}
+  if(i.effect){const image=builtinAssets.get(Number(d));if(image&&ASSETS.effectThumbnails?.[d]){const scale=Math.min(target.width*.86/image.naturalWidth,target.height*.86/image.naturalHeight),w=image.naturalWidth*scale,h=image.naturalHeight*scale;c.drawImage(image,(target.width-w)/2,(target.height-h)/2,w,h);return;}if(!image&&ASSETS.effectThumbnails?.[d]&&!itemAssetLoads.has(Number(d))&&!spriteErrors.has('asset-'+d))ensureItemAssets([Number(d)]);c.save();c.fillStyle='#e2c48e';c.textAlign='center';c.textBaseline='middle';c.font=`${Math.round(target.height*.35)}px Georgia,serif`;c.fillText(i.effect==='snow'?'❄':i.effect==='goldSnow'?'✧':i.effect==='warmth'?'✺':'✦',target.width/2,target.height/2);c.restore();return;}
   const s=loadSprite(d);if(!s)return;const b=s.bounds;let h=target.height*.84;if(h*b.w/b.h>target.width*.86)h=target.width*.86*b.h/b.w;drawSprite(c,d,target.width/2,target.height*.92,h);
 }
 function globePath(c){c.beginPath();c.moveTo(322,890);c.bezierCurveTo(193,774,153,538,248,355);c.bezierCurveTo(332,197,486,157,622,158);c.bezierCurveTo(833,155,1000,304,1046,504);c.bezierCurveTo(1076,659,1014,824,941,891);c.bezierCurveTo(796,936,464,938,322,890);c.closePath();}
@@ -1185,10 +1211,17 @@ const makeFlake=gold=>({x:245+Math.random()*770,y:195+Math.random()*700,vx:0,vy:
 const snow=Array.from({length:420},()=>makeFlake(false));
 const goldFlakes=Array.from({length:460},()=>makeFlake(true));
 const stars=Array.from({length:36},(_,k)=>({x:295+Math.random()*665,y:255+Math.random()*565,phase:Math.random()*Math.PI*2,size:k%5===0?8:3+Math.random()*3}));
-let hitRegions=[],showStarted=0,showPausedAt=null;
+let hitRegions=[],showStarted=0,showPausedAt=null,showEndTimer=null;
 let frameEffects={white:0,gold:0,warmth:false,show:false,phase:''};
 function showActive(now=performance.now()){return isPlaced(25)&&showUntil>now;}
+function scheduleShowEnd(){
+  clearTimeout(showEndTimer);
+  if(showUntil&&showPausedAt===null){
+    showEndTimer=setTimeout(()=>stopShow(true),Math.max(0,showUntil-performance.now()));
+  }
+}
 function stopShow(resume=false){
+  clearTimeout(showEndTimer);
   showUntil=0;showStarted=0;showPausedAt=null;$('show-banner').hidden=true;$('show-greeting').hidden=true;
   finishShowMusic(resume);renderShowControls();
 }
@@ -1196,7 +1229,7 @@ function startShow({scrollToGlobe=true}={}){
   if(!isPlaced(25))return false;
   closeDialog('item-dialog');collapseSimulation();editMode=false;selectItem(null);
   showStarted=performance.now();showUntil=showStarted+SHOW_SECONDS*1000;showPausedAt=null;
-  startShowMusic();renderUI({placementDay:25});drawFrame(0,showStarted);trackActivity('starlight_show',{action:'play'});
+  scheduleShowEnd();startShowMusic();renderUI({placementDay:25});drawFrame(0,showStarted);trackActivity('starlight_show',{action:'play'});
   if(scrollToGlobe)$('globe-wrapper').scrollIntoView({behavior:motion?'smooth':'auto',block:'center'});
   status(motion?'聖誕星光秀開始，9.5 秒後緩緩收尾。可隨時停止或重播。':'動態已暫停，顯示靜態聖誕星光畫面。');return true;
 }
@@ -1225,13 +1258,13 @@ function drawWarmth(time,strength=1,target=ctx,animate=motion){
   ctx.restore();
 }
 function drawSnowLayer(pool,count,dt,time,show=false,target=ctx,environment=null){
-  const ctx=target,airflow=environment?environment.wind:wind,shakePower=environment?environment.turbulence:turbulence,activeSnow=environment?environment.activeSnow:isPlaced(1),random=environment?.random||Math.random;
+  const ctx=target,airflow=environment?environment.wind:wind,activeSnow=environment?environment.activeSnow:isPlaced(1),random=environment?.random||Math.random;
   for(let k=0;k<count;k++){
     const p=pool[k];
     if(dt){
-      p.phase+=.014*dt;p.x+=(p.vx+Math.sin(p.phase)*(.2+shakePower*.35)+(airflow?(10.5+Math.sin(time*1.8+p.phase)*3)*p.depth:0))*dt;
+      p.phase+=.014*dt;p.x+=(p.vx+Math.sin(p.phase)*.2+(airflow?(10.5+Math.sin(time*1.8+p.phase)*3)*p.depth:0))*dt;
       p.y+=p.vy*p.depth*dt;
-      if(airflow)p.vy=Math.min(8,p.vy+.16*dt);else if(shakePower>.1)p.vy=Math.min(3.6,p.vy+.025*dt);else p.vy=.45+p.depth*.45;
+      if(airflow)p.vy=Math.min(8,p.vy+.16*dt);else p.vy=.45+p.depth*.45;
       p.vx*=Math.pow(.992,dt);
       if(airflow&&p.x>1025){p.x=235;p.y=205+random()*680;p.vx=0;}else if(p.x<225||p.x>1025){p.vx*=-.5;p.x=Math.max(225,Math.min(1025,p.x));}
       if(p.y>(!p.gold&&activeSnow?snowSurface(p.x,environment?environment.snowDepth:snowPack.depth):902)){p.y=205+random()*60;p.x=300+random()*650;p.vy=.5+random()*.7;p.vx=0;}
@@ -1397,12 +1430,11 @@ function drawSnowForeground(target,depth){
   target.beginPath();target.moveTo(310,925);target.bezierCurveTo(345,top+10,367,top-18*fullness,430,top-6*fullness);target.bezierCurveTo(490,top+10,527,top+9,580,top-5*fullness);target.bezierCurveTo(630,top-24*fullness,680,top-21*fullness,735,top-7*fullness);target.bezierCurveTo(800,top+9,865,top-12*fullness,954,top+10);target.lineTo(947,932);target.closePath();target.fill();target.restore();
 }
 
-function drawLooseSnow(target,depth,time,airflow=0,shakePower=0){
-  if(depth<.5||(!airflow&&shakePower<.1))return;
+function drawLooseSnow(target,depth,time){
+  if(depth<.5)return;
   target.save();target.fillStyle='#fff8e8';
-  const lift=airflow?125:Math.min(145,shakePower*32),count=airflow?80:42;
-  for(let k=0;k<count;k++){
-    const phase=(time*(airflow?.72:.48)+k*.618)%1,px=330+((k*83+phase*(airflow?200:65))%590),py=snowSurface(px,depth)-Math.sin(phase*Math.PI)*lift;
+  for(let k=0;k<80;k++){
+    const phase=(time*.72+k*.618)%1,px=330+((k*83+phase*200)%590),py=snowSurface(px,depth)-Math.sin(phase*Math.PI)*125;
     target.globalAlpha=.65*Math.sin(phase*Math.PI);target.beginPath();target.arc(px,py,1.1+(k%3)*.6,0,Math.PI*2);target.fill();
   }
   target.restore();
@@ -1435,14 +1467,14 @@ function drawCandyRain(target,time){
 }
 
 
-function sceneParticleCounts({elapsed=0,finalShow=false,animate=true,airflow=false,shakePower=0,activeSnow=false,goldSnow=false,timeline=SHOW_LIVE}){
+function sceneParticleCounts({elapsed=0,finalShow=false,animate=true,airflow=false,activeSnow=false,goldSnow=false,timeline=SHOW_LIVE}){
   const showFade=finalShow&&animate?showState(elapsed,timeline).fade:1;
-  const flow=animate&&(airflow||shakePower>.1),baseWhite=animate&&airflow?420:flow?340:activeSnow?240:0,baseGold=goldSnow?310:0;
+  const baseWhite=animate&&airflow?420:activeSnow?240:0,baseGold=goldSnow?310:0;
   const whiteCount=finalShow?Math.max(baseWhite,Math.round(100*showFade)):baseWhite,goldCount=finalShow?Math.max(baseGold,Math.round(90*showFade)):baseGold;
   return {showFade,whiteCount,goldCount};
 }
-function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=motion,activeSnow=false,goldSnow=false,warmth=false,candyRain=false,airflow=false,shakePower=0,objects=placedObjects(),whitePool=snow,goldPool=goldFlakes,environment=null,trackHits=false,timeline=SHOW_LIVE}){
-  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate,airflow,shakePower,activeSnow,goldSnow,timeline});
+function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=motion,activeSnow=false,goldSnow=false,warmth=false,candyRain=false,airflow=false,objects=placedObjects(),whitePool=snow,goldPool=goldFlakes,environment=null,trackHits=false,timeline=SHOW_LIVE}){
+  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate,airflow,activeSnow,goldSnow,timeline});
   ctx.save();globePath(ctx);ctx.clip();
   if(finalShow){const dim=ctx.createRadialGradient(625,560,150,625,560,465);dim.addColorStop(0,`rgba(7,12,27,${.53*showFade})`);dim.addColorStop(.65,`rgba(7,12,27,${.44*showFade})`);dim.addColorStop(1,'rgba(7,12,27,0)');ctx.fillStyle=dim;ctx.fillRect(180,150,900,790);}
   if(warmth||finalShow)drawWarmth(time,finalShow ? .52*showFade : 1,ctx,animate);
@@ -1456,7 +1488,7 @@ function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=mot
   }
   if(activeSnow)drawSnowForeground(ctx,environment?environment.snowDepth:snowPack.depth);
   drawSnowLayer(whitePool,whiteCount,animate?dt:0,time,finalShow,ctx,environment);drawSnowLayer(goldPool,goldCount,animate?dt:0,time,finalShow,ctx,environment);
-  if(activeSnow)drawLooseSnow(ctx,environment?environment.snowDepth:snowPack.depth,time,animate&&airflow?1:0,animate?shakePower:0);
+  if(activeSnow&&animate&&airflow)drawLooseSnow(ctx,environment?environment.snowDepth:snowPack.depth,time);
   if(candyRain)drawCandyRain(ctx,time);
   if(warmth||finalShow){
     ctx.save();ctx.globalCompositeOperation='screen';
@@ -1470,22 +1502,42 @@ function paintGlobeContents(ctx,{time,dt=0,elapsed=0,finalShow=false,animate=mot
 function drawFrame(dt=0,now=0){
   if(!canvas.width)return;ctx.setTransform(canvas.width/SCENE_W,0,0,canvas.height/SCENE_H,0,0);ctx.clearRect(0,0,SCENE_W,SCENE_H);hitRegions=[];
   if(!sceneReady)return;
-  if(showUntil&&now>=showUntil){stopShow(true);}
   const time=motion?now/1000:0,finalShow=showActive(now),elapsed=finalShow?(now-showStarted)/1000:0;
-  const activeSnow=isPlaced(1),goldSnow=isPlaced(13),warmth=isPlaced(13),candyRain=isPlaced(19),flow=motion&&(wind||turbulence>.1);
+  const activeSnow=isPlaced(1),goldSnow=isPlaced(13),warmth=isPlaced(13),candyRain=isPlaced(19),flow=motion&&wind;
   syncSnowPack(activeSnow);if(activeSnow&&!motion)snowPack.depth=Math.max(28,snowPack.depth);advanceSnowPack(snowPack,motion?dt/60:0,activeSnow,wind);
-  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate:motion,airflow:wind,shakePower:turbulence,activeSnow,goldSnow});
+  const {showFade,whiteCount,goldCount}=sceneParticleCounts({elapsed,finalShow,animate:motion,airflow:wind,activeSnow,goldSnow});
   frameEffects={white:whiteCount,gold:goldCount,warmth,candyRain,accumulation:snowPack.depth,airborneSnow:activeSnow&&snowPack.depth>.5&&flow,show:finalShow,signature:finalShow?signatureProgress(elapsed):0,phase:finalShow?(!motion?'靜態星光':showState(elapsed).phase):''};
   if(finalShow){$('show-banner').hidden=false;$('show-phase').textContent=frameEffects.phase;$('show-progress').style.width=`${Math.max(0,Math.min(100,elapsed/SHOW_SECONDS*100))}%`;}
   const greetingVisible=finalShow&&(!motion||elapsed>=SHOW_LIVE.holdEnd);$('show-greeting').hidden=!greetingVisible;
   if(greetingVisible){$('show-greeting').style.opacity=String(motion?showFade*showState(elapsed).greeting:1);$('show-greeting').style.top=motion?'37.7%':'41%';}
-  paintGlobeContents(ctx,{time,dt,elapsed,finalShow,animate:motion,activeSnow,goldSnow,warmth,candyRain,airflow:wind,shakePower:turbulence,trackHits:true});
+  paintGlobeContents(ctx,{time,dt,elapsed,finalShow,animate:motion,activeSnow,goldSnow,warmth,candyRain,airflow:wind,trackHits:true});
   frameEffects.accumulation=snowPack.depth;
-  if(motion)turbulence*=Math.pow(.984,dt);
 }
-function loop(now){const dt=lastFrame?Math.min((now-lastFrame)/16.667,2):0;lastFrame=now;if(!document.hidden&&!cardExportBusy)drawFrame(dt,now);requestAnimationFrame(loop);}
+let globeVisible=typeof IntersectionObserver!=='function',globeFrame=null;
+function syncGlobeAnimation(){
+  if(sceneReady&&globeVisible&&!document.hidden&&!cardExportBusy){
+    if(globeFrame===null)globeFrame=requestAnimationFrame(loop);
+  }else{
+    if(globeFrame!==null)cancelAnimationFrame(globeFrame);
+    globeFrame=null;
+    lastFrame=0;
+  }
+}
+function loop(now){
+  globeFrame=null;
+  const dt=lastFrame?Math.min((now-lastFrame)/16.667,2):0;
+  lastFrame=now;
+  drawFrame(dt,now);
+  syncGlobeAnimation();
+}
+if(typeof IntersectionObserver==='function'){
+  const globeObserver=new IntersectionObserver(([entry])=>{
+    globeVisible=entry.isIntersecting;
+    syncGlobeAnimation();
+  });
+  globeObserver.observe($('globe-wrapper'));
+}
 function resize(){const r=$('globe-wrapper').getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);width=r.width;height=r.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);drawFrame(0,performance.now());}
-function shake(power=4){turbulence=power;[...snow,...goldFlakes].forEach(p=>{p.vx=(Math.random()-.5)*5;p.vy=-(2+Math.random()*5);});if(motion){const wrapper=$('globe-wrapper');wrapper.classList.remove('shake');void wrapper.offsetWidth;wrapper.classList.add('shake');}}
 function pointerPoint(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*SCENE_W/r.width,y:(e.clientY-r.top)*SCENE_H/r.height};}
 function hitTest(p){for(const hit of [...hitRegions].reverse()){const r=hit.rect;if(p.x<r.x||p.x>r.x+r.w||p.y<r.y||p.y>r.y+r.h)continue;const b=hit.sprite.bounds;const sx=Math.floor(b.x+(p.x-r.x)/r.w*b.w),sy=Math.floor(b.y+(p.y-r.y)/r.h*b.h);try{if(hit.sprite.image.getContext('2d').getImageData(sx,sy,1,1).data[3]<32)continue;}catch{}return hit.day;}return null;}
 const placementGlass=el('canvas').getContext('2d'),placementAnchors=new Map();globePath(placementGlass);
@@ -1593,7 +1645,35 @@ function applyConfig(value,rewardValue=configuredRewards()){
 // Cards use a frozen copy of the rendered globe, without controls or edit outlines.
 // One geometry map keeps PNG, GIF's protected text palette and MP4 in sync.
 const CARD_LAYOUT=Object.freeze({width:1200,height:2000,photo:{x:80,y:190,width:1040,height:1198,radius:16},message:{x:110,y:1530,width:980,height:306},recipientY:1480,signatureY:1870,footerY:1950});
-const CARD_FONT='"Source Han Sans TC","Microsoft JhengHei",sans-serif';
+const CARD_FONT='"Source Han Sans TC","PingFang TC","Microsoft JhengHei","Noto Sans CJK TC",sans-serif';
+async function loadCardFont(){
+  try{await document.fonts?.load?.('400 42px "Source Han Sans TC"');}catch{}
+}
+const cardLibraryLoads=new Map();
+function loadCardLibrary(src){
+  if(!cardLibraryLoads.has(src)){
+    const loading=new Promise((resolve,reject)=>{
+      const script=el('script');
+      script.src=src;
+      script.onload=resolve;
+      script.onerror=()=>{
+        script.remove();
+        cardLibraryLoads.delete(src);
+        reject(new Error('卡片匯出工具載入失敗，請再試一次。'));
+      };
+      document.head.append(script);
+    });
+    cardLibraryLoads.set(src,loading);
+  }
+  return cardLibraryLoads.get(src);
+}
+function loadCardFormat(format){
+  if(format==='png')return Promise.resolve();
+  const codecs=loadCardLibrary('./assets/js/media-codecs.js');
+  return format==='mp4'
+    ?Promise.all([codecs,loadCardLibrary('./assets/js/media-mp4.js?v=20261028-white-blue-gold')])
+    :codecs;
+}
 const cardSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('zh-Hant',{granularity:'grapheme'}):null;
 const cardGraphemes=text=>cardSegmenter?[...cardSegmenter.segment(text)].map(s=>s.segment):Array.from(text);
 const cardCount=text=>cardGraphemes(text.replace(/\r\n?/g,'\n').replace(/\n/g,'')).length;
@@ -1696,6 +1776,7 @@ async function openChristmasCard(){
   if(!sceneReady||cardCapturing)return;
   collapseSimulation();const wasOpen=$('card-dialog').open;showDialog('card-dialog');
   if(mobileViewport.matches&&!wasOpen)$('card-dialog').scrollTop=0;
+  if(!wasOpen)loadCardFont().then(()=>{if($('card-dialog').open)renderChristmasCard();});
   cardDetectMP4().then(()=>updateCardButtons());trackActivity('card_open',{placed_count:ownedDays().filter(isPlaced).length});await captureCardScene();
 }
 function downloadChristmasCard(){
@@ -1824,7 +1905,7 @@ function createCardMovieRenderer(width,height,withMusicCredit=false,imageWidth=6
   const frame=el('canvas');frame.width=width;frame.height=height;const output=frame.getContext('2d',{willReadFrequently:true}),flags={...cardMotionFlags,whitePool:cardMotionFlags.whitePool.map(p=>({...p})),goldPool:cardMotionFlags.goldPool.map(p=>({...p}))};
   const scene=el('canvas');scene.width=Math.min(imageWidth,Math.round(width*.9));scene.height=Math.round(scene.width*SCENE_H/SCENE_W);const x=scene.getContext('2d',{willReadFrequently:true});
   let lastReplayTime=0,replaySeed=0x20261225;
-  const replay={wind:flags.airflow,turbulence:0,activeSnow:flags.white,snowDepth:flags.snowDepth,random:()=>((replaySeed=(Math.imul(replaySeed,1664525)+1013904223)>>>0)/4294967296)};
+  const replay={wind:flags.airflow,activeSnow:flags.white,snowDepth:flags.snowDepth,random:()=>((replaySeed=(Math.imul(replaySeed,1664525)+1013904223)>>>0)/4294967296)};
   const resetReplay=()=>{flags.whitePool=cardMotionFlags.whitePool.map(p=>({...p}));flags.goldPool=cardMotionFlags.goldPool.map(p=>({...p}));replay.snowDepth=flags.snowDepth;lastReplayTime=0;replaySeed=0x20261225;};
   return {canvas:frame,sourceTimeline:flags.show?{start:0,end:5,duration:5}:null,dispose(){for(const c of [poster,frame,scene]){c.width=1;c.height=1;}},draw(t){
     x.setTransform(1,0,0,1,0,0);x.drawImage(cardMotionBase,0,0,scene.width,scene.height);x.save();x.scale(scene.width/SCENE_W,scene.height/SCENE_H);
@@ -2035,11 +2116,12 @@ async function generateCardMedia(){
   const format=cardFormat();
   if(currentCardBlob()){renderCardMediaResult();updateCardButtons();$('card-status').textContent=cardReadyMessage();revealCardResult();return true;}
   const token=++cardExportToken;let completed=false;
-  cardExportBusy=true;cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
+  cardExportBusy=true;syncGlobeAnimation();cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
   cardMaking('準備畫面');$('card-status').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
   try{
     await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));checkCardJob(token);
-    if(document.fonts?.ready){await cardEncodingWait(document.fonts.ready,token,30000,'字型載入較慢，內容已保留，請稍後再試一次。');checkCardJob(token);}
+    await cardEncodingWait(Promise.all([loadCardFont(),loadCardFormat(format)]),token,30000,'字型或匯出工具載入較慢，請稍後再試一次。');
+    if(!validateCard().valid)throw new Error('請確認卡片文字沒有超出範圍。');
     let blob=null,chosen=null;
     if(format==='png'){
       blob=await encodeCardPNG(token);chosen={width:1200,height:2000};
@@ -2065,7 +2147,7 @@ async function generateCardMedia(){
     if(e.name!=='AbortError'){cardFailedFormat=format;trackActivity('card_generate',{card_format:format,status:'failure'});}
     $('card-status').textContent=e.name==='AbortError'?'已取消製作，文字、錄音與擺設已保留。':`製作未完成：${e.message} 文字、錄音與擺設已保留，可按「再試一次」。`;return false;
   }finally{
-    cardExportBusy=false;cardExportStop=null;lastFrame=0;renderCardMediaResult();updateCardButtons();if(completed)revealCardResult();
+    cardExportBusy=false;cardExportStop=null;syncGlobeAnimation();renderCardMediaResult();updateCardButtons();if(completed)revealCardResult();
   }
 }
 function cancelCardExport(){if(!cardExportBusy)return;++cardExportToken;cardExportStop?.();}
@@ -2109,7 +2191,7 @@ function deleteCardRecording(){
   $('card-record-time').textContent='0.0／5 秒';$('card-record-status').textContent='已刪除錄音，MP4 會使用目前的背景音樂設定。';invalidateCardMedia('mp4');updateCardButtons();renderCardMediaResult();
 }
 $('card-format').value='gif';
-$('card-format').addEventListener('change',()=>{renderCardMediaResult();updateCardButtons();$('card-status').textContent=currentCardBlob()?cardReadyMessage():cardFailedFormat===cardFormat()?'製作未完成，內容已保留，可按「再試一次」。':cardFormat()==='png'?'按下製作圖片卡片，完成後即可下載或分享。':'按下製作，產生這個格式的 5 秒卡片。';});
+$('card-format').addEventListener('change',()=>{loadCardFormat(cardFormat()).catch(()=>{});renderCardMediaResult();updateCardButtons();$('card-status').textContent=currentCardBlob()?cardReadyMessage():cardFailedFormat===cardFormat()?'製作未完成，內容已保留，可按「再試一次」。':cardFormat()==='png'?'按下製作圖片卡片，完成後即可下載或分享。':'按下製作，產生這個格式的 5 秒卡片。';});
 $('card-bgm').addEventListener('change',()=>{invalidateCardMedia('mp4');updateCardButtons();renderCardMediaResult();$('card-status').textContent='聲音設定已更新，按下製作即可產生新的影片。';});
 $('card-generate').addEventListener('click',generateCardMedia);$('card-cancel-export').addEventListener('click',cancelCardExport);$('card-making-cancel').addEventListener('click',cancelCardExport);
 $('card-record').addEventListener('click',startCardRecording);$('card-record-stop').addEventListener('click',stopCardRecording);$('card-record-delete').addEventListener('click',deleteCardRecording);
@@ -2137,7 +2219,7 @@ $('today-open').addEventListener('click',()=>{
   }else if(today()>=1)openDay(today());
 });
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
-$('shake-button').addEventListener('click',()=>shake());$('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();});
+$('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();drawFrame(0,performance.now());});
 $('edit-toggle').addEventListener('click',()=>{editMode=!editMode;if(!editMode)selectItem(null);else status('選取球內物件後拖曳。動物與一般造景可往球內上方移動，產品與雪丘保持靠近球底。');renderUI();});
 $('motion-toggle').addEventListener('click',()=>{motion=!motion;if(!motion)wind=false;renderUI();drawFrame(0,performance.now());});
 $('reset-layout').addEventListener('click',()=>{state().layouts={};persist();updateSelection();status('已還原預設位置，收藏與領取紀錄保留。');});
@@ -2195,16 +2277,13 @@ let lastDay=dateISO();setInterval(()=>{if(cloud.isAdmin&&cloud.adminToken&&Date.
 async function initialise(){
  $('scene-loading').hidden=true;renderUI();resize();
  if(cloud.email)cloudConnect(cloud.email).catch(()=>{});
- // Fonts are fetched concurrently and awaited only when exporting a text card.
- if(document.fonts?.load)Promise.all([document.fonts.load('400 14px "Source Han Sans TC"'),document.fonts.load('700 14px "Source Han Sans TC"')]).catch(()=>{});
  try{
   const background=$('empty-globe');
   if(!background.complete||!background.naturalWidth)await background.decode();
   if(!background.naturalWidth)throw new Error('雪境背景暫時無法載入，請重新整理。');
   sprites.clear();
   for(const [d,src] of Object.entries(ASSETS.custom||{}))if(ownedDays().includes(Number(d)))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
-  sceneReady=true;timing.sceneReadyMs=Math.round(performance.now()-timing.started);renderUI();resize();requestAnimationFrame(loop);
-  ensureItemAssets(sceneDays()).then(()=>{renderUI();drawFrame(0,performance.now());});
+  sceneReady=true;timing.sceneReadyMs=Math.round(performance.now()-timing.started);renderUI();resize();syncGlobeAnimation();
   openDatabase().then(()=>{sprites.clear();renderUI();drawFrame(0,performance.now());}).catch(()=>{});
  }catch(error){$('scene-loading').hidden=false;$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材尚未載入，請重新整理。';status(error.message,{persistent:true});}
 }
@@ -2270,13 +2349,15 @@ audio.addEventListener('error',()=>{pauseMusic(true);renderMusic();status('音�
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){if(showActive())showPausedAt=performance.now();if(musicPlaying){pauseMusic(true);renderMusic();}}
   else if(showPausedAt!==null){const delay=performance.now()-showPausedAt;showStarted+=delay;showUntil+=delay;showPausedAt=null;}
+  scheduleShowEnd();
+  syncGlobeAnimation();
 });
 
 
 document.addEventListener('click',event=>{
   const a=event.target.closest?.('a.product-link,#product-link');
   if(a){const found=BASE_CONFIG.items.find(i=>i.product&&validatedProductURL(i.product.url)===a.href);trackActivity('product_click',{...(found?giftAnalytics(found.day):{}),link_url:a.href});}
-  const control=event.target.closest?.('#shake-button,#wind-button,#motion-toggle,#reset-layout');
+  const control=event.target.closest?.('#wind-button,#motion-toggle,#reset-layout');
   if(control&&!control.disabled)trackActivity('globe_control',{action:control.id});
 });
 
