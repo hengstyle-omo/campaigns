@@ -869,67 +869,107 @@ button,input,textarea,select{line-height:1.5}
 
 #admin-auth-dialog > .dialog-close { min-width: 44px; min-height: 44px; }
 
+/* v85: equal passport columns and a single welcome entry action. */
 .welcome-intro { min-width: 0; }
 .welcome-intro .activity-intro-description { display: none; }
-.welcome-intro .activity-jumps { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 16px; }
-.welcome-intro .activity-jumps a {
-  grid-column: auto;
-  min-height: 85px;
-  padding: 8px 6px;
-  text-align: center;
-  font-size: 12px;
+.activity-jumps .mission-number { font-size: 20px; line-height: 1.3; }
+.welcome-intro .activity-jumps {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 16px;
 }
-.welcome-intro .activity-jumps strong { margin-bottom: 4px; font-size: 14px; }
-.welcome-intro .activity-jumps span { overflow-wrap: anywhere; }
-.welcome-content .welcome-progress { padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #101d2c; }
+.welcome-intro .mission-card {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #101d2c;
+  text-align: center;
+  line-height: 1.5;
+}
+.mission-card .mission-number { color: var(--gold); }
+.mission-card strong { color: var(--text); font-size: 16px; }
+.mission-card span { color: var(--muted); font-size: 14px; }
+.welcome-content .welcome-progress { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: #101d2c; }
 #welcome-dialog #welcome-progress-title { display: none; }
 .welcome-dialog.progress-only .welcome-content .welcome-progress { padding: 0; border: 0; background: none; }
-.welcome-dialog .welcome-footer { margin: 12px 0 0; padding: 0; border: 0; background: none; }
+.welcome-dialog .welcome-footer { position: static; margin: 14px 0 0; padding: 0; border: 0; background: none; }
 .welcome-dialog #progress-form > label:first-child { color: var(--text); font-weight: 600; }
 .welcome-dialog #progress-form input[type=email] { font-weight: 400; }
 .welcome-dialog .progress-consent-row { flex-wrap: wrap; }
-.welcome-media-toolbar { min-height: 0; }
+.welcome-dialog:not(.progress-only) .welcome-topline { display: none; }
+.welcome-media-toolbar { min-height: 0; margin-top: 0; }
+.welcome-dialog:not(.progress-only) .welcome-content {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  gap: 18px 24px;
+  margin: 0 0 18px;
+}
+.welcome-dialog:not(.progress-only) #welcome-title {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  margin: 0;
+  padding: 0;
+}
+.welcome-dialog:not(.progress-only) .welcome-media {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+  margin: 0;
+  align-self: start;
+}
+.welcome-dialog:not(.progress-only) .welcome-intro { grid-column: 2; grid-row: 2; }
+#welcome-video { max-height: none; }
+#welcome-start { width: 100%; min-height: 48px; }
 .home-passport-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
 .home-passport-redemption .passport-coupon-actions { padding: 0; border: 0; justify-content: flex-start; }
 #home-passport-note { flex: 1 1 240px; color: var(--muted); }
+.passport-value { display: inline-block; font-size: 0.8em; font-weight: 400; }
 
 @media (min-width: 761px) {
-  .welcome-dialog:not(.progress-only) { width: min(960px, calc(100vw - 40px)); max-width: none; padding: 24px; }
-  .welcome-dialog:not(.progress-only) .welcome-content {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    grid-template-rows: auto 1fr;
-    align-items: start;
-    gap: 8px 24px;
-  }
-  .welcome-content #welcome-title { grid-column: 1; grid-row: 1; margin-top: 0; }
-  .welcome-content .welcome-media { grid-column: 1; grid-row: 2; width: 100%; align-self: start; }
-  .welcome-content .welcome-intro { grid-column: 2; grid-row: 1 / span 2; }
-  .welcome-dialog .welcome-footer { position: static; }
-  #welcome-start { width: auto; min-width: 180px; }
+  .welcome-dialog:not(.progress-only) { width: min(1040px, calc(100vw - 40px)); max-width: none; padding: 24px; }
   .home-passport {
-    max-width: 960px;
-    grid-template-columns: clamp(160px, 20%, 180px) minmax(0, 1fr);
+    max-width: 1080px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
     margin: 24px auto 14px;
-    padding: 20px;
-    gap: 12px 24px;
+    padding: 24px;
+    gap: 16px 32px;
   }
-  .home-passport h3 { font-size: 18px; }
+  #home-passport-image {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: min(100%, 340px);
+    justify-self: center;
+    align-self: center;
+  }
+  .home-passport-copy { grid-column: 2; min-width: 0; }
+  .home-passport-redemption { grid-column: 2; align-content: start; }
+  .home-passport h3 { font-size: 20px; line-height: 1.5; }
+  .home-passport p { font-size: 14px; line-height: 1.7; }
+  #home-passport-days { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  #home-passport-days .participation-cell { width: 100%; }
 }
 
 @media (max-width: 760px) {
-  .welcome-dialog:not(.progress-only) { height: calc(100dvh - 20px); }
-  .welcome-dialog:not(.progress-only) :is(.welcome-content, .welcome-intro) { display: contents; }
-  .welcome-dialog:not(.progress-only) .welcome-topline { margin-bottom: -36px; }
-  .welcome-dialog:not(.progress-only) #welcome-title { padding-inline-end: 48px; }
-  .welcome-content .welcome-media { width: 100%; }
-  #welcome-video { max-height: 34dvh; }
-  .welcome-intro .activity-jumps { margin-top: 10px; margin-bottom: 12px; }
-  .welcome-dialog .welcome-footer {
-    position: sticky;
-    bottom: 0;
-    padding: 8px 0;
-    background: #142030;
+  .welcome-dialog:not(.progress-only) { height: auto; padding: 16px; scroll-padding-bottom: 16px; }
+  .welcome-dialog:not(.progress-only) .welcome-content { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .welcome-dialog:not(.progress-only) #welcome-title { grid-column: 1; grid-row: auto; }
+  .welcome-dialog:not(.progress-only) .welcome-media {
+    grid-column: 1;
+    grid-row: auto;
+    width: min(100%, 26dvh);
+    margin: 0 auto;
   }
-  .welcome-dialog:not(.progress-only) .welcome-footer { top: calc(100dvh - 99px); }
+  .welcome-dialog:not(.progress-only) .welcome-intro { grid-column: 1; grid-row: auto; }
+  .welcome-intro .activity-jumps { margin-bottom: 12px; gap: 6px; }
+  .welcome-intro .mission-card { padding: 10px 4px; gap: 5px; }
+  .mission-card strong { font-size: 15px; }
+  .mission-card span { font-size: 13px; }
+  .welcome-content .welcome-progress { padding: 12px; }
 }
-

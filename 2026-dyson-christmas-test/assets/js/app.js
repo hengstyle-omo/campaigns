@@ -111,7 +111,7 @@ function renderCloud(){
  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);$('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
  $('progress-open').setAttribute('aria-label',cloud.ready?'查看保存紀錄與護照夾資格':'輸入 Email 保存紀錄');
  $('admin-auth-email').textContent=cloud.email;$('admin-auth-submit').disabled=busy;$('admin-auth-cancel').disabled=busy;$('admin-auth-code').disabled=busy;$('admin-auth-form').setAttribute('aria-busy',String(busy));if($('admin-auth-dialog').open)$('admin-auth-message').textContent=cloud.loading?'正在驗證…':cloud.error||'請輸入管理員驗證碼。';
- $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始布置雪球';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
+ $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始佈置水晶球';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
  $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
  $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;
  $('progress-retry').hidden=!cloud.error||!active;
@@ -580,18 +580,18 @@ async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
   if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
-  try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始布置雪球');}
-  catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始布置雪球。':'點一下播放介紹，或直接開始布置雪球。');}
+  try{await video.play();if(attempt!==welcomeAttempt||!$('welcome-dialog').open){if(!$('welcome-dialog').open)video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');}
+  catch{if(attempt!==welcomeAttempt||!$('welcome-dialog').open)return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始佈置水晶球。':'點一下播放介紹，或直接開始佈置水晶球。');}
 }
 function openWelcome({progressOnly=false}={}){
-  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('progress-email-caption').textContent=progressOnly?'你的 Email':'Email（選填）';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
+  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-dialog').setAttribute('closedby',progressOnly?'closerequest':'none');$('welcome-skip').parentElement.hidden=!progressOnly;$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('progress-email-caption').textContent=progressOnly?'你的 Email':'Email（選填）';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
-  welcomeCleaned=false;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
+  welcomeCleaned=false;$('welcome-play').hidden=true;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
   video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
   if(progressOnly)return;
-  welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始布置雪球。');}},8000);
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始布置雪球。');}
+  welcomeTimer=setTimeout(()=>{if($('welcome-dialog').open&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');}
   else playWelcome();
 }
 function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
@@ -599,10 +599,11 @@ function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
 $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
-$('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始布置雪球');});
-$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';video.load();$('welcome-play').textContent='再看一次';$('welcome-play').hidden=false;welcomeMessage('布置屬於你的聖誕雪境。');});
-$('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始布置雪球。');});
-$('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome();});
+$('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');});
+$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';video.load();$('welcome-play').hidden=true;welcomeMessage('布置屬於你的聖誕雪境。');});
+$('welcome-video').addEventListener('error',()=>{if(!$('welcome-dialog').open)return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始佈置水晶球。');});
+$('welcome-dialog').addEventListener('keydown',event=>{if(event.key==='Escape'&&!welcomeProgressOnly){event.preventDefault();event.stopPropagation();}});
+$('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();if(welcomeProgressOnly)finishWelcome();});
 $('welcome-dialog').addEventListener('close',cleanupWelcome);
 
 function describeState(d){return {future:'尚未開啟',current:'可領取',missed:'已錯過',owned:'已收藏'}[dayState(d)];}
@@ -922,6 +923,18 @@ function setupActivityDialog(){
   for(const container of document.querySelectorAll('[data-activity-missions]')){
     const copy=missionTemplate.content.cloneNode(true);
     copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
+    if(container.closest('#welcome-dialog')){
+      const navigation=copy.querySelector('.activity-jumps');
+      const cards=document.createElement('div');
+      cards.className='activity-jumps';
+      for(const link of navigation.querySelectorAll('a')){
+        const card=document.createElement('div');
+        card.className='mission-card';
+        card.append(...link.childNodes);
+        cards.append(card);
+      }
+      navigation.replaceWith(cards);
+    }
     container.append(copy);
   }
   const ruleCopies=[];
@@ -1016,7 +1029,7 @@ function renderPassportCouponAction(actions,ready,count){
  }
  else if(!complete){const button=el('button','',`再累積 ${Math.max(0,PASSPORT_DAYS-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
  else if(previewDate||IS_TEST){const button=el('button','',`${previewDate?'模擬預覽':'測試版'} · 已達成 ${PASSPORT_DAYS} 天`);button.type='button';button.disabled=true;actions.append(button);}
- else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券');
+ else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券（價值 $1,080）');
  else {
    const button=el('button','','兌換資格確認中');
    button.type='button';button.disabled=true;actions.append(button);
@@ -2156,7 +2169,7 @@ $('config-save').addEventListener('click',()=>{try{applyConfig(JSON.parse($('con
 $('config-reset').addEventListener('click',()=>{settings={};rewardSettings={};safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(STORAGE_PREFIX+'rewards-v2',rewardSettings);renderUI();renderStudio();$('config-status').textContent='已還原內容草案，收藏紀錄與圖片保留。';});
 $('studio-export').addEventListener('click',exportConfig);
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeDialog(b.dataset.close)));
-document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){if(d.id==='welcome-dialog'&&!welcomeProgressOnly)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('globe-wrapper'));
 let lastDay=dateISO();setInterval(()=>{if(cloud.isAdmin&&cloud.adminToken&&Date.now()+cloud.offset>=cloud.adminSessionExpiresAt){cloudRequireAdminAuth({message:'管理員驗證已到期，請重新輸入驗證碼。'});return;}if(previewDate||document.hidden)return;const next=dateISO();if(next!==lastDay){lastDay=next;renderUI();if($('item-dialog').open&&currentModalDay&&dayState(currentModalDay)!=='owned')closeDialog('item-dialog');status('新的一天開始了，今天以前的物件皆已開放。');if(cloud.ready)cloudConnect(cloud.email).catch(()=>{});}},10000);
 async function initialise(){
