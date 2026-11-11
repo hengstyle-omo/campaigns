@@ -876,7 +876,11 @@ function renderUI({placementDay=null}={}){
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
   $('edit-toggle').setAttribute('aria-pressed',String(editMode));canvas.classList.toggle('editing',editMode);
   $('motion-toggle').setAttribute('aria-pressed',String(motion));$('motion-toggle').textContent=motion?'暫停動態':'開啟動態';
-  $('wind-button').setAttribute('aria-pressed',String(wind));$('wind-button').textContent=wind?'暴風雪中':'dyson 氣流';$('wind-button').title=wind?'關閉暴風雪':'開啟暴風雪';$('wind-button').setAttribute('aria-label',`dyson 氣流，暴風雪${wind?'已開啟':'已關閉'}`);
+  const windButton=$('wind-button');
+  windButton.setAttribute('aria-pressed',String(wind));
+  windButton.textContent=wind?'暴風雪中':'啟動 dyson 氣流倍增';
+  windButton.title=wind?'關閉暴風雪':'開啟暴風雪';
+  windButton.setAttribute('aria-label',wind?'暴風雪中，點選關閉':'啟動 dyson 氣流倍增');
   updateCardEntries();renderCloud();
 }
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
@@ -1732,8 +1736,11 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
   c.setAttribute('aria-label',data.valid?`聖誕卡片預覽，送給 ${data.recipient}。${data.message}${data.signature.trim()?`，署名 ${data.signature}`:''}`:'聖誕卡片預覽，請完成欄位或調整超出限制的內容。');
 }
 function updateCardButtons(){
-  const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardSaving||cardExportBusy||cardRecordingBusy();
-  $('card-download').disabled=disabled;$('card-share').disabled=disabled;
+  const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardExportBusy||cardRecordingBusy();
+  $('card-download').disabled=disabled;
+  $('card-share').disabled=disabled||cardSaving;
+  $('card-share-with-text').hidden=disabled;
+  $('card-share-with-text').disabled=cardSaving;
   $('card-copy-share-text').hidden=disabled;
   if(disabled)$('card-share-text').hidden=true;
   $('card-view-coupons').hidden=!couponCardTask()||!rewards().some(reward=>reward.unlock==='product'&&rewardQualified(reward));
@@ -1790,15 +1797,28 @@ function downloadChristmasCard(){
 function cardShareMetadata(){
   return {title:'Dyson Christmas｜聖誕驚喜倒數',text:`${BASE_CONFIG.cardShareText||'我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。'}\n${BASE_CONFIG.cardShareUrl||'https://hlh.tw/2026-dyson-christmas'}`};
 }
-async function shareChristmasCard(){
+async function shareChristmasCard(includeText=false){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardSaving||cardExportBusy)return;
-  const file=typeof File==='function'?new File([blob],`dyson-christmas-card.${cardFormat()}`,{type:blob.type}):null;
-  const shareData={files:[file],...cardShareMetadata()};
+  const format=cardFormat();
+  const file=typeof File==='function'?new File([blob],`dyson-christmas-card.${format}`,{type:blob.type}):null;
+  const shareData={files:[file]};
+  if(includeText)Object.assign(shareData,cardShareMetadata());
+  const cardStatus=$('card-status');
+  const downloadNotice='已準備下載卡片。可複製分享文案，再到 LINE 等應用程式貼上並附上卡片。';
   let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.(shareData));}catch{}
-  if(!supported){downloadChristmasCard();$('card-status').textContent='已準備下載卡片。可複製分享文案，再到 LINE 等應用程式貼上並附上卡片。';return;}
+  if(!supported){if(downloadChristmasCard())cardStatus.textContent=downloadNotice;return;}
   cardSaving=true;updateCardButtons();
-  try{await navigator.share(shareData);markCardTask(cardFormat(),'share');trackActivity('card_share',{card_format:cardFormat(),method:'native'});$('card-status').textContent='已交由裝置的分享功能處理。';}
-  catch(err){if(err.name==='AbortError')$('card-status').textContent='已取消分享，卡片仍可下載或再次分享。';else {downloadChristmasCard();$('card-status').textContent='已準備下載卡片。可複製分享文案，再到 LINE 等應用程式貼上並附上卡片。';}}
+  cardStatus.textContent='請在分享 App 內確認送出。也可返回網頁下載卡片或複製文案。';
+  try{
+    await navigator.share(shareData);
+    markCardTask(format,'share');
+    trackActivity('card_share',{card_format:format,method:'native'});
+    cardStatus.textContent='已交由裝置的分享功能處理，請在分享 App 內確認送出結果。';
+  }catch(err){
+    if(err.name==='AbortError')cardStatus.textContent='分享未完成，可重試或下載卡片後在 App 內附加。';
+    else if(downloadChristmasCard())cardStatus.textContent=downloadNotice;
+    else cardStatus.textContent='目前無法分享，請重新製作卡片後再試。';
+  }
   finally{cardSaving=false;updateCardButtons();}
 }
 function updateCardEntries(){
@@ -1813,7 +1833,8 @@ for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('blur',()=>{cardTouched=true;renderChristmasCard();});
 }
 $('card-download').addEventListener('click',downloadChristmasCard);$('card-view-coupons').addEventListener('click',()=>{closeDialog('card-dialog');openActivityDialog('activity-coupons');});
-$('card-share').addEventListener('click',shareChristmasCard);
+$('card-share').addEventListener('click',()=>shareChristmasCard());
+$('card-share-with-text').addEventListener('click',()=>shareChristmasCard(true));
 $('card-copy-share-text').addEventListener('click',async()=>{
   const {text}=cardShareMetadata();
   const field=$('card-share-text');
