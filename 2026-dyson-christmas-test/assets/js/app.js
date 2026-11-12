@@ -801,7 +801,10 @@ function renderCalendar(){
   if(t===0){$('today-kicker').textContent='12/01 開始';$('today-title').textContent='第一場雪';open.textContent='尚未開始';open.disabled=true;}
   else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日物件測試 · 1～25 號已開放':'聖誕倒數已結束';open.textContent='查看收藏';}
   else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent='查看今日物件';}
-  const key=$('calendar-key');key.replaceChildren();
+  const key=$('calendar-key');
+  if(mobileViewport.matches)root.after(key);
+  else $('calendar-heading').prepend(key);
+  key.replaceChildren();
   if(!mobileViewport.matches){
     for(const [state,label] of [['future','尚未開放'],['calendar-unopened','可翻牌'],['placed','已放入']]){
       const mark=el('span',state==='placed'?'calendar-placed-mark':`calendar-tile-key ${state}`);

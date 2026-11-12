@@ -1110,6 +1110,11 @@ button,input,textarea,select{line-height:1.5}
     transform: translateY(-1px) rotate(-45deg);
   }
   #calendar-grid .calendar-placed-mark { position: absolute; inset: 5px 5px auto auto; }
-  #calendar-key { margin-top: 10px; }
+  #game-calendar .calendar-heading #calendar-key {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    gap: 4px 12px;
+    margin: 0;
+  }
   #game-calendar .calendar-card-entry { margin-top: 10px; padding-top: 10px; }
 }

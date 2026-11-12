@@ -9,7 +9,7 @@ window.DYSON_GAME_CONFIG = {
   "holidayAccentRevision": "20261028-white-blue-gold",
   "frontFacingArtworkRevision": "20261028-front-retail",
   "paperSceneryRevision": "20261028-minimal-relief",
-  "version": 93,
+  "version": 94,
   "benefitLayoutRevision": "20261106-aligned-benefits-v76",
   "activityRulesRevision": "20261106-v76-rules",
   "testEnvironment": "november-test-2026",
