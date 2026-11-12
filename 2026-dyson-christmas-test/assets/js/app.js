@@ -697,13 +697,12 @@ const calendarRevealKey=STORAGE_PREFIX+'desktop-revealed-days';
 const savedCalendarReveals=safeRead(calendarRevealKey,[]);
 const revealedCalendarDays=new Set(Array.isArray(savedCalendarReveals)?savedCalendarReveals.map(Number):[]);
 const previewCalendarReveals=new Set();
-let desktopCalendarDay=null;
+let desktopCalendarRequest=0;
 
-function renderDesktopCalendarCell(button,day,animate=false){
+function renderDesktopCalendarCell(button,day,{flip=false}={}){
   const locked=dayState(day)==='future';
   const placed=!locked&&isPlaced(day);
   const revealed=!locked&&(placed||Object.hasOwn(state().claimed,day)||(previewDate?previewCalendarReveals:revealedCalendarDays).has(day));
-  const selected=!locked&&day===desktopCalendarDay;
   const date=`12/${String(day).padStart(2,'0')}`;
   const name=revealed?item(day).name:calendarName(day);
   const statusLabel=locked?'尚未開放':revealed?(placed?'已放入水晶球':'未放入水晶球'):'點一下翻牌';
@@ -711,11 +710,10 @@ function renderDesktopCalendarCell(button,day,animate=false){
   button.disabled=locked;
   button.title=label;
   button.classList.toggle('placed',placed);
-  button.classList.toggle('calendar-selected',selected);
   button.classList.toggle('calendar-unopened',!locked&&!revealed);
   button.setAttribute('aria-label',`${date}，${label}`);
-  if(!locked)button.setAttribute('aria-pressed',String(selected));
-  const face=el('span',animate?'calendar-tile-face calendar-tile-reveal':'calendar-tile-face');
+  if(!locked)button.setAttribute('aria-haspopup','dialog');
+  const face=el('span','calendar-tile-face');
   face.append(el('span','day-number',String(day)));
   if(revealed){
     const thumbnail=el('canvas','calendar-tile-thumbnail');
@@ -724,48 +722,47 @@ function renderDesktopCalendarCell(button,day,animate=false){
     thumbnail.setAttribute('aria-hidden','true');
     observeCollectionThumbnail(thumbnail,day);
     face.append(thumbnail);
+    if(placed)face.append(el('span','calendar-placed-mark'));
   }else{
     face.append(el('span','day-name',name));
   }
-  replaceCollectionThumbnails(button,face);
-}
-function renderDesktopCalendarDetail(){
-  const day=desktopCalendarDay;
-  const available=day!==null&&dayState(day)!=='future';
-  $('desktop-calendar-actions').hidden=!available;
-  $('desktop-calendar-item').textContent=available?item(day).name:'選擇日期，翻開每日驚喜。';
-  if(available){
-    const placed=isPlaced(day);
-    $('desktop-calendar-place').textContent=placed?'移出水晶球':'放入水晶球';
+  if(!flip){
+    replaceCollectionThumbnails(button,face);
+    return;
   }
+  const front=button.querySelector('.calendar-tile-face');
+  const rotor=el('span','calendar-tile-rotor');
+  face.classList.add('calendar-tile-back');
+  rotor.append(front,face);
+  replaceCollectionThumbnails(button,rotor);
+  button.classList.add('calendar-flipping');
+  return rotor.animate([{transform:'rotateY(0deg)'},{transform:'rotateY(180deg)'}],{
+    duration:420,easing:'ease-in-out',fill:'forwards'
+  }).finished.finally(()=>{
+    button.classList.remove('calendar-flipping');
+    if(rotor.parentNode===button){
+      face.remove();
+      face.classList.remove('calendar-tile-back');
+      replaceCollectionThumbnails(button,face);
+    }
+  });
 }
-function selectDesktopCalendarDay(day){
-  if(mobileViewport.matches||dayState(day)==='future')return;
-  const previous=desktopCalendarDay;
-  const revealed=previewDate?previewCalendarReveals:revealedCalendarDays;
-  const animate=!revealed.has(day)&&!Object.hasOwn(state().claimed,day)&&!isPlaced(day);
-  if(!revealed.has(day)){
+async function openDesktopCalendarDay(button,day){
+  if(mobileViewport.matches||dayState(day)!=='owned'||button.classList.contains('calendar-flipping'))return;
+  const request=++desktopCalendarRequest;
+  const currentPreview=previewDate;
+  const revealed=currentPreview?previewCalendarReveals:revealedCalendarDays;
+  const firstReveal=button.classList.contains('calendar-unopened');
+  const assets=ensureItemAssets([day]);
+  if(firstReveal){
     revealed.add(day);
-    if(!previewDate)safeWrite(calendarRevealKey,[...revealed]);
+    if(!currentPreview)safeWrite(calendarRevealKey,[...revealed]);
+    const flip=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+    await renderDesktopCalendarCell(button,day,{flip});
   }
-  desktopCalendarDay=day;
-  const root=$('calendar-grid');
-  if(previous!==null&&previous!==day){
-    const oldButton=root.querySelector(`[data-day="${previous}"]`);
-    oldButton?.classList.remove('calendar-selected');
-    if(oldButton&&!oldButton.disabled)oldButton.setAttribute('aria-pressed','false');
-  }
-  const button=root.querySelector(`[data-day="${day}"]`);
-  if(button)renderDesktopCalendarCell(button,day,animate);
-  renderDesktopCalendarDetail();
-  keepDesktopCalendarInView();
-}
-function keepDesktopCalendarInView(){
-  const globeTop=$('globe-wrapper').getBoundingClientRect().top;
-  const headerBottom=document.querySelector('.site-header').getBoundingClientRect().bottom;
-  if(globeTop<headerBottom||$('desktop-calendar-place').getBoundingClientRect().bottom>document.documentElement.clientHeight){
-    $('game-calendar').scrollIntoView({block:'start',behavior:'instant'});
-  }
+  await assets;
+  if(request!==desktopCalendarRequest||currentPreview!==previewDate||mobileViewport.matches||document.querySelector('dialog[open]'))return;
+  openItem(day);
 }
 function renderCalendar(){
   const count=availableDays().length,t=today();
@@ -779,7 +776,7 @@ function renderCalendar(){
     const s=dayState(i.day),b=el('button',`day-cell ${s}${i.product?' product-day':''}`);b.type='button';b.dataset.day=String(i.day);
     if(!mobileViewport.matches){
       renderDesktopCalendarCell(b,i.day);
-      b.addEventListener('click',()=>selectDesktopCalendarDay(i.day));
+      b.addEventListener('click',()=>openDesktopCalendarDay(b,i.day));
       root.append(b);
       continue;
     }
@@ -795,7 +792,6 @@ function renderCalendar(){
     b.addEventListener('click',()=>openDay(i.day));root.append(b);
   }
   if(activeDay)root.querySelector(`[data-day="${activeDay}"]`)?.focus({preventScroll:true});
-  if(!mobileViewport.matches)renderDesktopCalendarDetail();
   const open=$('today-open');open.disabled=false;
   if(t===0){$('today-kicker').textContent='12/01 開始';$('today-title').textContent='第一場雪';open.textContent='尚未開始';open.disabled=true;}
   else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日物件測試 · 1～25 號已開放':'聖誕倒數已結束';open.textContent='查看收藏';}
@@ -803,7 +799,7 @@ function renderCalendar(){
   const key=$('calendar-key');key.replaceChildren();
   if(!mobileViewport.matches){
     for(const [state,label] of [['future','尚未開放'],['calendar-unopened','可翻牌'],['placed','已放入']]){
-      const mark=el('span',`calendar-tile-key ${state}`);
+      const mark=el('span',state==='placed'?'calendar-placed-mark':`calendar-tile-key ${state}`);
       mark.setAttribute('aria-hidden','true');
       const entry=el('span');entry.append(mark,el('span','',label));key.append(entry);
     }
@@ -958,7 +954,6 @@ function updatePlacementUI(d){
   if(cell&&dayState(d)==='owned'){
     if(!mobileViewport.matches){
       renderDesktopCalendarCell(cell,Number(d));
-      renderDesktopCalendarDetail();
       return;
     }
     const stateLabel=placed?'已放入水晶球':'未放入水晶球',displayState=placed?'placed':'stored',music=calendarMusic(d);
@@ -987,7 +982,8 @@ function renderItemDialog(){
   if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.starter?'YOUR STARTER SCENE':i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.product?[i.product.model,i.product.color].filter(Boolean).join(' · '):i.starter?'基礎造景 · 不計入 25 天收藏':i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
   const c=el('canvas');c.width=600;c.height=440;drawThumbnail(c,i.day);$('item-visual').replaceChildren(c);
   renderProduct(i);
-  $('item-placement').textContent=isPlaced(i.day)?'移除水晶球內':'放入水晶球內';$('item-placement').setAttribute('aria-pressed',String(isPlaced(i.day)));$('item-position').hidden=!isPlaced(i.day)||((!!i.effect||!!i.fixed)&&i.day!==25);$('item-position').textContent=i.day===25?'重播星光秀':'調整擺放位置';renderMusic();
+  const placed=isPlaced(i.day),placementLabel=placed?'移除水晶球':'放入水晶球';
+  $('item-placement').textContent=mobileViewport.matches?`${placementLabel}內`:placementLabel;$('item-placement').setAttribute('aria-pressed',String(placed));$('item-position').hidden=!placed||((!!i.effect||!!i.fixed)&&i.day!==25);$('item-position').textContent=i.day===25?'重播星光秀':'調整擺放位置';renderMusic();
 }
 function renderProduct(i){
   const product=i.product;$('item-product').hidden=!product;if(!product)return;
@@ -2354,14 +2350,6 @@ $('today-open').addEventListener('click',()=>{
     if(mobileViewport.matches)openMobileCollection();
     else $('collection-section').scrollIntoView({behavior:'smooth'});
   }else if(today()>=1)openDay(today());
-});
-$('desktop-calendar-place').addEventListener('click',()=>{
-  if(desktopCalendarDay===null||mobileViewport.matches)return;
-  togglePlacement(desktopCalendarDay,{fromCollection:true});
-  keepDesktopCalendarInView();
-});
-$('desktop-calendar-info').addEventListener('click',()=>{
-  if(desktopCalendarDay!==null)openDay(desktopCalendarDay);
 });
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
 $('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();drawFrame(0,performance.now());});
