@@ -1048,13 +1048,16 @@ button,input,textarea,select{line-height:1.5}
   #globe-section > .globe-actions { margin-top: 0; }
   #game-calendar {
     position: static; display: flex; flex-direction: column; min-width: 0;
-    padding: 16px; scroll-margin-top: 88px;
+    padding: 16px; scroll-margin-top: 88px; container-type: inline-size;
   }
   body:has(#preview-banner:not([hidden])) #game-calendar { scroll-margin-top: 125px; }
-  #game-calendar .calendar-heading { margin-bottom: 8px; gap: 6px 12px; }
+  #game-calendar .calendar-heading { display: flex; flex-wrap: wrap; margin-bottom: 8px; gap: 6px 8px; }
+  #game-calendar-title { font-size: clamp(19px, 4.25cqi, 26px); white-space: nowrap; }
   #game-calendar .calendar-heading-main .eyebrow { display: none; }
   #game-calendar #today-label { display: none; }
-  #game-calendar .calendar-tools { flex-direction: column; align-items: flex-end; }
+  #game-calendar .calendar-tools {
+    flex-direction: column; align-items: flex-end; width: auto; max-width: 100%; margin-left: auto;
+  }
   #game-calendar .progress-track { margin-bottom: 10px; }
   #game-calendar .today-card { display: none; }
   #calendar-grid {
@@ -1102,23 +1105,27 @@ button,input,textarea,select{line-height:1.5}
     width: 100%; height: min(100%, calc((var(--day-height) - 36.5px) * 1.45));
     min-height: 0; object-fit: contain;
   }
-  #calendar-key .calendar-tile-key {
-    flex: none; width: 13px; height: 13px; border-radius: 3px;
-    border: 1px solid #354357; background: #101b29;
+  .calendar-status-mark { flex: none; width: 14px; height: 14px; }
+  .calendar-status-mark.unopened {
+    border: 1px solid #9b7e50; border-radius: 3px; background: #101b29;
   }
-  #calendar-key .calendar-tile-key.calendar-unopened { border-color: #9b7e50; }
-  .calendar-placed-mark {
-    display: grid; place-items: center; flex: none; width: 16px; height: 16px;
-    color: #edcc91;
+  .calendar-status-mark.locked {
+    background: #a7b2bf;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4'%3E%3Crect x='3.5' y='6.5' width='9' height='7' rx='1.5'/%3E%3Cpath d='M5.5 6.5v-2a2.5 2.5 0 0 1 5 0v2'/%3E%3C/svg%3E") center / contain no-repeat;
   }
-  .calendar-placed-mark::before {
-    content: ''; width: 10px; height: 6px; border-left: 2px solid; border-bottom: 2px solid;
-    transform: translateY(-1px) rotate(-45deg);
+  .calendar-status-mark.revealed {
+    background: #a7b2bf;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m1.5 8.8 1.8-1.8L6 9.6l6.6-6.6 1.8 1.8L6 13.2z' fill='none' stroke='black' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
-  #calendar-grid .calendar-placed-mark { position: absolute; inset: 5px 5px auto auto; }
+  .calendar-status-mark.placed {
+    background: #edcc91;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m1.5 8.8 1.8-1.8L6 9.6l6.6-6.6 1.8 1.8L6 13.2z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  #calendar-grid .calendar-status-mark { position: absolute; inset: 4px 4px auto auto; }
   #game-calendar .calendar-tools #calendar-key {
     justify-content: flex-end;
-    gap: 4px 12px;
+    gap: 4px 6px;
+    font-size: 11px;
     margin: 0;
   }
   #game-calendar .calendar-card-entry { margin-top: 10px; padding-top: 10px; }

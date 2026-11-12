@@ -697,8 +697,17 @@ const calendarRevealKey=STORAGE_PREFIX+'desktop-revealed-days';
 const savedCalendarReveals=safeRead(calendarRevealKey,[]);
 const revealedCalendarDays=new Set(Array.isArray(savedCalendarReveals)?savedCalendarReveals.map(Number):[]);
 const previewCalendarReveals=new Set();
+const desktopCalendarLabels={
+  locked:'尚未開放',unopened:'可翻牌',revealed:'已翻牌、未放入',placed:'已放入'
+};
 let desktopCalendarRequest=0;
 let pendingDesktopCalendarButton=null;
+
+function desktopCalendarMark(status){
+  const mark=el('span',`calendar-status-mark ${status}`);
+  mark.setAttribute('aria-hidden','true');
+  return mark;
+}
 
 function renderDesktopCalendarCell(button,day,{flip=false}={}){
   const locked=dayState(day)==='future';
@@ -707,7 +716,8 @@ function renderDesktopCalendarCell(button,day,{flip=false}={}){
   const date=`12/${String(day).padStart(2,'0')}`;
   const name=revealed?item(day).name:calendarName(day);
   const music=calendarMusic(day);
-  const statusLabel=locked?'尚未開放':revealed?(placed?'已放入水晶球':'未放入水晶球'):'點一下翻牌';
+  const status=locked?'locked':placed?'placed':revealed?'revealed':'unopened';
+  const statusLabel=status==='unopened'?'點一下翻牌':desktopCalendarLabels[status];
   const label=`${name}${music?`，另有 ${music}`:''}，${statusLabel}`;
   button.disabled=locked;
   button.title=label;
@@ -724,11 +734,11 @@ function renderDesktopCalendarCell(button,day,{flip=false}={}){
     thumbnail.setAttribute('aria-hidden','true');
     observeCollectionThumbnail(thumbnail,day);
     face.append(thumbnail);
-    if(placed)face.append(el('span','calendar-placed-mark'));
   }else{
     face.append(el('span','day-name',name));
   }
   if(music)face.append(el('span','calendar-tile-music','♫ 聖誕旋律'));
+  if(status!=='unopened')face.append(desktopCalendarMark(status));
   if(!flip){
     replaceCollectionThumbnails(button,face);
     return;
@@ -808,10 +818,8 @@ function renderCalendar(){
   else $('today-label').before(key);
   key.replaceChildren();
   if(!mobileViewport.matches){
-    for(const [state,label] of [['future','尚未開放'],['calendar-unopened','可翻牌'],['placed','已放入']]){
-      const mark=el('span',state==='placed'?'calendar-placed-mark':`calendar-tile-key ${state}`);
-      mark.setAttribute('aria-hidden','true');
-      const entry=el('span');entry.append(mark,el('span','',label));key.append(entry);
+    for(const [status,label] of Object.entries(desktopCalendarLabels)){
+      const entry=el('span');entry.append(desktopCalendarMark(status),el('span','',label));key.append(entry);
     }
     return;
   }
