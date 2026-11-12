@@ -705,7 +705,9 @@ function renderDesktopCalendarCell(button,day,animate=false){
   const revealed=!locked&&(placed||Object.hasOwn(state().claimed,day)||(previewDate?previewCalendarReveals:revealedCalendarDays).has(day));
   const selected=!locked&&day===desktopCalendarDay;
   const date=`12/${String(day).padStart(2,'0')}`;
-  const label=locked?'尚未開放':revealed?`${item(day).name}，${placed?'已放入水晶球':'未放入水晶球'}`:'點一下翻牌';
+  const name=revealed?item(day).name:calendarName(day);
+  const statusLabel=locked?'尚未開放':revealed?(placed?'已放入水晶球':'未放入水晶球'):'點一下翻牌';
+  const label=`${name}，${statusLabel}`;
   button.disabled=locked;
   button.title=label;
   button.classList.toggle('placed',placed);
@@ -714,6 +716,7 @@ function renderDesktopCalendarCell(button,day,animate=false){
   button.setAttribute('aria-label',`${date}，${label}`);
   if(!locked)button.setAttribute('aria-pressed',String(selected));
   const face=el('span',animate?'calendar-tile-face calendar-tile-reveal':'calendar-tile-face');
+  face.append(el('span','day-number',String(day)));
   if(revealed){
     const thumbnail=el('canvas','calendar-tile-thumbnail');
     thumbnail.width=140;
@@ -722,7 +725,7 @@ function renderDesktopCalendarCell(button,day,animate=false){
     observeCollectionThumbnail(thumbnail,day);
     face.append(thumbnail);
   }else{
-    face.append(el('span','day-number',String(day)));
+    face.append(el('span','day-name',name));
   }
   replaceCollectionThumbnails(button,face);
 }

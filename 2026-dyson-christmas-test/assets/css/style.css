@@ -1053,18 +1053,23 @@ button,input,textarea,select{line-height:1.5}
     grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(5px, .6vw, 7px);
   }
   #calendar-grid .day-cell {
-    height: clamp(62px, calc((100svh - 548px) / 5), 84px); min-height: 0; padding: 0;
+    height: clamp(74px, calc((100svh - 548px) / 5), 84px); min-height: 0; padding: 0;
     border: 1px solid #465769; background: #0f1b2a; box-shadow: none;
   }
   #calendar-grid .day-cell.future { opacity: 1; border-color: #354357; background: #101b29; }
-  #calendar-grid .calendar-unopened { border-color: #9b7e50; }
+  #calendar-grid .calendar-unopened {
+    border-color: #8f7b5b; background: linear-gradient(150deg, #233040, #13202f);
+  }
   #calendar-grid .day-cell.placed { border-color: #d5b37a; background: #293140; }
   #calendar-grid .day-cell.calendar-selected { border-color: #f1cc8c; box-shadow: inset 0 0 0 1px #f1cc8c; }
   #calendar-grid .calendar-tile-face {
-    display: grid; place-items: center; width: 100%; height: 100%; padding: 3px;
+    display: grid; grid-template-rows: auto minmax(0, 1fr);
+    place-items: center; width: 100%; height: 100%; padding: 4px 3px 3px;
   }
   #calendar-grid .day-cell .day-number { color: #e3cca4; }
   #calendar-grid .day-cell.future .day-number { color: #a7b2bf; }
+  #calendar-grid .day-cell .day-name { font-size: clamp(11px, 1vw, 13px); line-height: 1.15; }
+  #calendar-grid .day-cell.future .day-name { color: #a7b2bf; }
   #calendar-grid .calendar-tile-thumbnail { width: 84%; height: 100%; min-height: 0; object-fit: contain; }
   #calendar-key .calendar-tile-key {
     flex: none; width: 13px; height: 13px; border-radius: 3px;
