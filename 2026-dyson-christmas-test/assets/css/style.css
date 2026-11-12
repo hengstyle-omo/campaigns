@@ -1042,10 +1042,6 @@ button,input,textarea,select{line-height:1.5}
     width: min(100%, 640px, max(270px, calc((100svh - 188px) * .8678)));
     margin-inline: auto;
   }
-  #globe-section #empty-globe,
-  #globe-section #snow-canvas {
-    transform: translateX(-3.8%) scale(1.14);
-  }
   #game-calendar { position: static; padding: 16px; scroll-margin-top: 88px; }
   body:has(#preview-banner:not([hidden])) #game-calendar { scroll-margin-top: 125px; }
   #game-calendar .calendar-heading { margin-bottom: 8px; gap: 6px 12px; }
@@ -1085,7 +1081,9 @@ button,input,textarea,select{line-height:1.5}
   #calendar-grid .day-cell.future .day-number { color: #a7b2bf; }
   #calendar-grid .day-cell .day-name { font-size: clamp(11px, 1vw, 13px); line-height: 1.15; }
   #calendar-grid .day-cell.future .day-name { color: #a7b2bf; }
-  #calendar-grid .calendar-tile-thumbnail { width: 84%; height: 100%; min-height: 0; object-fit: contain; }
+  #calendar-grid .calendar-tile-thumbnail {
+    width: 84%; height: 100%; min-height: 0; object-fit: contain; transform: scale(1.16);
+  }
   #calendar-key .calendar-tile-key {
     flex: none; width: 13px; height: 13px; border-radius: 3px;
     border: 1px solid #354357; background: #101b29;

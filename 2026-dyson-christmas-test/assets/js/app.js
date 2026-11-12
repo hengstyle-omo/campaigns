@@ -1679,13 +1679,7 @@ function updateSelection(){
 function moveSelected(dx,dy){if(!editMode||!selectedDay||!isPlaced(selectedDay)||item(selectedDay).fixed)return;const l=getLayout(selectedDay);l.x+=dx;l.y+=dy;state().layouts[selectedDay]=constrain(selectedDay,l);persist();updateSelection();drawFrame(0,performance.now());}
 canvas.addEventListener('pointerdown',e=>{const pt=pointerPoint(e),d=hitTest(pt);if(editMode&&d&&!item(d).fixed){selectItem(d);const l=getLayout(d);drag={id:e.pointerId,day:d,start:pt,offset:{x:pt.x-l.x,y:pt.y-l.y},moved:false};canvas.setPointerCapture(e.pointerId);}else drag={id:e.pointerId,day:d,start:pt,moved:false,viewOnly:true};});
 canvas.addEventListener('pointermove',e=>{const pt=pointerPoint(e);if(drag&&drag.id===e.pointerId){if(Math.hypot(pt.x-drag.start.x,pt.y-drag.start.y)>10)drag.moved=true;if(!drag.viewOnly&&drag.moved){const l=getLayout(drag.day);l.x=pt.x-drag.offset.x;l.y=pt.y-drag.offset.y;state().layouts[drag.day]=constrain(drag.day,l);drawFrame(0,performance.now());}return;}
-  const d=hitTest(pt),tip=$('scene-tip');tip.hidden=!d;
-  if(d){
-    const frame=$('globe-wrapper').getBoundingClientRect();
-    tip.textContent=item(d).name;
-    tip.style.left=`${Math.max(18,Math.min(82,(e.clientX-frame.left)/frame.width*100))}%`;
-    tip.style.top=`${(e.clientY-frame.top)/frame.height*100}%`;
-  }
+  const d=hitTest(pt);$('scene-tip').hidden=!d;if(d){$('scene-tip').textContent=item(d).name;$('scene-tip').style.left=`${Math.max(18,Math.min(82,((pt.x/SCENE_W-.5)*SCENE_VIEW.zoom+.5+SCENE_VIEW.shiftX)*100))}%`;$('scene-tip').style.top=`${((pt.y/SCENE_H-.5)*SCENE_VIEW.zoom+.5)*100}%`;}
 });
 canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const saved=drag;drag=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(saved.moved){if(saved.day===24&&!saved.viewOnly){const star=getLayout(24),near=[2,12].filter(d=>isPlaced(d)).map(d=>getLayout(d)).map(t=>starAboveTreeLayout(star,t)).sort((a,b)=>Math.hypot(star.x-a.x,star.y-a.y)-Math.hypot(star.x-b.x,star.y-b.y))[0];if(near&&Math.hypot(star.x-near.x,star.y-near.y)<85){state().layouts[24]={...star,x:near.x,y:near.y};status('金星已放在聖誕樹頂。');}}persist();return;}if(saved.day){if(editMode)selectItem(saved.day);else openItem(saved.day);}});
 canvas.addEventListener('pointercancel',()=>{drag=null;persist();});canvas.addEventListener('pointerleave',()=>{$('scene-tip').hidden=true;});
