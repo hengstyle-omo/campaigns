@@ -706,8 +706,9 @@ function renderDesktopCalendarCell(button,day,{flip=false}={}){
   const revealed=!locked&&(placed||Object.hasOwn(state().claimed,day)||(previewDate?previewCalendarReveals:revealedCalendarDays).has(day));
   const date=`12/${String(day).padStart(2,'0')}`;
   const name=revealed?item(day).name:calendarName(day);
+  const music=calendarMusic(day);
   const statusLabel=locked?'尚未開放':revealed?(placed?'已放入水晶球':'未放入水晶球'):'點一下翻牌';
-  const label=`${name}，${statusLabel}`;
+  const label=`${name}${music?`，另有 ${music}`:''}，${statusLabel}`;
   button.disabled=locked;
   button.title=label;
   button.classList.toggle('placed',placed);
@@ -727,6 +728,7 @@ function renderDesktopCalendarCell(button,day,{flip=false}={}){
   }else{
     face.append(el('span','day-name',name));
   }
+  if(music)face.append(el('span','calendar-tile-music','♫ 聖誕旋律'));
   if(!flip){
     replaceCollectionThumbnails(button,face);
     return;
@@ -803,7 +805,7 @@ function renderCalendar(){
   else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent='查看今日物件';}
   const key=$('calendar-key');
   if(mobileViewport.matches)root.after(key);
-  else $('calendar-heading').prepend(key);
+  else $('today-label').before(key);
   key.replaceChildren();
   if(!mobileViewport.matches){
     for(const [state,label] of [['future','尚未開放'],['calendar-unopened','可翻牌'],['placed','已放入']]){
