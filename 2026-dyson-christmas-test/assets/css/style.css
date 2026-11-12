@@ -1042,6 +1042,10 @@ button,input,textarea,select{line-height:1.5}
     width: min(100%, 640px, max(270px, calc((100svh - 188px) * .8678)));
     margin-inline: auto;
   }
+  #globe-section #empty-globe,
+  #globe-section #snow-canvas {
+    transform: translateX(-3.8%) scale(1.14);
+  }
   #game-calendar { position: static; padding: 16px; scroll-margin-top: 88px; }
   body:has(#preview-banner:not([hidden])) #game-calendar { scroll-margin-top: 125px; }
   #game-calendar .calendar-heading { margin-bottom: 8px; gap: 6px 12px; }
