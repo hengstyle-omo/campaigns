@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant" data-activity-environment="test">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261111-v86"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10141c"><title>Dyson 聖誕收藏｜11 月一般使用者測試版</title><link rel="stylesheet" href="./assets/css/style.css?v=20261112-v87"></head>
 <body>
 <template id="activity-missions-template">
  <p class="activity-intro-description">
@@ -13,7 +13,7 @@
    <a href="#activity-attendance"><b class="mission-number">03</b><strong>獨家好禮</strong><span>打卡五天<br>享靠櫃禮</span></a>
   </nav>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v86</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v87</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline" hidden><button id="welcome-skip" type="button" aria-label="關閉">×</button></div>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
@@ -95,6 +95,13 @@
    </section>
    <div class="progress-label"><span>已開放物件</span><span id="progress-count">0 / 25</span></div><div class="progress-track"><div id="progress-fill"></div></div>
    <div id="calendar-grid" class="calendar-grid" aria-label="12 月每日禮盒"></div>
+   <div class="desktop-calendar-detail">
+    <p id="desktop-calendar-item" aria-live="polite">選擇日期，翻開每日驚喜。</p>
+    <div id="desktop-calendar-actions" hidden>
+     <button id="desktop-calendar-info" type="button">查看介紹</button>
+     <button id="desktop-calendar-place" class="gold-button" type="button">放入水晶球</button>
+    </div>
+   </div>
    <div id="calendar-key" class="calendar-key" aria-label="日期狀態說明"></div>
    <div class="calendar-card-entry"><button id="card-open" class="gold-button" type="button" disabled>製作聖誕卡片</button></div>
    </div>
@@ -200,7 +207,7 @@
 
 
 
-<script src="./assets/js/config.js?v=20261111-v86"></script>
+<script src="./assets/js/config.js?v=20261112-v87"></script>
 <script src="./assets/js/analytics.js?v=20261106-v78-coupon-links"></script>
-<script src="./assets/js/app.js?v=20261111-v86"></script>
+<script src="./assets/js/app.js?v=20261112-v87-calendar"></script>
 </body></html>

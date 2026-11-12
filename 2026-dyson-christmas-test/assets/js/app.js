@@ -693,14 +693,97 @@ function calendarStateIcon(state){
   const icon=el('span',`calendar-state-icon ${state}`);
   icon.setAttribute('aria-hidden','true');return icon;
 }
+const calendarRevealKey=STORAGE_PREFIX+'desktop-revealed-days';
+const savedCalendarReveals=safeRead(calendarRevealKey,[]);
+const revealedCalendarDays=new Set(Array.isArray(savedCalendarReveals)?savedCalendarReveals.map(Number):[]);
+const previewCalendarReveals=new Set();
+let desktopCalendarDay=null;
+
+function renderDesktopCalendarCell(button,day,animate=false){
+  const locked=dayState(day)==='future';
+  const placed=!locked&&isPlaced(day);
+  const revealed=!locked&&(placed||Object.hasOwn(state().claimed,day)||(previewDate?previewCalendarReveals:revealedCalendarDays).has(day));
+  const selected=!locked&&day===desktopCalendarDay;
+  const date=`12/${String(day).padStart(2,'0')}`;
+  const label=locked?'尚未開放':revealed?`${item(day).name}，${placed?'已放入水晶球':'未放入水晶球'}`:'點一下翻牌';
+  button.disabled=locked;
+  button.title=label;
+  button.classList.toggle('placed',placed);
+  button.classList.toggle('calendar-selected',selected);
+  button.classList.toggle('calendar-unopened',!locked&&!revealed);
+  button.setAttribute('aria-label',`${date}，${label}`);
+  if(!locked)button.setAttribute('aria-pressed',String(selected));
+  const face=el('span',animate?'calendar-tile-face calendar-tile-reveal':'calendar-tile-face');
+  face.append(el('span','day-number',date));
+  if(revealed){
+    const thumbnail=el('canvas','calendar-tile-thumbnail');
+    thumbnail.width=140;
+    thumbnail.height=100;
+    thumbnail.setAttribute('aria-hidden','true');
+    observeCollectionThumbnail(thumbnail,day);
+    face.append(thumbnail);
+    if(placed)face.append(calendarStateIcon('placed'));
+  }else{
+    const icon=locked?calendarStateIcon('future'):el('span','calendar-tile-gift');
+    icon.setAttribute('aria-hidden','true');
+    face.append(icon);
+  }
+  replaceCollectionThumbnails(button,face);
+}
+function renderDesktopCalendarDetail(){
+  const day=desktopCalendarDay;
+  const available=day!==null&&dayState(day)!=='future';
+  $('desktop-calendar-actions').hidden=!available;
+  $('desktop-calendar-item').textContent=available?item(day).name:'選擇日期，翻開每日驚喜。';
+  if(available){
+    const placed=isPlaced(day);
+    $('desktop-calendar-place').textContent=placed?'移出水晶球':'放入水晶球';
+  }
+}
+function selectDesktopCalendarDay(day){
+  if(mobileViewport.matches||dayState(day)==='future')return;
+  const previous=desktopCalendarDay;
+  const revealed=previewDate?previewCalendarReveals:revealedCalendarDays;
+  const animate=!revealed.has(day)&&!Object.hasOwn(state().claimed,day)&&!isPlaced(day);
+  if(!revealed.has(day)){
+    revealed.add(day);
+    if(!previewDate)safeWrite(calendarRevealKey,[...revealed]);
+  }
+  desktopCalendarDay=day;
+  const root=$('calendar-grid');
+  if(previous!==null&&previous!==day){
+    const oldButton=root.querySelector(`[data-day="${previous}"]`);
+    oldButton?.classList.remove('calendar-selected');
+    if(oldButton&&!oldButton.disabled)oldButton.setAttribute('aria-pressed','false');
+  }
+  const button=root.querySelector(`[data-day="${day}"]`);
+  if(button)renderDesktopCalendarCell(button,day,animate);
+  renderDesktopCalendarDetail();
+  keepDesktopCalendarInView();
+}
+function keepDesktopCalendarInView(){
+  const globeTop=$('globe-wrapper').getBoundingClientRect().top;
+  const headerBottom=document.querySelector('.site-header').getBoundingClientRect().bottom;
+  if(globeTop<headerBottom||$('desktop-calendar-place').getBoundingClientRect().bottom>document.documentElement.clientHeight){
+    $('game-calendar').scrollIntoView({block:'start',behavior:'instant'});
+  }
+}
 function renderCalendar(){
   const count=availableDays().length,t=today();
   $('today-label').textContent=`${dateISO().slice(5).replace('-','/')} · 台灣${previewDate?' · 模擬':''}`;
   $('mobile-calendar-count').textContent=`已開放 ${count}／25`;
   $('progress-count').textContent=`${count} / 25`;$('progress-fill').style.width=`${count/25*100}%`;
-  const root=$('calendar-grid');root.replaceChildren();
+  const root=$('calendar-grid');
+  const activeDay=root.contains(document.activeElement)?Number(document.activeElement.dataset.day):null;
+  replaceCollectionThumbnails(root);
   for(const i of items()){
     const s=dayState(i.day),b=el('button',`day-cell ${s}${i.product?' product-day':''}`);b.type='button';b.dataset.day=String(i.day);
+    if(!mobileViewport.matches){
+      renderDesktopCalendarCell(b,i.day);
+      b.addEventListener('click',()=>selectDesktopCalendarDay(i.day));
+      root.append(b);
+      continue;
+    }
     const name=calendarName(i.day),music=calendarMusic(i.day);
     const displayState=s==='owned'?(isPlaced(i.day)?'placed':'stored'):s;
     const stateLabel=s==='owned'?(displayState==='placed'?'已放入水晶球':'未放入水晶球'):describeState(i.day);
@@ -712,11 +795,20 @@ function renderCalendar(){
     if(['future','stored','placed'].includes(displayState))b.append(calendarStateIcon(displayState));
     b.addEventListener('click',()=>openDay(i.day));root.append(b);
   }
+  if(activeDay)root.querySelector(`[data-day="${activeDay}"]`)?.focus({preventScroll:true});
+  if(!mobileViewport.matches)renderDesktopCalendarDetail();
   const open=$('today-open');open.disabled=false;
   if(t===0){$('today-kicker').textContent='12/01 開始';$('today-title').textContent='第一場雪';open.textContent='尚未開始';open.disabled=true;}
   else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日物件測試 · 1～25 號已開放':'聖誕倒數已結束';open.textContent='查看收藏';}
   else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent='查看今日物件';}
   const key=$('calendar-key');key.replaceChildren();
+  if(!mobileViewport.matches){
+    for(const [icon,label] of [[calendarStateIcon('future'),'尚未開放'],[el('span','calendar-tile-gift'),'可翻牌'],[calendarStateIcon('placed'),'已放入']]){
+      icon.setAttribute('aria-hidden','true');
+      const entry=el('span');entry.append(icon,el('span','',label));key.append(entry);
+    }
+    return;
+  }
   for(const [s,label] of [['future','日期未到'],['stored','未放入'],['placed','已放入']]){
     const entry=el('span');entry.append(calendarStateIcon(s),el('span','',label));if(s==='placed')entry.append(el('small','calendar-border-note','日期格有金邊'));key.append(entry);
   }
@@ -841,6 +933,7 @@ function placeHomePassport(){
 }
 mobileViewport.addEventListener('change',event=>{
   placeHomePassport();
+  renderCalendar();
   if(event.matches)return;
   closeDialog('mobile-collection');
   restoreMobileGlobe();
@@ -863,6 +956,11 @@ function updatePlacementUI(d){
   refreshItemThumbnails(d);
   const cell=$('calendar-grid').querySelector(`[data-day="${Number(d)}"]`);
   if(cell&&dayState(d)==='owned'){
+    if(!mobileViewport.matches){
+      renderDesktopCalendarCell(cell,Number(d));
+      renderDesktopCalendarDetail();
+      return;
+    }
     const stateLabel=placed?'已放入水晶球':'未放入水晶球',displayState=placed?'placed':'stored',music=calendarMusic(d);
     cell.classList.toggle('placed',placed);cell.classList.toggle('stored',!placed);cell.title=stateLabel;
     cell.setAttribute('aria-label',`12月${d}日，${calendarName(d)}${music?`，另有 ${music}`:''}，${stateLabel}，依台灣時間開啟`);
@@ -2256,6 +2354,14 @@ $('today-open').addEventListener('click',()=>{
     if(mobileViewport.matches)openMobileCollection();
     else $('collection-section').scrollIntoView({behavior:'smooth'});
   }else if(today()>=1)openDay(today());
+});
+$('desktop-calendar-place').addEventListener('click',()=>{
+  if(desktopCalendarDay===null||mobileViewport.matches)return;
+  togglePlacement(desktopCalendarDay,{fromCollection:true});
+  keepDesktopCalendarInView();
+});
+$('desktop-calendar-info').addEventListener('click',()=>{
+  if(desktopCalendarDay!==null)openDay(desktopCalendarDay);
 });
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
 $('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();drawFrame(0,performance.now());});
