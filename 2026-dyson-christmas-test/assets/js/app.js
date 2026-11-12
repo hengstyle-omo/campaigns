@@ -714,7 +714,6 @@ function renderDesktopCalendarCell(button,day,animate=false){
   button.setAttribute('aria-label',`${date}，${label}`);
   if(!locked)button.setAttribute('aria-pressed',String(selected));
   const face=el('span',animate?'calendar-tile-face calendar-tile-reveal':'calendar-tile-face');
-  face.append(el('span','day-number',date));
   if(revealed){
     const thumbnail=el('canvas','calendar-tile-thumbnail');
     thumbnail.width=140;
@@ -722,11 +721,8 @@ function renderDesktopCalendarCell(button,day,animate=false){
     thumbnail.setAttribute('aria-hidden','true');
     observeCollectionThumbnail(thumbnail,day);
     face.append(thumbnail);
-    if(placed)face.append(calendarStateIcon('placed'));
   }else{
-    const icon=locked?calendarStateIcon('future'):el('span','calendar-tile-gift');
-    icon.setAttribute('aria-hidden','true');
-    face.append(icon);
+    face.append(el('span','day-number',String(day)));
   }
   replaceCollectionThumbnails(button,face);
 }
@@ -803,9 +799,10 @@ function renderCalendar(){
   else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent='查看今日物件';}
   const key=$('calendar-key');key.replaceChildren();
   if(!mobileViewport.matches){
-    for(const [icon,label] of [[calendarStateIcon('future'),'尚未開放'],[el('span','calendar-tile-gift'),'可翻牌'],[calendarStateIcon('placed'),'已放入']]){
-      icon.setAttribute('aria-hidden','true');
-      const entry=el('span');entry.append(icon,el('span','',label));key.append(entry);
+    for(const [state,label] of [['future','尚未開放'],['calendar-unopened','可翻牌'],['placed','已放入']]){
+      const mark=el('span',`calendar-tile-key ${state}`);
+      mark.setAttribute('aria-hidden','true');
+      const entry=el('span');entry.append(mark,el('span','',label));key.append(entry);
     }
     return;
   }
