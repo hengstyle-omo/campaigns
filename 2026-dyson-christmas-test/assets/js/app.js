@@ -698,6 +698,7 @@ const savedCalendarReveals=safeRead(calendarRevealKey,[]);
 const revealedCalendarDays=new Set(Array.isArray(savedCalendarReveals)?savedCalendarReveals.map(Number):[]);
 const previewCalendarReveals=new Set();
 let desktopCalendarRequest=0;
+let pendingDesktopCalendarButton=null;
 
 function renderDesktopCalendarCell(button,day,{flip=false}={}){
   const locked=dayState(day)==='future';
@@ -748,8 +749,9 @@ function renderDesktopCalendarCell(button,day,{flip=false}={}){
   });
 }
 async function openDesktopCalendarDay(button,day){
-  if(mobileViewport.matches||dayState(day)!=='owned'||button.classList.contains('calendar-flipping'))return;
+  if(mobileViewport.matches||dayState(day)!=='owned'||pendingDesktopCalendarButton===button||button.classList.contains('calendar-flipping'))return;
   const request=++desktopCalendarRequest;
+  pendingDesktopCalendarButton=button;
   const currentPreview=previewDate;
   const revealed=currentPreview?previewCalendarReveals:revealedCalendarDays;
   const firstReveal=button.classList.contains('calendar-unopened');
@@ -759,9 +761,12 @@ async function openDesktopCalendarDay(button,day){
     if(!currentPreview)safeWrite(calendarRevealKey,[...revealed]);
     const flip=!matchMedia('(prefers-reduced-motion: reduce)').matches;
     await renderDesktopCalendarCell(button,day,{flip});
+    await new Promise(resolve=>setTimeout(resolve,250));
   }
   await assets;
-  if(request!==desktopCalendarRequest||currentPreview!==previewDate||mobileViewport.matches||document.querySelector('dialog[open]'))return;
+  if(request!==desktopCalendarRequest)return;
+  pendingDesktopCalendarButton=null;
+  if(currentPreview!==previewDate||mobileViewport.matches||document.querySelector('dialog[open]'))return;
   openItem(day);
 }
 function renderCalendar(){
