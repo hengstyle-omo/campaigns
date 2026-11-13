@@ -576,11 +576,13 @@ function showDialog(id){const d=$(id);if(!d.open){d.showModal();if(id==='voucher
 
 // The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
+const welcomeVideoSrc='./assets/video/dyson_2026xmas_welcome.mp4';
+const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.webp';
 let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=false;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
-  if(!video.getAttribute('src')){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}
+  if(!video.getAttribute('src')){video.src=welcomeVideoSrc;video.currentTime=0;}
   $('welcome-play').hidden=true;welcomeMessage('正在準備你的聖誕旅程…');
   try{await video.play();if(attempt!==welcomeAttempt||!welcomeMediaOpen()){if(!welcomeMediaOpen())video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');}
   catch{if(attempt!==welcomeAttempt||!welcomeMediaOpen())return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始佈置水晶球。':'點一下播放介紹，或直接開始佈置水晶球。');}
@@ -600,7 +602,7 @@ function openWelcome({progressOnly=false}={}){
   welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-dialog').setAttribute('closedby',progressOnly?'closerequest':'none');$('welcome-skip').parentElement.hidden=!progressOnly;$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('progress-email-caption').textContent=progressOnly?'你的 Email':'Email（選填）';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
   $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
   welcomeCleaned=false;$('welcome-play').hidden=true;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
-  video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';if(!progressOnly){video.src='./assets/video/welcome.mp4?rev=20261027-5';video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
+  video.poster=welcomePosterSrc;if(!progressOnly){video.src=welcomeVideoSrc;video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
   if(progressOnly)return;
   welcomeTimer=setTimeout(()=>{if(welcomeMediaOpen()&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
@@ -613,7 +615,7 @@ $('welcome-skip').addEventListener('click',finishWelcome);
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');});
-$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster='./assets/video/welcome-poster.webp?rev=20261111-bright';video.load();$('welcome-play').hidden=true;welcomeMessage('布置屬於你的聖誕雪境。');});
+$('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster=welcomePosterSrc;video.load();$('welcome-play').hidden=true;welcomeMessage('布置屬於你的聖誕雪境。');});
 $('welcome-video').addEventListener('error',()=>{if(!welcomeMediaOpen())return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始佈置水晶球。');});
 $('welcome-dialog').addEventListener('keydown',event=>{if(event.key==='Escape'&&!welcomeProgressOnly){event.preventDefault();event.stopPropagation();}});
 $('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();if(welcomeProgressOnly)finishWelcome();});
