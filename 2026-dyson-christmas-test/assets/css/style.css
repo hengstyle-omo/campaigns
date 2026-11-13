@@ -163,20 +163,20 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .benefit-card.locked.next-reward>button{color:#d6bc95;border-color:#786440;background:#17202b}
 
 .benefit-card.claimed .reward-meta .benefit-date,.voucher-card.claimed .reward-meta .benefit-date{color:#e2bf89}
-.day-cell{min-height:119px;gap:5px;padding:10px 4px}.day-cell .day-name{display:block;max-width:100%;font-size:12px;line-height:1.4;color:#c4c1bb;overflow-wrap:anywhere;font-weight:500;text-align:center}.day-cell.future .day-name{color:#b1b3b9}.day-cell.missed .day-name{color:#9598a1}.day-cell.owned .day-name{color:#efdbbb}.day-cell.current .day-name{color:#ffe2b2}.day-cell .day-status{margin-top:auto;padding-top:2px}.day-cell .day-music{font-size:10px;line-height:1.35;color:#b9a98d;text-align:center;overflow-wrap:anywhere}.day-cell.current .day-music,.day-cell.owned .day-music{color:#e2c38b}@media(max-width:1000px){.day-cell{min-height:125px}}@media(max-width:380px){.calendar-grid{gap:5px}.day-cell{padding:8px 3px;min-height:121px}.day-cell .day-name{font-size:11px}.day-cell .day-music{font-size:10px}.day-cell .day-number{font-size:23px}}
+.day-cell{min-height:119px;gap:5px;padding:10px 4px}.day-cell .day-name{display:block;max-width:100%;font-size:12px;line-height:1.4;color:#c4c1bb;overflow-wrap:anywhere;font-weight:500;text-align:center}.day-cell.future .day-name{color:#b1b3b9}.day-cell.missed .day-name{color:#9598a1}.day-cell.owned .day-name{color:#efdbbb}.day-cell.current .day-name{color:#ffe2b2}.day-cell .day-status{margin-top:auto;padding-top:2px}@media(max-width:1000px){.day-cell{min-height:125px}}@media(max-width:380px){.calendar-grid{gap:5px}.day-cell{padding:8px 3px;min-height:121px}.day-cell .day-name{font-size:11px}.day-cell .day-number{font-size:23px}}
 .card-media-options{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}.card-format-label{display:block;color:var(--gold);font-size:14px;margin-bottom:7px}.card-media-options select{width:100%;background:#0b121d;color:var(--text);border:1px solid #b38d5066;border-radius:6px;padding:10px 8px;font:inherit;font-size:13px}.card-audio-check{display:flex;gap:7px;align-items:center;font-size:14px;margin:12px 0}.card-audio-check input{width:15px;height:15px;margin:0;accent-color:var(--gold)}.card-audio-check span,.card-voice-heading strong span{color:var(--muted);font-size:12px;font-weight:400}.card-voice-heading{display:flex;justify-content:space-between;gap:8px;align-items:baseline;font-size:13px;margin:14px 0 8px}.card-voice-heading strong{font-weight:500;color:#e7d1ad}.card-voice-heading>span{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--gold)}.card-voice-actions{display:flex;gap:7px;flex-wrap:wrap}.card-voice-actions button{padding:6px 10px;font-size:13px}#card-record-stop{border-color:#e9a087;color:#ffd2bf}#card-voice-preview{width:100%;height:34px;margin-top:10px}#card-generate{width:100%;margin-top:15px;padding:10px;font-size:14px}#card-file-size{color:#d9c19a;font-size:13px;min-height:18px;margin-top:9px}#card-export-progress{display:flex;align-items:center;gap:9px;margin-top:10px}#card-progress{flex:1;width:0;height:7px;accent-color:var(--gold)}#card-cancel-export{padding:4px 8px;font-size:12px}#card-video-preview,#card-gif-preview{width:100%;height:auto;display:block;border-radius:3px}.card-format-error{color:#f2afa0!important}
 
 /* Base compact calendar; readable sizing and columns are defined below. */
-.day-music-short{display:none}
+
 @media(max-width:760px){
  .calendar-grid{gap:5px}
  .day-cell{height:100px;min-height:100px;padding:5px 2px;gap:2px;justify-content:flex-start}
  .day-cell .day-number{font-size:23px;line-height:1.1;flex-shrink:0}
  .day-cell .day-name{font-size:11px;line-height:1.25;flex-shrink:0}
- .day-cell .day-music{font-size:10px;line-height:1.25;flex-shrink:0}
+
  .day-cell .day-status{font-size:10px;line-height:1.25;margin-top:auto;padding-top:0;flex-shrink:0}
- .day-music-full{display:none}
- .day-music-short{display:inline}
+
+
 }
 
 .sim-panel-heading>span:last-child{color:var(--gold);font-size:12px}.sim-panel-footer{align-items:center;justify-content:flex-end}.sim-panel-footer #quick-sim-done{background:#ddbc7a24;border-color:#d6ae6c;color:#f2d4a2}
@@ -187,13 +187,13 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .day-cell.current{border-color:#e4ba78;box-shadow:inset 0 0 0 1px #e4ba7824}
 .day-cell.unselected{background:#0c121d;border-color:#353b455e;box-shadow:none}
 .day-cell .day-number{flex-shrink:0}.day-cell .day-name{line-height:1.3}
-.day-music-full{display:none}.day-music-short{display:inline}
+
 .calendar-state-icon{position:absolute;right:5px;top:4px;width:13px;height:13px;display:inline-grid;place-items:center;color:#8b919c;font-size:14px;line-height:1;pointer-events:none}
 .calendar-state-icon.placed{color:#edcf95;font-weight:700}.calendar-state-icon.current{color:#f4d393;font-size:21px}
 .calendar-state-icon.future{background:center/11px 11px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238b919c' stroke-width='1.4'%3E%3Crect x='3.5' y='7' width='9' height='7' rx='1.4'/%3E%3Cpath d='M5.5 7V4a2.5 2.5 0 0 1 5 0v3'/%3E%3C/svg%3E")}
 .calendar-state-icon.unselected{width:7px;height:7px;border:1px solid #737986;border-radius:50%}
 .calendar-key .calendar-state-icon{position:static;flex:none;margin-right:1px}.calendar-key>span{gap:4px}
-@media(min-width:761px){.day-cell{padding:7px 4px;gap:4px}.day-cell .day-number{font-size:25px;line-height:1.1}.day-cell .day-music{line-height:1.25}}
+@media(min-width:761px){.day-cell{padding:7px 4px;gap:4px}.day-cell .day-number{font-size:25px;line-height:1.1}}
 /* Keep corner symbols clear of two-digit dates on narrow five-column grids. */
 .day-cell .calendar-state-icon{right:3px;top:3px;width:9px;height:9px;font-size:12px;background-size:9px 9px}
 .day-cell .calendar-state-icon.current{font-size:16px}
@@ -209,7 +209,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 /* Collected gifts stay dark until the user explicitly places them. */
 .day-cell.owned.stored{background:#0c121d;border-color:#454854;box-shadow:none}
-.day-cell.owned.stored .day-number{color:#a5a5ad}.day-cell.owned.stored .day-name{color:#c0bdba}.day-cell.owned.stored .day-music{color:#b9a98d}
+.day-cell.owned.stored .day-number{color:#a5a5ad}.day-cell.owned.stored .day-name{color:#c0bdba}
 .day-cell.owned.placed{background:linear-gradient(145deg,#e5bd7e2c,#d7b88016);border-color:#d5b37a;box-shadow:inset 0 0 0 1px #d5b37a22}
 .day-cell.owned.placed .day-number{color:#e5c58f}.day-cell.owned.placed .day-name{color:#f4ddba}
 .day-cell.product-day.owned.stored{border-color:#b39255a6;box-shadow:inset 0 0 0 1px #c3a15c13,0 0 9px #dfb7690c}
@@ -236,7 +236,7 @@ button,input,textarea,select{line-height:1.5}
 .day-cell{height:auto;min-height:100px;padding:9px 5px;gap:5px}
 .day-cell .day-number{font-size:25px;line-height:1.1}
 .day-cell .day-name{font-size:14px;line-height:1.4}
-.day-cell .day-music{font-size:12px;line-height:1.35}
+
 .day-cell.future .day-name{color:#bec3cc}
 .calendar-note,.benefit-note,.dialog-subtitle,.today-card.compact>p:not(.eyebrow){font-size:14px}
 .calendar-key{font-size:12px;line-height:1.6}
@@ -256,7 +256,7 @@ button,input,textarea,select{line-height:1.5}
  .calendar-tools{margin-left:auto;max-width:100%}
  .day-cell{height:auto;min-height:100px;padding:8px 4px;gap:4px}
  .day-cell .day-name{font-size:14px;line-height:1.4}
- .day-cell .day-music{font-size:12px;line-height:1.35}
+
  .collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
  .collection-card .card-info{padding:12px}
  .collection-card.product-card h3{font-size:16px}
@@ -272,8 +272,6 @@ button,input,textarea,select{line-height:1.5}
  .sim-selection-toolbar span{flex-basis:100%}
  .sim-panel-footer{flex-wrap:wrap}
  .sim-panel-heading{flex-wrap:wrap}
- 
- 
 }
 @media(max-width:360px){
  .site-header nav{max-width:calc(100% - 88px)}
@@ -468,8 +466,9 @@ button,input,textarea,select{line-height:1.5}
 .welcome-progress .progress-consent{font-size:13px;line-height:1.6;gap:8px}
 .welcome-progress .card-hint{font-size:12px;line-height:1.6;margin:7px 0 0}
 .welcome-progress #progress-message:empty{display:none}
-.welcome-progress #progress-current p{margin:0;font-size:12px}
-.welcome-progress #progress-switch{margin:4px 0 8px}
+.welcome-progress #progress-current{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+.welcome-progress #progress-current p{margin:0;font-size:12px;overflow-wrap:anywhere}
+.welcome-progress #progress-switch{margin:0;min-height:44px;white-space:nowrap}
 .welcome-content .welcome-media{grid-column:1;grid-row:1;width:min(100%,238px);margin:0 auto;align-self:center}
 .welcome-media-toolbar{min-height:24px;margin-top:6px;flex-wrap:wrap;gap:4px 8px}
 .welcome-media-toolbar .welcome-status{font-size:11px;line-height:1.5}
@@ -1042,7 +1041,7 @@ button,input,textarea,select{line-height:1.5}
     margin-inline: auto;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--game-gap);
-    align-items: stretch;
+    align-items: start;
   }
   #globe-section { min-width: 0; display: flex; flex-direction: column; padding-bottom: 17px; }
   #globe-section > .globe-actions { margin-top: 10px; }
@@ -1065,8 +1064,7 @@ button,input,textarea,select{line-height:1.5}
   #calendar-grid {
     --day-height: clamp(74px, calc((100svh - 548px) / 5), 84px);
     grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(5px, .6vw, 7px);
-    grid-auto-rows: minmax(calc(var(--day-height) + 10px), 1fr);
-    flex: 1 0 auto;
+    grid-auto-rows: calc(var(--day-height) + 10px);
   }
   #calendar-grid .day-cell {
     height: 100%; min-height: 0; padding: 0;
@@ -1080,7 +1078,7 @@ button,input,textarea,select{line-height:1.5}
     border-color: #e8c482; background: #293140; box-shadow: inset 0 0 0 1px #e8c482;
   }
   #calendar-grid .calendar-tile-face {
-    position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+    position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr);
     place-items: center; width: 100%; height: 100%; padding: 4px 3px 3px;
   }
   #calendar-grid .day-cell.calendar-flipping { border-color: transparent; background: transparent; }
@@ -1098,10 +1096,6 @@ button,input,textarea,select{line-height:1.5}
   #calendar-grid .day-cell.future .day-number { color: #a7b2bf; }
   #calendar-grid .day-cell .day-name { font-size: clamp(11px, 1vw, 13px); line-height: 1.15; }
   #calendar-grid .day-cell.future .day-name { color: #a7b2bf; }
-  #calendar-grid .calendar-tile-music {
-    font-size: clamp(8px, .85vw, 11px); line-height: 1.2; white-space: nowrap; color: #edcc91;
-  }
-  #calendar-grid .day-cell.future .calendar-tile-music { color: #a7b2bf; }
   #calendar-grid .calendar-tile-thumbnail {
     /* Reserve 36.5px for the date, tile borders and face padding. */
     width: 100%; height: min(100%, calc((var(--day-height) - 36.5px) * 1.45));
@@ -1123,6 +1117,20 @@ button,input,textarea,select{line-height:1.5}
   #calendar-grid .calendar-status-mark { position: absolute; inset: 4px 4px auto auto; }
   #game-calendar .calendar-card-entry { margin-top: 10px; padding-top: 10px; }
 }
+
+.calendar-music-mark {
+  position: absolute;
+  top: 21px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 13px;
+  font: 13px/1 Arial, sans-serif;
+  color: #edcc91;
+  pointer-events: none;
+}
+.day-cell.future .calendar-music-mark { color: #a7b2bf; }
 
 .campaign-footer {
   display: flex; flex-direction: column; align-items: center; text-align: center;

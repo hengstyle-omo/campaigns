@@ -113,6 +113,8 @@ function renderCloud(){
  $('admin-auth-email').textContent=cloud.email;$('admin-auth-submit').disabled=busy;$('admin-auth-cancel').disabled=busy;$('admin-auth-code').disabled=busy;$('admin-auth-form').setAttribute('aria-busy',String(busy));if($('admin-auth-dialog').open)$('admin-auth-message').textContent=cloud.loading?'正在驗證…':cloud.error||'請輸入管理員驗證碼。';
  $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始佈置水晶球';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
  $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
+ $('progress-email-field').hidden=!!cloud.email;
+ if(cloud.email)$('progress-email').value=cloud.email;
  $('progress-email').disabled=busy;$('progress-marketing').disabled=busy;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;
  $('progress-retry').hidden=!cloud.error||!active;
  const message=cloud.error||(cloud.loading?'正在背景同步進度，你可以先瀏覽與製作卡片。':cloud.marketingSaving?'正在保存行銷意願…':cloud.consentStatus|| (cloud.saving?'正在背景保存進度…':cloud.ready?'紀錄已保存，可用相同 Email 查看集點日期。':''));
@@ -122,7 +124,7 @@ function renderCloud(){
  $('cloud-settings').hidden=!admin;$('cloud-endpoint').value=cloud.endpoint;$('cloud-summary').textContent=active?'進度服務已設定。':'請先設定進度服務網址。';
  renderHomePassport();
 }
-function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;$('progress-marketing').checked=cloud.marketingDirty?cloud.marketingDraft===true:cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;openWelcome({progressOnly:true});renderCloud();$('progress-email').focus();}
+function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;openWelcome({progressOnly:true});$(cloud.email?'progress-switch':'progress-email').focus();}
 function cloudTransport(payload){
  if(!cloudEnabled())return Promise.reject(new Error('請從已設定進度服務的 HTTPS 活動網址保存。'));
  return new Promise((resolve,reject)=>{
@@ -709,6 +711,12 @@ function desktopCalendarMark(status){
   return mark;
 }
 
+function calendarMusicMark(){
+  const mark=el('span','calendar-music-mark','♫');
+  mark.setAttribute('aria-hidden','true');
+  return mark;
+}
+
 function renderDesktopCalendarCell(button,day,{flip=false}={}){
   const locked=dayState(day)==='future';
   const placed=!locked&&isPlaced(day);
@@ -737,7 +745,7 @@ function renderDesktopCalendarCell(button,day,{flip=false}={}){
   }else{
     face.append(el('span','day-name',name));
   }
-  if(music)face.append(el('span','calendar-tile-music','♫ 聖誕旋律'));
+  if(music)face.append(calendarMusicMark());
   if(status!=='unopened')face.append(desktopCalendarMark(status));
   if(!flip){
     replaceCollectionThumbnails(button,face);
@@ -803,7 +811,7 @@ function renderCalendar(){
     if(s==='owned')b.classList.add(displayState);
     b.setAttribute('aria-label',`12月${i.day}日，${name}${music?`，另有 ${music}`:''}，${stateLabel}，依台灣時間開啟`);
     b.append(el('span','day-number',String(i.day)),el('span','day-name',name));
-    if(music){const preview=el('span','day-music');preview.append(el('span','day-music-full',`＋ ${music}`),el('span','day-music-short','＋聖誕旋律'));b.append(preview);}
+    if(music)b.append(calendarMusicMark());
     b.setAttribute('title',stateLabel);
     if(['future','stored','placed'].includes(displayState))b.append(calendarStateIcon(displayState));
     b.addEventListener('click',()=>openDay(i.day));root.append(b);
@@ -1842,13 +1850,10 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
 }
 function updateCardButtons(){
   const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardExportBusy||cardRecordingBusy();
-  $('card-download').disabled=disabled;
+  $('card-download').disabled=disabled||cardSaving;
   $('card-share').disabled=disabled||cardSaving;
-  $('card-share-with-text').hidden=disabled;
-  $('card-share-with-text').disabled=cardSaving;
-  $('card-copy-share-text').hidden=disabled;
-  if(disabled)$('card-share-text').hidden=true;
-  $('card-view-coupons').hidden=!couponCardTask()||!rewards().some(reward=>reward.unlock==='product'&&rewardQualified(reward));
+  if(disabled)hideCardShareFallback();
+  $('card-copy-share-text').disabled=cardSaving;
   updateCardMediaControls();
 }
 function renderChristmasCard(){
@@ -1902,18 +1907,25 @@ function downloadChristmasCard(){
 function cardShareMetadata(){
   return {title:'Dyson Christmas｜聖誕驚喜倒數',text:`${BASE_CONFIG.cardShareText||'我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。'}\n${BASE_CONFIG.cardShareUrl||'https://hlh.tw/2026-dyson-christmas'}`};
 }
-async function shareChristmasCard(includeText=false){
+function hideCardShareFallback(){
+  $('card-copy-share-text').hidden=true;
+  $('card-share-text').hidden=true;
+}
+async function shareChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardSaving||cardExportBusy)return;
+  hideCardShareFallback();
   const format=cardFormat();
   const file=typeof File==='function'?new File([blob],`dyson-christmas-card.${format}`,{type:blob.type}):null;
-  const shareData={files:[file]};
-  if(includeText)Object.assign(shareData,cardShareMetadata());
+  const shareData={...cardShareMetadata(),files:[file]};
   const cardStatus=$('card-status');
-  const downloadNotice='已準備下載卡片。可複製分享文案，再到 LINE 等應用程式貼上並附上卡片。';
   let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.(shareData));}catch{}
-  if(!supported){if(downloadChristmasCard())cardStatus.textContent=downloadNotice;return;}
+  const showFallback=()=>{
+    $('card-copy-share-text').hidden=false;
+    cardStatus.textContent='無法直接分享。請下載卡片並複製分享文案，再到分享 App 貼上文案、附加卡片。';
+  };
+  if(!supported){showFallback();return;}
   cardSaving=true;updateCardButtons();
-  cardStatus.textContent='請在分享 App 內確認送出。也可返回網頁下載卡片或複製文案。';
+  cardStatus.textContent='請在分享 App 內確認送出。';
   try{
     await navigator.share(shareData);
     markCardTask(format,'share');
@@ -1921,8 +1933,7 @@ async function shareChristmasCard(includeText=false){
     cardStatus.textContent='已交由裝置的分享功能處理，請在分享 App 內確認送出結果。';
   }catch(err){
     if(err.name==='AbortError')cardStatus.textContent='分享未完成，可重試或下載卡片後在 App 內附加。';
-    else if(downloadChristmasCard())cardStatus.textContent=downloadNotice;
-    else cardStatus.textContent='目前無法分享，請重新製作卡片後再試。';
+    else showFallback();
   }
   finally{cardSaving=false;updateCardButtons();}
 }
@@ -1937,9 +1948,8 @@ for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('compositionend',renderChristmasCard);
   $(`card-${name}`).addEventListener('blur',()=>{cardTouched=true;renderChristmasCard();});
 }
-$('card-download').addEventListener('click',downloadChristmasCard);$('card-view-coupons').addEventListener('click',()=>{closeDialog('card-dialog');openActivityDialog('activity-coupons');});
-$('card-share').addEventListener('click',()=>shareChristmasCard());
-$('card-share-with-text').addEventListener('click',()=>shareChristmasCard(true));
+$('card-download').addEventListener('click',downloadChristmasCard);
+$('card-share').addEventListener('click',shareChristmasCard);
 $('card-copy-share-text').addEventListener('click',async()=>{
   const {text}=cardShareMetadata();
   const field=$('card-share-text');
@@ -1977,7 +1987,7 @@ function invalidateCardMedia(format){
   if(format)cardMediaOutputs.delete(format);else cardMediaOutputs.clear();
   if(!format||format==='png'){cardBlob=null;cardFile=null;}
   if(!format||cardFailedFormat===format)cardFailedFormat=null;
-  clearCardMediaPreview();$('card-file-size').textContent='';
+  hideCardShareFallback();clearCardMediaPreview();$('card-file-size').textContent='';
 }
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
@@ -1999,7 +2009,9 @@ function cardReadyMessage(){
 }
 function renderCardMediaResult(){
   const format=cardFormat(),result=cardMediaOutputs.get(format),blob=currentCardBlob();
-  $('card-download').textContent=`下載${format==='png'?'圖片':format==='gif'?'動態圖片':'有聲影片'}`;
+  hideCardShareFallback();
+  $('card-download').textContent=format==='mp4'?'下載影片':'下載圖片';
+  $('card-share').textContent=format==='mp4'?'分享影片':'分享圖片';
   $('card-preview-state').textContent=blob?'卡片完成了':'圖片預覽';
   $('card-file-size').textContent=blob?`${format.toUpperCase()} · ${cardBytesLabel(blob.size)}${format==='png'?'':' · 5 秒'}`:'';
   clearCardMediaPreview();
