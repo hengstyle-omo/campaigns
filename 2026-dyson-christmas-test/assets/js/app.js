@@ -698,7 +698,7 @@ const savedCalendarReveals=safeRead(calendarRevealKey,[]);
 const revealedCalendarDays=new Set(Array.isArray(savedCalendarReveals)?savedCalendarReveals.map(Number):[]);
 const previewCalendarReveals=new Set();
 const desktopCalendarLabels={
-  locked:'尚未開放',unopened:'可翻牌',revealed:'已翻牌、未放入',placed:'已放入'
+  locked:'尚未開放',unopened:'可翻牌',revealed:'未放入',placed:'已放入'
 };
 let desktopCalendarRequest=0;
 let pendingDesktopCalendarButton=null;
@@ -813,16 +813,9 @@ function renderCalendar(){
   if(t===0){$('today-kicker').textContent='12/01 開始';$('today-title').textContent='第一場雪';open.textContent='尚未開始';open.disabled=true;}
   else if(t===26){$('today-kicker').textContent='12/01 — 12/25';$('today-title').textContent=previewDate?'全日物件測試 · 1～25 號已開放':'聖誕倒數已結束';open.textContent='查看收藏';}
   else {const i=item(t),s=dayState(t);$('today-kicker').textContent=`12/${String(t).padStart(2,'0')} 今日驚喜`;$('today-title').textContent=i.name;open.textContent='查看今日物件';}
+  if(!mobileViewport.matches)return;
   const key=$('calendar-key');
-  if(mobileViewport.matches)root.after(key);
-  else $('today-label').before(key);
   key.replaceChildren();
-  if(!mobileViewport.matches){
-    for(const [status,label] of Object.entries(desktopCalendarLabels)){
-      const entry=el('span');entry.append(desktopCalendarMark(status),el('span','',label));key.append(entry);
-    }
-    return;
-  }
   for(const [s,label] of [['future','日期未到'],['stored','未放入'],['placed','已放入']]){
     const entry=el('span');entry.append(calendarStateIcon(s),el('span','',label));if(s==='placed')entry.append(el('small','calendar-border-note','日期格有金邊'));key.append(entry);
   }
