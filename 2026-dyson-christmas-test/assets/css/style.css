@@ -1042,11 +1042,14 @@ button,input,textarea,select{line-height:1.5}
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--game-gap);
     align-items: start;
+    container-type: inline-size;
   }
   #globe-section { min-width: 0; display: flex; flex-direction: column; padding-bottom: 17px; }
   #globe-section > .globe-actions { margin-top: 10px; }
   #game-calendar {
     position: static; display: flex; flex-direction: column; min-width: 0;
+    /* Match the globe image and its 10px gap plus 46px button row. */
+    min-height: calc((100cqi - var(--game-gap)) / 2 * 1346 / 1168 + 56px);
     padding: 16px; scroll-margin-top: 88px; container-type: inline-size;
   }
   body:has(#preview-banner:not([hidden])) #game-calendar { scroll-margin-top: 125px; }
@@ -1062,9 +1065,9 @@ button,input,textarea,select{line-height:1.5}
   #game-calendar .progress-track { margin-bottom: 10px; }
   #game-calendar .today-card { display: none; }
   #calendar-grid {
-    --day-height: clamp(74px, calc((100svh - 548px) / 5), 84px);
     grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(5px, .6vw, 7px);
-    grid-auto-rows: calc(var(--day-height) + 10px);
+    grid-auto-rows: minmax(clamp(84px, calc((100svh - 498px) / 5), 94px), 1fr);
+    flex: 1 0 auto;
   }
   #calendar-grid .day-cell {
     height: 100%; min-height: 0; padding: 0;
@@ -1097,8 +1100,7 @@ button,input,textarea,select{line-height:1.5}
   #calendar-grid .day-cell .day-name { font-size: clamp(11px, 1vw, 13px); line-height: 1.15; }
   #calendar-grid .day-cell.future .day-name { color: #a7b2bf; }
   #calendar-grid .calendar-tile-thumbnail {
-    /* Reserve 36.5px for the date, tile borders and face padding. */
-    width: 100%; height: min(100%, calc((var(--day-height) - 36.5px) * 1.45));
+    width: 100%; height: 100%; max-height: 64px;
     min-height: 0; object-fit: contain;
   }
   .calendar-status-mark { flex: none; width: 14px; height: 14px; }
