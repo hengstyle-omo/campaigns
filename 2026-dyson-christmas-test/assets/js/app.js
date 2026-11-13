@@ -576,7 +576,7 @@ function showDialog(id){const d=$(id);if(!d.open){d.showModal();if(id==='voucher
 
 // The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
-const welcomeVideoSrc='./assets/video/dyson_2026xmas_welcome.mp4';
+const welcomeVideoSrc='./assets/video/dyson_2026_xmas_welcome.mp4';
 const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.webp';
 let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=false;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
