@@ -1,1 +1,1 @@
-v100 test / 2026-11-16 / mobile cards, calendar and link preview
+v102 test / 2026-11-16 / card sharing and text-only game sharing

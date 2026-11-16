@@ -210,8 +210,11 @@ async function cloudConnect(email,consent,{userInitiated=false,adminCode}={}){
   safeWrite(STORAGE_PREFIX+'guest-state',Core.transportState(Core.freshState()));guestCardTask=null;safeWrite(STORAGE_PREFIX+'guest-card-task',null);safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:cloud.consent});
   timing.progressReadMs=Math.round(performance.now()-started);cloud.consentStatus=preserveDraft?'行銷意願尚未保存，請重試。':'進度已保存。';
   cloudCache();renderUI();drawFrame(0,performance.now());cloudScheduleSave();
-  closeDialog('admin-auth-dialog');$('admin-auth-code').value='';if(payload.action==='adminLogin')status('管理員驗證完成，可使用日期模擬。');if(userInitiated)trackActivity('progress_save',{method:'email'});return true;
- }catch(error){cloud.error=error.message;status(error.message,{persistent:true});throw error;}
+  closeDialog('admin-auth-dialog');$('admin-auth-code').value='';if(payload.action==='adminLogin')status('管理員驗證完成，可使用日期模擬。');if(userInitiated&&payload.action==='connect'&&!cloud.isAdmin)trackActivity('progress_save',{method:'email',status:'success'});return true;
+ }catch(error){
+  if(userInitiated&&payload.action==='connect'&&error.code!=='ADMIN_AUTH_REQUIRED')trackActivity('progress_save_error',{method:'email',status:'failure'});
+  cloud.error=error.message;status(error.message,{persistent:true});throw error;
+ }
  finally{cloud.loading=false;renderCloud();}
 }
 function cloudScheduleSave(){cloudCache();if(!cloud.ready||!cloudEnabled())return;clearTimeout(cloud.timer);if(!cloud.pendingCardTask&&!Object.keys(previewPending()).length)return;cloud.timer=setTimeout(()=>cloudFlush(),1500);}
@@ -259,7 +262,7 @@ $('progress-email').addEventListener('input',()=>{
 });
 $('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();});
 $('progress-form').addEventListener('submit',event=>{event.preventDefault();startWelcomeCollection();});
-$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined);}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();});
+$('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined,{userInitiated:true});}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();});
 $('admin-auth-form').addEventListener('submit',async event=>{
  event.preventDefault();if(cloud.loading)return;const code=$('admin-auth-code').value;$('admin-auth-code').value='';
  try{await cloudConnect(cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined,{userInitiated:true,adminCode:code});}
@@ -604,7 +607,8 @@ function openWelcome({progressOnly=false}={}){
   welcomeCleaned=false;$('welcome-play').hidden=true;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
   video.poster=welcomePosterSrc;if(!progressOnly){video.src=welcomeVideoSrc;video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
   document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
-  if(progressOnly)return;
+  if(progressOnly){trackActivity('progress_open');return;}
+  trackActivity('welcome_view');
   welcomeTimer=setTimeout(()=>{if(welcomeMediaOpen()&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');}
   else playWelcome();
@@ -936,7 +940,9 @@ function restoreMobileGlobe(){
 
 $('mobile-calendar-toggle').addEventListener('click',event=>{
   const button=event.currentTarget;
-  button.setAttribute('aria-expanded',String(button.getAttribute('aria-expanded')!=='true'));
+  const expanded=button.getAttribute('aria-expanded')!=='true';
+  button.setAttribute('aria-expanded',String(expanded));
+  if(expanded)trackActivity('calendar_expand');
 });
 $('mobile-collection-open').addEventListener('click',openMobileCollection);
 $('mobile-collection').addEventListener('close',restoreMobileGlobe);
@@ -1031,7 +1037,18 @@ function renderHomePassport(){
   const note=$('home-passport-note');
   note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error;
   note.hidden=!note.textContent;
-  for(const id of ['home-passport-actions','voucher-passport-actions'])renderPassportCouponAction($(id),ready,dates.length);
+  renderPassportCouponAction($('home-passport-actions'),ready,dates.length,'daily_checkin');
+  renderPassportCouponAction($('voucher-passport-actions'),ready,dates.length,'activity_rewards');
+  trackPassportComplete();
+}
+function trackPassportComplete(){
+  if(!window.DysonAnalytics?.enabled||!analyticsAllowed()||!cloud.email||!cloud.ready||cloud.isAdmin)return;
+  const dates=participationDates();
+  if(dates.length!==PASSPORT_DAYS||dates[PASSPORT_DAYS-1]!==dateISO())return;
+  const key=cloudCacheKey(cloud.email)+':passport-complete';
+  if(!safeRead(key,false)&&trackActivity('passport_complete',{coupon_id:'visits-10',attendance_days:PASSPORT_DAYS})){
+    safeWrite(key,true);
+  }
 }
 function renderVouchers(){
   const root=$('vouchers-list'),progress=rewardProgress();
@@ -1048,7 +1065,9 @@ function jumpActivitySection(id){
   dialog.scrollTo({top:Math.max(0,offset),behavior:'instant'});
   target.focus({preventScroll:true});
 }
-function openActivityDialog(id){
+let activityEntryPoint='activity_rewards';
+function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
+  activityEntryPoint=entryPoint;
   moveActivityOverview('activity-overview');
   welcomeProgressOnly=false;
   $('welcome-title').textContent='Dyson 聖誕雪境';
@@ -1105,6 +1124,7 @@ function setupActivityDialog(){
           $('game-calendar').scrollIntoView({block:'start',behavior:'instant'});
         }
       }else{
+        if(id==='activity-coupons')trackActivity('coupon_view',{entry_point:'activity_rewards'});
         jumpActivitySection(id);
       }
     });
@@ -1150,11 +1170,14 @@ function couponClaimURL(id){
  const raw=String(cloud.rewardLinks[id]||guestLink||'').trim();
  if(!raw)return '';try{const url=new URL(raw);return url.protocol==='https:'&&!url.username&&!url.password?url.href:'';}catch{return '';}
 }
-function appendClaimLink(container,id,label){
+function appendClaimLink(container,id,label,entryPoint){
  const url=couponClaimURL(id);if(!url){const button=el('button','',id==='visits-10'?'兌換券準備中':'優惠券準備中');button.type='button';button.disabled=true;container.append(button);return;}
- const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);link.addEventListener('click',()=>trackActivity('coupon_click',{coupon_id:id}));container.append(link);
+ const link=el('a','gold-button coupon-claim-link',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${label}（另開視窗）`);const recordClick=()=>trackActivity('coupon_click',{coupon_id:id,entry_point:entryPoint});
+ link.addEventListener('click',recordClick);
+ link.addEventListener('auxclick',event=>{if(event.button===1)recordClick();});
+ container.append(link);
 }
-function renderPassportCouponAction(actions,ready,count){
+function renderPassportCouponAction(actions,ready,count,entryPoint){
  const complete=ready&&count>=PASSPORT_DAYS;
  const expired=!IS_TEST&&!previewDate&&dateISO()>`${YEAR}-12-31`;
  const key=JSON.stringify([ready,Math.min(count,PASSPORT_DAYS),!!previewDate,!!cloud.email,expired,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
@@ -1168,7 +1191,7 @@ function renderPassportCouponAction(actions,ready,count){
  }
  else if(!complete){const button=el('button','',`再累積 ${Math.max(0,PASSPORT_DAYS-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
  else if(previewDate||IS_TEST){const button=el('button','',`${previewDate?'模擬預覽':'測試版'} · 已達成 ${PASSPORT_DAYS} 天`);button.type='button';button.disabled=true;actions.append(button);}
- else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券（價值 $1,080）');
+ else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券（價值 $1,080）',entryPoint);
  else {
    const button=el('button','','兌換資格確認中');
    button.type='button';button.disabled=true;actions.append(button);
@@ -1176,7 +1199,10 @@ function renderPassportCouponAction(actions,ready,count){
 }
 function appendCouponAction(card,b,progress,full){
  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
- if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>openActivityDialog('activity-coupons'));card.append(button);return;}
+ if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>{
+   trackActivity('coupon_view',{coupon_id:b.id,entry_point:'home'});
+   openActivityDialog('activity-coupons',{entryPoint:'home'});
+ });card.append(button);return;}
  if(!qualified){const button=el('button','','尚未開放');button.type='button';button.disabled=true;button.title=`12/${b.productDay} 開放`;card.append(button);return;}
  if(!unlocked){
    const button=el('button','gold-button','製作卡片領優惠');
@@ -1202,7 +1228,7 @@ function appendCouponAction(card,b,progress,full){
      return;
    }
  }
- appendClaimLink(card,b.id,'領取優惠券');
+ appendClaimLink(card,b.id,'領取優惠券',activityEntryPoint);
 }
 function renderRewardCard(b,progress,full){
   const unlocked=rewardUnlocked(b,progress);
@@ -1797,7 +1823,7 @@ const cardSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('zh-Ha
 const cardGraphemes=text=>cardSegmenter?[...cardSegmenter.segment(text)].map(s=>s.segment):Array.from(text);
 const cardCount=text=>cardGraphemes(text.replace(/\r\n?/g,'\n').replace(/\n/g,'')).length;
 let cardCapturedAt=null,cardSnapshot=null,cardBackground=null,cardCapturing=false,cardBlob=null,cardFile=null,cardRenderToken=0,cardSaving=false,cardTouched=false;
-let cardDraftKey='',cardSceneKey='',cardSceneRevision=0,cardFailedFormat=null;
+let cardDraftKey='',cardSceneKey='',cardSceneRevision=0,cardFailedFormat=null,cardFormReadyTracked=false;
 function wrapCardText(context,text,maxWidth){
   const lines=[];
   for(const paragraph of text.replace(/\r\n?/g,'\n').split('\n')){
@@ -1851,16 +1877,26 @@ function paintChristmasCard(data,c=$('card-preview'),photo=cardSnapshot,dimensio
   c.setAttribute('aria-label',data.valid?`聖誕卡片預覽，送給 ${data.recipient}。${data.message}${data.signature.trim()?`，署名 ${data.signature}`:''}`:'聖誕卡片預覽，請完成欄位或調整超出限制的內容。');
 }
 function updateCardButtons(){
-  const disabled=!currentCardBlob()||!validateCard().valid||cardCapturing||cardExportBusy||cardRecordingBusy();
+  const blob=currentCardBlob(),format=cardFormat();
+  const disabled=!blob||!validateCard().valid||cardCapturing||cardExportBusy||cardRecordingBusy();
   $('card-download').disabled=disabled||cardSaving;
   $('card-share').disabled=disabled||cardSaving;
-  if(disabled)hideCardShareFallback();
-  $('card-copy-share-text').disabled=cardSaving;
+  $('card-share-options').hidden=disabled;
+  $('card-copy-share-text').disabled=disabled||cardSaving;
+  $('card-share-file').disabled=disabled||cardSaving;
+  if(disabled)resetCardShareOptions();
+  else {
+    const mode=cardSharePayloads(blob,format).preferred?.mode;
+    $('card-share').textContent=mode==='text'?'系統分享文案':mode?format==='mp4'?'分享影片':'分享圖片':'分享方式';
+  }
   updateCardMediaControls();
 }
 function renderChristmasCard(){
   if(cardExportBusy)return;
   const data=validateCard(),key=JSON.stringify([cardSceneRevision,data.recipient,data.message,data.signature]);
+  if(data.valid&&$('card-dialog').open&&!cardFormReadyTracked){
+    cardFormReadyTracked=trackActivity('card_form_ready');
+  }
   if(key!==cardDraftKey){cardDraftKey=key;++cardRenderToken;invalidateCardMedia();}
   for(const name of ['recipient','message','signature']){
     $(`card-${name}-count`).textContent=`${data.counts[name]}／${name==='message'?100:12}`;
@@ -1897,8 +1933,12 @@ async function openChristmasCard(){
   if(!sceneReady||cardCapturing)return;
   collapseSimulation();const wasOpen=$('card-dialog').open;showDialog('card-dialog');
   if(mobileViewport.matches&&!wasOpen)$('card-dialog').scrollTop=0;
-  if(!wasOpen)loadCardFont().then(()=>{if($('card-dialog').open)renderChristmasCard();});
-  cardDetectMP4().then(()=>updateCardButtons());trackActivity('card_open',{placed_count:ownedDays().filter(isPlaced).length});await captureCardScene();
+  if(!wasOpen){
+    cardFormReadyTracked=false;
+    trackActivity('card_open',{placed_count:ownedDays().filter(isPlaced).length});
+    loadCardFont().then(()=>{if($('card-dialog').open)renderChristmasCard();});
+  }
+  cardDetectMP4().then(()=>updateCardButtons());await captureCardScene();
 }
 function downloadChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardExportBusy)return false;
@@ -1909,36 +1949,87 @@ function downloadChristmasCard(){
   markCardTask(cardFormat(),'download');updateCardButtons();trackActivity('card_download',{card_format:cardFormat()});
   $('card-status').textContent='已準備下載卡片檔案。可將檔案傳給想祝福的人。';return true;
 }
-function cardShareMetadata(){
-  return {title:'Dyson Christmas｜聖誕驚喜倒數',text:`${BASE_CONFIG.cardShareText||'我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。'}\n${BASE_CONFIG.cardShareUrl||'https://hlh.tw/2026-dyson-christmas'}`};
+function cardShareCopy(){
+  return {
+    message:BASE_CONFIG.cardShareText||'我把一點雪、一點星光，還有想你的心意，都裝進這顆水晶球了。',
+    url:BASE_CONFIG.cardShareUrl||'https://hlh.tw/2026-dyson-christmas',
+  };
 }
-function hideCardShareFallback(){
-  $('card-copy-share-text').hidden=true;
+function cardShareMetadata(){
+  const {message,url}=cardShareCopy();
+  return {title:'Dyson Christmas｜聖誕驚喜倒數',text:`${message}\n${url}`};
+}
+function cardLineShareURL(){
+  const {message,url}=cardShareCopy();
+  const link=new URL('https://social-plugins.line.me/lineit/share');
+  link.searchParams.set('url',url);
+  link.searchParams.set('text',message);
+  return link.href;
+}
+function cardSharePayloads(blob,format){
+  const options={preferred:null,fileOnly:null};
+  if(typeof navigator.share!=='function')return options;
+  const metadata=cardShareMetadata();
+  if(typeof navigator.canShare!=='function'){
+    options.preferred={mode:'text',data:metadata};
+    return options;
+  }
+  const supports=data=>{try{return navigator.canShare(data);}catch{return false;}};
+  if(typeof File==='function'){
+    const files=[new File([blob],`dyson-christmas-card.${format}`,{type:blob.type})];
+    const combined={...metadata,files},fileOnly={files};
+    if(supports(fileOnly))options.fileOnly={mode:'file',data:fileOnly};
+    if(supports(combined))options.preferred={mode:'combined',data:combined};
+  }
+  options.preferred??=options.fileOnly;
+  if(!options.preferred&&supports(metadata))options.preferred={mode:'text',data:metadata};
+  return options;
+}
+function resetCardShareOptions(){
+  $('card-share-file').hidden=true;
   $('card-share-text').hidden=true;
 }
-async function shareChristmasCard(){
-  const blob=currentCardBlob();if(!blob||!validateCard().valid||cardSaving||cardExportBusy)return;
-  hideCardShareFallback();
+async function shareChristmasCard({fileOnly=false}={}){
+  const blob=currentCardBlob();
+  if(!blob||!validateCard().valid||cardSaving||cardExportBusy||cardCapturing||cardRecordingBusy())return;
   const format=cardFormat();
-  const file=typeof File==='function'?new File([blob],`dyson-christmas-card.${format}`,{type:blob.type}):null;
-  const shareData={...cardShareMetadata(),files:[file]};
+  const {preferred,fileOnly:fileOption}=cardSharePayloads(blob,format);
+  const option=fileOnly?fileOption:preferred;
+  const media=format==='mp4'?'影片':'圖片';
   const cardStatus=$('card-status');
-  let supported=false;try{supported=!!(file&&navigator.share&&navigator.canShare?.(shareData));}catch{}
-  const showFallback=()=>{
-    $('card-copy-share-text').hidden=false;
-    cardStatus.textContent='無法直接分享。請下載卡片並複製分享文案，再到分享 App 貼上文案、附加卡片。';
-  };
-  if(!supported){showFallback();return;}
-  cardSaving=true;updateCardButtons();
-  cardStatus.textContent='請在分享 App 內確認送出。';
+  trackActivity('card_share_click',{card_format:format,method:option?.mode||'manual'});
+  resetCardShareOptions();
+  if(!option){
+    cardStatus.textContent=`可用 LINE 分享文案。要傳${media}，請先下載，再到聊天中附加。`;
+    $('card-share-options').focus();
+    return;
+  }
+  cardSaving=true;
   try{
-    await navigator.share(shareData);
-    markCardTask(format,'share');
-    trackActivity('card_share',{card_format:format,method:'native'});
-    cardStatus.textContent='已交由裝置的分享功能處理，請在分享 App 內確認送出結果。';
-  }catch(err){
-    if(err.name==='AbortError')cardStatus.textContent='分享未完成，可重試或下載卡片後在 App 內附加。';
-    else showFallback();
+    const shareRequest=navigator.share(option.data);
+    updateCardButtons();
+    cardStatus.textContent='請選擇分享對象並確認送出。';
+    await shareRequest;
+    if(option.mode!=='text'){
+      markCardTask(format,'share');
+      trackActivity('card_share',{card_format:format,method:'native'});
+    }
+    cardStatus.textContent=option.mode==='text'
+      ?`已開啟系統文案分享。${media}可先下載，再到聊天中附加。`
+      :option.mode==='file'
+        ?`已開啟系統${media}分享。可另外複製或用 LINE 分享文案。`
+        :'已交由系統分享，請在分享 App 內確認送出。';
+  }catch(error){
+    if(error.name==='AbortError'){
+      cardStatus.textContent='分享未完成，可重新分享或下載卡片。';
+    }else if(option.mode==='combined'&&fileOption){
+      const retry=$('card-share-file');
+      retry.textContent=`只分享${media}`;
+      retry.hidden=false;
+      cardStatus.textContent=`系統未能同時分享${media}與文案。可按「只分享${media}」重試。`;
+    }else{
+      cardStatus.textContent=`系統分享未能開啟。可用 LINE 分享文案，再下載${media}附加。`;
+    }
   }
   finally{cardSaving=false;updateCardButtons();}
 }
@@ -1954,8 +2045,17 @@ for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('blur',()=>{cardTouched=true;renderChristmasCard();});
 }
 $('card-download').addEventListener('click',downloadChristmasCard);
-$('card-share').addEventListener('click',shareChristmasCard);
-$('card-copy-share-text').addEventListener('click',async()=>{
+$('card-share').addEventListener('click',()=>shareChristmasCard());
+$('card-share-file').addEventListener('click',()=>shareChristmasCard({fileOnly:true}));
+$('card-share-game').addEventListener('click',shareGame);
+const lineShareLink=$('card-share-line');
+lineShareLink.href=cardLineShareURL();
+lineShareLink.addEventListener('click',()=>{
+  trackActivity('card_share_click',{card_format:cardFormat(),method:'line_text'});
+  $('card-status').textContent='LINE 會帶入活動文案與連結。卡片可下載後附加。';
+});
+$('card-copy-share-text').addEventListener('click',copyCardShareText);
+async function copyCardShareText(){
   const {text}=cardShareMetadata();
   const field=$('card-share-text');
   try{
@@ -1969,7 +2069,25 @@ $('card-copy-share-text').addEventListener('click',async()=>{
     field.select();
     $('card-status').textContent='請複製下方的分享文案與活動連結。';
   }
-});
+}
+async function shareGame(){
+  const button=$('card-share-game');
+  if(button.disabled||cardSaving)return;
+  const data=cardShareMetadata();
+  button.disabled=true;
+  try{
+    if(typeof navigator.share==='function'&&(typeof navigator.canShare!=='function'||navigator.canShare(data))){
+      await navigator.share(data);
+      $('card-status').textContent='請在分享 App 中確認送出。';
+      return;
+    }
+  }catch(error){
+    if(error.name==='AbortError')return;
+  }finally{
+    button.disabled=false;
+  }
+  await copyCardShareText();
+}
 // Five-second, readability-first card exports. All encoding stays on this device.
 const CARD_SECONDS=5,CARD_LIMITS={gif:4*1024*1024,mp4:4*1024*1024};
 let cardMotionBase=null,cardMotionFlags=null,cardExportBusy=false,cardExportToken=0,cardExportStop=null;
@@ -1992,7 +2110,7 @@ function invalidateCardMedia(format){
   if(format)cardMediaOutputs.delete(format);else cardMediaOutputs.clear();
   if(!format||format==='png'){cardBlob=null;cardFile=null;}
   if(!format||cardFailedFormat===format)cardFailedFormat=null;
-  hideCardShareFallback();clearCardMediaPreview();$('card-file-size').textContent='';
+  resetCardShareOptions();clearCardMediaPreview();$('card-file-size').textContent='';
 }
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
@@ -2014,7 +2132,7 @@ function cardReadyMessage(){
 }
 function renderCardMediaResult(){
   const format=cardFormat(),result=cardMediaOutputs.get(format),blob=currentCardBlob();
-  hideCardShareFallback();
+  resetCardShareOptions();
   $('card-download').textContent=format==='mp4'?'下載影片':'下載圖片';
   $('card-share').textContent=format==='mp4'?'分享影片':'分享圖片';
   $('card-preview-state').textContent=blob?'卡片完成了':'圖片預覽';
@@ -2273,6 +2391,7 @@ async function generateCardMedia(){
   const format=cardFormat();
   if(currentCardBlob()){renderCardMediaResult();updateCardButtons();$('card-status').textContent=cardReadyMessage();return true;}
   const token=++cardExportToken;
+  trackActivity('card_generate_start',{card_format:format});
   cardExportBusy=true;syncGlobeAnimation();cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
   cardMaking('準備畫面');$('card-status').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
   try{
@@ -2301,8 +2420,10 @@ async function generateCardMedia(){
     if(format==='png'){cardBlob=blob;if(typeof File==='function')cardFile=new File([blob],'dyson-christmas-card.png',{type:'image/png'});}
     trackActivity('card_generate',{card_format:format,status:'success',has_voice:!!cardVoiceBuffer,has_bgm:$('card-bgm').checked});$('card-status').textContent=cardReadyMessage()+(blob.size>CARD_LIMITS[format]?' 此場景檔案較大，已優先保留文字清晰度。':'');return true;
   }catch(e){
-    if(e.name!=='AbortError'){cardFailedFormat=format;trackActivity('card_generate',{card_format:format,status:'failure'});}
-    $('card-status').textContent=e.name==='AbortError'?'已取消製作，文字、錄音與擺設已保留。':`製作未完成：${e.message} 文字、錄音與擺設已保留，可按「再試一次」。`;return false;
+    const cancelled=e.name==='AbortError';
+    if(!cancelled)cardFailedFormat=format;
+    trackActivity('card_generate',{card_format:format,status:cancelled?'cancelled':'failure'});
+    $('card-status').textContent=cancelled?'已取消製作，文字、錄音與擺設已保留。':`製作未完成：${e.message} 文字、錄音與擺設已保留，可按「再試一次」。`;return false;
   }finally{
     cardExportBusy=false;cardExportStop=null;syncGlobeAnimation();renderCardMediaResult();updateCardButtons();
   }
