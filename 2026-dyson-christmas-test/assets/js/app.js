@@ -1902,7 +1902,10 @@ async function openChristmasCard(){
 }
 function downloadChristmasCard(){
   const blob=currentCardBlob();if(!blob||!validateCard().valid||cardExportBusy)return false;
-  const url=URL.createObjectURL(blob),link=el('a');link.href=url;link.download=`dyson-christmas-card.${cardFormat()}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  const url=URL.createObjectURL(blob),link=el('a');
+  link.href=url;link.download=`dyson-christmas-card.${cardFormat()}`;link.hidden=true;
+  $('card-dialog').append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
   markCardTask(cardFormat(),'download');updateCardButtons();trackActivity('card_download',{card_format:cardFormat()});
   $('card-status').textContent='已準備下載卡片檔案。可將檔案傳給想祝福的人。';return true;
 }
@@ -2015,6 +2018,7 @@ function renderCardMediaResult(){
   $('card-download').textContent=format==='mp4'?'下載影片':'下載圖片';
   $('card-share').textContent=format==='mp4'?'分享影片':'分享圖片';
   $('card-preview-state').textContent=blob?'卡片完成了':'圖片預覽';
+  $('card-download').closest('.card-result-actions').toggleAttribute('data-card-ready',!!blob);
   $('card-file-size').textContent=blob?`${format.toUpperCase()} · ${cardBytesLabel(blob.size)}${format==='png'?'':' · 5 秒'}`:'';
   clearCardMediaPreview();
   $('card-preview-note').textContent=blob?`${format.toUpperCase()} · ${cardBytesLabel(blob.size)} · ${format==='gif'?'5 秒循環預覽，無聲':format==='mp4'?'按播放試看並試聽':'靜態圖片'}`:'';
@@ -2022,11 +2026,6 @@ function renderCardMediaResult(){
     cardMediaURL=URL.createObjectURL(result.blob);const preview=$(format==='gif'?'card-gif-preview':'card-video-preview');preview.src=cardMediaURL;preview.hidden=false;$('card-preview').hidden=true;
   }
   updateCardMediaControls();
-}
-function revealCardResult(){
-  if($('card-dialog').open&&matchMedia('(max-width:760px)').matches){
-    $('card-preview-state').closest('.card-preview-area').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-  }
 }
 function encodeCardPNG(token){
   return new Promise((resolve,reject)=>{
@@ -2272,8 +2271,8 @@ async function encodeCardMP4Recorder(options,audio,mime,token){
 async function generateCardMedia(){
   if(cardExportBusy||cardCapturing||cardSaving||cardRecordingBusy()||!validateCard().valid||!cardMotionBase)return false;
   const format=cardFormat();
-  if(currentCardBlob()){renderCardMediaResult();updateCardButtons();$('card-status').textContent=cardReadyMessage();revealCardResult();return true;}
-  const token=++cardExportToken;let completed=false;
+  if(currentCardBlob()){renderCardMediaResult();updateCardButtons();$('card-status').textContent=cardReadyMessage();return true;}
+  const token=++cardExportToken;
   cardExportBusy=true;syncGlobeAnimation();cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
   cardMaking('準備畫面');$('card-status').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
   try{
@@ -2300,12 +2299,12 @@ async function generateCardMedia(){
     checkCardJob(token);
     cardMediaOutputs.set(format,{blob,...chosen,duration:format==='png'?0:5});
     if(format==='png'){cardBlob=blob;if(typeof File==='function')cardFile=new File([blob],'dyson-christmas-card.png',{type:'image/png'});}
-    completed=true;trackActivity('card_generate',{card_format:format,status:'success',has_voice:!!cardVoiceBuffer,has_bgm:$('card-bgm').checked});$('card-status').textContent=cardReadyMessage()+(blob.size>CARD_LIMITS[format]?' 此場景檔案較大，已優先保留文字清晰度。':'');return true;
+    trackActivity('card_generate',{card_format:format,status:'success',has_voice:!!cardVoiceBuffer,has_bgm:$('card-bgm').checked});$('card-status').textContent=cardReadyMessage()+(blob.size>CARD_LIMITS[format]?' 此場景檔案較大，已優先保留文字清晰度。':'');return true;
   }catch(e){
     if(e.name!=='AbortError'){cardFailedFormat=format;trackActivity('card_generate',{card_format:format,status:'failure'});}
     $('card-status').textContent=e.name==='AbortError'?'已取消製作，文字、錄音與擺設已保留。':`製作未完成：${e.message} 文字、錄音與擺設已保留，可按「再試一次」。`;return false;
   }finally{
-    cardExportBusy=false;cardExportStop=null;syncGlobeAnimation();renderCardMediaResult();updateCardButtons();if(completed)revealCardResult();
+    cardExportBusy=false;cardExportStop=null;syncGlobeAnimation();renderCardMediaResult();updateCardButtons();
   }
 }
 function cancelCardExport(){if(!cardExportBusy)return;++cardExportToken;cardExportStop?.();}

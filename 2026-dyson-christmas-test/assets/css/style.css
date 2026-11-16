@@ -395,9 +395,9 @@ button,input,textarea,select{line-height:1.5}
 @media(max-width:1000px){.calendar-heading{grid-template-columns:minmax(0,1fr);gap:10px}.calendar-title-row{justify-content:space-between;gap:7px}.calendar-tools{flex-direction:row;align-items:center;justify-content:space-between;margin-left:0;width:100%;gap:8px;flex-wrap:wrap}}
 
 /* v38: logical reading order is write, preview, then format and sharing. */
-.card-workspace{row-gap:0}.card-form-fields,.card-export-panel{min-width:0}.card-form-fields{grid-column:1;grid-row:1}.card-workspace>.card-preview-area{grid-column:2;grid-row:1/span 2;align-self:start}.card-export-panel{grid-column:1;grid-row:2}
+.card-workspace{row-gap:0}.card-form-fields,.card-export-panel{min-width:0}.card-form-fields{grid-column:1;grid-row:1}.card-workspace>.card-preview-area{grid-column:2;grid-row:1/span 3;align-self:start}.card-export-panel{grid-column:1;grid-row:2}.card-result-actions{grid-column:1;grid-row:3;min-width:0}
 #card-preview-note:empty,.card-status:empty{display:none}
-@media(max-width:760px){.card-workspace{row-gap:20px}.card-form-fields{grid-column:1;grid-row:1}.card-workspace>.card-preview-area{grid-column:1;grid-row:2}.card-export-panel{grid-column:1;grid-row:3}.card-export-panel .card-media-options{margin-top:0;padding-top:0;border-top:0}}
+@media(max-width:760px){.card-workspace{row-gap:20px}.card-form-fields{grid-column:1;grid-row:1}.card-workspace>.card-preview-area{grid-column:1;grid-row:3;align-self:start}.card-export-panel{grid-column:1;grid-row:2}.card-result-actions{grid-row:4}.card-export-panel .card-media-options{margin-top:0;padding-top:0;border-top:0}}
 
 /* v38: homepage reward summaries keep only the benefit, product and entry. */
 .benefit-card.compact-reward{gap:12px;padding:18px 15px}
@@ -641,6 +641,9 @@ button,input,textarea,select{line-height:1.5}
   .mobile-calendar-toggle strong { font-size: 16px; }
   #mobile-calendar-count { margin-left: auto; color: var(--gold); font-size: 13px; }
   .calendar-body { display: block; padding: 4px 14px 15px; }
+  #game-calendar :is(.calendar-heading-main,#today-label,#today-card,.progress-label) { display: none; }
+  #game-calendar .calendar-heading:has(#quick-sim-toggle[hidden]) { display: none; }
+  #game-calendar .progress-track { margin-bottom: 10px; }
   .mobile-calendar-toggle[aria-expanded="false"] ~ .calendar-body { display: none; }
   .calendar-card-entry, #starter-section, #collection-section, #bonus-section { display: none; }
 
@@ -722,9 +725,30 @@ button,input,textarea,select{line-height:1.5}
   dialog .dialog-close, #welcome-skip, #audio-close { min-width: 44px; min-height: 44px; }
   #card-dialog h2 { margin-right: 44px; }
   #card-dialog .card-workspace { gap: 12px; margin-top: 12px; }
-  #card-dialog .card-preview-area { grid-row: 1; max-width: min(300px, 100%); }
-  #card-dialog .card-form-fields { grid-row: 2; }
-  #card-dialog .card-preview-stage > :is(canvas,video,img) { width: 100%; height: auto; max-height: 34dvh; object-fit: contain; }
+  #card-dialog .card-preview-area,
+  #card-dialog .card-result-actions { width: min(100%, 300px); margin-inline: auto; }
+  #card-dialog .card-preview-stage {
+    width: min(100%, 228px, max(150px, 30dvh));
+    aspect-ratio: 3 / 5;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  #card-dialog .card-preview-stage > :is(canvas,video,img) {
+    width: 100%; height: 100%; object-fit: contain;
+  }
+  #card-dialog #card-generate { height: 44px; }
+  #card-dialog .card-save-actions { margin-top: 0; }
+  #card-dialog .card-making { gap: 6px; padding: 8px; }
+  #card-dialog .card-making .mini-globe { width: 56px; height: 56px; }
+  #card-dialog .mini-globe::after { top: 10px; font-size: 20px; }
+  #card-dialog #card-making-cancel { margin-top: 4px; min-height: 44px; }
+  #card-dialog .card-recording-preview {
+    position: absolute; inset: 0 auto auto 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+  }
+  #card-dialog :is(#card-export-progress,#card-file-size) { display: none; }
+  #card-dialog .card-result-actions:not([data-card-ready]) .card-save-actions { display: none; }
+  #card-dialog .card-result-actions:not([data-card-ready]):has(.card-status:empty) { display: none; }
   #card-dialog .card-field { margin-bottom: 8px; }
   #card-dialog .card-field :is(input,textarea) { font-size: 16px; }
   #card-dialog #card-message { min-height: 74px; height: 82px; }
