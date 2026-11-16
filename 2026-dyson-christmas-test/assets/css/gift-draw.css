@@ -35,15 +35,16 @@
   background: radial-gradient(ellipse at 50% 1%, #eef0ef 1%, #b5c2ce 32%, #61758d 67%, #33485f 100%);
 }
 .draw-tree, .draw-gifts { position: absolute; }
-.draw-tree { width: 64%; height: 76%; left: 50%; top: 8%; transform: translateX(-50%); }
+.draw-tree { height: 76%; aspect-ratio: 1214 / 1295; left: 50%; top: 8%; transform: translateX(-50%); }
 .draw-tree-art, .draw-tree-logo { display: block; position: absolute; }
 .draw-tree-art { inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .draw-tree-logo {
-  width: clamp(70px, 18%, 118px);
+  width: clamp(98px, 37.5%, 165px);
+  max-width: 52%;
   height: auto;
-  left: 50%;
-  top: 2%;
-  transform: translate(-50%, -48%);
+  left: 52%;
+  top: 35%;
+  transform: translate(-50%, -50%);
   filter: brightness(0) saturate(100%) invert(94%) sepia(32%) saturate(682%) hue-rotate(320deg) brightness(111%) contrast(103%) drop-shadow(0 0 5px #ffcb7c) drop-shadow(0 0 12px #fca83b);
 }
 .draw-gifts { inset: 0; }
@@ -201,7 +202,6 @@
 @media (max-width: 560px) {
   .draw-copy { padding-top: 18px; }
   .draw-stage { aspect-ratio: 1.07; }
-  .draw-tree { width: 72%; }
   .draw-gifts .draw-gift { width: calc(var(--size) + 4%); }
   #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .draw-coupon { padding: 10px; }

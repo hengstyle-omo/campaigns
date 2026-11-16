@@ -185,8 +185,12 @@
     byId('draw-bonus').hidden = activeDate < bonusDate;
     byId('draw-create').hidden = Boolean(day) || !validDate(activeDate);
     byId('draw-view').hidden = !prize;
-    byId('draw-from-card').hidden = !day;
-    byId('draw-from-card').textContent = played ? '查看今日聖誕祝福' : '今日禮物已解鎖 · 前往拆禮物';
+    const drawFromCard = byId('draw-from-card');
+    drawFromCard.hidden = !day;
+    if (played) drawFromCard.textContent = '查看今日聖誕祝福';
+    else drawFromCard.textContent = pool.length
+      ? '取得今日抽獎資格 · 前往拆禮物'
+      : '今日祝福已解鎖 · 前往拆禮物';
     feedback.classList.toggle('draw-is-blessing', played && !opening);
     dateInput.disabled = Boolean(pending);
     reset.disabled = Boolean(pending);
