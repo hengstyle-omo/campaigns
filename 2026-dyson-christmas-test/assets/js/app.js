@@ -245,6 +245,8 @@ async function startWelcomeCollection(){
 }
 function markCardTask(format,method){
  const task=cardTaskNormalise({completed:true,format,method,at:new Date().toISOString()});if(!task)return;
+ window.DysonTestDraw.syncDate(dateISO());
+ window.DysonTestDraw.complete(cardMediaOutputs.get(format)?.drawDate);
  if(!previewDate&&!deviceCouponTask){
    deviceCouponTask=task;
    safeWrite(couponTaskKey,task);
@@ -532,7 +534,7 @@ const calendarMusic=d=>({7:'Jingle Bells · 輕快版',25:'聖誕祝福旋律'})
 function configuredItem(d){const source=itemByDay(d);return {...source,...settings[d],day:source.day,benefit:null,product:source.product?{...source.product,...settings[d]?.product}:null};}
 function item(d){
   const value=configuredItem(d);
-  if(Number(d)===20&&dateISO()<(BASE_CONFIG.bp10RevealDate||`${YEAR}-12-16`))return {...value,teaser:true,name:'清淨機新品',description:'全新清淨科技，即將揭曉。',hint:'12/16 揭曉清淨機新品，12/20 開放收藏。',product:{...value.product,model:'清淨機新品',color:'',intro:'清淨機新品將於 12/16 揭曉，12/20 開放收藏並解鎖專屬優惠券。',tagline:'清淨新科技，即將揭曉。',features:[],url:''}};
+  if(Number(d)===20&&dateISO()<(BASE_CONFIG.bp10RevealDate||`${YEAR}-12-16`))return {...value,teaser:true,name:'清淨機新品',description:'全新清淨科技，即將揭曉。',hint:'12/16 揭曉清淨機新品，12/20 開放收藏。',product:{...value.product,model:'清淨機新品',color:'',intro:'清淨機新品將於 12/16 揭曉，12/20 開放收藏。',tagline:'清淨新科技，即將揭曉。',features:[],url:''}};
   return value;
 }
 const configuredRewards=()=>BASE_CONFIG.rewards.map(b=>({...b,...rewardSettings[b.id],id:b.id,unlock:b.unlock,productDay:b.productDay,required:b.required,redemption:b.redemption,...(b.redemption==='counter'?{code:'',approved:true}:{} )}));
@@ -963,9 +965,9 @@ mobileViewport.addEventListener('change',event=>{
 });
 
 function renderBenefits(){
-  const progress=rewardProgress(),root=$('benefit-grid');root.replaceChildren();
-  for(const b of rewards().filter(reward=>reward.redemption!=='counter'))root.append(renderRewardCard(b,progress,false));
-  $('voucher-count').textContent=String(progress.unlockedCount);
+  window.DysonTestDraw.syncDate(dateISO());
+  const passport=rewards().find(reward=>reward.redemption==='counter');
+  window.DysonTestDraw.setPassportUnlocked(Boolean(passport&&rewardUnlocked(passport,rewardProgress())));
   if($('vouchers-dialog').open)renderVouchers();
 }
 function updatePlacementUI(d){
@@ -1051,12 +1053,7 @@ function trackPassportComplete(){
   }
 }
 function renderVouchers(){
-  const root=$('vouchers-list'),progress=rewardProgress();
-  const products=rewards().filter(reward=>reward.redemption!=='counter');
-  root.replaceChildren(...products.map(reward=>renderRewardCard(reward,progress,true)));
-  if(!IS_TEST&&!previewDate&&products.some(reward=>rewardUnlocked(reward,progress)&&(!reward.validUntil||dateISO()<=reward.validUntil)&&!couponClaimURL(reward.id))){
-    loadProductCouponLinks();
-  }
+  window.DysonTestDraw.syncDate(dateISO());
 }
 function jumpActivitySection(id){
   const dialog=$('vouchers-dialog'),target=$(id);
@@ -2038,6 +2035,14 @@ function updateCardEntries(){
   for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).disabled=disabled;
 }
 for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).addEventListener('click',openChristmasCard);
+$('draw-create').addEventListener('click',openChristmasCard);
+for(const [id,dialog] of [['draw-from-card','card-dialog'],['draw-from-vouchers','vouchers-dialog']]){
+  $(id).addEventListener('click',()=>{
+    closeDialog(dialog);
+    $('draw-heading').focus({preventScroll:true});
+    $('draw-heading').scrollIntoView({block:'start'});
+  });
+}
 $('card-form').addEventListener('submit',e=>e.preventDefault());
 for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('input',e=>{if(!e.isComposing)renderChristmasCard();});
@@ -2390,6 +2395,8 @@ async function generateCardMedia(){
   if(cardExportBusy||cardCapturing||cardSaving||cardRecordingBusy()||!validateCard().valid||!cardMotionBase)return false;
   const format=cardFormat();
   if(currentCardBlob()){renderCardMediaResult();updateCardButtons();$('card-status').textContent=cardReadyMessage();return true;}
+  window.DysonTestDraw.syncDate(dateISO());
+  const drawDate=window.DysonTestDraw.date();
   const token=++cardExportToken;
   trackActivity('card_generate_start',{card_format:format});
   cardExportBusy=true;syncGlobeAnimation();cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
@@ -2416,7 +2423,7 @@ async function generateCardMedia(){
       chosen=options;
     }
     checkCardJob(token);
-    cardMediaOutputs.set(format,{blob,...chosen,duration:format==='png'?0:5});
+    cardMediaOutputs.set(format,{blob,...chosen,drawDate,duration:format==='png'?0:5});
     if(format==='png'){cardBlob=blob;if(typeof File==='function')cardFile=new File([blob],'dyson-christmas-card.png',{type:'image/png'});}
     trackActivity('card_generate',{card_format:format,status:'success',has_voice:!!cardVoiceBuffer,has_bgm:$('card-bgm').checked});$('card-status').textContent=cardReadyMessage()+(blob.size>CARD_LIMITS[format]?' 此場景檔案較大，已優先保留文字清晰度。':'');return true;
   }catch(e){
