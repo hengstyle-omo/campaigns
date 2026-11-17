@@ -150,6 +150,21 @@
     return Object.keys(prizes).filter(id => (id !== 'bonus' || date >= bonusDate) && !won.has(id));
   }
 
+  function chooseWinningBoxes(previousBox) {
+    const first = Number.isInteger(previousBox) && previousBox >= 0 && previousBox < gifts.length
+      ? previousBox : Math.floor(Math.random() * gifts.length);
+    const other = Math.floor(Math.random() * (gifts.length - 1));
+    return [first, other >= first ? other + 1 : other];
+  }
+
+  function assignPrizes(pool, preferred = []) {
+    if (!pool.length) return [null, null];
+    const first = pool.includes(preferred[0]) ? preferred[0] : randomMember(pool);
+    const remaining = pool.length > 1 ? pool.filter(prize => prize !== first) : pool;
+    const second = remaining.includes(preferred[1]) ? preferred[1] : randomMember(remaining);
+    return [first, second];
+  }
+
   function prizeArt(id) {
     const { day, product } = prizeDetailsById[id];
     const sprite = product && window.DYSON_ASSETS.sprites?.[day];
@@ -483,8 +498,8 @@
       if (!draw.days[generatedOn]) {
         draw.days[generatedOn] = {
           layout: currentGiftLayout(generatedOn),
-          winningBox: Math.floor(Math.random() * gifts.length),
-          hiddenPrize: randomMember(pool) ?? null,
+          winningBoxes: chooseWinningBoxes(),
+          hiddenPrizes: assignPrizes(pool),
         };
         saveDraw(draw);
       }
@@ -498,11 +513,14 @@
     const pool = availablePrizes(draw.days, date);
     if (!day || day.result) return false;
 
-    // The previous fifteen-box layout had three winning indices. Unopened days get a fresh five-box draw.
-    day.winningBox ??= day.winningGift ?? Math.floor(Math.random() * gifts.length);
-    const assignedPrize = pool.includes(day.hiddenPrize) ? day.hiddenPrize : randomMember(pool);
-    const won = choice === 'win' || (choice === 'random' && day.winningBox === index);
-    const prize = choice === 'bonus' && pool.includes('bonus') ? 'bonus' : won ? assignedPrize : null;
+    // Keep the original position on unopened days saved before two boxes could win.
+    day.winningBoxes ??= chooseWinningBoxes(day.winningBox ?? day.winningGift);
+    day.hiddenPrizes = assignPrizes(pool, day.hiddenPrizes ?? [day.hiddenPrize]);
+    const slot = day.winningBoxes.indexOf(index);
+    let prize = null;
+    if (choice === 'bonus' && pool.includes('bonus')) prize = 'bonus';
+    if (choice === 'win') prize = day.hiddenPrizes[slot === -1 ? 0 : slot];
+    if (choice === 'random' && slot !== -1) prize = day.hiddenPrizes[slot];
     day.layout ??= currentGiftLayout(date, day);
     day.result = { selected: index, prize: prize ?? null };
     if (!prize) day.result.fact = factIndex(date, draw.days);

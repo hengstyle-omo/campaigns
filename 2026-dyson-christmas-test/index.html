@@ -21,7 +21,7 @@
    <a href="#activity-attendance"><b class="mission-number">03</b><strong>獨家好禮</strong><span>打卡五天<br>享靠櫃禮</span></a>
   </nav>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v111</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v112</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline" hidden><button id="welcome-skip" type="button" aria-label="關閉">×</button></div>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
@@ -41,7 +41,7 @@
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-coupons">
    <h3 id="rules-coupons">聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
-   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。未抽中時可看到一則 Dyson 小知識。有可抽優惠券時，抽中機率為 20%。同款券只會中一次，12/20 起加入任一商品優惠券。</p>
+   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。未抽中時可看到一則 Dyson 小知識。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。同款券只會中一次，12/20 起加入任一商品優惠券。</p>
    <p>※ 抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-passport">
@@ -205,7 +205,7 @@
   <summary>測試設定</summary>
   <div class="draw-settings-controls">
     <label>活動日期<input id="draw-date" type="date" min="2026-12-01" max="2026-12-25"></label>
-    <label>抽獎結果<select id="draw-mode"><option value="random">隨機 · 中獎率 20%</option><option value="miss">指定沒抽中</option><option value="win">指定抽中一張</option><option value="bonus">指定抽中加碼券</option></select></label>
+    <label>抽獎結果<select id="draw-mode"><option value="random">隨機 · 中獎率 40%</option><option value="miss">指定沒抽中</option><option value="win">指定抽中一張</option><option value="bonus">指定抽中加碼券</option></select></label>
     <button id="draw-use-activity-date" type="button">使用活動日期</button>
     <button id="draw-simulate" type="button">模擬完成今日卡片</button>
     <button id="draw-reset" type="button">清除抽獎測試紀錄</button>
@@ -325,6 +325,6 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v111-unified-wallet"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v112-two-winning-boxes"></script>
 <script src="./assets/js/app.js?v=20261117-v111-unified-wallet"></script>
 </body></html>
