@@ -6,8 +6,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
-<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v120">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v121">
+<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v123">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v123">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -48,14 +48,18 @@
 <template id="activity-notices-template">
  <ol><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v121</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v123</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <button id="welcome-review-close" class="dialog-close" type="button" aria-label="關閉" hidden>×</button>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
-  <h2 id="welcome-title">Dyson 聖誕雪境</h2>
+  <h2 id="welcome-title" tabindex="-1" autofocus>Dyson 聖誕雪境</h2>
   <div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="聖誕活動玩法介紹"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div>
   <div class="welcome-intro">
    <div data-activity-missions="welcome-description"></div>
+   <section id="welcome-account" aria-labelledby="welcome-account-title">
+    <h3 id="welcome-account-title">留下 Email，累積打卡領好禮</h3>
+    <p>填寫 Email 並簽到，累積滿 5 天即可解鎖 Dyson 護照夾兌換券。你也可以直接開始佈置水晶球。</p>
+   </section>
    
    <div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始佈置水晶球</button></div>
   </div>
@@ -174,7 +178,7 @@
       <ol id="draw-passport-days" class="participation-grid draw-passport-days" aria-label="五天簽到進度"></ol>
       <details id="draw-passport-account" class="draw-passport-extra">
         <summary>管理保存紀錄</summary>
-        <div class="welcome-progress"><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label id="progress-email-field" for="progress-email"><span id="progress-email-caption">你的 Email</span><input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><div class="progress-consent-row"><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>接收 Dyson 優惠與新品（選填）</span></label><a href="https://docs.google.com/document/d/1t16XzusKmtd05-ndbZZWI5BFOdslWheB/edit" target="_blank" rel="noopener noreferrer" aria-label="個人資料告知暨同意書">個資告知</a></div><button id="progress-submit" class="gold-button" type="submit">保存並簽到</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></div>
+        <div id="draw-progress-fields" class="welcome-progress"><div id="progress-current" hidden><p>目前使用 <strong id="progress-email-label"></strong></p><button id="progress-switch" type="button">切換 Email</button></div><form id="progress-form" novalidate><label id="progress-email-field" for="progress-email"><span id="progress-email-caption">你的 Email</span><input id="progress-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label><div class="progress-consent-row"><label class="progress-consent"><input id="progress-marketing" type="checkbox"><span>接收 Dyson 優惠與新品（選填）</span></label><a href="https://docs.google.com/document/d/1t16XzusKmtd05-ndbZZWI5BFOdslWheB/edit" target="_blank" rel="noopener noreferrer" aria-label="個人資料告知暨同意書">個資告知</a></div><button id="progress-submit" class="gold-button" type="submit">保存並簽到</button></form><p id="progress-message" role="status" aria-live="polite"></p><button id="progress-retry" type="button" hidden>重試同步</button></div>
       </details>
       <details class="draw-passport-extra">
         <summary>兌換說明</summary>
@@ -293,7 +297,7 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-effects.js?v=20261117-v120"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v121"></script>
-<script src="./assets/js/app.js?v=20261117-v120"></script>
+<script src="./assets/js/gift-effects.js?v=20261117-v123"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v123"></script>
+<script src="./assets/js/app.js?v=20261117-v123"></script>
 </body></html>

@@ -923,6 +923,15 @@ button,input,textarea,select{line-height:1.5}
 .mission-card span { color: var(--muted); font-size: 14px; }
 .welcome-content .welcome-progress { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: #101d2c; }
 #welcome-progress-title { display: none; }
+#welcome-account {
+  min-width: 0; padding: 14px; border: 1px solid var(--line);
+  border-radius: 8px; background: #101d2c;
+}
+#welcome-account h3 { margin: 0 0 5px; color: var(--gold); font-size: 1rem; }
+#welcome-account > p { margin: 0 0 12px; color: #c8d3e3; font-size: .875rem; }
+#welcome-account .welcome-progress { padding: 0; border: 0; background: none; }
+#welcome-account #progress-form { gap: 8px; }
+#welcome-account #progress-current:not([hidden]) { margin-bottom: 8px; }
 .welcome-dialog.progress-only .welcome-content .welcome-progress { padding: 0; border: 0; background: none; }
 :is(.welcome-dialog, .activity-dialog) .welcome-footer { position: static; margin: 14px 0 0; padding: 0; border: 0; background: none; }
 :is(.welcome-dialog, .activity-dialog) #progress-form > label:first-child { color: var(--text); font-weight: 600; }

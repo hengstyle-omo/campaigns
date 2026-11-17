@@ -2,7 +2,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   const ctx = canvas.getContext('2d');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let width = 0, height = 0, frame = 0, idleStart = 0, ready = false;
-  let visible = true, selected = null, targets = [];
+  let visible = true, selected = null, targets = [], hovered = null, consolation = null;
   const snow = Array.from({ length: 64 }, (_, i) => ({
     x: Math.random(), y: Math.random(), phase: Math.random() * 6.28,
     size: i < 48 ? 0.7 + Math.random() : 1.8 + Math.random() * 1.5,
@@ -76,6 +76,33 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     }
     if (time >= 1.4) selected = null;
   }
+  function drawGather(now) {
+    const point = targets[hovered];
+    if (!point) return;
+    for (let i = 0; i < 20; i++) {
+      const progress = ((now / 1300 + i / 20) % 1);
+      const angle = i * 2.4 + progress * .6;
+      const radius = (1 - progress) * width * .105;
+      dot(point[0] + Math.cos(angle) * radius,
+        point[1] + Math.sin(angle) * radius * .65,
+        1 + i % 3 * .4, Math.sin(progress * Math.PI) * .75);
+    }
+  }
+  function drawConsolation(now) {
+    const progress = (now - consolation.start) / 950;
+    if (progress >= 1) { consolation = null; return; }
+    const [x, y] = consolation.point;
+    for (let i = 0; i < 9; i++) {
+      const offset = Math.sin(i * 2.4) * width * .035 * progress;
+      const lift = progress * height * (.06 + i % 3 * .025);
+      const alpha = Math.sin(progress * Math.PI) * .7;
+      dot(x + offset, y - lift, 1.7, alpha, true);
+      dot(x + offset - 3, y - lift, .8, alpha * .65, true);
+      dot(x + offset + 3, y - lift, .8, alpha * .65, true);
+      dot(x + offset, y - lift - 3, .8, alpha * .65, true);
+      dot(x + offset, y - lift + 3, .8, alpha * .65, true);
+    }
+  }
   function paint(now) {
     frame = 0;
     if (!visible || document.hidden || motion.matches) return;
@@ -87,6 +114,8 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     }
     if (ready) drawIdle(now);
     if (selected) drawWin(now);
+    if (hovered !== null && ready) drawGather(now);
+    if (consolation) drawConsolation(now);
     frame = requestAnimationFrame(paint);
   }
   function update() {
@@ -97,6 +126,18 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       frame = 0;
       ctx.clearRect(0, 0, width, height);
     }
+  }
+  for (const [index, gift] of gifts.entries()) {
+    const gather = () => {
+      if (gift.disabled || !ready) return;
+      locateGifts();
+      hovered = index;
+    };
+    const release = () => { if (hovered === index) hovered = null; };
+    gift.addEventListener('pointerenter', gather);
+    gift.addEventListener('focus', gather);
+    gift.addEventListener('pointerleave', release);
+    gift.addEventListener('blur', release);
   }
   if (ctx) {
     resize();
@@ -114,12 +155,17 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     setReady(value) {
       if (ready === value) return;
       ready = value;
+      if (!ready) hovered = null;
       stage.classList.toggle('draw-idle-ready', ready);
       stage.classList.remove('draw-idle-pulse');
       if (ready) {
         idleStart = 0;
         locateGifts();
       }
+    },
+    showConsolation(index) {
+      locateGifts();
+      consolation = { start: performance.now(), point: targets[index] };
     },
     celebrate(index) {
       locateGifts();

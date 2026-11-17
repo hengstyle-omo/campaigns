@@ -128,9 +128,15 @@ function openProgress(){
   for(const id of ['card-dialog','item-dialog'])closeDialog(id);
   closeActivityReview();
   const account=$('draw-passport-account');
-  account.open=true;
-  account.scrollIntoView({block:'start'});
-  (cloud.loading?account.querySelector('summary'):$(cloud.email?'progress-switch':'progress-email')).focus({preventScroll:true});
+  const target=$(cloud.email?'progress-switch':'progress-email');
+  if(welcomeMediaOpen()){
+    $('welcome-account').scrollIntoView({block:'nearest'});
+    (cloud.loading?$('welcome-title'):target).focus({preventScroll:true});
+  }else{
+    account.open=true;
+    account.scrollIntoView({block:'start'});
+    (cloud.loading?account.querySelector('summary'):target).focus({preventScroll:true});
+  }
   trackActivity('progress_open');
 }
 function cloudTransport(payload){
@@ -261,8 +267,9 @@ async function saveCheckInAccount(){
   }
   const consent=cloud.marketingDirty?cloud.marketingDraft:undefined;
   const saved=await cloudConnect(email,consent,{userInitiated:true}).catch(()=>false);
-  if(saved&&$('draw-passport-account').contains(document.activeElement)){
-    $('draw-passport-account').querySelector('summary').focus({preventScroll:true});
+  if(saved&&$('draw-progress-fields').contains(document.activeElement)){
+    const target=welcomeMediaOpen()?$('progress-switch'):$('draw-passport-account').querySelector('summary');
+    target.focus({preventScroll:true});
   }
 }
 function markCardTask(format,method){
@@ -633,6 +640,7 @@ function openWelcome({review=false,focusId}={}){
   video.poster=welcomePosterSrc;
   video.src=welcomeVideoSrc;
   video.currentTime=0;
+  $('welcome-account').append($('draw-progress-fields'));
   document.body.classList.add('welcome-visible');
   showDialog('welcome-dialog');
   dialog.scrollTop=0;
@@ -646,9 +654,21 @@ function openWelcome({review=false,focusId}={}){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');}
   else playWelcome();
 }
-function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');if($('welcome-review-close').hidden)safeWrite(welcomeSeenKey,true);}
+function cleanupWelcome(){
+  if(welcomeCleaned)return;
+  welcomeCleaned=true;
+  ++welcomeAttempt;
+  clearTimeout(welcomeTimer);
+  const video=$('welcome-video');
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  document.body.classList.remove('welcome-visible');
+  $('draw-passport-account').append($('draw-progress-fields'));
+  if($('welcome-review-close').hidden)safeWrite(welcomeSeenKey,true);
+}
 function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
-function closeActivityReview(){if(!$('welcome-review-close').hidden)closeDialog('welcome-dialog');}
+function closeActivityReview(){if(welcomeMediaOpen()&&!$('welcome-review-close').hidden)finishWelcome();}
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');});

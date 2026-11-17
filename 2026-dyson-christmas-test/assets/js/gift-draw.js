@@ -306,6 +306,7 @@
   function openPrize(id) {
     if (!prizes[id] || prizeCard.open || discovery.open || productDialog.open) return;
     byId('draw-prize-kind').textContent = '適用商品｜' + prizes[id].name;
+    byId('draw-prize-info-title').textContent = '適用商品介紹｜' + prizes[id].name;
     const image = byId('draw-prize-image');
     image.hidden = id === 'bonus';
     if (image.hidden) image.removeAttribute('src');
@@ -492,6 +493,9 @@
             stage.classList.add('draw-flying');
             effects?.celebrate(index);
             await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
+          } else if (!recorded.prize && activeDate === attempt.date) {
+            effects?.showConsolation(index);
+            await new Promise(resolve => setTimeout(resolve, 950));
           }
         }
       }

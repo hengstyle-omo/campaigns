@@ -349,12 +349,13 @@
   background: #fbedd2;
   color: #162333;
 }
-.draw-result-ticket h3 { margin: 0; font-size: 1.15rem; line-height: 1.15; color: inherit; }
-.draw-result-ticket strong { display: block; margin-block: 5px; font-size: clamp(2.6rem, 11vw, 3.5rem); }
+.draw-result-ticket h3 { margin: 0; font-size: clamp(.95rem, 4vw, 1.2rem); line-height: 1.3; color: inherit; white-space: nowrap; }
+.draw-result-ticket strong { font-size: 1.12em; }
 .draw-result-ticket p { margin: 0; font-size: .9rem; }
 .draw-result-ticket a { padding: 8px 16px; text-decoration: none; }
 .draw-result-dialog [hidden], .draw-actions [hidden] { display: none; }
 #draw-prize { grid-template-areas: "ticket" "info"; }
+#draw-prize-info { align-self: start; overflow-wrap: anywhere; }
 .draw-result-ticket { grid-area: ticket; }
 .draw-prize-product { display: grid; justify-items: center; gap: 6px; margin: 0; font-size: .9rem; }
 .draw-prize-product img { display: block; object-fit: contain; }
@@ -368,8 +369,8 @@
 .draw-prize-info a { color: #f7dba4; }
 @media (min-width: 660px) {
   #draw-prize.draw-with-product-info {
-    width: min(760px, calc(100% - 24px)); grid-template-areas: "info ticket";
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px;
+    width: min(760px, calc(100% - 24px)); grid-template-areas: "ticket info";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; align-items: start;
   }
 }
 .draw-discovery h3 { color: #c6d0db; margin: 0; font-size: 1rem; font-weight: 500; }
