@@ -1,1 +1,1 @@
-v120 test / 2026-11-17 / shared welcome guide, passport terms, coupon dialogs, animated gift scene
+v121 test / 2026-11-17 / coupon card and product dialog layout
