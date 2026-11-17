@@ -9,38 +9,25 @@
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
-    hd19: { rewardId: 'product-hd19', name: 'HD19隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
+    hd19: { rewardId: 'product-hd19', name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
     pencilvac: { rewardId: 'product-sv50', name: 'PencilVac筆型吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
     hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
     bonus: { rewardId: 'product-bp10', name: '任一 Dyson 品項優惠券', image: './assets/images/brand/dyson-logo-white.png' },
   };
   const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
   const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
-  const brandImage = './assets/images/brand/dyson-logo-white.png';
-  const counterLink = 'https://shop.hengstyle.com/Article/Detail/94141';
-  const servicesLink = 'https://shop.hengstyle.com/site/dyson';
-  const facts = [
-    { lead: 'Dyson 源自英國。', copy: '品牌由英國發明家 James Dyson 創立，並於 1993 年在英國推出 DC01 氣旋吸塵器。' },
-    { lead: '第一台氣旋吸塵器背後，有 5,127 個原型。', copy: 'James Dyson 發現集塵袋被灰塵堵住後，吸塵器的吸力就會變弱。他花了五年反覆試做，才找到解法。' },
-    { lead: '全台有 41 個據點可以現場體驗 Dyson。', copy: '除了 20 間 Dyson 專櫃，還有 21 間 hengstyle 恆隆行專櫃販售 Dyson 產品。到櫃可以試試吹風機的風量、感受吸塵器的手感，也能請專人介紹不同機型。', link: counterLink },
-    { lead: '在恆隆行直營通路買 Dyson，享自動保固。', copy: '到 Dyson 直營專櫃或恆隆行官方線上購物選購，從買前諮詢、機型比較，到買後的操作問題與維修，都有恆隆行的服務窗口。', link: servicesLink },
-    { lead: 'Dyson 百貨優惠和專櫃資訊，可以在同一頁找到。', copy: '恆隆行 Dyson 百貨首頁整理了百貨活動、選購攻略和專櫃據點。出門前，也可以用電話或 LINE 先問專櫃有沒有想體驗的機型。', link: servicesLink },
-    { lead: 'Dyson 買回家後，也有操作教學可以跟著做。', copy: '從吸塵器、美髮家電到清淨機，恆隆行都有使用教學。像是 BP 系列要換濾網，就能跟著影片一步步操作。', link: servicesLink },
-    { product: 'hd19', lead: '旅行可以帶同一支吹風機。', copy: 'HD19隨行吹風機支援 100–240V，出發前確認當地插座規格，需要時帶上轉接頭。' },
-    { product: 'hd19', lead: '主機約 330 公克。', copy: 'HD19隨行吹風機相較原版 Dyson Supersonic，機身輕 25%、小 32%，放進行李更省空間。主機重量未計入線材與插頭。' },
-    { product: 'hd19', lead: '熟悉的造型方式也能帶去旅行。', copy: 'HD19隨行吹風機可以搭配相容的 Supersonic 吹嘴，吹整完還能切換冷風定型。' },
-    { product: 'pencilvac', lead: '單手也能靈活繞過桌腳。', copy: 'PencilVac筆型吸塵器的握把直徑只有 38 毫米，搭配可 360° 轉向的吸頭，沿牆或繞過家具都好操作。' },
-    { product: 'pencilvac', lead: '吸頭裡有四個錐形滾刷。', copy: 'PencilVac筆型吸塵器的 Fluffycones 吸頭用這個設計減少清潔時的毛髮纏繞。' },
-    { product: 'pencilvac', lead: '平常容易漏看的細灰，也能照得更清楚。', copy: 'PencilVac筆型吸塵器的吸頭會照亮前後兩側的地面，打掃完還能免手碰清空集塵筒。' },
-    { product: 'hj10', lead: '空氣品質變化時，風速會跟著調整。', copy: '開啟自動模式後，HJ10 會依微粒偵測結果調整風速，機身螢幕也能查看 PM2.5 和 PM10 濃度。' },
-    { product: 'hj10', lead: '放在臥室，晚上可以把螢幕調暗。', copy: 'HJ10 的底部約 23 × 23 公分，切到夜間模式，機身螢幕就會變暗。' },
-    { product: 'hj10', lead: '手機就能控制清淨機。', copy: '用 MyDyson App 可以遠端操作、設定最長 9 小時的關機定時，也能查看濾網更換提醒。' },
+  const missMessages = [
+    '差一點點！明天再來挑一份禮物，試試手氣。',
+    '今天先收下一句聖誕快樂，明天再來拆禮物吧！',
+    '謝謝你來拆禮物。明天再挑一盒，看看會遇見什麼驚喜。',
+    '今天的手氣差了一點。明天換一盒，再試一次吧！',
+    '謝謝你陪我們拆到最後一天，祝你聖誕快樂！',
   ];
   const catalog = window.DYSON_GAME_CONFIG;
   const prizeDetailsById = Object.fromEntries(Object.entries(prizes).map(([id, { rewardId }]) => {
     const reward = catalog.rewards.find(reward => reward.id === rewardId);
     const day = reward?.productDay;
-    return [id, { reward, day, product: id === 'bonus' ? null : catalog.items.find(item => item.day === day)?.product }];
+    return [id, { day, product: id === 'bonus' ? null : catalog.items.find(item => item.day === day)?.product }];
   }));
 
   const byId = id => document.getElementById(id);
@@ -52,11 +39,6 @@
   const discovery = byId('draw-discovery');
   const flyover = byId('draw-flyover');
   const prizeClaim = byId('draw-prize-claim');
-  const prizeIntro = byId('draw-prize-intro');
-  const prizeDetails = byId('draw-prize-details');
-  const prizeFeatures = byId('draw-prize-features');
-  const prizeProductLink = byId('draw-prize-product-link');
-  const prizeImage = byId('draw-prize-image');
   const wallet = byId('draw-wallet');
   const giftGroup = byId('draw-gifts');
   const passportButton = byId('draw-passport-open');
@@ -268,64 +250,22 @@
     return day.slice(5).replace('-', '/');
   }
 
-  function factIndex(date, days) {
-    const day = Number(date.slice(-2));
-    const choices = Array.from(facts.keys()).filter(index => {
-      const { product } = facts[index];
-      return !product || prizeDetailsById[product].day <= day;
-    });
-    const saved = days[date]?.result?.fact;
-    if (choices.includes(saved)) return saved;
-    const earlierMisses = Object.entries(days).filter(([key, record]) => key < date && record.result && !record.result.prize);
-    const seen = new Set(earlierMisses.map(([, record]) => record.result.fact));
-    return choices.find(index => !seen.has(index)) ?? choices[earlierMisses.length % choices.length];
-  }
-
-  function renderFact(show, days) {
-    byId('draw-fact').hidden = !show;
-    if (!show) return;
-    const fact = facts[factIndex(activeDate, days)];
-    const image = byId('draw-fact-image');
-    const source = fact.product ? window.DYSON_ASSETS.sprites?.[prizeDetailsById[fact.product].day] ?? prizes[fact.product].image : brandImage;
-    if (image.getAttribute('src') !== source) image.src = source;
-    image.alt = fact.product ? prizes[fact.product].name : '';
-    byId('draw-fact-lead').textContent = fact.lead;
-    byId('draw-fact-copy').textContent = fact.copy;
-    const productUrl = prizeDetailsById[fact.product]?.product?.url;
-    byId('draw-fact-link').href = fact.link || (productUrl?.startsWith('https://') ? productUrl : servicesLink);
+  function missMessage(date, days) {
+    if (date === end) return missMessages[missMessages.length - 1];
+    const earlierMisses = Object.entries(days).filter(([key, record]) => key < date && record.result && !record.result.prize).length;
+    return missMessages[earlierMisses % (missMessages.length - 1)];
   }
 
   function openPrize(id, claimable) {
     if (!prizes[id] || prizeCard.open || discovery.open) return;
 
-    const { name } = prizes[id];
-    const { reward, product } = prizeDetailsById[id];
-    byId('draw-prize-ticket').hidden = !claimable;
+    const name = id === 'bonus' ? '任一 Dyson 商品' : prizes[id].name;
+    byId('draw-prize-kind').textContent = '適用商品｜' + name;
     byId('draw-prize-won-label').hidden = !claimable;
+    prizeClaim.hidden = !claimable;
     if (claimable) prizeClaim.href = prizeURL(id);
     else prizeClaim.removeAttribute('href');
     prizeClaim.dataset.coupon = id;
-    prizeImage.src = prizeArt(id);
-    prizeImage.alt = product ? name : '';
-    byId('draw-prize-name').textContent = name;
-    byId('draw-prize-kind').textContent = product ? name + '的優惠券' : name;
-
-    // The countdown introduction ends with scene-specific instructions.
-    const intro = product?.intro?.split('點選放進雪境，')[0].trim() || reward?.conditions || '';
-    prizeIntro.textContent = intro;
-    prizeIntro.hidden = !intro;
-    const features = product?.features ?? [];
-    prizeDetails.hidden = !features.length;
-    prizeDetails.open = features.length > 0;
-    prizeFeatures.replaceChildren(...features.map(feature => {
-      const line = document.createElement('li');
-      line.textContent = feature;
-      return line;
-    }));
-    const productUrl = product?.url;
-    prizeProductLink.hidden = !productUrl?.startsWith('https://');
-    if (prizeProductLink.hidden) prizeProductLink.removeAttribute('href');
-    else prizeProductLink.href = productUrl;
     prizeCard.showModal();
   }
 
@@ -388,7 +328,6 @@
       gift.classList.toggle('draw-touch-opening', state === 'opening' && pending.touch);
     }
     giftGroup.classList.toggle('draw-ready', canOpen);
-    renderFact(played && !opening && !prize, days);
     floatedTicket.hidden = !prize;
     if (prize) {
       floatedTicket.dataset.box = String(selected);
@@ -430,7 +369,7 @@
     if (!note.hidden) {
       note.textContent = activeDate < bonusDate
         ? '前三張優惠券已集齊，12/20 再來抽加碼券。'
-        : '優惠券已集齊，仍可每天拆盒看一則 Dyson 小知識。';
+        : '本次活動的優惠券已集齊，可到票夾查看。';
     }
     if (!opening) renderWallet(days);
   }
@@ -478,7 +417,6 @@
     if (choice === 'random' && slot !== -1) prize = day.hiddenPrizes[slot];
     day.layout ??= currentGiftLayout(date, day);
     day.result = { selected: index, prize: prize ?? null };
-    if (!prize) day.result.fact = factIndex(date, draw.days);
     return saveDraw(draw) ? day.result : null;
   }
 
@@ -552,10 +490,15 @@
     }).catch(showError);
   });
   function openResult() {
-    const result = readDraw().days[activeDate]?.result;
+    const { days } = readDraw();
+    const result = days[activeDate]?.result;
     if (!result || pending || prizeCard.open || discovery.open) return;
-    if (result.prize) openPrize(result.prize, true);
-    else discovery.showModal();
+    if (result.prize) {
+      openPrize(result.prize, true);
+    } else {
+      byId('draw-miss-copy').textContent = missMessage(activeDate, days);
+      discovery.showModal();
+    }
   }
 
   byId('draw-result-open').addEventListener('click', openResult);

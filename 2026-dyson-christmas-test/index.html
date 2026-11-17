@@ -7,7 +7,7 @@
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
 <link rel="stylesheet" href="./assets/css/style.css?v=20261117-v117-consolidated">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v117-checkin">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v118-coupons">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -21,7 +21,7 @@
    <div><b class="mission-number">03</b><strong>獨家好禮</strong><span>每日簽到<br>累積打卡</span></div>
   </nav>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v117</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v118</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
   <h2 id="welcome-title">Dyson 聖誕雪境</h2>
@@ -40,7 +40,7 @@
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-coupons">
    <h3 id="rules-coupons">聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
-   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。未抽中時可看到一則 Dyson 小知識。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。同款券只會中一次，12/20 起加入任一商品優惠券。</p>
+   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。12/20 起加入任一商品優惠券。活動期間，每位會員每款優惠券限領一次。</p>
    <p>※ 抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-passport">
@@ -107,12 +107,11 @@
  </div>
  <section id="benefit-section" class="benefit-section"><div class="section-heading"><div><p class="eyebrow"><svg class="ticket-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v2m0 2v2m0 2v2"/></svg>優惠券</p><h2>聖誕優惠券</h2></div></div><section id="draw-card" class="draw-card" aria-labelledby="draw-heading">
   <div class="draw-copy">
-    <h3 id="draw-heading" tabindex="-1">挑一份你的聖誕回禮</h3>
-    <p id="draw-rules">每天挑 1 盒，揭曉優惠券或 Dyson 小知識。</p>
+    <h3 id="draw-heading" tabindex="-1">挑一份聖誕禮物</h3>
+    <p id="draw-rules">每天可拆 1 份禮物，有機會抽中 Dyson $1,000 優惠券。</p>
     <p id="draw-bonus" class="draw-bonus" hidden>12/20 加碼｜<span>Dyson 任一商品折 $1,000</span></p>
   </div>
   <div id="draw-stage" class="draw-stage">
-    <img class="draw-tree-logo" src="./assets/images/brand/dyson-logo-white.png" alt="" width="1702" height="591" loading="lazy" decoding="async">
     <div class="draw-tree" aria-hidden="true">
       <img class="draw-tree-art" src="./assets/images/scene/day-12-christmas-tree.webp" alt="" width="1214" height="1295" loading="lazy" decoding="async">
       <span class="draw-tree-lights"></span>
@@ -175,36 +174,17 @@
 </section>
 <dialog id="draw-prize" class="draw-result-dialog" aria-labelledby="draw-prize-name">
   <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
-  <div class="draw-result-main">
-    <div class="draw-result-art"><img id="draw-prize-image" alt="" width="156" height="156"></div>
-    <div class="draw-result-info">
-      <p id="draw-prize-won-label" class="draw-prize-won-label" hidden>你抽中了 Dyson 優惠券！</p>
-      <h3 id="draw-prize-name"></h3>
-      <p id="draw-prize-intro" hidden></p>
-      <details id="draw-prize-details" hidden>
-        <summary>產品亮點</summary>
-        <ul id="draw-prize-features"></ul>
-      </details>
-      <a id="draw-prize-product-link" target="_blank" rel="noopener noreferrer" hidden>了解產品詳情 ↗</a>
-    </div>
-  </div>
-  <div id="draw-prize-ticket" class="draw-result-ticket" hidden>
-    <span id="draw-prize-kind"></span>
-    <strong>$1,000</strong>
-    <a id="draw-prize-claim" class="gold-button" target="_blank" rel="noopener noreferrer">立即領取優惠券 ↗</a>
+  <p id="draw-prize-won-label" class="draw-prize-won-label" hidden>恭喜抽中！</p>
+  <div class="draw-result-ticket">
+    <h3 id="draw-prize-name">Dyson <strong>$1,000</strong> 優惠券</h3>
+    <p id="draw-prize-kind"></p>
+    <a id="draw-prize-claim" class="gold-button" target="_blank" rel="noopener noreferrer" hidden>領取優惠券 ↗</a>
   </div>
 </dialog>
-<dialog id="draw-discovery" class="draw-result-dialog draw-discovery" aria-labelledby="draw-discovery-title">
+<dialog id="draw-discovery" class="draw-result-dialog draw-discovery" aria-labelledby="draw-discovery-title" aria-describedby="draw-miss-copy">
   <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
-  <h3 id="draw-discovery-title">今日 Dyson 小知識</h3>
-    <article id="draw-fact" class="draw-fact" aria-labelledby="draw-fact-lead" hidden>
-      <img id="draw-fact-image" alt="" width="80" height="96">
-      <div>
-        <strong id="draw-fact-lead"></strong>
-        <p id="draw-fact-copy"></p>
-        <a id="draw-fact-link" href="https://shop.hengstyle.com/site/dyson" target="_blank" rel="noopener noreferrer">了解更多</a>
-      </div>
-    </article>
+  <h3 id="draw-discovery-title">今天沒有抽中優惠券</h3>
+  <p id="draw-miss-copy"></p>
 </dialog>
 <details id="draw-settings" class="draw-settings">
   <summary>測試設定</summary>
@@ -274,7 +254,7 @@
   </section>
   <section aria-labelledby="activity-coupons">
    <h3 id="activity-coupons" class="activity-section-title" tabindex="-1">拆禮物抽優惠券</h3>
-   <p class="voucher-instructions">當天製作聖誕卡片並下載或分享圖片，即可拆一份禮物，有機會抽到 Dyson $1,000 優惠券。未抽中時可看一則 Dyson 小知識。</p>
+   <p class="voucher-instructions">當天製作聖誕卡片並下載或分享圖片，即可拆一份禮物，有機會抽到 Dyson $1,000 優惠券。活動期間，每位會員每款優惠券限領一次。</p>
    <button id="draw-from-vouchers" type="button">前往拆禮物</button>
   </section>
   <section aria-labelledby="activity-attendance">
@@ -308,6 +288,6 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v117-consolidated"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v118-coupons"></script>
 <script src="./assets/js/app.js?v=20261117-v117-consolidated"></script>
 </body></html>
