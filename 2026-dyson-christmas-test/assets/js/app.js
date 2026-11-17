@@ -122,7 +122,7 @@ function renderCloud(){
  for(const id of ['quick-sim-toggle','studio-open'])$(id).hidden=!admin;
  if(!admin){$('quick-sim-panel').hidden=true;$('preview-banner').hidden=true;}
  $('cloud-settings').hidden=!admin;$('cloud-endpoint').value=cloud.endpoint;$('cloud-summary').textContent=active?'進度服務已設定。':'請先設定進度服務網址。';
- renderHomePassport();
+ renderPassport();
 }
 function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;openWelcome({progressOnly:true});$(cloud.email?'progress-switch':'progress-email').focus();}
 function cloudTransport(payload){
@@ -951,13 +951,7 @@ $('mobile-collection').addEventListener('close',restoreMobileGlobe);
 $('mobile-collection-pages').addEventListener('scroll',syncMobileCollectionPage,{passive:true});
 $('mobile-collection-prev').addEventListener('click',()=>moveMobileCollectionPage(-1));
 $('mobile-collection-next').addEventListener('click',()=>moveMobileCollectionPage(1));
-function placeHomePassport(){
-  const passport=$('home-passport');
-  const anchor=$(mobileViewport.matches?'game-experience':'benefit-section');
-  if(anchor.nextElementSibling!==passport)anchor.after(passport);
-}
 mobileViewport.addEventListener('change',event=>{
-  placeHomePassport();
   renderCalendar();
   if(event.matches)return;
   closeDialog('mobile-collection');
@@ -1050,7 +1044,7 @@ function passportProgressText(count){
   if(previewDate)return `模擬累積 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
   return `已打卡 ${Math.min(count,PASSPORT_DAYS)}／${PASSPORT_DAYS} 天`;
 }
-function renderHomePassport(){
+function renderPassport(){
   const ready=attendanceReady(),dates=participationDisplayDates();
   const progressText=passportProgressText(dates.length);
   const expired=realDateISO()>`${YEAR}-12-31`;
@@ -1059,14 +1053,11 @@ function renderHomePassport(){
   const key=eligible?(previewDate?'preview:'+cloud.email:cloudCacheKey(cloud.email)+':passport-gift-opened'):'';
   const label=expired?'已逾兌換期限':complete&&!eligible?'兌換資格確認中':progressText;
   window.DysonTestDraw.setPassportReward({ key, label, preview:!!previewDate });
-  $('home-passport-status').textContent=progressText;
-  $('voucher-passport-status').textContent=progressText;
-  renderAttendanceGrid($('home-passport-days'),dates);
+  $('voucher-passport-status').textContent=label;
   renderAttendanceGrid($('voucher-passport-days'),dates);
-  const note=$('home-passport-note');
+  const note=$('voucher-passport-note');
   note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error;
   note.hidden=!note.textContent;
-  renderPassportCouponAction($('home-passport-actions'),ready,dates.length,'daily_checkin');
   renderPassportCouponAction($('voucher-passport-actions'),ready,dates.length,'activity_rewards');
   trackPassportComplete();
 }
@@ -1090,7 +1081,7 @@ function jumpActivitySection(id){
   target.focus({preventScroll:true});
 }
 let activityEntryPoint='activity_rewards';
-function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
+function openActivityDialog(id,{entryPoint='activity_rewards',autoplay=true}={}){
   activityEntryPoint=entryPoint;
   moveActivityOverview('activity-overview');
   welcomeProgressOnly=false;
@@ -1101,7 +1092,7 @@ function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
   renderVouchers();
   showDialog('vouchers-dialog');
   $('welcome-play').hidden=true;
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+  if(!autoplay||matchMedia('(prefers-reduced-motion: reduce)').matches){
     $('welcome-play').textContent='播放介紹';
     $('welcome-play').hidden=false;
     welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');
@@ -1223,7 +1214,7 @@ function renderPassportCouponAction(actions,ready,count,entryPoint){
  });
  actions.replaceChildren(button);
 }
-window.DysonTestDraw.onPassportOpened=renderHomePassport;
+window.DysonTestDraw.onPassportOpened=renderPassport;
 window.DysonTestDraw.trackCoupon=id=>{
  const couponId={hd19:'product-hd19',pencilvac:'product-sv50',hj10:'product-hj10',bonus:'product-bp10',passport:'visits-10'}[id];
  if(couponId)trackActivity('coupon_click',{coupon_id:couponId,entry_point:'gift_draw'});
@@ -2055,6 +2046,7 @@ for(const [id,dialog,heading,section] of [
     closeDialog(dialog);
     $(heading).focus({preventScroll:true});
     $(section).scrollIntoView({block:'start'});
+    if(id==='draw-from-card')window.DysonTestDraw.openResult();
   });
 }
 $('card-form').addEventListener('submit',e=>e.preventDefault());
@@ -2551,8 +2543,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('audio-panel').h
 document.addEventListener('focusin',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
-for(const id of ['home-passport-image','voucher-passport-image'])$(id).src=ASSETS.rewardImages.passport;
-placeHomePassport();
+$('draw-passport-details').addEventListener('click',()=>openActivityDialog('activity-attendance',{entryPoint:'wallet',autoplay:false}));
+$('voucher-passport-image').src=ASSETS.rewardImages.passport;
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));

@@ -10,7 +10,7 @@
 .draw-copy { padding: 26px 16px 0; }
 .draw-copy h3, .draw-wallet h3 { color: #f2d9ab; margin: 0 0 8px; }
 .draw-copy h3 { font-size: clamp(1.45rem, 3vw, 2.25rem); }
-#draw-card, #draw-heading, #draw-coupons, #home-passport { scroll-margin-top: 110px; }
+#draw-card, #draw-heading, #draw-coupons { scroll-margin-top: 110px; }
 .draw-copy p, .draw-feedback p { margin: 0; }
 .draw-copy p + p:not([hidden]) { margin-top: 6px; }
 .draw-bonus, #draw-count { color: #efc984; }
@@ -40,13 +40,14 @@
     radial-gradient(ellipse at 51% 52%, #7696c92e 0%, transparent 66%)
       50% 40% / 145% 100% no-repeat;
   mask-image: radial-gradient(ellipse 52% 60% at 50% 34%, #000 26%, #000b 58%, transparent 94%);
-  opacity: .72;
-  animation: draw-aurora-drift 22s ease-in-out infinite;
+  opacity: .58;
+  animation: draw-aurora-drift 18s ease-in-out infinite;
 }
 @keyframes draw-aurora-drift {
-  0%, 100% { background-position: 20% 25%, 82% 60%, 50% 40%; opacity: .66; }
-  38% { background-position: 74% 39%, 44% 43%, 35% 46%; opacity: .92; }
-  72% { background-position: 56% 28%, 14% 56%, 63% 37%; opacity: .76; }
+  0%, 100% { background-position: 20% 25%, 82% 60%, 50% 40%; opacity: .55; }
+  24% { background-position: 54% 36%, 63% 48%, 36% 46%; opacity: .96; }
+  50% { background-position: 79% 44%, 40% 36%, 64% 52%; opacity: .28; }
+  74% { background-position: 48% 27%, 19% 55%, 76% 34%; opacity: .84; }
 }
 .draw-tree, .draw-gifts { position: absolute; }
 .draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }
@@ -104,7 +105,7 @@
 .draw-flyover-rider img:first-child { display: block; width: 100%; }
 .draw-flyover-rider img:last-child { position: absolute; width: 48%; left: 19%; bottom: 26%; }
 .draw-flyover-reindeer { width: 45%; margin-bottom: 9%; }
-.draw-celebrate .draw-flyover { animation: draw-fly-past 2.4s .1s ease-in-out both; }
+.draw-flying .draw-flyover { animation: draw-fly-past var(--draw-flight-duration, 1100ms) ease-in-out both; }
 @keyframes draw-fly-past {
   from { transform: translate(-110%, 65%); opacity: 1; }
   to { left: 100%; transform: translate(15%, -25%); opacity: 1; }
@@ -327,6 +328,7 @@
 .draw-result-info { display: grid; gap: 6px; min-width: 0; font-size: .92rem; }
 .draw-result-info h3, .draw-result-info p { margin: 0; }
 .draw-result-info h3 { color: #f7dba4; }
+.draw-result-info .draw-prize-won-label { color: #f6d597; font-weight: 700; }
 .draw-result-info summary { cursor: pointer; font-weight: 700; }
 .draw-result-info ul { margin: 4px 0 0; padding-inline-start: 1.25rem; }
 .draw-result-info a, .draw-fact a, .draw-coupon a:not(.gold-button) { color: #f6d597; text-underline-offset: .18em; }
@@ -346,6 +348,9 @@
 .draw-result-ticket strong { font-size: clamp(1.65rem, 6vw, 2rem); line-height: 1; }
 .draw-result-ticket a { display: block; padding: 8px 10px; font-size: .9rem; text-decoration: none; }
 .draw-result-ticket[hidden], .draw-actions [hidden], .draw-fact[hidden] { display: none; }
+.draw-discovery { width: min(500px, calc(100% - 24px)); }
+.draw-discovery[open] { display: block; }
+.draw-discovery h3 { color: #f7dba4; margin: 0 0 12px; }
 .draw-fact {
   display: grid;
   grid-template-columns: 60px minmax(0, 1fr);
