@@ -30,17 +30,18 @@
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 79% -14% -27%;
+  inset: 76% -14% -27%;
   border-radius: 50% 50% 0 0 / 50% 50% 0 0;
   background:
     radial-gradient(ellipse at 28% 30%, #fcfdffbc, transparent 31%),
     radial-gradient(ellipse at 70% 24%, #a0b8d48c, transparent 25%),
     radial-gradient(ellipse at 65% 48%, #f7faffc7, transparent 34%),
     radial-gradient(ellipse at 32% 44%, #a7bed685, transparent 28%),
+    repeating-conic-gradient(from 25deg, #fff8ea80 0% 14%, #d3e2ef50 14% 27%, #3b557425 27% 48%) 0 0 / 5px 5px,
     linear-gradient(179deg, #f8fbff 3%, #e1ebf6 34%, #becfe2 58%, #90a8c3 100%);
 }
 .draw-tree, .draw-gifts { position: absolute; }
-.draw-tree { height: 75%; aspect-ratio: 1214 / 1295; left: 50%; top: 7%; transform: translateX(-50%); }
+.draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }
 .draw-tree::before {
   content: "";
   position: absolute;
@@ -55,14 +56,64 @@
 .draw-tree-art, .draw-tree-logo { display: block; position: absolute; }
 .draw-tree-art { inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .draw-tree-logo {
-  width: clamp(98px, 37.5%, 165px);
-  max-width: 52%;
+  top: 3%;
+  left: 50%;
+  width: clamp(92px, 32%, 224px);
+  max-height: 12%;
   height: auto;
-  left: 52%;
-  top: 35%;
-  transform: translate(-50%, -50%);
+  object-fit: contain;
+  transform: translateX(-50%);
   filter: brightness(0) saturate(100%) invert(94%) sepia(32%) saturate(682%) hue-rotate(320deg) brightness(103%) contrast(98%) drop-shadow(0 0 2px #fffaf1b3) drop-shadow(0 0 8px #ffc17d66);
 }
+.draw-stage::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: 26% 0 9%;
+  background:
+    url("../images/scene/day-02-fir-tree.webp") 7% 88% / 13% auto no-repeat,
+    url("../images/scene/day-02-fir-tree.webp") 92% 89% / 17% auto no-repeat,
+    url("../images/scene/day-02-fir-tree.webp") 20% 78% / 8% auto no-repeat,
+    url("../images/scene/day-02-fir-tree.webp") 79% 83% / 10% auto no-repeat;
+  opacity: .30;
+}
+.draw-tree-lights {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 51% 35%, #fff5b9 0, #ffcf7880 2%, transparent 7%),
+    radial-gradient(circle at 35% 50%, #fff5b9 0, #ffcf78aa 2%, transparent 6%),
+    radial-gradient(circle at 65% 53%, #fff5b9 0, #ffcf78aa 2%, transparent 7%),
+    radial-gradient(circle at 29% 69%, #fff5b9 0, #ffcf7880 2%, transparent 8%),
+    radial-gradient(circle at 53% 70%, #fff5b9 0, #ffcf7880 2%, transparent 9%),
+    radial-gradient(circle at 72% 77%, #fff5b9 0, #ffcf7880 2%, transparent 8%);
+  mix-blend-mode: screen;
+}
+.draw-stage-won .draw-tree-lights { opacity: 1; }
+.draw-celebrate .draw-tree-lights { animation: draw-tree-twinkle 1.25s ease-in-out 2; }
+.draw-flyover {
+  position: absolute;
+  z-index: 2;
+  top: 19%;
+  left: 0;
+  display: flex;
+  align-items: end;
+  width: clamp(110px, 34%, 270px);
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 0 7px #f7ca7777);
+}
+.draw-flyover-rider { position: relative; width: 55%; }
+.draw-flyover-rider img:first-child { display: block; width: 100%; }
+.draw-flyover-rider img:last-child { position: absolute; width: 48%; left: 19%; bottom: 26%; }
+.draw-flyover-reindeer { width: 45%; margin-bottom: 9%; }
+.draw-celebrate .draw-flyover { animation: draw-fly-past 2.4s .1s ease-in-out both; }
+@keyframes draw-fly-past {
+  from { transform: translate(-110%, 65%); opacity: 1; }
+  to { left: 100%; transform: translate(15%, -25%); opacity: 1; }
+}
+@keyframes draw-tree-twinkle { 0%, 100% { opacity: 1; } 45% { opacity: .4; } }
 .draw-gifts { inset: 0; }
 .draw-gifts .draw-gift {
   --mouth-y: 48%;
@@ -84,11 +135,11 @@
   transform: translate(-50%, -50%) rotate(var(--angle));
   appearance: none;
 }
-.draw-gifts .draw-gift:nth-child(1) { --x: 27%; --y: 74%; --size: 13%; --angle: -7deg; }
-.draw-gifts .draw-gift:nth-child(2) { --x: 76%; --y: 74%; --size: 12.5%; --angle: 8deg; }
-.draw-gifts .draw-gift:nth-child(3) { --x: 15%; --y: 86%; --size: 15%; --angle: -5deg; }
-.draw-gifts .draw-gift:nth-child(4) { --x: 63%; --y: 86%; --size: 16%; --angle: 2deg; }
-.draw-gifts .draw-gift:nth-child(5) { --x: 86%; --y: 86%; --size: 15%; --angle: 5deg; }
+.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 27%; --y: 74%; --size: 13%; --angle: -7deg; }
+.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 76%; --y: 74%; --size: 12.5%; --angle: 8deg; }
+.draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 15%; --y: 86%; --size: 15%; --angle: -5deg; }
+.draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 63%; --y: 86%; --size: 16%; --angle: 2deg; }
+.draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 86%; --y: 86%; --size: 15%; --angle: 5deg; }
 .draw-gifts .draw-gift:disabled { opacity: 1; cursor: default; }
 .draw-gifts .draw-gift:not(:disabled) { cursor: pointer; }
 .draw-gifts .draw-gift:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 1px; z-index: 1; }
@@ -153,7 +204,34 @@
 .draw-gift[data-state="opening"] .draw-lid { animation: draw-lid-lift .8s ease both; }
 .draw-gift[data-state="opening"] .draw-snow { animation: draw-flurry .63s .16s ease-out both; }
 .draw-gift[data-state="won"] .draw-glow { opacity: .8; transition: opacity .25s ease-out; }
-.draw-gift[data-state="won"] .draw-ticket { opacity: 1; transform: translate(-50%, -116%) rotate(-7deg) scale(1); }
+.draw-floated-ticket {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 3;
+  opacity: 1;
+  transform: translate(-50%, -116%) rotate(-7deg);
+  text-decoration: none;
+}
+.draw-floated-ticket[hidden], .draw-box-animal[hidden], .draw-animal-result[hidden], .draw-passport button[hidden] { display: none; }
+.draw-floated-ticket:focus-visible, a.draw-prize:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 3px; }
+.draw-box-animal {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 51%;
+  width: 113%;
+  height: 85%;
+  object-fit: contain;
+  object-position: bottom;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: draw-animal-rise .4s ease-out both;
+}
+@keyframes draw-animal-rise {
+  from { opacity: 0; transform: translate(-50%, 40%) scale(.72); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
 @keyframes draw-lid-lift {
   0% { transform: none; }
   17% { transform: translateY(-4%) rotate(3deg); }
@@ -185,6 +263,37 @@
   text-align: left;
 }
 .draw-prize[hidden] { display: none; }
+a.draw-prize { text-decoration: none; }
+a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.draw-animal-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #f2d9ab;
+  margin-top: 10px;
+}
+.draw-animal-result img { object-fit: contain; }
+.draw-passport { margin: 15px 0 0; padding-top: 12px; border-top: 1px solid #80705655; }
+.draw-passport h4 { margin: 0 0 4px; color: #f2d9ab; }
+.draw-passport button { margin-top: 8px; }
+.draw-passport button::before {
+  content: "";
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin-right: 7px;
+  vertical-align: middle;
+  background: url("../images/scene/day-03-ribbon-gift.webp") center / contain no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .draw-passport-opening::before { animation: draw-box-hop .5s ease; }
+  .draw-passport-ticket:not([hidden]) { animation: draw-passport-reveal .28s ease-out both; }
+}
+@keyframes draw-passport-reveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 .draw-prize-art {
   display: grid;
   place-items: center;
@@ -255,8 +364,8 @@
   .draw-copy { padding-top: 18px; }
   .draw-stage { aspect-ratio: 1.07; }
   .draw-gifts .draw-gift { width: calc(var(--size) + 4%); }
-  .draw-gifts .draw-gift:nth-child(-n+2) { --y: 76%; }
-  .draw-gifts .draw-gift:nth-child(4) { --x: 65%; }
+  .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 76%; }
+  .draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 65%; }
   #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .draw-coupon { padding: 10px; }
   .draw-wallet, .draw-settings { padding: 12px; }

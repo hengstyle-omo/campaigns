@@ -7,7 +7,7 @@
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
 <link rel="stylesheet" href="./assets/css/style.css?v=20261117-v102-collections">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=4">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v102-gift-rewards">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -42,7 +42,7 @@
   <section class="activity-rules-section" aria-labelledby="rules-coupons">
    <h3 id="rules-coupons">聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
    <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。每盒都有聖誕祝福，有可抽優惠券時，抽中機率為 20%。同款券只會中一次，12/20 起加入任一商品優惠券。</p>
-   <p>※ 抽獎紀錄保存在目前使用的瀏覽器。測試券不可兌換。</p>
+   <p>※ 抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-passport">
    <h3 id="rules-passport">累積參與｜滿 5 天再享專屬好禮</h3>
@@ -59,7 +59,7 @@
   </section>
  </div></details>
  <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><ol id="activity-notices-list"><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol></div></details>
- <p class="november-test-notice">測試版提醒：本頁以 11/01–11/25 模擬 12/01–12/25，進度僅供測試，優惠券及護照夾資格不可兌換。</p>
+ <p class="november-test-notice">測試版提醒：本頁以 11/01–11/25 模擬 12/01–12/25，進度獨立保存。實際領取結果以恆隆行優惠券頁為準。</p>
 </dialog>
 <dialog id="admin-auth-dialog" class="admin-auth-dialog" aria-labelledby="admin-auth-title" aria-describedby="admin-auth-description">
  <button class="dialog-close mobile-admin-close" data-close="admin-auth-dialog" type="button" aria-label="關閉管理員驗證">×</button>
@@ -115,33 +115,60 @@
     <p id="draw-bonus" class="draw-bonus" hidden>12/20 加碼｜<span>Dyson 任一商品折 $1,000</span></p>
   </div>
   <div id="draw-stage" class="draw-stage">
+    <img class="draw-tree-logo" src="./assets/images/brand/dyson-logo-white.png" alt="" width="1702" height="591" loading="lazy" decoding="async">
     <div class="draw-tree" aria-hidden="true">
       <img class="draw-tree-art" src="./assets/images/scene/day-12-christmas-tree.webp" alt="" width="1214" height="1295" loading="lazy" decoding="async">
-      <img class="draw-tree-logo" src="./assets/images/brand/dyson-logo-white.png" alt="" width="1702" height="591" loading="lazy" decoding="async">
+      <span class="draw-tree-lights"></span>
+    </div>
+    <div class="draw-flyover" aria-hidden="true">
+      <div class="draw-flyover-rider">
+        <img src="./assets/images/scene/day-22-golden-sleigh.webp" alt="" loading="lazy">
+        <img src="./assets/images/scene/day-23-cat-santa.webp" alt="" loading="lazy">
+      </div>
+      <img class="draw-flyover-reindeer" src="./assets/images/scene/day-08-leaping-reindeer.webp" alt="" loading="lazy">
     </div>
     <div id="draw-gifts" class="draw-gifts" role="group" aria-label="五盒聖誕禮物" aria-describedby="draw-rules"></div>
   </div>
   <div id="draw-feedback" class="draw-feedback">
     <p id="draw-status" role="status" aria-live="polite" tabindex="-1"></p>
     <p id="draw-pool-note" class="draw-muted"></p>
-    <div id="draw-prize" class="draw-prize" hidden>
+    <div id="draw-animal-result" class="draw-animal-result" hidden>
+      <img id="draw-animal-preview" alt="" width="92" height="70">
+      <span id="draw-animal-name"></span>
+    </div>
+    <a id="draw-prize" class="draw-prize" target="_blank" rel="noopener noreferrer" hidden>
       <div class="draw-prize-art"><img id="draw-prize-image" alt="" width="144" height="108"></div>
       <div class="draw-prize-copy">
         <span id="draw-prize-kind"></span>
         <strong>$1,000</strong>
         <span id="draw-prize-name"></span>
+        <span class="draw-prize-cta">前往領取優惠券 ↗</span>
       </div>
-    </div>
+    </a>
     <div class="draw-actions">
       <button id="draw-create" class="gold-button" type="button">製作卡片解鎖禮物</button>
       <a id="draw-view" href="#draw-coupons" hidden>查看我的優惠券</a>
     </div>
+    <section id="draw-passport" class="draw-passport" aria-labelledby="draw-passport-title">
+      <h4 id="draw-passport-title" tabindex="-1">5 日打卡回禮</h4>
+      <p id="draw-passport-progress" class="draw-muted" aria-live="polite"></p>
+      <button id="draw-passport-open" class="gold-button" type="button" hidden>拆開 5 日回禮</button>
+      <a id="draw-passport-ticket" class="draw-prize draw-passport-ticket" target="_blank" rel="noopener noreferrer" hidden>
+        <div class="draw-prize-art"><img id="draw-passport-image" alt="" width="144" height="108" loading="lazy"></div>
+        <div class="draw-prize-copy">
+          <span>兌換券已解鎖</span>
+          <b>Dyson 護照夾</b>
+          <span>價值 $1,080</span>
+          <span id="draw-passport-cta" class="draw-prize-cta">前往領取兌換券 ↗</span>
+        </div>
+      </a>
+    </section>
   </div>
 </section>
 <section class="draw-wallet" aria-labelledby="draw-coupons">
   <h3 id="draw-coupons" tabindex="-1">我的優惠券 <span id="draw-count"></span></h3>
   <div id="draw-wallet"></div>
-  <p class="draw-muted draw-wallet-note">抽獎紀錄保存在目前使用的瀏覽器。測試券不可兌換。</p>
+  <p class="draw-muted draw-wallet-note">抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
 </section>
 <details id="draw-settings" class="draw-settings">
   <summary>測試設定</summary>
@@ -229,7 +256,7 @@
    <h3 id="activity-coupons" class="activity-section-title" tabindex="-1"><svg class="ticket-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v2m0 2v2m0 2v2"/></svg>優惠券</h3>
    <p class="voucher-instructions">當天製作聖誕卡片並下載或分享圖片後，可拆一份聖誕禮物，免填 Email。每盒都有祝福，還有機會抽中 Dyson $1,000 優惠券。</p>
    <button id="draw-from-vouchers" class="gold-button" type="button">前往拆禮物</button>
-   <p class="voucher-footnote">優惠券測試不可兌換。</p>
+   <p class="voucher-footnote">實際領取結果以恆隆行優惠券頁為準。</p>
   </section>
   <section class="activity-attendance" aria-labelledby="activity-attendance">
    <h3 id="activity-attendance" class="activity-section-title" tabindex="-1">每日打卡</h3>
@@ -255,7 +282,7 @@
  <div class="preview-controls"><label>預覽日期<input id="preview-date" type="date" value="2026-12-01" min="2026-11-30" max="2026-12-26"></label><button id="preview-start" class="gold-button">模擬當日</button><button id="preview-fill">收藏至此日（不放入）</button><button id="preview-clear">清空測試進度</button><button id="studio-export">下載活動設定 config.js</button></div>
  <p class="studio-note">產品圖可在下表替換，建議透明 PNG／WebP。HD19、SV50、HJ10、BP10 已使用獨立透明產品圖；BP10 的了解詳情連結待補。HD19、SV50、HJ10 商品專屬券沿用既有序號；任一主機優惠序號與使用期限可於下方設定。護照夾好禮為櫃位兌換，不使用折價序號。</p>
  <div id="asset-persistence" class="studio-note"></div><div class="table-scroll"><table class="studio-table"><thead><tr><th>日期</th><th>預覽</th><th>類型與項目</th><th>當日效果</th><th>產品介紹</th><th>素材</th><th>調整</th></tr></thead><tbody id="studio-table-body"></tbody></table></div>
- <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四張商品優惠券與累積登入 5 天的 Dyson 護照夾好禮。可調整顯示文字與期限，請保留解鎖條件；領券網址請在 Apps Script 的 DYSON_COUPON_LINKS 指令碼屬性補上。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇顯示設定</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>領券網址未提供時會顯示準備中。本測試頁的購物優惠券採每日拆禮物抽獎；護照夾兌換券需填寫 Email 並同步累積登入滿 5 天。管理員模擬僅供預覽，不開啟實際領券連結。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
+ <details class="config-editor"><summary>編輯內容與優惠設定</summary><p>可修改每日名稱、產品型號、介紹、最多三項特色及 HTTPS 詳情連結。五份禮遇包含四張商品優惠券與累積登入 5 天的 Dyson 護照夾好禮。可調整顯示文字與期限，請保留解鎖條件；領券網址沿用本活動的恆隆行優惠券連結。</p><label class="config-label" for="config-json">25 天內容與產品介紹</label><textarea id="config-json" spellcheck="false" aria-label="25天內容設定 JSON"></textarea><label class="config-label" for="reward-json">五份禮遇顯示設定</label><textarea id="reward-json" class="reward-json" spellcheck="false" aria-label="五份禮遇設定 JSON"></textarea><p>本測試頁的購物優惠券採每日拆禮物抽獎；護照夾兌換券需填寫 Email 並同步累積登入滿 5 天。管理員模擬僅供預覽，不開啟實際領券連結。</p><div class="config-actions"><button id="config-save" class="gold-button">套用設定</button><button id="config-reset">還原草案設定</button></div><p id="config-status" role="status"></p></details>
  <p class="studio-note">連接 Google Sheet 後，正式領取以後端台灣時間檢查。日期模擬只供 Sheet 勾選的管理者測試；限定動物另由「是否有專屬收藏」控制，模擬進度不混入正式收藏。管理員需輸入驗證碼；一般參加者仍以 Email 保存進度，不驗證信箱持有人。</p>
 </dialog>
 <input id="asset-input" type="file" accept="image/png,image/webp,image/jpeg" hidden>
@@ -264,8 +291,8 @@
 
 
 
-<script src="./assets/js/config.js?v=20261117-v102-share-copy"></script>
+<script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=3"></script>
-<script src="./assets/js/app.js?v=20261117-v102-draw-layout"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v102-gift-rewards"></script>
+<script src="./assets/js/app.js?v=20261117-v102-gift-rewards"></script>
 </body></html>

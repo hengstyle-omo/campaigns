@@ -966,8 +966,6 @@ mobileViewport.addEventListener('change',event=>{
 
 function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
-  const passport=rewards().find(reward=>reward.redemption==='counter');
-  window.DysonTestDraw.setPassportUnlocked(Boolean(passport&&rewardUnlocked(passport,rewardProgress())));
   if($('vouchers-dialog').open)renderVouchers();
 }
 function updatePlacementUI(d){
@@ -992,7 +990,7 @@ function updatePlacementUI(d){
   }
 }
 function renderUI({placementDay=null}={}){
-  const real=realDateISO(),effective=dateISO();if(IS_TEST)$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，優惠與護照資格不可兌換。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
+  const real=realDateISO(),effective=dateISO();if(IS_TEST)$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，實際領取結果以恆隆行優惠券頁為準。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
   $('preview-banner').hidden=!previewDate;
   if(placementDay!==null)updatePlacementUI(placementDay);else{renderCalendar();renderCollection();renderMobileCollection();renderBenefits();}
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
@@ -1032,6 +1030,12 @@ function passportProgressText(count){
 function renderHomePassport(){
   const ready=attendanceReady(),dates=participationDisplayDates();
   const progressText=passportProgressText(dates.length);
+  const expired=realDateISO()>`${YEAR}-12-31`;
+  const complete=ready&&dates.length>=PASSPORT_DAYS;
+  const eligible=!expired&&complete&&(!!previewDate||cloud.attendance?.eligible===true);
+  const key=eligible?(previewDate?'preview:'+cloud.email:cloudCacheKey(cloud.email)+':passport-gift-opened'):'';
+  const label=expired?'已逾兌換期限':complete&&!eligible?'兌換資格確認中':progressText;
+  window.DysonTestDraw.setPassportReward({ key, label, preview:!!previewDate });
   $('home-passport-status').textContent=progressText;
   $('voucher-passport-status').textContent=progressText;
   renderAttendanceGrid($('home-passport-days'),dates);
@@ -1176,24 +1180,32 @@ function appendClaimLink(container,id,label,entryPoint){
 }
 function renderPassportCouponAction(actions,ready,count,entryPoint){
  const complete=ready&&count>=PASSPORT_DAYS;
- const expired=!IS_TEST&&!previewDate&&dateISO()>`${YEAR}-12-31`;
- const key=JSON.stringify([ready,Math.min(count,PASSPORT_DAYS),!!previewDate,!!cloud.email,expired,cloud.attendance?.eligible,couponClaimURL('visits-10')]);
+ const expired=realDateISO()>`${YEAR}-12-31`;
+ const eligible=complete&&(!!previewDate||cloud.attendance?.eligible===true);
+ const opened=eligible&&window.DysonTestDraw.hasOpenedPassport();
+ const key=JSON.stringify([ready,Math.min(count,PASSPORT_DAYS),!!cloud.email,expired,eligible,opened]);
  if(actions.dataset.state===key)return;
  actions.dataset.state=key;
- actions.replaceChildren();
- if(expired){const button=el('button','','已逾兌換期限');button.type='button';button.disabled=true;actions.append(button);}
- else if(!ready){
-   const button=el('button','',cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄');
-   button.type='button';button.addEventListener('click',openProgress);actions.append(button);
- }
- else if(!complete){const button=el('button','',`再累積 ${Math.max(0,PASSPORT_DAYS-count)} 天解鎖`);button.type='button';button.disabled=true;actions.append(button);}
- else if(previewDate||IS_TEST){const button=el('button','',`${previewDate?'模擬預覽':'測試版'} · 已達成 ${PASSPORT_DAYS} 天`);button.type='button';button.disabled=true;actions.append(button);}
- else if(cloud.attendance?.eligible===true)appendClaimLink(actions,'visits-10','領取護照夾兌換券（價值 $1,080）',entryPoint);
- else {
-   const button=el('button','','兌換資格確認中');
-   button.type='button';button.disabled=true;actions.append(button);
- }
+ const label=expired?'已逾兌換期限':!ready?(cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄'):
+   !complete?`再累積 ${PASSPORT_DAYS-count} 天解鎖`:opened?'查看護照夾兌換券':eligible?'前往查看 5 日回禮':'兌換資格確認中';
+ const button=el('button','',label);
+ button.type='button';
+ button.disabled=expired||(ready&&!eligible);
+ if(!ready&&!expired)button.addEventListener('click',openProgress);
+ if(eligible&&!expired)button.addEventListener('click',()=>{
+   trackActivity('coupon_view',{coupon_id:'visits-10',entry_point:entryPoint});
+   if($('vouchers-dialog').open)closeDialog('vouchers-dialog');
+   $('draw-passport-title').focus({preventScroll:true});
+   $('draw-passport').scrollIntoView({block:'center'});
+ });
+ actions.replaceChildren(button);
 }
+window.DysonTestDraw.onPassportOpened=renderHomePassport;
+window.DysonTestDraw.trackCoupon=id=>{
+ const couponId={hd19:'product-hd19',pencilvac:'product-sv50',hj10:'product-hj10',bonus:'product-bp10',passport:'visits-10'}[id];
+ if(couponId)trackActivity('coupon_click',{coupon_id:couponId,entry_point:'gift_draw'});
+};
+
 function appendCouponAction(card,b,progress,full){
  const qualified=rewardQualified(b,progress),unlocked=rewardUnlocked(b,progress);
  if(!full){const button=el('button','','查看優惠券');button.type='button';button.addEventListener('click',()=>{

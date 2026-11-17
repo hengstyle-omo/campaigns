@@ -11,6 +11,9 @@
     hj10: { name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
     bonus: { name: 'Dyson 任一商品', image: './assets/images/brand/dyson-logo-black.png' },
   };
+  const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
+  const animals = window.DYSON_GAME_CONFIG.bonusItems.filter(item => window.DYSON_ASSETS.bonusSprites[item.day]);
+  const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
   const blessings = [
     '願你忙碌的日子裡，也有一點時間留給自己。',
     '願你今天收到一句，剛好想聽見的話。',
@@ -47,6 +50,11 @@
   const prizeImage = byId('draw-prize-image');
   const wallet = byId('draw-wallet');
   const giftGroup = byId('draw-gifts');
+  const passportButton = byId('draw-passport-open');
+  const passportTicket = byId('draw-passport-ticket');
+  const stage = byId('draw-stage');
+  const animalResult = byId('draw-animal-result');
+  const animalPreview = byId('draw-animal-preview');
   const simulate = byId('draw-simulate');
   const reset = byId('draw-reset');
   const validDate = value => /^2026-12-\d{2}$/.test(value ?? '') && value >= start && value <= end;
@@ -57,7 +65,9 @@
   let pending = null;
   let actionError = '';
   let wonCount = 0;
-  let passportUnlocked = false;
+  let passport = { count: 0, required: 5 };
+  let passportOpening = null;
+  const previewOpened = new Set();
 
   try {
     const storedDate = localStorage.getItem(dateKey);
@@ -73,11 +83,35 @@
     button.type = 'button';
     button.className = 'draw-gift';
     button.setAttribute('aria-label', '選擇' + name + '禮物');
-    button.innerHTML = '<span class="draw-shadow" aria-hidden="true"></span><span class="draw-box" aria-hidden="true"><span class="draw-body"></span><span class="draw-mouth"></span><span class="draw-lid"></span></span><span class="draw-glow" aria-hidden="true"></span><span class="draw-ticket" aria-hidden="true">$1,000</span><span class="draw-snow" aria-hidden="true"></span>';
+    button.innerHTML = '<span class="draw-shadow" aria-hidden="true"></span><span class="draw-box" aria-hidden="true"><span class="draw-body"></span><span class="draw-mouth"></span><span class="draw-lid"></span></span><span class="draw-glow" aria-hidden="true"></span><span class="draw-snow" aria-hidden="true"></span>';
+    const animal = document.createElement('img');
+    animal.className = 'draw-box-animal';
+    animal.alt = '';
+    animal.hidden = true;
+    button.append(animal);
     button.addEventListener('click', () => openGift(index));
     giftGroup.append(button);
     return button;
   });
+
+  const floatedTicket = document.createElement('a');
+  floatedTicket.className = 'draw-ticket draw-floated-ticket';
+  floatedTicket.target = '_blank';
+  floatedTicket.rel = 'noopener noreferrer';
+  floatedTicket.textContent = '$1,000';
+  floatedTicket.setAttribute('aria-label', '前往領取千元優惠券（另開視窗）');
+  floatedTicket.hidden = true;
+  giftGroup.append(floatedTicket);
+  byId('draw-passport-image').src = window.DYSON_ASSETS.rewardImages.passport;
+
+  function bindCouponClick(link, id) {
+    const track = () => window.DysonTestDraw?.trackCoupon?.(typeof id === 'function' ? id() : id);
+    link.addEventListener('click', track);
+    link.addEventListener('auxclick', event => { if (event.button === 1) track(); });
+  }
+  bindCouponClick(floatedTicket, () => floatedTicket.dataset.coupon);
+  bindCouponClick(prizeCard, () => prizeCard.dataset.coupon);
+  bindCouponClick(passportTicket, 'passport');
 
   function emptyDraw() {
     return { days: {} };
@@ -128,18 +162,70 @@
       note.textContent = day ? '✓ 已抽中 · ' + displayDate(day)
         : id === 'bonus' && activeDate < bonusDate ? '12/20 加入抽獎' : '尚未抽中';
       coupon.append(title, amount, note);
+      if (day) {
+        const link = document.createElement('a');
+        link.href = prizeURL(id);
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = '前往領取優惠券 ↗';
+        bindCouponClick(link, id);
+        coupon.append(link);
+      }
       return coupon;
     }));
   }
 
   function updateBadge() {
-    byId('voucher-count').textContent = wonCount + Number(passportUnlocked);
+    byId('voucher-count').textContent = wonCount + Number(Boolean(passport.key));
   }
 
-  function setPassportUnlocked(unlocked) {
-    passportUnlocked = unlocked;
+  function hasOpenedPassport() {
+    if (!passport.key) return false;
+    if (passport.preview) return previewOpened.has(passport.key);
+    try { return localStorage.getItem(passport.key) === 'true'; } catch { return passport.opened === true; }
+  }
+
+  function renderPassport() {
+    const opening = Boolean(passportOpening && passportOpening === passport.key);
+    const opened = hasOpenedPassport() && !opening;
+    const progress = byId('draw-passport-progress');
+    const message = opened ? '兌換券已解鎖。' : opening ? '正在拆開 5 日回禮…' : passport.label || '已打卡 0／5 天';
+    if (progress.textContent !== message) progress.textContent = message;
+    passportButton.hidden = !passport.key || opened;
+    passportButton.disabled = opening;
+    passportButton.classList.toggle('draw-passport-opening', opening);
+    passportTicket.hidden = !opened;
+    if (opened && !passport.preview) passportTicket.href = prizeURL('passport');
+    else passportTicket.removeAttribute('href');
+    byId('draw-passport-cta').textContent = passport.preview ? '管理員模擬 · 領券連結預覽' : '前往領取兌換券 ↗';
     updateBadge();
   }
+
+  function setPassportReward(state) {
+    passport = { ...state, opened: passport.key === state.key && passport.opened };
+    renderPassport();
+  }
+
+  passportButton.addEventListener('click', async () => {
+    if (!passport.key || passportOpening || hasOpenedPassport()) return;
+    const { key, preview } = passport;
+    passportOpening = key;
+    renderPassport();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      await new Promise(resolve => setTimeout(resolve, 550));
+    }
+    if (preview) previewOpened.add(key);
+    else {
+      if (passport.key === key) passport.opened = true;
+      try { localStorage.setItem(key, 'true'); } catch { /* Keep the result available for this session. */ }
+    }
+    passportOpening = null;
+    renderPassport();
+    if (passport.key === key) {
+      window.DysonTestDraw.onPassportOpened?.();
+      if (!passport.preview) passportTicket.focus({ preventScroll: true });
+    }
+  });
 
   function displayDate(day) {
     return day.slice(5).replace('-', '/');
@@ -155,6 +241,8 @@
     if (!id) return;
 
     const { name, image } = prizes[id];
+    prizeCard.href = prizeURL(id);
+    prizeCard.dataset.coupon = id;
     if (prizeImage.getAttribute('src') !== image) prizeImage.src = image;
     prizeCard.dataset.bonus = String(id === 'bonus');
     byId('draw-prize-name').textContent = name;
@@ -170,6 +258,9 @@
     // Earlier trials used fifteen gifts. Keep those results visible on the five-gift scene.
     const selected = opening ? pending.index : played ? day.result.selected % gifts.length : undefined;
     const prize = opening ? null : day?.result?.prize;
+    const animal = played && !opening && !prize && (animals.find(item => item.day === day.result.animal)
+      ?? animals[(Number(activeDate.slice(-2)) + selected) % animals.length]);
+    const animalURL = animal && window.DYSON_ASSETS.bonusSprites[animal.day];
     const canOpen = day && !played && !pending;
     const bonusOption = mode.querySelector('option[value="bonus"]');
     const winOption = mode.querySelector('option[value="win"]');
@@ -181,7 +272,23 @@
       gift.disabled = !canOpen;
       const state = index === selected ? opening ? 'opening' : prize ? 'won' : 'blessing' : 'closed';
       if (gift.dataset.state !== state) gift.dataset.state = state;
+      const portrait = gift.querySelector('.draw-box-animal');
+      portrait.hidden = !animalURL || index !== selected;
+      if (!portrait.hidden && portrait.getAttribute('src') !== animalURL) portrait.src = animalURL;
     }
+    animalResult.hidden = !animalURL;
+    if (animalURL) {
+      if (animalPreview.getAttribute('src') !== animalURL) animalPreview.src = animalURL;
+      byId('draw-animal-name').textContent = animal.animal || animal.name;
+    }
+    floatedTicket.hidden = !prize;
+    if (prize) {
+      floatedTicket.dataset.box = String(selected);
+      floatedTicket.dataset.coupon = prize;
+      floatedTicket.href = prizeURL(prize);
+    }
+    stage.classList.toggle('draw-stage-won', Boolean(prize));
+    if (!prize) stage.classList.remove('draw-celebrate');
     byId('draw-bonus').hidden = activeDate < bonusDate;
     byId('draw-create').hidden = Boolean(day) || !validDate(activeDate);
     byId('draw-view').hidden = !prize;
@@ -261,7 +368,7 @@
     const assignedPrize = pool.includes(day.hiddenPrize) ? day.hiddenPrize : randomMember(pool);
     const won = choice === 'win' || (choice === 'random' && day.winningBox === index);
     const prize = choice === 'bonus' && pool.includes('bonus') ? 'bonus' : won ? assignedPrize : null;
-    day.result = { selected: index, prize: prize ?? null };
+    day.result = { selected: index, prize: prize ?? null, animal: prize ? null : randomMember(animals)?.day };
     return saveDraw(draw);
   }
 
@@ -283,6 +390,9 @@
     } finally {
       pending = null;
       render();
+      if (readDraw().days[attempt.date]?.result?.prize && activeDate === attempt.date) {
+        stage.classList.add('draw-celebrate');
+      }
       if (restoreFocus) status.focus({ preventScroll: true });
     }
   }
@@ -319,6 +429,10 @@
   byId('draw-view').addEventListener('click', () => byId('draw-coupons').focus({ preventScroll: true }));
   window.addEventListener('storage', event => {
     if (event.key === drawKey || event.key === null) render();
+    if (event.key === passport.key || event.key === null) {
+      renderPassport();
+      window.DysonTestDraw.onPassportOpened?.();
+    }
   });
   function syncDate(date) {
     activityDate = date;
@@ -337,6 +451,7 @@
       showError();
     }
   });
-  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, setPassportUnlocked };
+  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, setPassportReward, hasOpenedPassport };
+  renderPassport();
   render();
 })();
