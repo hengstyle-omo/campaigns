@@ -306,7 +306,7 @@
   function openPrize(id) {
     if (!prizes[id] || prizeCard.open || discovery.open || productDialog.open) return;
     byId('draw-prize-kind').textContent = '適用商品｜' + prizes[id].name;
-    byId('draw-prize-info-title').textContent = '適用商品介紹｜' + prizes[id].name;
+    byId('draw-prize-product-name').textContent = prizes[id].name;
     const image = byId('draw-prize-image');
     image.hidden = id === 'bonus';
     if (image.hidden) image.removeAttribute('src');
@@ -382,6 +382,7 @@
     }
     giftGroup.classList.toggle('draw-ready', canOpen);
     effects?.setReady(canOpen);
+    stage.classList.toggle('draw-opening', opening);
     floatedTicket.hidden = !prize;
     if (prize) {
       floatedTicket.dataset.box = String(selected);
@@ -490,7 +491,6 @@
           const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
           await new Promise(resolve => setTimeout(resolve, duration));
           if (recorded.prize && activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            stage.classList.add('draw-flying');
             effects?.celebrate(index);
             await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
           } else if (!recorded.prize && activeDate === attempt.date) {

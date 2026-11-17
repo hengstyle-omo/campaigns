@@ -23,7 +23,7 @@
   width: 100%;
   aspect-ratio: 1.66;
   overflow: clip;
-  background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
+  background: #142231;
 }
 /* Two soft light fields drift at separate speeds within the sky. */
 .draw-stage::before,
@@ -258,8 +258,9 @@
 .draw-floated-ticket:focus-visible, .draw-passport-ticket:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 3px; }
 @keyframes draw-lid-lift {
   0% { transform: none; }
-  17% { transform: translateY(-4%) rotate(3deg); }
-  57% { transform: translate(-6%, -35%) rotate(-20deg); }
+  22% { transform: translateY(-1%) rotate(1deg); }
+  38% { transform: translateY(-2%) rotate(-2deg); }
+  72% { transform: translate(-6%, -32%) rotate(-17deg); }
   100% { transform: translate(-8%, -27%) rotate(-14deg); }
 }
 @keyframes draw-box-hop {
@@ -554,3 +555,78 @@
   #draw-product-image { max-width: 144px; height: 160px; }
 }
 @media (prefers-reduced-motion: reduce) { #draw-effects { display: none; } }
+
+.draw-landscape {
+  position: absolute; inset: -12px; z-index: -1; pointer-events: none;
+  background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
+  transform: translate(var(--land-x, 0px), var(--land-y, 0px));
+}
+.draw-tree { translate: var(--tree-x, 0px) var(--tree-y, 0px); }
+.draw-gifts { translate: var(--gift-x, 0px) var(--gift-y, 0px); }
+.draw-tree-lights { opacity: .28; animation: draw-lights-breathe 7s ease-in-out infinite; }
+@keyframes draw-lights-breathe { 50% { opacity: .52; } }
+.draw-ready .draw-gift .draw-box { filter: drop-shadow(0 3px 3px #06101d66); }
+.draw-gift .draw-box::after {
+  content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 32%, #fff5d066 48%, transparent 64%);
+  mask: var(--gift-art) center / 100% 100% no-repeat;
+}
+@media (hover: hover) {
+  .draw-gift[data-state="closed"]:not(:disabled):hover .draw-box {
+    animation: none; transform: translateY(-3%) scale(1.025);
+    filter: brightness(1.04) drop-shadow(0 5px 5px #07132266);
+  }
+  .draw-gift[data-state="closed"]:not(:disabled):hover .draw-box::after {
+    animation: draw-ribbon-sheen 1.2s ease-out;
+  }
+}
+@keyframes draw-ribbon-sheen {
+  15%, 70% { opacity: .55; }
+  0% { background-position: -100px 0; }
+  100% { background-position: 100px 0; opacity: 0; }
+}
+.draw-idle-pulse .draw-gift:not(:disabled) .draw-box { animation: draw-quiet-nudge .7s ease-out both; }
+.draw-idle-pulse .draw-gift:nth-child(2) .draw-box { animation-delay: .15s; }
+.draw-idle-pulse .draw-gift:nth-child(3) .draw-box { animation-delay: .3s; }
+.draw-idle-pulse .draw-gift:nth-child(4) .draw-box { animation-delay: .45s; }
+.draw-idle-pulse .draw-gift:nth-child(5) .draw-box { animation-delay: .6s; }
+@keyframes draw-quiet-nudge { 35% { transform: translateY(-2%) rotate(-1.5deg); } 65% { transform: rotate(1deg); } }
+.draw-floated-ticket:not([hidden]) { animation: draw-ticket-float 4s ease-in-out infinite; }
+@keyframes draw-ticket-float { 50% { transform: translate(-50%, -122%) rotate(-5deg); } }
+.draw-opening .draw-gift[data-state="closed"] { opacity: .6; transition: opacity .3s; }
+#draw-prize {
+  background: #151c26; border: 1px solid #ffffff24; border-radius: 10px;
+  padding: 52px 28px 28px; gap: 30px;
+}
+#draw-prize .draw-result-ticket {
+  background: #f5f4ef; border: 0; border-radius: 5px; padding: 30px 20px;
+  gap: 22px; color: #171b20;
+}
+#draw-prize .draw-prize-won-label { color: #626568; font-size: .8rem; font-weight: 400; letter-spacing: .08em; }
+#draw-prize .draw-result-ticket h3 { font-weight: 400; font-size: clamp(.95rem, 4vw, 1.2rem); }
+#draw-prize .draw-result-ticket h3 strong { font-weight: 600; }
+#draw-prize .draw-prize-product { gap: 15px; }
+#draw-prize-image { width: 120px; height: 140px; }
+#draw-prize-kind { color: #535961; font-size: .8rem; font-weight: 400; }
+#draw-prize-claim.gold-button {
+  background: #191c20; color: #fff; border: 1px solid #191c20;
+  border-radius: 3px; width: 100%; padding: 12px 8px; font-size: .9rem; font-weight: 500;
+}
+#draw-prize-claim.gold-button:hover { background: #30343b; }
+#draw-prize-info { line-height: 1.8; color: #bfc6cf; font-weight: 400; }
+#draw-prize-info-title { display: grid; gap: 8px; margin-bottom: 18px; }
+#draw-prize-info-title small { color: #9aa4b2; font-size: .75rem; font-weight: 400; letter-spacing: .05em; }
+#draw-prize-info-title span { color: #f2f3f5; font-size: 1.1rem; line-height: 1.5; font-weight: 500; }
+#draw-prize-features-title { color: #ccd2da; font-size: .85rem; font-weight: 500; margin-top: 22px; }
+#draw-prize-features { list-style: none; padding: 0; margin-bottom: 20px; }
+#draw-prize-features li { border-bottom: 1px solid #ffffff12; padding: 7px 0; font-size: .875rem; }
+#draw-prize-product-link { color: #d8dde4; font-size: .85rem; text-decoration: underline; text-underline-offset: .3em; }
+#draw-prize .draw-result-close button { border: 0; background: none; color: #d6dbe2; }
+@media (max-width: 659px) { #draw-prize { padding: 46px 18px 20px; } }
+@media (prefers-reduced-motion: reduce) {
+  .draw-landscape, .draw-tree, .draw-gifts { translate: none !important; transform: none; }
+  .draw-tree { transform: translateX(-50%); }
+  .draw-floated-ticket:not([hidden]) { animation: none; }
+}
+
+@media (max-width: 600px) { .draw-landscape { background-size: 100% 100%; } }

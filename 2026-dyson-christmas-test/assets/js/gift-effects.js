@@ -3,6 +3,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let width = 0, height = 0, frame = 0, idleStart = 0, ready = false;
   let visible = true, selected = null, targets = [], hovered = null, consolation = null;
+  const pointer = { x: 0, y: 0, currentX: 0, currentY: 0 };
   const snow = Array.from({ length: 64 }, (_, i) => ({
     x: Math.random(), y: Math.random(), phase: Math.random() * 6.28,
     size: i < 48 ? 0.7 + Math.random() : 1.8 + Math.random() * 1.5,
@@ -12,7 +13,12 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     if (alpha <= 0) return;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = color(alpha, gold);
+    if (!gold && radius > 1.8) {
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, color(alpha, false));
+      gradient.addColorStop(1, color(0, false));
+      ctx.fillStyle = gradient;
+    } else ctx.fillStyle = color(alpha, gold);
     ctx.fill();
   }
   function locateGifts() {
@@ -32,49 +38,22 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     locateGifts();
   }
-  function tail(now, elapsed, end, point) {
-    for (let i = 11; i >= 0; i--) {
-      const p = elapsed - i * .025;
-      if (p < 0 || p > 1) continue;
-      const [x, y] = point(p);
-      dot(x, y + Math.sin(now / 85 + i) * i * .35, i ? 1.2 : 3.3, (1 - i / 12) * end, true);
-    }
-  }
   function drawIdle(now) {
     if (!idleStart) idleStart = now;
-    const time = ((now - idleStart) % 9300) / 1000;
-    const top = [width * .51, height * .19];
-    tail(now, time / .95, .9, p => [
-      width * (.51 + Math.sin(p * 11) * .10 * (1 - p)),
-      height * (.75 - p * .56),
-    ]);
-    if (time > .7 && time < 2) dot(...top, 4 + 3 * Math.sin(time * 4) ** 2, .8, true);
-    if (time >= 1 && time < 2.45) {
-      for (const [i, [x, y]] of targets.entries()) {
-        tail(now, (time - 1 - i * .035) / .9, .86, p => [
-          top[0] + (x - top[0]) * p,
-          top[1] + (y - top[1]) * p - Math.sin(p * Math.PI) * height * .18,
-        ]);
-      }
-    }
-    stage.classList.toggle('draw-idle-pulse', time > 1.9 && time < 2.42);
+    const time = (now - idleStart) % 10000;
+    stage.classList.toggle('draw-idle-pulse', time > 1200 && time < 3000);
   }
   function drawWin(now) {
-    const time = (now - selected.start) / 1000;
+    const progress = (now - selected.start) / 1400;
+    if (progress >= 1) { selected = null; return; }
     const [x, y] = selected.point;
-    const top = [width * .51, height * .19];
-    tail(now, time / .95, 1, p => [
-      x + (top[0] - x) * p + Math.sin(p * 16) * width * .13 * Math.sin(p * Math.PI),
-      y + (top[1] - y) * p,
-    ]);
-    const burst = (time - .78) / .62;
-    if (burst > 0 && burst < 1) {
-      for (let i = 0; i < 22; i++) {
-        const angle = i * 2.4, radius = width * .15 * burst * (.35 + (i % 5) * .16);
-        dot(top[0] + Math.cos(angle) * radius, top[1] + Math.sin(angle) * radius + burst ** 2 * 40, 2.2, 1 - burst, true);
-      }
+    for (let i = 0; i < 18; i++) {
+      const angle = i * 2.4;
+      const radius = width * .045 * progress * (1 + i % 3 * .25);
+      dot(x + Math.cos(angle) * radius,
+        y - height * .09 * progress + Math.sin(angle) * radius * .5,
+        1.3 + i % 2 * .4, Math.sin(progress * Math.PI) * .65, true);
     }
-    if (time >= 1.4) selected = null;
   }
   function drawGather(now) {
     const point = targets[hovered];
@@ -107,6 +86,12 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     frame = 0;
     if (!visible || document.hidden || motion.matches) return;
     ctx.clearRect(0, 0, width, height);
+    pointer.currentX += (pointer.x - pointer.currentX) * .065;
+    pointer.currentY += (pointer.y - pointer.currentY) * .065;
+    for (const [layer, depth] of [['land', 2], ['tree', 4], ['gift', 7]]) {
+      stage.style.setProperty('--' + layer + '-x', pointer.currentX * depth + 'px');
+      stage.style.setProperty('--' + layer + '-y', pointer.currentY * depth + 'px');
+    }
     for (const { x, y, phase, size } of snow) {
       const breeze = Math.sin(now / 1100 + phase) * .026;
       dot(((x + now * size / 200000 + breeze) % 1 + 1) % 1 * width,
@@ -114,7 +99,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     }
     if (ready) drawIdle(now);
     if (selected) drawWin(now);
-    if (hovered !== null && ready) drawGather(now);
+    if (hovered !== null && ready) { locateGifts(); drawGather(now); }
     if (consolation) drawConsolation(now);
     frame = requestAnimationFrame(paint);
   }
@@ -127,6 +112,13 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       ctx.clearRect(0, 0, width, height);
     }
   }
+  stage.addEventListener('pointermove', event => {
+    if (event.pointerType !== 'mouse' || motion.matches) return;
+    const rect = stage.getBoundingClientRect();
+    pointer.x = (event.clientX - rect.left) / rect.width * 2 - 1;
+    pointer.y = (event.clientY - rect.top) / rect.height * 2 - 1;
+  });
+  stage.addEventListener('pointerleave', () => { pointer.x = 0; pointer.y = 0; });
   for (const [index, gift] of gifts.entries()) {
     const gather = () => {
       if (gift.disabled || !ready) return;

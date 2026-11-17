@@ -1225,3 +1225,21 @@ button,input,textarea,select{line-height:1.5}
 .onboarding-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
 .onboarding-actions button { padding: 4px 8px; font-size: 13px; }
 .onboarding-target { outline: 2px solid #ffe1a1 !important; outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  #mobile-collection[open] { display: flex; flex-direction: column; }
+  #mobile-collection > .globe-actions,
+  #mobile-collection > .scene-tools,
+  #mobile-collection > .show-controls {
+    flex: none; width: calc(100% - 24px); max-width: 510px; margin: 8px auto;
+  }
+  #mobile-collection > .globe-actions { display: grid; }
+  #mobile-collection #snow-canvas { pointer-events: auto; }
+  #mobile-collection #snow-canvas.editing { touch-action: none; }
+  #mobile-collection .scene-tools { padding: 10px; }
+  #mobile-collection .position-editor { gap: 8px; }
+  #mobile-collection .position-editor strong { flex-basis: 100%; }
+  #mobile-collection .mobile-collection-actions { position: sticky; bottom: 0; width: 100%; z-index: 2; margin-top: auto; }
+  #mobile-collection .mobile-collection-tray { margin-inline: auto; }
+  #mobile-collection .onboarding-guide { position: fixed; z-index: 5; }
+}

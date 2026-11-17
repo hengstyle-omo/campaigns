@@ -6,8 +6,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
-<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v123">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v123">
+<link rel="stylesheet" href="./assets/css/style.css?v=20261118-v124">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261118-v124">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -48,7 +48,7 @@
 <template id="activity-notices-template">
  <ol><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v123</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v124</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <button id="welcome-review-close" class="dialog-close" type="button" aria-label="關閉" hidden>×</button>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
@@ -94,7 +94,7 @@
    <div id="show-controls" class="show-controls" hidden><button id="show-replay" type="button">播放星光秀</button><button id="show-stop" type="button" hidden>停止演出</button><span>9.5 秒 · 可隨時重播</span><div class="show-banner-slot"><div id="show-banner" class="show-banner" hidden><span>CHRISTMAS LIGHT SHOW</span><strong id="show-phase" role="status" aria-live="polite"></strong><div class="show-track"><i id="show-progress"></i></div></div></div></div>
    <div id="scene-tools" class="scene-tools" aria-label="場景調整工具" hidden><div class="scene-tool-actions"><button id="motion-toggle" type="button" aria-pressed="true">暫停動態</button><button id="reset-layout" type="button">還原擺放</button></div><p id="scene-edit-hint">點選球內物件後拖曳，或使用方向鍵微調。</p>
 
-   <div id="position-editor" class="position-editor" hidden><strong id="selected-name"></strong><label>大小 <input id="scale-control" type="range" min="0.65" max="1.35" step="0.05" value="1"></label><button id="selected-reset">還原此件</button><button id="selected-detail">查看收藏</button><p>動物與一般造景可移至球內上方。</p></div></div>
+   <div id="position-editor" class="position-editor" hidden><strong id="selected-name"></strong><label>大小 <input id="scale-control" type="range" min="0.65" max="1.35" step="0.05" value="1"></label><button id="selected-reset">還原此件</button><button id="selected-detail">查看收藏</button><button id="selected-remove" type="button">移除</button><p>動物與一般造景可移至球內上方。</p></div></div>
    <p id="status" class="status" role="status" aria-live="polite"></p>
   </section>
   <section id="game-calendar" class="calendar-panel" aria-labelledby="game-calendar-title">
@@ -124,6 +124,7 @@
     <p id="draw-bonus" class="draw-bonus" hidden>12/20 加碼｜<span>Dyson 任一主機 $1,000 折價券</span></p>
   </div>
   <div id="draw-stage" class="draw-stage">
+    <div class="draw-landscape" aria-hidden="true"></div>
     <div class="draw-idle-deer" aria-hidden="true"><img src="./assets/images/scene/day-08-leaping-reindeer.webp" alt="" loading="lazy"></div>
     <div class="draw-tree" aria-hidden="true">
       <img class="draw-tree-art" src="./assets/images/scene/day-12-christmas-tree.webp" alt="" width="1214" height="1295" loading="lazy" decoding="async">
@@ -198,7 +199,7 @@
     <a id="draw-prize-claim" class="gold-button" target="_blank" rel="noopener noreferrer" hidden>立即領取優惠券 ↗</a>
   </div>
   <section id="draw-prize-info" class="draw-prize-info" aria-labelledby="draw-prize-info-title" hidden>
-    <h3 id="draw-prize-info-title">適用商品介紹</h3>
+    <h3 id="draw-prize-info-title"><small>適用商品介紹</small><span id="draw-prize-product-name"></span></h3>
     <p id="draw-prize-intro"></p>
     <h4 id="draw-prize-features-title">產品亮點</h4>
     <ul id="draw-prize-features"></ul>
@@ -297,7 +298,7 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-effects.js?v=20261117-v123"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v123"></script>
-<script src="./assets/js/app.js?v=20261117-v123"></script>
+<script src="./assets/js/gift-effects.js?v=20261118-v124"></script>
+<script src="./assets/js/gift-draw.js?v=20261118-v124"></script>
+<script src="./assets/js/app.js?v=20261118-v124"></script>
 </body></html>
