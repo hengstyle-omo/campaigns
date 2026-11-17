@@ -964,8 +964,18 @@ mobileViewport.addEventListener('change',event=>{
   restoreMobileGlobe();
 });
 
+function syncDrawSceneKeepsakes(){
+  const revealed=previewDate?previewCalendarReveals:revealedCalendarDays;
+  const claimed=state().claimed;
+  const opened=availableDays()
+    .filter(day=>revealed.has(day)||Object.hasOwn(claimed,day)||isPlaced(day))
+    .map(day=>({day,name:item(day).name}));
+  window.DysonTestDraw.updateSceneKeepsakes(opened);
+}
+
 function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
+  syncDrawSceneKeepsakes();
   if($('vouchers-dialog').open)renderVouchers();
 }
 function updatePlacementUI(d){
@@ -992,7 +1002,8 @@ function updatePlacementUI(d){
 function renderUI({placementDay=null}={}){
   const real=realDateISO(),effective=dateISO();if(IS_TEST)$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，實際領取結果以恆隆行優惠券頁為準。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
   $('preview-banner').hidden=!previewDate;
-  if(placementDay!==null)updatePlacementUI(placementDay);else{renderCalendar();renderCollection();renderMobileCollection();renderBenefits();}
+  if(placementDay!==null){updatePlacementUI(placementDay);syncDrawSceneKeepsakes();}
+  else{renderCalendar();renderCollection();renderMobileCollection();renderBenefits();}
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
   $('edit-toggle').setAttribute('aria-pressed',String(editMode));canvas.classList.toggle('editing',editMode);
   $('motion-toggle').setAttribute('aria-pressed',String(motion));$('motion-toggle').textContent=motion?'暫停動態':'開啟動態';
@@ -1004,7 +1015,19 @@ function renderUI({placementDay=null}={}){
   updateCardEntries();renderCloud();
 }
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
-function openItem(d){if(dayState(d)!=='owned')return;collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');trackActivity('gift_view',giftAnalytics(d));}
+function openItem(d){
+  if(dayState(d)!=='owned')return;
+  const day=Number(d);
+  if(day>=1&&day<=25){
+    const revealed=previewDate?previewCalendarReveals:revealedCalendarDays;
+    if(!revealed.has(day)){
+      revealed.add(day);
+      if(!previewDate)safeWrite(calendarRevealKey,[...revealed]);
+    }
+    syncDrawSceneKeepsakes();
+  }
+  collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');trackActivity('gift_view',giftAnalytics(d));
+}
 function renderItemDialog(){
   if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.starter?'YOUR STARTER SCENE':i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.product?[i.product.model,i.product.color].filter(Boolean).join(' · '):i.starter?'基礎造景 · 不計入 25 天收藏':i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
   const c=el('canvas');c.width=600;c.height=440;drawThumbnail(c,i.day);$('item-visual').replaceChildren(c);
@@ -2023,11 +2046,15 @@ function updateCardEntries(){
 }
 for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).addEventListener('click',openChristmasCard);
 $('draw-create').addEventListener('click',openChristmasCard);
-for(const [id,dialog] of [['draw-from-card','card-dialog'],['draw-from-vouchers','vouchers-dialog']]){
+for(const [id,dialog,heading,section] of [
+  ['draw-from-card','card-dialog','draw-heading','draw-card'],
+  ['draw-from-vouchers','vouchers-dialog','draw-heading','draw-card'],
+  ['wallet-from-vouchers','vouchers-dialog','draw-coupons','draw-coupons'],
+]){
   $(id).addEventListener('click',()=>{
     closeDialog(dialog);
-    $('draw-heading').focus({preventScroll:true});
-    $('draw-card').scrollIntoView({block:'start'});
+    $(heading).focus({preventScroll:true});
+    $(section).scrollIntoView({block:'start'});
   });
 }
 $('card-form').addEventListener('submit',e=>e.preventDefault());

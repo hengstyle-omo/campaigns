@@ -10,7 +10,7 @@
 .draw-copy { padding: 26px 16px 0; }
 .draw-copy h3, .draw-wallet h3 { color: #f2d9ab; margin: 0 0 8px; }
 .draw-copy h3 { font-size: clamp(1.45rem, 3vw, 2.25rem); }
-#draw-card, #draw-heading { scroll-margin-top: 110px; }
+#draw-card, #draw-heading, #draw-coupons, #home-passport { scroll-margin-top: 110px; }
 .draw-copy p, .draw-feedback p { margin: 0; }
 .draw-copy p + p:not([hidden]) { margin-top: 6px; }
 .draw-bonus, #draw-count { color: #efc984; }
@@ -243,8 +243,8 @@
   transform: translate(-50%, -116%) rotate(-7deg);
   text-decoration: none;
 }
-.draw-floated-ticket[hidden], .draw-keepsake-result[hidden], .draw-passport button[hidden] { display: none; }
-.draw-floated-ticket:focus-visible, a.draw-prize:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 3px; }
+.draw-floated-ticket[hidden], .draw-keepsake-result[hidden], .draw-passport-actions [hidden] { display: none; }
+.draw-floated-ticket:focus-visible, .draw-passport-ticket:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 3px; }
 @keyframes draw-lid-lift {
   0% { transform: none; }
   17% { transform: translateY(-4%) rotate(3deg); }
@@ -263,21 +263,6 @@
 .draw-feedback { min-height: 108px; padding: 14px 16px 20px; border-top: 1px solid #80705655; background: #101d2a; }
 .draw-has-result #draw-status { color: #f8daa1; font-weight: 750; }
 .draw-feedback #draw-pool-note { margin-top: 6px; }
-.draw-prize {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  width: min(100%, 420px);
-  margin: 14px auto 0;
-  overflow: hidden;
-  border: 1px solid #dfba79;
-  border-radius: 10px;
-  background: #fbedd2;
-  color: #162333;
-  text-align: left;
-}
-.draw-prize[hidden] { display: none; }
-a.draw-prize { text-decoration: none; }
-a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
 .draw-keepsake-result {
   display: flex;
   align-items: center;
@@ -289,9 +274,19 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 .draw-keepsake-result img { object-fit: contain; }
 .draw-keepsake-result small { display: block; color: #d9d9d2; }
 .draw-passport { margin: 15px 0 0; padding-top: 12px; border-top: 1px solid #80705655; }
-.draw-passport h4 { margin: 0 0 4px; color: #f2d9ab; }
-.draw-passport button { margin-top: 8px; }
-.draw-passport button::before {
+.draw-wallet h4 { margin: 0 0 8px; color: #f2d9ab; }
+.draw-wallet > section:first-of-type { margin-top: 16px; }
+.draw-passport-card.draw-coupon {
+  width: min(100%, 650px);
+  grid-template-columns: minmax(0, 1fr) clamp(62px, 25%, 130px);
+}
+.draw-passport-card .draw-coupon-image { height: auto; max-height: 144px; }
+.draw-passport-card p { margin: 2px 0 0; }
+#draw-passport-progress { color: #f5d79f; font-weight: 700; }
+.draw-passport-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 8px; }
+.draw-passport-actions .draw-passport-ticket { text-decoration: none; }
+.draw-passport-actions .draw-passport-ticket span { color: inherit; }
+#draw-passport-open::before {
   content: "";
   display: inline-block;
   width: 32px;
@@ -308,55 +303,46 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
 }
-.draw-prize-art {
-  display: grid;
-  place-items: center;
-  padding: 8px;
-  background: #f4f2ee;
-  border-right: 1px dashed #b19769;
-}
-.draw-prize-art img { display: block; width: 100%; height: 108px; object-fit: contain; }
-.draw-prize[data-bonus="true"] .draw-prize-art img { width: 72%; }
-.draw-prize-copy { display: grid; align-content: center; gap: 4px; padding: 12px; }
-.draw-prize-copy span { font-size: .85rem; line-height: 1.35; }
-.draw-prize-copy strong { font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.05; }
-.draw-prize-copy h4 { margin: 0; font-size: 1rem; line-height: 1.3; }
 .draw-result-dialog {
   box-sizing: border-box;
-  grid-template-columns: minmax(0, 1fr) minmax(164px, 28%);
-  gap: 20px;
-  width: min(720px, calc(100% - 32px));
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 29%);
+  align-items: center;
+  gap: 16px;
+  width: min(620px, calc(100% - 24px));
   max-width: none;
+  height: fit-content;
+  max-height: calc(100dvh - 24px);
   margin: auto;
-  padding: 44px 22px 22px;
+  padding: 40px 18px 18px;
   border-color: #b49053;
 }
 .draw-result-dialog[open] { display: grid; }
 .draw-result-dialog::backdrop { background: #07101bce; }
 .draw-result-close { position: absolute; inset: 8px 8px auto auto; margin: 0; }
 .draw-result-close button { min-width: 36px; min-height: 36px; padding: 0; font-size: 1.4rem; line-height: 1; }
-.draw-result-main { display: grid; grid-template-columns: clamp(74px, 16vw, 132px) minmax(0, 1fr); align-items: center; gap: 14px; }
+.draw-result-main { display: grid; grid-template-columns: clamp(58px, 13vw, 105px) minmax(0, 1fr); align-items: center; gap: 12px; }
 .draw-result-dialog:has(.draw-result-ticket[hidden]) .draw-result-main { grid-column: 1 / -1; }
-.draw-result-art { display: grid; place-items: center; min-height: 110px; }
-.draw-result-art img { width: 100%; height: min(24vh, 148px); object-fit: contain; }
-.draw-result-info { display: grid; gap: 8px; min-width: 0; }
+.draw-result-art { display: grid; place-items: center; }
+.draw-result-art img { width: 100%; height: min(22vh, 132px); object-fit: contain; }
+.draw-result-info { display: grid; gap: 6px; min-width: 0; font-size: .92rem; }
 .draw-result-info h3, .draw-result-info p { margin: 0; }
 .draw-result-info h3 { color: #f7dba4; }
 .draw-result-info summary { cursor: pointer; font-weight: 700; }
 .draw-result-info ul { margin: 4px 0 0; padding-inline-start: 1.25rem; }
-.draw-result-info a, .draw-fact a, .draw-coupon a { color: #f6d597; text-underline-offset: .18em; }
+.draw-result-info a, .draw-fact a, .draw-coupon a:not(.gold-button) { color: #f6d597; text-underline-offset: .18em; }
 .draw-result-ticket {
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 8px;
-  padding: 14px 10px;
+  gap: 6px;
+  padding: 12px 10px;
   border: 1px solid #dfba79;
   border-radius: 10px;
   background: #fbedd2;
   color: #162333;
   text-align: center;
 }
+.draw-result-ticket span { font-size: .86rem; line-height: 1.35; }
 .draw-result-ticket strong { font-size: clamp(1.65rem, 6vw, 2rem); line-height: 1; }
 .draw-result-ticket a { display: block; padding: 8px 10px; font-size: .9rem; text-decoration: none; }
 .draw-result-ticket[hidden], .draw-actions [hidden], .draw-fact[hidden] { display: none; }
@@ -381,8 +367,10 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 .draw-actions a { color: #f6d597; }
 .draw-wallet, .draw-settings { margin-top: 16px; padding: 18px; border: 1px solid #6c625070; border-radius: 12px; }
 #draw-count { display: inline-block; font-size: .8em; margin-left: .4em; }
-#draw-wallet { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
-.draw-coupon { display: grid; gap: 3px; padding: 14px; border: 1px solid #566475; border-radius: 8px; background: #121e2a; }
+#draw-wallet { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 225px), 1fr)); gap: 12px; }
+.draw-coupon { display: grid; grid-template-columns: minmax(0, 1fr) clamp(48px, 28%, 82px); align-items: center; gap: 8px; padding: 14px; border: 1px solid #566475; border-radius: 8px; background: #121e2a; }
+.draw-coupon-copy { display: grid; gap: 3px; overflow-wrap: anywhere; }
+.draw-coupon-image { display: block; width: 100%; height: 92px; object-fit: contain; }
 .draw-coupon[data-won] { border-color: #c8a66b; background: #24282c; }
 .draw-coupon span { color: #efc984; }
 .draw-coupon small { color: #bbc8d3; }
@@ -428,7 +416,6 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
     background: transparent;
   }
   .draw-actions { justify-content: flex-start; }
-  .draw-prize-art img { height: 80px; }
 }
 
 @media (max-width: 560px) {
@@ -438,7 +425,7 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
   .draw-stage { aspect-ratio: 1.07; background-size: 100% 100%; }
   .draw-gifts .draw-gift { width: calc(115% * var(--size)); }
   .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 71%; }
-  #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  #draw-wallet { gap: 8px; }
   .draw-coupon { padding: 10px; }
   .draw-wallet, .draw-settings { padding: 12px; }
 }

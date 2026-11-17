@@ -11,7 +11,7 @@
     hd19: { rewardId: 'product-hd19', name: 'HD19隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
     pencilvac: { rewardId: 'product-sv50', name: 'PencilVac筆型吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
     hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
-    bonus: { rewardId: 'product-bp10', name: 'Dyson 任一商品', image: './assets/images/brand/dyson-logo-black.png' },
+    bonus: { rewardId: 'product-bp10', name: '任一 Dyson 品項優惠券', image: './assets/images/brand/dyson-logo-white.png' },
   };
   const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
   const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
@@ -75,7 +75,7 @@
   let pending = null;
   let actionError = '';
   let wonCount = 0;
-  let passport = { count: 0, required: 5 };
+  let passport = {};
   let passportOpening = null;
   const previewOpened = new Set();
   let layoutDate;
@@ -150,18 +150,27 @@
     return Object.keys(prizes).filter(id => (id !== 'bonus' || date >= bonusDate) && !won.has(id));
   }
 
+  function prizeArt(id) {
+    const { day, product } = prizeDetailsById[id];
+    const sprite = product && window.DYSON_ASSETS.sprites?.[day];
+    return sprite || prizes[id].image;
+  }
+
   function renderWallet(days) {
     const wins = new Map(Object.entries(days).map(([day, record]) => [record.result?.prize, day]));
-    const visiblePrizes = Object.entries(prizes).filter(([id]) => id !== 'bonus' || activeDate >= bonusDate || wins.has(id));
-    wonCount = visiblePrizes.filter(([id]) => wins.has(id)).length;
-    byId('draw-count').textContent = '已抽中 ' + wonCount + '／' + visiblePrizes.length + ' 張';
+    const coupons = Object.entries(prizes);
+    wonCount = coupons.filter(([id]) => wins.has(id)).length;
+    byId('draw-count').textContent = '已抽中 ' + wonCount + '／' + coupons.length + ' 張';
     updateBadge();
 
-    wallet.replaceChildren(...visiblePrizes.map(([id, { name }]) => {
+    wallet.replaceChildren(...coupons.map(([id, { name }]) => {
       const coupon = document.createElement('article');
       const day = wins.get(id);
       coupon.className = 'draw-coupon';
+      coupon.dataset.coupon = id;
       if (day) coupon.dataset.won = '';
+      const copy = document.createElement('div');
+      copy.className = 'draw-coupon-copy';
       const title = document.createElement('strong');
       title.textContent = name;
       const amount = document.createElement('span');
@@ -169,16 +178,13 @@
       const note = document.createElement('small');
       note.textContent = day ? '✓ 已抽中 · ' + displayDate(day)
         : id === 'bonus' && activeDate < bonusDate ? '12/20 加入抽獎' : '尚未抽中';
-      coupon.append(title, amount, note);
-      if (prizeDetailsById[id].product) {
-        const details = document.createElement('button');
-        details.type = 'button';
-        details.className = 'draw-coupon-details';
-        details.textContent = '查看產品介紹';
-        details.setAttribute('aria-label', '查看 ' + name + ' 的產品介紹');
-        details.addEventListener('click', () => openPrize(id, Boolean(day)));
-        coupon.append(details);
-      }
+      const details = document.createElement('button');
+      details.type = 'button';
+      details.className = 'draw-coupon-details';
+      details.textContent = '了解更多';
+      details.setAttribute('aria-label', '了解更多：' + name);
+      details.addEventListener('click', () => openPrize(id, Boolean(day)));
+      copy.append(title, amount, note, details);
       if (day) {
         const link = document.createElement('a');
         link.href = prizeURL(id);
@@ -186,8 +192,15 @@
         link.rel = 'noopener noreferrer';
         link.textContent = '立即領取優惠券 ↗';
         bindCouponClick(link, id);
-        coupon.append(link);
+        copy.append(link);
       }
+      const image = document.createElement('img');
+      image.className = 'draw-coupon-image';
+      image.alt = '';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.src = prizeArt(id);
+      coupon.append(copy, image);
       return coupon;
     }));
   }
@@ -206,7 +219,8 @@
     const opening = Boolean(passportOpening && passportOpening === passport.key);
     const opened = hasOpenedPassport() && !opening;
     const progress = byId('draw-passport-progress');
-    const message = opened ? '兌換券已解鎖。' : opening ? '正在拆開 5 日回禮…' : passport.label || '已打卡 0／5 天';
+    const attendance = passport.label || (passport.key ? '已打卡 5／5 天' : '已打卡 0／5 天');
+    const message = opened ? attendance + ' · 兌換券已解鎖' : opening ? '正在拆開 5 日回禮…' : attendance;
     if (progress.textContent !== message) progress.textContent = message;
     passportButton.hidden = !passport.key || opened;
     passportButton.disabled = opening;
@@ -214,7 +228,7 @@
     passportTicket.hidden = !opened;
     if (opened && !passport.preview) passportTicket.href = prizeURL('passport');
     else passportTicket.removeAttribute('href');
-    byId('draw-passport-cta').textContent = passport.preview ? '管理員模擬 · 領券連結預覽' : '前往領取兌換券 ↗';
+    byId('draw-passport-cta').textContent = passport.preview ? '管理員模擬 · 領券連結預覽' : '領取兌換券 ↗';
     updateBadge();
   }
 
@@ -284,16 +298,16 @@
   function openPrize(id, claimable) {
     if (!prizes[id] || prizeCard.open) return;
 
-    const { name, image } = prizes[id];
-    const { reward, day, product } = prizeDetailsById[id];
+    const { name } = prizes[id];
+    const { reward, product } = prizeDetailsById[id];
     byId('draw-prize-ticket').hidden = !claimable;
     if (claimable) prizeClaim.href = prizeURL(id);
     else prizeClaim.removeAttribute('href');
     prizeClaim.dataset.coupon = id;
-    prizeImage.src = product ? window.DYSON_ASSETS.sprites?.[day] ?? image : image;
+    prizeImage.src = prizeArt(id);
     prizeImage.alt = product ? name : '';
     byId('draw-prize-name').textContent = name;
-    byId('draw-prize-kind').textContent = id === 'bonus' ? '任一商品現折' : '指定商品現折';
+    byId('draw-prize-kind').textContent = product ? name + '的優惠券' : name;
 
     // The countdown introduction ends with scene-specific instructions.
     const intro = product?.intro?.split('點選放進雪境，')[0].trim() || reward?.conditions || '';
@@ -301,7 +315,7 @@
     prizeIntro.hidden = !intro;
     const features = product?.features ?? [];
     prizeDetails.hidden = !features.length;
-    prizeDetails.open = false;
+    prizeDetails.open = features.length > 0;
     prizeFeatures.replaceChildren(...features.map(feature => {
       const line = document.createElement('li');
       line.textContent = feature;
@@ -417,7 +431,6 @@
     byId('draw-bonus').hidden = activeDate < bonusDate;
     byId('draw-create').hidden = Boolean(day) || !validDate(activeDate);
     byId('draw-result-open').hidden = !prize;
-    byId('draw-view').hidden = !prize;
     const drawFromCard = byId('draw-from-card');
     drawFromCard.hidden = !day;
     drawFromCard.textContent = played ? '查看今日拆盒結果' : '取得今日抽獎資格 · 前往拆禮物';

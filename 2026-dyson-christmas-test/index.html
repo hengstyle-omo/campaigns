@@ -7,7 +7,7 @@
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
 <link rel="stylesheet" href="./assets/css/style.css?v=20261117-v102-collections">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v109-draw-result">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v111-unified-wallet">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -21,7 +21,7 @@
    <a href="#activity-attendance"><b class="mission-number">03</b><strong>獨家好禮</strong><span>打卡五天<br>享靠櫃禮</span></a>
   </nav>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v109</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v111</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline" hidden><button id="welcome-skip" type="button" aria-label="關閉">×</button></div>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
@@ -151,28 +151,35 @@
     <div class="draw-actions">
       <button id="draw-create" class="gold-button" type="button">製作卡片解鎖禮物</button>
       <button id="draw-result-open" type="button" hidden>查看中獎結果</button>
-      <a id="draw-view" href="#draw-coupons" hidden>查看我的優惠券</a>
+      <a id="draw-view" href="#draw-coupons">查看我的票夾</a>
     </div>
-    <section id="draw-passport" class="draw-passport" aria-labelledby="draw-passport-title">
-      <h4 id="draw-passport-title" tabindex="-1">5 日打卡回禮</h4>
-      <p id="draw-passport-progress" class="draw-muted" aria-live="polite"></p>
-      <button id="draw-passport-open" class="gold-button" type="button" hidden>拆開 5 日回禮</button>
-      <a id="draw-passport-ticket" class="draw-prize draw-passport-ticket" target="_blank" rel="noopener noreferrer" hidden>
-        <div class="draw-prize-art"><img id="draw-passport-image" alt="" width="144" height="108" loading="lazy"></div>
-        <div class="draw-prize-copy">
-          <span>兌換券已解鎖</span>
-          <b>Dyson 護照夾</b>
-          <span>價值 $1,080</span>
-          <span id="draw-passport-cta" class="draw-prize-cta">前往領取兌換券 ↗</span>
-        </div>
-      </a>
-    </section>
   </div>
 </section>
 <section class="draw-wallet" aria-labelledby="draw-coupons">
-  <h3 id="draw-coupons" tabindex="-1">我的優惠券 <span id="draw-count"></span></h3>
-  <div id="draw-wallet"></div>
-  <p class="draw-muted draw-wallet-note">抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
+  <h3 id="draw-coupons" tabindex="-1">我的票夾</h3>
+  <section aria-labelledby="draw-wallet-prizes">
+    <h4 id="draw-wallet-prizes">抽獎優惠券 <span id="draw-count"></span></h4>
+    <div id="draw-wallet"></div>
+    <p class="draw-muted draw-wallet-note">抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
+  </section>
+  <section id="draw-passport" class="draw-passport" aria-labelledby="draw-passport-title">
+    <h4 id="draw-passport-title" tabindex="-1">打卡好禮</h4>
+    <article class="draw-coupon draw-passport-card" aria-labelledby="draw-passport-name">
+      <div class="draw-coupon-copy">
+        <strong id="draw-passport-name">Dyson 護照夾兌換券</strong>
+        <span>價值 $1,080</span>
+        <p class="draw-passport-requirement">留下 Email 保存紀錄，累積打卡滿 <b>5 天</b>即可解鎖。天數無須連續。</p>
+        <p id="draw-passport-progress" aria-live="polite">已打卡 0／5 天</p>
+        <p class="draw-muted">持券至 Dyson 專櫃不限金額消費即贈，兌換至 2026/12/31，每人限贈乙次。</p>
+        <div class="draw-passport-actions">
+          <a href="#home-passport">查看每日打卡</a>
+          <button id="draw-passport-open" class="gold-button" type="button" hidden>拆開 5 日回禮</button>
+          <a id="draw-passport-ticket" class="gold-button draw-passport-ticket" target="_blank" rel="noopener noreferrer" hidden><span id="draw-passport-cta">領取兌換券 ↗</span></a>
+        </div>
+      </div>
+      <img id="draw-passport-image" class="draw-coupon-image" alt="Dyson 護照夾" width="144" height="144" loading="lazy" decoding="async">
+    </article>
+  </section>
 </section>
 <dialog id="draw-prize" class="draw-result-dialog" aria-labelledby="draw-prize-name">
   <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
@@ -204,7 +211,7 @@
     <button id="draw-reset" type="button">清除抽獎測試紀錄</button>
   </div>
 </details></section>
-   <section id="home-passport" class="home-passport" aria-labelledby="home-passport-title">
+   <section id="home-passport" class="home-passport" aria-labelledby="home-passport-title" tabindex="-1">
     <img id="home-passport-image" alt="Dyson 護照夾（價值 $1,080）" width="1080" height="1350" loading="lazy">
     <div class="home-passport-details">
     <div class="home-passport-copy">
@@ -278,8 +285,9 @@
   <div id="activity-details"></div>
   <section class="activity-rewards" aria-labelledby="activity-coupons">
    <h3 id="activity-coupons" class="activity-section-title" tabindex="-1"><svg class="ticket-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v2m0 2v2m0 2v2"/></svg>優惠券</h3>
-   <p class="voucher-instructions">當天製作聖誕卡片並下載或分享圖片後，可拆一份聖誕禮物，免填 Email。每盒都有祝福，還有機會抽中 Dyson $1,000 優惠券。</p>
+   <p class="voucher-instructions">當天製作聖誕卡片並下載或分享圖片後，可拆一份聖誕禮物，免填 Email。有機會抽中 Dyson $1,000 優惠券，未抽中時可看一則 Dyson 小知識。</p>
    <button id="draw-from-vouchers" class="gold-button" type="button">前往拆禮物</button>
+   <button id="wallet-from-vouchers" type="button">查看我的票夾</button>
    <p class="voucher-footnote">實際領取結果以恆隆行優惠券頁為準。</p>
   </section>
   <section class="activity-attendance" aria-labelledby="activity-attendance">
@@ -317,6 +325,6 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v109-draw-result"></script>
-<script src="./assets/js/app.js?v=20261117-v106-scene-keepsakes"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v111-unified-wallet"></script>
+<script src="./assets/js/app.js?v=20261117-v111-unified-wallet"></script>
 </body></html>
