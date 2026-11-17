@@ -10,7 +10,7 @@
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
     hd19: { rewardId: 'product-hd19', name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
-    pencilvac: { rewardId: 'product-sv50', name: 'Dyson PencilVac 筆形吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
+    pencilvac: { rewardId: 'product-sv50', name: 'PencilVac 筆形吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
     hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
     bonus: { rewardId: 'product-bp10', name: 'Dyson 任一主機', image: './assets/images/brand/dyson-logo-white.png' },
   };
