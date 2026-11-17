@@ -4,7 +4,21 @@
   const bonusDate = '2026-12-20';
   const dateKey = 'dyson-christmas-test-v2-date';
   const drawKey = 'dyson-christmas-test-v2-gifts';
+  const giftOpeningDuration = 800;
+  const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
+  const giftDesigns = [
+    { file: "navy-tall.webp", ratio: "227 / 390", scale: 0.76, seam: "0% 39.2%, 80.2% 39.7%, 100% 34.6%", lip: "6% 38.2%, 28% 26.6%, 96% 33.6%, 80.2% 40.7%", opening: "39.7%" },
+    { file: "ivory-wide.webp", ratio: "400 / 260", scale: 1.12, seam: "0% 58.8%, 84.2% 60.4%, 100% 45.4%", lip: "6% 57.8%, 28% 37.4%, 96% 44.4%, 84.2% 61.4%", opening: "60.4%" },
+    { file: "burgundy-gold.webp", ratio: "320 / 352", scale: 0.98, seam: "0% 48.6%, 79.1% 49.4%, 100% 37.5%", lip: "6% 47.6%, 28% 29.5%, 96% 36.5%, 79.1% 50.4%", opening: "49.4%" },
+    { file: "forest-green.webp", ratio: "254 / 274", scale: 0.84, seam: "0% 52.2%, 81.5% 53.3%, 100% 43.1%", lip: "6% 51.2%, 28% 35.1%, 96% 42.1%, 81.5% 54.3%", opening: "53.3%" },
+    { file: "slate-silver.webp", ratio: "295 / 372", scale: 0.85, seam: "0% 42.2%, 80.3% 43.3%, 100% 33.9%", lip: "6% 41.2%, 28% 25.9%, 96% 32.9%, 80.3% 44.3%", opening: "43.3%" },
+    { file: "teal-large.webp", ratio: "416 / 358", scale: 1.13, seam: "0% 52.0%, 85.8% 52.2%, 100% 39.1%", lip: "6% 51.0%, 28% 31.1%, 96% 38.1%, 85.8% 53.2%", opening: "52.2%" },
+    { file: "plum-tall.webp", ratio: "268 / 391", scale: 0.83, seam: "0% 38.9%, 80.6% 39.6%, 100% 29.7%", lip: "6% 37.9%, 28% 21.7%, 96% 28.7%, 80.6% 40.6%", opening: "39.6%" },
+    { file: "cream-green.webp", ratio: "266 / 297", scale: 0.88, seam: "0% 51.9%, 81.6% 53.2%, 100% 40.7%", lip: "6% 50.9%, 28% 32.7%, 96% 39.7%, 81.6% 54.2%", opening: "53.2%" },
+    { file: "rust-flat.webp", ratio: "433 / 296", scale: 1.12, seam: "0% 59.8%, 87.5% 61.5%, 100% 44.3%", lip: "6% 58.8%, 28% 36.3%, 96% 43.3%, 87.5% 62.5%", opening: "61.5%" },
+    { file: "rose-gold.webp", ratio: "320 / 353", scale: 0.98, seam: "0% 47.3%, 78.8% 48.4%, 100% 36.8%", lip: "6% 46.3%, 28% 28.8%, 96% 35.8%, 78.8% 49.4%", opening: "48.4%" },
+  ];
   const prizes = {
     hd19: { name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
     pencilvac: { name: 'PencilVac 鉛筆吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
@@ -53,6 +67,7 @@
   const passportButton = byId('draw-passport-open');
   const passportTicket = byId('draw-passport-ticket');
   const stage = byId('draw-stage');
+  stage.style.setProperty('--draw-touch-preview', touchPreviewDuration + 'ms');
   const animalResult = byId('draw-animal-result');
   const animalPreview = byId('draw-animal-preview');
   const simulate = byId('draw-simulate');
@@ -68,6 +83,9 @@
   let passport = { count: 0, required: 5 };
   let passportOpening = null;
   const previewOpened = new Set();
+  let layoutDate;
+  let previewLayout;
+  let appliedLayout;
 
   try {
     const storedDate = localStorage.getItem(dateKey);
@@ -89,7 +107,7 @@
     animal.alt = '';
     animal.hidden = true;
     button.append(animal);
-    button.addEventListener('click', () => openGift(index));
+    button.addEventListener('click', event => openGift(index, event?.pointerType));
     giftGroup.append(button);
     return button;
   });
@@ -249,10 +267,60 @@
     byId('draw-prize-kind').textContent = id === 'bonus' ? '任一商品現折' : '指定商品現折';
   }
 
+  function createGiftLayout(random = Math.random) {
+    const available = giftDesigns.map((_, index) => index);
+    return giftPositions.map(() => {
+      const [design] = available.splice(Math.floor(random() * available.length), 1);
+      return { design, x: random() * 4 - 2, y: random() * 3 - 1.5 };
+    });
+  }
+
+  function currentGiftLayout(date, day) {
+    if (day?.layout) return day.layout;
+    if (layoutDate !== date) {
+      layoutDate = date;
+      if (day) {
+        // The original saved draws only have a box index. Give those dates a stable layout.
+        let seed = Number(date.replaceAll('-', ''));
+        previewLayout = createGiftLayout(() => {
+          seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+          return seed / 4294967296;
+        });
+      } else {
+        previewLayout = createGiftLayout();
+      }
+    }
+    return previewLayout;
+  }
+
+  function placeGift(element, { x, y }) {
+    element.style.setProperty('--gift-x-offset', x + '%');
+    element.style.setProperty('--gift-y-offset', y + '%');
+  }
+
+  function renderGiftLayout(layout) {
+    const key = JSON.stringify(layout);
+    if (appliedLayout === key) return;
+    for (const [index, box] of layout.entries()) {
+      const gift = gifts[index];
+      const design = giftDesigns[box.design];
+      placeGift(gift, box);
+      gift.style.setProperty('--gift-art', 'url("./assets/images/gifts/' + design.file + '")');
+      gift.style.setProperty('--gift-ratio', design.ratio);
+      gift.style.setProperty('--gift-scale', design.scale);
+      gift.style.setProperty('--gift-seam', design.seam);
+      gift.style.setProperty('--gift-lip', design.lip);
+      gift.style.setProperty('--mouth-y', design.opening);
+    }
+    appliedLayout = key;
+  }
+
   function render() {
     const { days } = readDraw();
     const pool = availablePrizes(days, activeDate);
     const day = days[activeDate];
+    const layout = currentGiftLayout(activeDate, day);
+    renderGiftLayout(layout);
     const opening = pending?.date === activeDate;
     const played = Boolean(day?.result);
     // Earlier trials used fifteen gifts. Keep those results visible on the five-gift scene.
@@ -272,6 +340,7 @@
       gift.disabled = !canOpen;
       const state = index === selected ? opening ? 'opening' : prize ? 'won' : 'blessing' : 'closed';
       if (gift.dataset.state !== state) gift.dataset.state = state;
+      gift.classList.toggle('draw-touch-opening', state === 'opening' && pending.touch);
       const portrait = gift.querySelector('.draw-box-animal');
       portrait.hidden = !animalURL || index !== selected;
       if (!portrait.hidden && portrait.getAttribute('src') !== animalURL) portrait.src = animalURL;
@@ -284,6 +353,7 @@
     floatedTicket.hidden = !prize;
     if (prize) {
       floatedTicket.dataset.box = String(selected);
+      placeGift(floatedTicket, layout[selected]);
       floatedTicket.dataset.coupon = prize;
       floatedTicket.href = prizeURL(prize);
     }
@@ -348,6 +418,7 @@
       const pool = availablePrizes(draw.days, generatedOn);
       if (!draw.days[generatedOn]) {
         draw.days[generatedOn] = {
+          layout: currentGiftLayout(generatedOn),
           winningBox: Math.floor(Math.random() * gifts.length),
           hiddenPrize: randomMember(pool) ?? null,
         };
@@ -368,21 +439,24 @@
     const assignedPrize = pool.includes(day.hiddenPrize) ? day.hiddenPrize : randomMember(pool);
     const won = choice === 'win' || (choice === 'random' && day.winningBox === index);
     const prize = choice === 'bonus' && pool.includes('bonus') ? 'bonus' : won ? assignedPrize : null;
+    day.layout ??= currentGiftLayout(date, day);
     day.result = { selected: index, prize: prize ?? null, animal: prize ? null : randomMember(animals)?.day };
     return saveDraw(draw);
   }
 
-  async function openGift(index) {
+  async function openGift(index, pointerType) {
     if (pending || gifts[index].disabled) return;
     actionError = '';
-    const attempt = { date: activeDate, choice: mode.value, index };
+    const touch = pointerType === 'touch' || (!pointerType && matchMedia('(hover: none)').matches);
+    const attempt = { date: activeDate, choice: mode.value, index, touch };
     pending = attempt;
     const restoreFocus = document.activeElement === gifts[index];
     try {
       if (await withDrawLock(() => record(attempt))) {
         render();
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          await new Promise(resolve => setTimeout(resolve, 800));
+          const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
+          await new Promise(resolve => setTimeout(resolve, duration));
         }
       }
     } catch {
@@ -421,7 +495,7 @@
   reset.addEventListener('click', () => {
     actionError = '';
     void withDrawLock(() => {
-      saveDraw(emptyDraw());
+      if (saveDraw(emptyDraw())) layoutDate = undefined;
       mode.value = 'random';
       render();
     }).catch(showError);

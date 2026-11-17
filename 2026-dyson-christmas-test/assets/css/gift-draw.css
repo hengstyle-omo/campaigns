@@ -25,6 +25,35 @@
   overflow: clip;
   background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
 }
+/* Sky ribbons sit within the isolated stage, underneath the scene artwork. */
+.draw-stage::before,
+.draw-stage::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  inset: 3% -24% 53%;
+  border-radius: 50%;
+  opacity: .38;
+  background:
+    radial-gradient(ellipse at 48% 102%, transparent 38%, #59ddbc42 51%, #80eed650 57%, #50bdd91c 64%, transparent 70%);
+  transform: translate(-11%, -7%) rotate(-10deg);
+  animation: draw-aurora-drift 16s ease-in-out infinite;
+}
+.draw-stage::after {
+  inset: 6% -18% 58%;
+  opacity: .26;
+  background:
+    radial-gradient(ellipse at 53% 102%, transparent 43%, #529ed636 54%, #77dfba46 59%, transparent 70%);
+  transform: translate(16%, 6%) rotate(9deg);
+  animation-direction: reverse;
+  animation-duration: 21s;
+}
+@keyframes draw-aurora-drift {
+  0%, 100% { transform: translate(-15%, -5%) rotate(-11deg); opacity: .30; }
+  48% { transform: translate(8%, 3%) rotate(2deg); opacity: .70; }
+  75% { opacity: .51; }
+}
 .draw-tree, .draw-gifts { position: absolute; }
 .draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }
 .draw-tree::before {
@@ -91,13 +120,13 @@
 .draw-gifts .draw-gift {
   --mouth-y: 48%;
   position: absolute;
-  top: var(--y);
-  left: var(--x);
-  width: var(--size);
+  top: calc(var(--y) + var(--gift-y-offset, 0%));
+  left: calc(var(--x) + var(--gift-x-offset, 0%));
+  width: calc(var(--size) * var(--gift-scale, 1));
   min-width: 0;
   min-height: 0;
   height: auto;
-  aspect-ratio: 945 / 960;
+  aspect-ratio: var(--gift-ratio, 945 / 960);
   margin: 0;
   padding: 0;
   overflow: visible;
@@ -108,8 +137,8 @@
   transform: translate(-50%, -50%) rotate(var(--angle));
   appearance: none;
 }
-.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 27%; --y: 74%; --size: 13%; --angle: -7deg; }
-.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 76%; --y: 74%; --size: 12.5%; --angle: 8deg; }
+.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 29%; --y: 69%; --size: 13%; --angle: -7deg; }
+.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 76%; --y: 69%; --size: 12.5%; --angle: 8deg; }
 .draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 15%; --y: 86%; --size: 15%; --angle: -5deg; }
 .draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 63%; --y: 86%; --size: 16%; --angle: 2deg; }
 .draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 86%; --y: 86%; --size: 15%; --angle: 5deg; }
@@ -125,20 +154,36 @@
 }
 .draw-box, .draw-body, .draw-lid { inset: 0; }
 .draw-body, .draw-lid { background: var(--gift-art) center / 100% 100% no-repeat; }
-.draw-body { clip-path: polygon(12% 49%, 77% 52.5%, 93% 40%, 100% 100%, 0 100%); }
+.draw-gift[data-state="closed"] .draw-box { background: var(--gift-art) center / 100% 100% no-repeat; }
+.draw-gift[data-state="closed"] :is(.draw-body, .draw-lid) { visibility: hidden; }
+.draw-body { clip-path: polygon(var(--gift-seam), 100% 100%, 0 100%); }
 .draw-lid {
-  clip-path: polygon(0 0, 100% 0, 100% 37%, 77% 54%, 0 50%);
-  transform-origin: 72% 48%;
+  clip-path: polygon(0 0, var(--gift-seam), 100% 0);
+  transform-origin: 72% var(--mouth-y);
 }
 .draw-mouth {
-  inset: 31% 9% 46% 12%;
+  inset: 0;
   background: linear-gradient(165deg, #b79762 5%, #2b251d 12%, #151925 65%, #795c36);
-  clip-path: polygon(0 78%, 34% 33%, 100% 13%, 82% 100%);
+  clip-path: polygon(var(--gift-lip));
   opacity: 0;
 }
 .draw-gift:is([data-state="won"], [data-state="blessing"]) .draw-lid { transform: translate(-8%, -27%) rotate(-14deg); }
 .draw-gift:is([data-state="opening"], [data-state="won"], [data-state="blessing"]) .draw-mouth { opacity: 1; }
-.draw-gift:not(:disabled):hover .draw-box { filter: brightness(1.09); }
+@media (hover: hover) {
+  .draw-gift[data-state="closed"]:not(:disabled):hover .draw-box {
+    filter: brightness(1.13) drop-shadow(0 0 .4rem #ffd28e86);
+    animation: draw-gift-nudge 360ms ease-out both;
+  }
+}
+.draw-gift[data-state="closed"]:focus-visible .draw-box,
+.draw-gift.draw-touch-opening .draw-box {
+  filter: brightness(1.1) drop-shadow(0 0 .35rem #ffd28e65);
+}
+@keyframes draw-gift-nudge {
+  0%, 100% { transform: none; }
+  30% { transform: translateY(-3%) rotate(-4deg); }
+  62% { transform: translateY(-1%) rotate(3deg); }
+}
 .draw-gift[data-state="opening"] .draw-box { animation: draw-box-hop .7s ease both; }
 .draw-glow, .draw-snow {
   inset: calc(var(--mouth-y) - 25%) -14% auto;
@@ -176,11 +221,24 @@
 }
 .draw-gift[data-state="opening"] .draw-lid { animation: draw-lid-lift .8s ease both; }
 .draw-gift[data-state="opening"] .draw-snow { animation: draw-flurry .63s .16s ease-out both; }
+.draw-gift.draw-touch-opening .draw-box {
+  animation: draw-gift-nudge var(--draw-touch-preview) ease-out,
+    draw-box-hop .7s ease var(--draw-touch-preview) forwards;
+}
+.draw-gift.draw-touch-opening .draw-lid { animation-delay: var(--draw-touch-preview); }
+.draw-gift.draw-touch-opening .draw-snow { animation-delay: calc(.16s + var(--draw-touch-preview)); }
+.draw-gift.draw-touch-opening .draw-mouth {
+  animation: draw-mouth-reveal .24s ease-out var(--draw-touch-preview) both;
+}
+@keyframes draw-mouth-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 .draw-gift[data-state="won"] .draw-glow { opacity: .8; transition: opacity .25s ease-out; }
 .draw-floated-ticket {
   position: absolute;
-  left: var(--x);
-  top: var(--y);
+  left: calc(var(--x) + var(--gift-x-offset, 0%));
+  top: calc(var(--y) + var(--gift-y-offset, 0%));
   z-index: 3;
   opacity: 1;
   transform: translate(-50%, -116%) rotate(-7deg);
@@ -192,7 +250,7 @@
   position: absolute;
   z-index: 1;
   left: 50%;
-  bottom: 51%;
+  bottom: calc(100% - var(--mouth-y));
   width: 113%;
   height: 85%;
   object-fit: contain;
@@ -312,8 +370,8 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
     aspect-ratio: auto;
     border-right: 1px solid #80705655;
   }
-  .draw-gifts .draw-gift { width: min(var(--size), calc(var(--draw-scene-height) * .23)); }
-  .draw-gifts .draw-gift:nth-child(-n+2) { width: min(var(--size), calc(var(--draw-scene-height) * .20)); }
+  .draw-gifts .draw-gift { width: min(calc(var(--size) * var(--gift-scale, 1)), calc(var(--draw-scene-height) * .23)); }
+  .draw-gifts .draw-gift:nth-child(-n+2) { width: min(calc(var(--size) * var(--gift-scale, 1)), calc(var(--draw-scene-height) * .20)); }
   .draw-copy {
     grid-area: 1 / 2;
     align-self: end;
@@ -336,13 +394,15 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 @media (max-width: 560px) {
   .draw-copy { padding-top: 18px; }
   .draw-stage { aspect-ratio: 1.07; background-size: 100% 100%; }
-  .draw-gifts .draw-gift { width: calc(var(--size) + 4%); }
-  .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 76%; }
+  .draw-gifts .draw-gift { width: calc((var(--size) + 3%) * var(--gift-scale, 1)); }
+  .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 71%; }
   .draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 65%; }
   #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .draw-coupon { padding: 10px; }
   .draw-wallet, .draw-settings { padding: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .draw-stage * { animation: none !important; transition: none !important; }
+  .draw-stage *,
+  .draw-stage::before,
+  .draw-stage::after { animation: none !important; transition: none !important; }
 }
