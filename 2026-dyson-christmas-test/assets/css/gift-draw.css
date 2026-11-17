@@ -8,9 +8,9 @@
   text-align: center;
 }
 .draw-copy { padding: 26px 16px 0; }
-.draw-copy h3, .draw-wallet h3 { color: #f2d9ab; margin: 0 0 8px; }
+.draw-copy h3, .draw-wallet h3, .draw-passport h3 { color: #f2d9ab; margin: 0 0 8px; }
 .draw-copy h3 { font-size: clamp(1.45rem, 3vw, 2.25rem); }
-#draw-card, #draw-heading, #draw-coupons { scroll-margin-top: 110px; }
+#draw-card, #draw-heading, #draw-coupons, #draw-passport, #draw-passport-account { scroll-margin-top: 110px; }
 .draw-copy p, .draw-feedback p { margin: 0; }
 .draw-copy p + p:not([hidden]) { margin-top: 6px; }
 .draw-bonus, #draw-count { color: #efc984; }
@@ -25,27 +25,45 @@
   overflow: clip;
   background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
 }
-/* Fade the moving colors within the night sky, before the hillside or props. */
-.draw-stage::before {
+/* Two soft light fields drift at separate speeds within the sky. */
+.draw-stage::before,
+.draw-stage::after {
   content: "";
   position: absolute;
   z-index: -1;
   pointer-events: none;
   inset: 0 0 66%;
-  background:
-    radial-gradient(ellipse at 62% 48%, #7adcb9af 0%, #4abbaa69 29%, transparent 69%)
-      12% 26% / 142% 89% no-repeat,
-    radial-gradient(ellipse at 41% 42%, #78a7eb97 0%, #477aa34d 37%, transparent 72%)
-      84% 54% / 148% 100% no-repeat;
   mask-image: radial-gradient(ellipse 58% 58% at 50% 35%, #000 20%, #000c 55%, transparent 100%);
-  opacity: .44;
-  animation: draw-aurora-drift 12s ease-in-out infinite;
 }
-@keyframes draw-aurora-drift {
-  0%, 100% { background-position: 12% 26%, 84% 54%; opacity: .34; }
-  25% { background-position: 51% 40%, 64% 44%; opacity: .94; }
-  52% { background-position: 88% 30%, 38% 56%; opacity: .13; }
-  78% { background-position: 46% 20%, 18% 42%; opacity: 1; }
+.draw-stage::before {
+  background: radial-gradient(ellipse at 43% 45%, #7adcb9a8 0%, #4abbaa59 31%, transparent 69%) 20% 34% / 120% 91% no-repeat;
+  opacity: .38;
+  animation: draw-aurora-green 19s ease-in-out infinite;
+}
+.draw-stage::after {
+  background: radial-gradient(ellipse at 64% 42%, #78a7eb91 0%, #477aa344 33%, transparent 73%) 80% 54% / 125% 100% no-repeat;
+  opacity: .36;
+  animation: draw-aurora-blue 29s -4s ease-in-out infinite;
+}
+@keyframes draw-aurora-green {
+  0%, 100% { background-position: 15% 32%; opacity: .2; }
+  13% { opacity: .58; }
+  26% { background-position: 52% 42%; opacity: .9; }
+  33% { opacity: .78; }
+  49% { background-position: 84% 36%; opacity: .12; }
+  57% { opacity: .16; }
+  73% { background-position: 57% 22%; opacity: .68; }
+  88% { opacity: .29; }
+}
+@keyframes draw-aurora-blue {
+  0%, 100% { background-position: 83% 52%; opacity: .48; }
+  9% { opacity: .13; }
+  21% { background-position: 55% 38%; opacity: .17; }
+  38% { background-position: 25% 48%; opacity: .82; }
+  45% { opacity: .88; }
+  67% { background-position: 46% 53%; opacity: .2; }
+  81% { opacity: .54; }
+  90% { background-position: 76% 43%; opacity: .72; }
 }
 .draw-tree, .draw-gifts { position: absolute; }
 .draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }
@@ -90,7 +108,7 @@
 .draw-flyover {
   position: absolute;
   z-index: 2;
-  top: 19%;
+  top: 28%;
   left: 0;
   display: flex;
   align-items: end;
@@ -103,10 +121,15 @@
 .draw-flyover-rider img:first-child { display: block; width: 100%; }
 .draw-flyover-rider img:last-child { position: absolute; width: 48%; left: 19%; bottom: 26%; }
 .draw-flyover-reindeer { width: 45%; margin-bottom: 9%; }
-.draw-flying .draw-flyover { animation: draw-fly-past var(--draw-flight-duration, 1100ms) ease-in-out both; }
+.draw-flying .draw-flyover { animation: draw-fly-past var(--draw-flight-duration, 2800ms) linear both; }
 @keyframes draw-fly-past {
-  from { transform: translate(-110%, 65%); opacity: 1; }
-  to { left: 100%; transform: translate(15%, -25%); opacity: 1; }
+  0% { left: 0; top: 27%; transform: translateX(-110%) rotate(4deg); opacity: 0; }
+  17% { left: 10%; top: 23%; transform: translateX(-75%) rotate(-6deg); opacity: 1; }
+  36% { left: 30%; top: 12%; transform: translateX(-61%) rotate(-13deg); opacity: 1; }
+  55% { left: 51%; top: 6%; transform: translateX(-50%) rotate(-3deg); opacity: 1; }
+  75% { left: 74%; top: 10%; transform: translateX(-30%) rotate(6deg); opacity: 1; }
+  89% { left: 90%; top: 14%; transform: translateX(-13%) rotate(2deg); opacity: 1; }
+  100% { left: 100%; top: 12%; transform: translateX(10%) rotate(-7deg); opacity: 0; }
 }
 @keyframes draw-tree-twinkle { 0%, 100% { opacity: 1; } 45% { opacity: .4; } }
 .draw-gifts { inset: 0; }
@@ -242,7 +265,7 @@
   transform: translate(-50%, -116%) rotate(-7deg);
   text-decoration: none;
 }
-.draw-floated-ticket[hidden], .draw-keepsake-result[hidden], .draw-passport-actions [hidden] { display: none; }
+.draw-floated-ticket[hidden], .draw-passport-actions [hidden] { display: none; }
 .draw-floated-ticket:focus-visible, .draw-passport-ticket:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 3px; }
 @keyframes draw-lid-lift {
   0% { transform: none; }
@@ -262,27 +285,32 @@
 .draw-feedback { min-height: 108px; padding: 14px 16px 20px; border-top: 1px solid #80705655; background: #101d2a; }
 .draw-has-result #draw-status { color: #f8daa1; font-weight: 750; }
 .draw-feedback #draw-pool-note { margin-top: 6px; }
-.draw-keepsake-result {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #f2d9ab;
-  margin-top: 10px;
-}
-.draw-keepsake-result img { object-fit: contain; }
-.draw-keepsake-result small { display: block; color: #d9d9d2; }
-.draw-passport { margin: 15px 0 0; padding-top: 12px; border-top: 1px solid #80705655; }
+.draw-passport-intro { margin: 0 0 12px; color: #d2dae1; }
+.draw-passport-intro strong { color: #f5d79f; }
 .draw-wallet h4 { margin: 0 0 8px; color: #f2d9ab; }
 .draw-wallet > section:first-of-type { margin-top: 16px; }
-.draw-passport-card.draw-coupon {
-  width: min(100%, 650px);
-  grid-template-columns: minmax(0, 1fr) clamp(62px, 25%, 130px);
+.draw-coupon.draw-passport-card {
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 16px;
 }
-.draw-passport-card .draw-coupon-image { height: auto; max-height: 144px; }
-.draw-passport-card p { margin: 2px 0 0; }
+.draw-passport-card .draw-coupon-image { width: 100%; height: 94px; border-radius: 6px; }
+.draw-passport-card p { margin: 0; }
+.draw-passport-requirement { color: #d2dae1; font-size: .875rem; }
+.draw-passport-status { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid #56647570; }
 #draw-passport-progress { color: #f5d79f; font-weight: 700; }
-.draw-passport-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 8px; }
+.draw-passport-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 2px; }
+.draw-passport-days, .draw-passport-extra { grid-column: 1 / -1; }
+.draw-passport-days .participation-cell { min-height: 45px; gap: 2px; padding-block: 4px; }
+.draw-passport-days .participation-check { width: 19px; height: 19px; font-size: 12px; }
+.draw-passport-days .participation-date { font-size: .75rem; }
+.draw-passport-extra { border-top: 1px solid #56647570; padding-top: 8px; }
+.draw-passport-extra summary { cursor: pointer; color: #f6d597; }
+.draw-passport-extra > p { margin-top: 7px; }
+.draw-passport-extra .welcome-progress { max-width: 520px; margin: 8px 0 0; padding: 0; border: 0; }
+.draw-passport-extra .progress-consent-row { flex-wrap: wrap; white-space: normal; }
+.draw-passport-extra #progress-submit { justify-self: start; }
+
 .draw-passport-actions .draw-passport-ticket { text-decoration: none; }
 .draw-passport-actions .draw-passport-ticket span { color: inherit; }
 #draw-passport-open::before {
@@ -362,23 +390,25 @@
   background: #172637;
 }
 .draw-fact img { width: 100%; height: 76px; object-fit: contain; }
-.draw-fact h4 { margin: 0 0 6px; color: #f7dba4; font-size: .86rem; }
 .draw-fact p, .draw-fact a { margin: 4px 0 0; font-size: .88rem; }
 .draw-fact a:not([hidden]) { display: inline-block; }
 
 .draw-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 10px; }
 .draw-actions a { color: #f6d597; }
-.draw-wallet, .draw-settings { margin-top: 16px; padding: 18px; border: 1px solid #6c625070; border-radius: 12px; }
-#draw-count { display: inline-block; font-size: .8em; margin-left: .4em; }
-#draw-wallet { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 225px), 1fr)); gap: 12px; }
-.draw-coupon { display: grid; grid-template-columns: minmax(0, 1fr) clamp(48px, 28%, 82px); align-items: center; gap: 8px; padding: 14px; border: 1px solid #566475; border-radius: 8px; background: #121e2a; }
+.draw-wallet, .draw-passport, .draw-settings { margin-top: 16px; padding: 18px; border: 1px solid #6c625070; border-radius: 12px; }
+.draw-wallet-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+#draw-count { font-size: .85em; }
+#draw-wallet { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.draw-coupon { display: grid; grid-template-columns: minmax(0, 1fr) clamp(56px, 27%, 76px); align-items: start; gap: 10px; padding: 14px; border: 1px solid #566475; border-radius: 8px; background: #121e2a; }
 .draw-coupon-copy { display: grid; gap: 3px; overflow-wrap: anywhere; }
-.draw-coupon-image { display: block; width: 100%; height: 92px; object-fit: contain; }
+.draw-coupon-copy strong { font-size: .95rem; line-height: 1.35; }
+.draw-coupon-image { display: block; align-self: center; width: 100%; height: 86px; object-fit: contain; }
 .draw-coupon[data-won] { border-color: #c8a66b; background: #24282c; }
 .draw-coupon span { color: #efc984; }
 .draw-coupon small { color: #bbc8d3; }
 .draw-coupon[data-won] small { color: #f9dca8; }
 .draw-coupon-details { justify-self: start; min-height: 36px; padding: 4px 0; border: 0; background: transparent; color: #f6d597; text-align: left; text-decoration: underline; text-underline-offset: .18em; }
+.draw-coupon[data-coupon] .draw-coupon-copy > a { justify-self: start; font-size: .875rem; }
 .draw-wallet-note { margin: 10px 0 0; }
 .draw-settings summary { width: fit-content; cursor: pointer; }
 .draw-settings-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; margin-top: 12px; }
@@ -387,7 +417,37 @@
 #draw-from-card { display: block; margin-top: 10px; width: 100%; }
 #draw-from-card[hidden] { display: none; }
 
+@media (min-width: 561px) {
+  #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #draw-wallet .draw-coupon-copy > strong { min-height: 2.7em; }
+
+  @supports (grid-template-rows: subgrid) {
+    /* Share the same title, amount, status and action tracks across each card row. */
+    #draw-wallet .draw-coupon {
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+      row-gap: 3px;
+    }
+    #draw-wallet .draw-coupon-copy {
+      grid-column: 1;
+      grid-row: 1 / -1;
+      grid-template-rows: subgrid;
+    }
+    #draw-wallet .draw-coupon-copy > a { grid-row: 5; }
+    #draw-wallet .draw-coupon-image { grid-column: 2; grid-row: 1 / span 4; }
+  }
+}
+
 @media (min-width: 761px) {
+  .draw-coupon.draw-passport-card {
+    grid-template-columns: 84px minmax(0, 1fr) minmax(160px, 26%);
+  }
+  .draw-passport-status {
+    grid-column: auto;
+    padding: 0 0 0 16px;
+    border-top: 0;
+    border-left: 1px solid #56647570;
+  }
   .draw-card {
     display: grid;
     grid-template-columns: minmax(0, 1fr) clamp(245px, 30%, 354px);
@@ -421,6 +481,10 @@
   .draw-actions { justify-content: flex-start; }
 }
 
+@media (min-width: 1090px) {
+  #draw-wallet { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
 @media (max-width: 560px) {
   .draw-copy { padding-top: 18px; }
   .draw-result-dialog { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 44px 14px 14px; }
@@ -430,9 +494,10 @@
   .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 71%; }
   #draw-wallet { gap: 8px; }
   .draw-coupon { padding: 10px; }
-  .draw-wallet, .draw-settings { padding: 12px; }
+  .draw-wallet, .draw-passport, .draw-settings { padding: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .draw-stage *,
-  .draw-stage::before { animation: none !important; transition: none !important; }
+  .draw-stage::before,
+  .draw-stage::after { animation: none !important; transition: none !important; }
 }

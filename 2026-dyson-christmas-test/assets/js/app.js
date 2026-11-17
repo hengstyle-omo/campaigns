@@ -111,7 +111,7 @@ function renderCloud(){
  $('progress-open').classList.toggle('is-busy',busy||saving&&!cloud.error);$('progress-open').setAttribute('aria-busy',String(busy||saving&&!cloud.error));
  $('progress-open').setAttribute('aria-label',cloud.ready?'查看保存紀錄與護照夾資格':'輸入 Email 保存紀錄');
  $('admin-auth-email').textContent=cloud.email;$('admin-auth-submit').disabled=busy;$('admin-auth-cancel').disabled=busy;$('admin-auth-code').disabled=busy;$('admin-auth-form').setAttribute('aria-busy',String(busy));if($('admin-auth-dialog').open)$('admin-auth-message').textContent=cloud.loading?'正在驗證…':cloud.error||'請輸入管理員驗證碼。';
- $('progress-submit').textContent='保存紀錄';$('welcome-start').textContent=welcomeProgressOnly?'保存紀錄':'開始佈置水晶球';$('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
+ $('progress-submit').disabled=busy;$('progress-form').setAttribute('aria-busy',String(busy));
  $('progress-current').hidden=!cloud.email;$('progress-email-label').textContent=cloud.email;$('progress-switch').disabled=busy;
  $('progress-email-field').hidden=!!cloud.email;
  if(cloud.email)$('progress-email').value=cloud.email;
@@ -124,7 +124,14 @@ function renderCloud(){
  $('cloud-settings').hidden=!admin;$('cloud-endpoint').value=cloud.endpoint;$('cloud-summary').textContent=active?'進度服務已設定。':'請先設定進度服務網址。';
  renderPassport();
 }
-function openProgress(){for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);$('progress-email').value=cloud.email;openWelcome({progressOnly:true});$(cloud.email?'progress-switch':'progress-email').focus();}
+function openProgress(){
+  for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);
+  const account=$('draw-passport-account');
+  account.open=true;
+  account.scrollIntoView({block:'start'});
+  (cloud.loading?account.querySelector('summary'):$(cloud.email?'progress-switch':'progress-email')).focus({preventScroll:true});
+  trackActivity('progress_open');
+}
 function cloudTransport(payload){
  if(!cloudEnabled())return Promise.reject(new Error('請從已設定進度服務的 HTTPS 活動網址保存。'));
  return new Promise((resolve,reject)=>{
@@ -238,10 +245,23 @@ async function saveMarketingConsent(){
  const email=cloud.email,desired=cloud.marketingDraft===true;
  cloud.marketingSaving=(async()=>{try{const result=await cloudSend({action:'consent',email,marketingConsent:desired});if(result.consentSaved!==true||result.marketingConsent!==desired)throw new Error('行銷意願尚未確認保存。');if(cloud.email!==email)return false;acceptFormalResult(result);cloud.consent=desired;cloud.marketingDirty=false;cloud.marketingDraft=null;cloud.consentStatus='行銷意願已保存。';cloud.error='';safeWrite(STORAGE_PREFIX+'cloud-profile',{email,consent:desired});return true;}catch(error){cloud.error='行銷意願尚未保存：'+error.message;return false;}finally{cloud.marketingSaving=null;renderCloud();}})();renderCloud();return cloud.marketingSaving;
 }
-async function startWelcomeCollection(){
- const email=cloudEmail($('progress-email').value);if(!email){if(welcomeProgressOnly){$('progress-message').textContent='請填寫 Email 保存或找回進度。';return;}trackCampaignStart();finishWelcome();return;}
- if(!isCloudEmail(email)){$('progress-message').textContent='請確認 Email 格式。';$('progress-email').focus();return;}
- const consent=cloud.marketingDirty?cloud.marketingDraft:undefined;if(!welcomeProgressOnly)trackCampaignStart();finishWelcome();cloudConnect(email,consent,{userInitiated:true}).catch(()=>{});
+function startWelcomeCollection(){
+  trackCampaignStart();
+  finishWelcome();
+  if(!onboardingStep)setOnboardingStep(1);
+}
+async function saveCheckInAccount(){
+  const email=cloudEmail($('progress-email').value);
+  if(!isCloudEmail(email)){
+    $('progress-message').textContent=email?'請確認 Email 格式。':'請填寫 Email 保存或找回進度。';
+    $('progress-email').focus();
+    return;
+  }
+  const consent=cloud.marketingDirty?cloud.marketingDraft:undefined;
+  const saved=await cloudConnect(email,consent,{userInitiated:true}).catch(()=>false);
+  if(saved&&$('draw-passport-account').contains(document.activeElement)){
+    $('draw-passport-account').querySelector('summary').focus({preventScroll:true});
+  }
 }
 function markCardTask(format,method){
  const task=cardTaskNormalise({completed:true,format,method,at:new Date().toISOString()});if(!task)return;
@@ -263,7 +283,7 @@ $('progress-email').addEventListener('input',()=>{
  $('progress-marketing').checked=cloud.ready&&cloudEmail($('progress-email').value)===cloud.email&&cloud.consent;
 });
 $('progress-marketing').addEventListener('change',()=>{cloud.marketingDirty=true;cloud.marketingDraft=$('progress-marketing').checked;cloud.consentStatus='';if(cloud.ready&&cloudEmail($('progress-email').value)===cloud.email)saveMarketingConsent();});
-$('progress-form').addEventListener('submit',event=>{event.preventDefault();startWelcomeCollection();});
+$('progress-form').addEventListener('submit',event=>{event.preventDefault();void saveCheckInAccount();});
 $('progress-retry').addEventListener('click',async()=>{if(!cloud.ready){try{await cloudConnect($('progress-email').value||cloud.email,cloud.marketingDirty?cloud.marketingDraft:undefined,{userInitiated:true});}catch{}}else if(cloud.marketingDirty)await saveMarketingConsent();else await cloudFlush();});
 $('admin-auth-form').addEventListener('submit',async event=>{
  event.preventDefault();if(cloud.loading)return;const code=$('admin-auth-code').value;$('admin-auth-code').value='';
@@ -583,7 +603,7 @@ function showDialog(id){const d=$(id);if(!d.open){d.showModal();if(id==='voucher
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
 const welcomeVideoSrc='./assets/video/dyson_2026_xmas_welcome.mp4';
 const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.webp';
-let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true,welcomeProgressOnly=false;
+let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
   const video=$('welcome-video'),attempt=++welcomeAttempt;
@@ -592,50 +612,158 @@ async function playWelcome(){
   try{await video.play();if(attempt!==welcomeAttempt||!welcomeMediaOpen()){if(!welcomeMediaOpen())video.pause();return;}welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');}
   catch{if(attempt!==welcomeAttempt||!welcomeMediaOpen())return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始佈置水晶球。':'點一下播放介紹，或直接開始佈置水晶球。');}
 }
-function moveActivityOverview(target){
-  $(target).append($('welcome-content'));
-  const navigationEnabled=target==='activity-overview';
-  for(const link of $('welcome-content').querySelectorAll('.activity-jumps a')){
-    link.tabIndex=navigationEnabled?0:-1;
-    if(navigationEnabled)link.removeAttribute('aria-disabled');
-    else link.setAttribute('aria-disabled','true');
-  }
-}
-function welcomeMediaOpen(){return $('welcome-video').closest('dialog')?.open===true;}
-function openWelcome({progressOnly=false}={}){
-  moveActivityOverview('welcome-overview');
-  welcomeProgressOnly=progressOnly;$('welcome-dialog').classList.toggle('progress-only',progressOnly);$('welcome-dialog').setAttribute('closedby',progressOnly?'closerequest':'none');$('welcome-skip').parentElement.hidden=!progressOnly;$('welcome-title').textContent=progressOnly?'保存紀錄':'Dyson 聖誕雪境';$('progress-email-caption').textContent=progressOnly?'你的 Email':'Email（選填）';if(!$('progress-email').value)$('progress-email').value=cloud.email;renderCloud();
-  $('welcome-dialog').scrollTop=0;if($('welcome-dialog').open)return;
-  welcomeCleaned=false;$('welcome-play').hidden=true;$('welcome-play').textContent='播放介紹';const video=$('welcome-video');video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=false;
-  video.poster=welcomePosterSrc;if(!progressOnly){video.src=welcomeVideoSrc;video.currentTime=0;}else{video.pause();video.removeAttribute('src');video.load();}
-  document.body.classList.add('welcome-visible');showDialog('welcome-dialog');
-  if(progressOnly){trackActivity('progress_open');return;}
+function welcomeMediaOpen(){return $('welcome-dialog').open;}
+function openWelcome(){
+  const dialog=$('welcome-dialog');
+  dialog.setAttribute('closedby','none');
+  dialog.scrollTop=0;
+  if(dialog.open)return;
+  welcomeCleaned=false;
+  $('welcome-play').hidden=true;
+  $('welcome-play').textContent='播放介紹';
+  const video=$('welcome-video');
+  video.muted=true;
+  video.defaultMuted=true;
+  video.playsInline=true;
+  video.loop=false;
+  video.poster=welcomePosterSrc;
+  video.src=welcomeVideoSrc;
+  video.currentTime=0;
+  document.body.classList.add('welcome-visible');
+  showDialog('welcome-dialog');
   trackActivity('welcome_view');
   welcomeTimer=setTimeout(()=>{if(welcomeMediaOpen()&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');}
   else playWelcome();
 }
 function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
-function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');closeDialog('vouchers-dialog');}
-$('welcome-skip').addEventListener('click',finishWelcome);
+function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');});
 $('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster=welcomePosterSrc;video.load();$('welcome-play').hidden=true;welcomeMessage('布置屬於你的聖誕雪境。');});
 $('welcome-video').addEventListener('error',()=>{if(!welcomeMediaOpen())return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始佈置水晶球。');});
-$('welcome-dialog').addEventListener('keydown',event=>{if(event.key==='Escape'&&!welcomeProgressOnly){event.preventDefault();event.stopPropagation();}});
-$('welcome-dialog').addEventListener('cancel',event=>{event.preventDefault();if(welcomeProgressOnly)finishWelcome();});
-$('welcome-dialog').addEventListener('close',()=>{
-  if(!$('welcome-dialog').open&&$('welcome-content').closest('#welcome-dialog'))cleanupWelcome();
-});
-$('vouchers-dialog').addEventListener('close',()=>{
-  if(!$('vouchers-dialog').open&&$('welcome-content').closest('#vouchers-dialog')){
-    ++welcomeAttempt;
-    clearTimeout(welcomeTimer);
-    $('welcome-video').pause();
-    moveActivityOverview('welcome-overview');
+$('welcome-dialog').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();}});
+$('welcome-dialog').addEventListener('cancel',event=>event.preventDefault());
+$('welcome-dialog').addEventListener('close',cleanupWelcome);
+
+const onboardingKey=STORAGE_PREFIX+'first-visit-guide-'+YEAR;
+let onboardingStep=safeRead(onboardingKey,0);
+if(onboardingStep===4)onboardingStep=3;
+let onboardingTarget=null;
+const onboardingMessages={
+  1:'點開 12/01「第一場雪」，看看你的第一份聖誕收藏。',
+  2:'按「放入水晶球」，讓第一場雪飄進球裡。',
+  3:'按「調整位置」，試著佈置你的水晶球。',
+  5:'按「製作聖誕卡片」，把你佈置的雪境送給朋友。'
+};
+function setOnboardingStep(step){
+  onboardingStep=step;
+  safeWrite(onboardingKey,step);
+  const revealed=previewDate?previewCalendarReveals:revealedCalendarDays;
+  if(step===1&&dayState(1)==='owned'&&!isPlaced(1)&&revealed.has(1)){
+    void openDay(1);
   }
+  syncOnboarding();
+  const current=onboardingStep;
+  requestAnimationFrame(()=>{
+    if(onboardingStep===current)syncOnboarding({reveal:true});
+  });
+}
+function positionOnboarding(){
+  const guide=$('onboarding-guide');
+  if(guide.hidden||!onboardingTarget)return;
+  const rect=onboardingTarget.getBoundingClientRect();
+  const inset=12,gap=10,viewportWidth=document.documentElement.clientWidth,viewportHeight=window.innerHeight;
+  const guideWidth=guide.offsetWidth,guideHeight=guide.offsetHeight;
+  const reservedBottom=mobileViewport.matches&&guide.parentNode===document.body?70:0;
+  const usableBottom=onboardingTarget.id==='mobile-card-open'?rect.top-gap:viewportHeight-reservedBottom-inset;
+  guide.style.visibility=rect.bottom>inset&&rect.top<viewportHeight-inset?'visible':'hidden';
+  const widthLeft=rect.left-gap-inset,widthRight=viewportWidth-rect.right-gap-inset;
+  const above=rect.top-gap-guideHeight;
+  const below=rect.bottom+gap;
+  let x=rect.left+rect.width/2-guideWidth/2;
+  let y=below+guideHeight<=usableBottom?below:above;
+  if(y<inset&&Math.max(widthLeft,widthRight)>=guideWidth){
+    x=widthRight>=guideWidth?rect.right+gap:rect.left-gap-guideWidth;
+    y=rect.top+Math.min(24,rect.height/2);
+  }
+  guide.style.left=Math.max(inset,Math.min(viewportWidth-guideWidth-inset,x))+'px';
+  guide.style.top=Math.max(inset,Math.min(usableBottom-guideHeight,y))+'px';
+}
+function syncOnboarding({reveal=false}={}){
+  const guide=$('onboarding-guide');
+  const dialog=Array.from(document.querySelectorAll('dialog[open]')).at(-1);
+  let step=onboardingStep,target=null,moveDay=null;
+  if(step>0&&step<6&&dayState(1)==='owned'){
+    if(step<=2){
+      if(isPlaced(1)){
+        if(!dialog){onboardingStep=step=3;safeWrite(onboardingKey,step);}
+      }
+      else if(dialog?.id==='item-dialog'&&Number(currentModalDay)===1){
+        if(onboardingStep!==2){
+          onboardingStep=step=2;
+          safeWrite(onboardingKey,step);
+        }
+        target=$('item-placement');
+      }else if(!dialog){
+        step=1;
+        $('mobile-calendar-toggle').setAttribute('aria-expanded','true');
+        target=$('calendar-grid').querySelector('[data-day="1"]');
+      }
+    }
+    if(!dialog&&!target){
+      if(step===3)target=$('edit-toggle');
+      if(step===4){
+        target=canvas;
+        moveDay=STARTER_IDS.find(d=>isPlaced(d)&&!item(d).fixed)
+          ?? ownedDays().find(d=>isPlaced(d)&&item(d).layout&&!item(d).fixed&&!item(d).effect);
+        if(editMode&&moveDay&&reveal){
+          selectItem(moveDay);
+          drawFrame(0,performance.now());
+        }
+      }
+      if(step===5)target=$(mobileViewport.matches?'mobile-card-open':'card-open');
+    }
+  }
+  if(onboardingTarget!==target&&onboardingTarget){
+    onboardingTarget.classList.remove('onboarding-target');
+    onboardingTarget.removeAttribute('aria-describedby');
+  }
+  onboardingTarget=target;
+  guide.hidden=!target;
+  if(!target)return;
+  const host=step===2?$('item-dialog'):document.body;
+  if(guide.parentNode!==host)host.append(guide);
+  target.classList.add('onboarding-target');
+  target.setAttribute('aria-describedby','onboarding-message');
+  const message=step===4?(moveDay?'拖曳球內的'+item(moveDay).name+'，或用方向鍵移動。也可以直接按「完成」。':'選取球內的物件並拖曳，或按「完成」繼續。'):onboardingMessages[step];
+  if($('onboarding-message').textContent!==message)$('onboarding-message').textContent=message;
+  $('onboarding-done').hidden=step!==4;
+  if(reveal){
+    if(target.id!=='mobile-card-open')target.scrollIntoView({block:'center',behavior:'instant'});
+    if(!target.disabled)target.focus({preventScroll:true});
+  }
+  positionOnboarding();
+}
+function completeOnboardingMove(){
+  if(onboardingStep!==4)return;
+  editMode=false;
+  selectItem(null);
+  setOnboardingStep(5);
+  renderUI();
+}
+$('onboarding-skip').addEventListener('click',()=>{
+  const target=onboardingTarget;
+  setOnboardingStep(6);
+  target?.focus({preventScroll:true});
 });
+$('onboarding-done').addEventListener('click',completeOnboardingMove);
+$('item-dialog').addEventListener('close',()=>{
+  syncOnboarding({reveal:onboardingStep===2});
+});
+document.addEventListener('scroll',positionOnboarding,{capture:true,passive:true});
+window.addEventListener('resize',()=>syncOnboarding());
 
 function describeState(d){return {future:'尚未開啟',current:'可領取',missed:'已錯過',owned:'已收藏'}[dayState(d)];}
 function starAboveTreeLayout(star,tree){return {...star,x:tree.x,y:tree.y-tree.h*tree.scale+star.h*star.scale*.48};}
@@ -670,6 +798,7 @@ function togglePlacement(d,{fromCollection=false}={}){
   if(!placed&&selectedDay===d)selectItem(null);
   if(Number(d)===25&&!placed)stopShow(false);
   persist();renderUI({placementDay:d});if($('item-dialog').open){if(Number(currentModalDay)===Number(d))closeDialog('item-dialog');else renderItemDialog();}drawFrame(0,performance.now());
+  if(placed&&Number(d)===1&&(onboardingStep===1||onboardingStep===2))setOnboardingStep(3);
   if(!placed)status(`「${item(d).name}」已移出水晶球。`);
   if(Number(d)===25&&placed)startShow({scrollToGlobe:!fromCollection});
 }
@@ -958,19 +1087,8 @@ mobileViewport.addEventListener('change',event=>{
   restoreMobileGlobe();
 });
 
-function syncDrawSceneKeepsakes(){
-  const revealed=previewDate?previewCalendarReveals:revealedCalendarDays;
-  const claimed=state().claimed;
-  const opened=availableDays()
-    .filter(day=>revealed.has(day)||Object.hasOwn(claimed,day)||isPlaced(day))
-    .map(day=>({day,name:item(day).name}));
-  window.DysonTestDraw.updateSceneKeepsakes(opened);
-}
-
 function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
-  syncDrawSceneKeepsakes();
-  if($('vouchers-dialog').open)renderVouchers();
 }
 function updatePlacementUI(d){
   // Keep the clicked button and the list height intact: replacing the collection
@@ -996,7 +1114,7 @@ function updatePlacementUI(d){
 function renderUI({placementDay=null}={}){
   const real=realDateISO(),effective=dateISO();if(IS_TEST)$('november-test-clock').textContent=real.startsWith('2026-11-')?`台灣 ${real.slice(5).replace('-','/')} → 活動 ${effective.slice(5).replace('-','/')} · 測試資料獨立保存，實際領取結果以恆隆行優惠券頁為準。`:'11 月測試已結束或尚未開始；保留既有測試收藏供檢查，不新增集點。';
   $('preview-banner').hidden=!previewDate;
-  if(placementDay!==null){updatePlacementUI(placementDay);syncDrawSceneKeepsakes();}
+  if(placementDay!==null)updatePlacementUI(placementDay);
   else{renderCalendar();renderCollection();renderMobileCollection();renderBenefits();}
   updateSelection();renderQuickSimulation();renderShowControls();renderMusic();
   $('edit-toggle').setAttribute('aria-pressed',String(editMode));canvas.classList.toggle('editing',editMode);
@@ -1006,7 +1124,7 @@ function renderUI({placementDay=null}={}){
   windButton.textContent=wind?'暴風雪中':'啟動 dyson 氣流倍增';
   windButton.title=wind?'關閉暴風雪':'開啟暴風雪';
   windButton.setAttribute('aria-label',wind?'暴風雪中，點選關閉':'啟動 dyson 氣流倍增');
-  updateCardEntries();renderCloud();
+  updateCardEntries();renderCloud();syncOnboarding();
 }
 function collapseSimulation(){$('quick-sim-panel').hidden=true;$('quick-sim-toggle').setAttribute('aria-expanded','false');}
 function openItem(d){
@@ -1018,9 +1136,9 @@ function openItem(d){
       revealed.add(day);
       if(!previewDate)safeWrite(calendarRevealKey,[...revealed]);
     }
-    syncDrawSceneKeepsakes();
   }
   collapseSimulation();currentModalDay=d;renderItemDialog();showDialog('item-dialog');trackActivity('gift_view',giftAnalytics(d));
+  syncOnboarding({reveal:day===1&&(onboardingStep===1||onboardingStep===2)});
 }
 function renderItemDialog(){
   if(!currentModalDay)return;const i=item(currentModalDay);$('item-day').textContent=i.starter?'YOUR STARTER SCENE':i.bonus?'EXCLUSIVE COLLECTION':`DECEMBER ${String(i.day).padStart(2,'0')}`;$('item-kind').textContent=i.product?[i.product.model,i.product.color].filter(Boolean).join(' · '):i.starter?'基礎造景 · 不計入 25 天收藏':i.bonus?`限定趣味收藏 · ${i.animal||''}`:i.effect?'雪境效果收藏':'聖誕造景收藏';$('item-title').textContent=(!i.teaser&&i.product?.detailTitle)||i.name;$('item-description').textContent=i.product?i.product.intro:i.description;
@@ -1053,12 +1171,12 @@ function renderPassport(){
   const key=eligible?(previewDate?'preview:'+cloud.email:cloudCacheKey(cloud.email)+':passport-gift-opened'):'';
   const label=expired?'已逾兌換期限':complete&&!eligible?'兌換資格確認中':progressText;
   window.DysonTestDraw.setPassportReward({ key, label, preview:!!previewDate });
-  $('voucher-passport-status').textContent=label;
-  renderAttendanceGrid($('voucher-passport-days'),dates);
-  const note=$('voucher-passport-note');
-  note.textContent=previewDate?'以下為管理員模擬結果，不計入帳號實際登入天數。':ready?'':cloud.error;
-  note.hidden=!note.textContent;
-  renderPassportCouponAction($('voucher-passport-actions'),ready,dates.length,'activity_rewards');
+  renderAttendanceGrid($('draw-passport-days'),dates);
+  const checkIn=$('draw-passport-checkin'),signedToday=participationDates().includes(dateISO());
+  const open=today()>=1&&today()<=25;
+  checkIn.hidden=eligible;
+  checkIn.disabled=cloud.loading||signedToday||!open||!!previewDate;
+  checkIn.textContent=previewDate?'管理員模擬':cloud.loading?'簽到同步中…':signedToday?'今日已簽到':open?'簽到':'簽到未開放';
   trackPassportComplete();
 }
 function trackPassportComplete(){
@@ -1073,77 +1191,22 @@ function trackPassportComplete(){
 function renderVouchers(){
   window.DysonTestDraw.syncDate(dateISO());
 }
-function jumpActivitySection(id){
-  const dialog=$('vouchers-dialog'),target=$(id);
-  const offset=dialog.scrollTop+target.getBoundingClientRect().top-
-    dialog.getBoundingClientRect().top-$('activity-dialog-top').offsetHeight-10;
-  dialog.scrollTo({top:Math.max(0,offset),behavior:'instant'});
-  target.focus({preventScroll:true});
-}
 let activityEntryPoint='activity_rewards';
-function openActivityDialog(id,{entryPoint='activity_rewards',autoplay=true}={}){
+function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
   activityEntryPoint=entryPoint;
-  moveActivityOverview('activity-overview');
-  welcomeProgressOnly=false;
-  $('welcome-title').textContent='Dyson 聖誕雪境';
-  $('progress-email-caption').textContent='Email（選填）';
-  if(!$('progress-email').value)$('progress-email').value=cloud.email;
-  renderCloud();
   renderVouchers();
   showDialog('vouchers-dialog');
-  $('welcome-play').hidden=true;
-  if(!autoplay||matchMedia('(prefers-reduced-motion: reduce)').matches){
-    $('welcome-play').textContent='播放介紹';
-    $('welcome-play').hidden=false;
-    welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');
-  }else playWelcome();
-  if(id){
-    jumpActivitySection(id);
-  }else{
-    $('vouchers-dialog').scrollTop=0;
-    $('vouchers-title').focus({preventScroll:true});
-  }
+  $('vouchers-dialog').scrollTop=0;
+  if(id)$(id).scrollIntoView({block:'nearest'});
+  $(id||'vouchers-title').focus({preventScroll:true});
+  syncOnboarding();
 }
 function setupActivityDialog(){
-  const missionTemplate=$('activity-missions-template');
-  for(const container of document.querySelectorAll('[data-activity-missions]')){
-    const copy=missionTemplate.content.cloneNode(true);
-    copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
-    for(const link of copy.querySelectorAll('.activity-jumps a'))link.classList.add('mission-card');
-    container.append(copy);
-  }
-  const ruleCopies=[];
-  for(const source of $('welcome-dialog').querySelectorAll('.welcome-rules')){
-    const copy=source.cloneNode(true);
-    if(copy.id)copy.id='activity-'+copy.id;
-    for(const node of copy.querySelectorAll('[id]'))node.id='activity-'+node.id;
-    for(const node of copy.querySelectorAll('[aria-labelledby]')){
-      node.setAttribute('aria-labelledby',node.getAttribute('aria-labelledby').split(/\s+/).map(id=>'activity-'+id).join(' '));
-    }
-    ruleCopies.push(copy);
-  }
-  $('activity-details').replaceChildren(...ruleCopies);
-  for(const link of document.querySelectorAll('.activity-jumps a')){
-    link.addEventListener('click',event=>{
-      event.preventDefault();
-      const id=link.getAttribute('href').slice(1);
-      const fromWelcome=link.closest('#welcome-dialog');
-      if(fromWelcome)return;
-      if(id==='game-calendar'){
-        closeDialog('vouchers-dialog');
-        if(mobileViewport.matches){
-          openMobileCollection();
-        }else{
-          const heading=$('game-calendar-title');
-          heading.focus({preventScroll:true});
-          $('game-calendar').scrollIntoView({block:'start',behavior:'instant'});
-        }
-      }else{
-        if(id==='activity-coupons')trackActivity('coupon_view',{entry_point:'activity_rewards'});
-        jumpActivitySection(id);
-      }
-    });
-  }
+  const container=document.querySelector('[data-activity-missions]');
+  const copy=$('activity-missions-template').content.cloneNode(true);
+  copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
+  for(const mission of copy.querySelectorAll('.activity-jumps > div'))mission.classList.add('mission-card');
+  container.append(copy);
 }
 function renderAttendanceGrid(grid,dates){
   const earned=dates.slice(0,PASSPORT_DAYS),key=earned.join(',');
@@ -1192,29 +1255,6 @@ function appendClaimLink(container,id,label,entryPoint){
  link.addEventListener('auxclick',event=>{if(event.button===1)recordClick();});
  container.append(link);
 }
-function renderPassportCouponAction(actions,ready,count,entryPoint){
- const complete=ready&&count>=PASSPORT_DAYS;
- const expired=realDateISO()>`${YEAR}-12-31`;
- const eligible=complete&&(!!previewDate||cloud.attendance?.eligible===true);
- const opened=eligible&&window.DysonTestDraw.hasOpenedPassport();
- const key=JSON.stringify([ready,Math.min(count,PASSPORT_DAYS),!!cloud.email,expired,eligible,opened]);
- if(actions.dataset.state===key)return;
- actions.dataset.state=key;
- const label=expired?'已逾兌換期限':!ready?(cloud.email?'查看保存紀錄':'輸入 Email 保存紀錄'):
-   !complete?`再累積 ${PASSPORT_DAYS-count} 天解鎖`:opened?'查看護照夾兌換券':eligible?'前往查看 5 日回禮':'兌換資格確認中';
- const button=el('button','',label);
- button.type='button';
- button.disabled=expired||(ready&&!eligible);
- if(!ready&&!expired)button.addEventListener('click',openProgress);
- if(eligible&&!expired)button.addEventListener('click',()=>{
-   trackActivity('coupon_view',{coupon_id:'visits-10',entry_point:entryPoint});
-   if($('vouchers-dialog').open)closeDialog('vouchers-dialog');
-   $('draw-passport-title').focus({preventScroll:true});
-   $('draw-passport').scrollIntoView({block:'center'});
- });
- actions.replaceChildren(button);
-}
-window.DysonTestDraw.onPassportOpened=renderPassport;
 window.DysonTestDraw.trackCoupon=id=>{
  const couponId={hd19:'product-hd19',pencilvac:'product-sv50',hj10:'product-hj10',bonus:'product-bp10',passport:'visits-10'}[id];
  if(couponId)trackActivity('coupon_click',{coupon_id:couponId,entry_point:'gift_draw'});
@@ -1746,12 +1786,12 @@ function updateSelection(){
   $('position-editor').hidden=!show;$('scene-edit-hint').hidden=show;
   if(show){$('selected-name').textContent=item(selectedDay).name;$('scale-control').value=String(getLayout(selectedDay).scale);}
 }
-function moveSelected(dx,dy){if(!editMode||!selectedDay||!isPlaced(selectedDay)||item(selectedDay).fixed)return;const l=getLayout(selectedDay);l.x+=dx;l.y+=dy;state().layouts[selectedDay]=constrain(selectedDay,l);persist();updateSelection();drawFrame(0,performance.now());}
+function moveSelected(dx,dy){if(!editMode||!selectedDay||!isPlaced(selectedDay)||item(selectedDay).fixed)return;const l=getLayout(selectedDay);l.x+=dx;l.y+=dy;state().layouts[selectedDay]=constrain(selectedDay,l);persist();updateSelection();drawFrame(0,performance.now());completeOnboardingMove();}
 canvas.addEventListener('pointerdown',e=>{const pt=pointerPoint(e),d=hitTest(pt);if(editMode&&d&&!item(d).fixed){selectItem(d);const l=getLayout(d);drag={id:e.pointerId,day:d,start:pt,offset:{x:pt.x-l.x,y:pt.y-l.y},moved:false};canvas.setPointerCapture(e.pointerId);}else drag={id:e.pointerId,day:d,start:pt,moved:false,viewOnly:true};});
 canvas.addEventListener('pointermove',e=>{const pt=pointerPoint(e);if(drag&&drag.id===e.pointerId){if(Math.hypot(pt.x-drag.start.x,pt.y-drag.start.y)>10)drag.moved=true;if(!drag.viewOnly&&drag.moved){const l=getLayout(drag.day);l.x=pt.x-drag.offset.x;l.y=pt.y-drag.offset.y;state().layouts[drag.day]=constrain(drag.day,l);drawFrame(0,performance.now());}return;}
   const d=hitTest(pt);$('scene-tip').hidden=!d;if(d){$('scene-tip').textContent=item(d).name;$('scene-tip').style.left=`${Math.max(18,Math.min(82,((pt.x/SCENE_W-.5)*SCENE_VIEW.zoom+.5+SCENE_VIEW.shiftX)*100))}%`;$('scene-tip').style.top=`${((pt.y/SCENE_H-.5)*SCENE_VIEW.zoom+.5)*100}%`;}
 });
-canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const saved=drag;drag=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(saved.moved){if(saved.day===24&&!saved.viewOnly){const star=getLayout(24),near=[2,12].filter(d=>isPlaced(d)).map(d=>getLayout(d)).map(t=>starAboveTreeLayout(star,t)).sort((a,b)=>Math.hypot(star.x-a.x,star.y-a.y)-Math.hypot(star.x-b.x,star.y-b.y))[0];if(near&&Math.hypot(star.x-near.x,star.y-near.y)<85){state().layouts[24]={...star,x:near.x,y:near.y};status('金星已放在聖誕樹頂。');}}persist();return;}if(saved.day){if(editMode)selectItem(saved.day);else openItem(saved.day);}});
+canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const saved=drag;drag=null;if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(saved.moved){if(saved.day===24&&!saved.viewOnly){const star=getLayout(24),near=[2,12].filter(d=>isPlaced(d)).map(d=>getLayout(d)).map(t=>starAboveTreeLayout(star,t)).sort((a,b)=>Math.hypot(star.x-a.x,star.y-a.y)-Math.hypot(star.x-b.x,star.y-b.y))[0];if(near&&Math.hypot(star.x-near.x,star.y-near.y)<85){state().layouts[24]={...star,x:near.x,y:near.y};status('金星已放在聖誕樹頂。');}}persist();if(!saved.viewOnly)completeOnboardingMove();return;}if(saved.day){if(editMode)selectItem(saved.day);else openItem(saved.day);}});
 canvas.addEventListener('pointercancel',()=>{drag=null;persist();});canvas.addEventListener('pointerleave',()=>{$('scene-tip').hidden=true;});
 document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||e.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;const moves={ArrowLeft:[-4,0],ArrowRight:[4,0],ArrowUp:[0,-4],ArrowDown:[0,4]};if(editMode&&selectedDay&&moves[e.key]){e.preventDefault();moveSelected(...moves[e.key].map(v=>e.shiftKey?v*3:v));}});
 function assetLabel(d){if(customAssets.has(d))return '已使用自訂圖片';if(ASSETS.sprites?.[d])return item(d).product?'已內嵌產品透明圖':'獨立透明造景素材';return item(d).effect?'程式動態效果':'已內嵌節慶素材';}
@@ -1949,6 +1989,7 @@ async function captureCardScene(){
 async function openChristmasCard(){
   if(!sceneReady||cardCapturing)return;
   collapseSimulation();const wasOpen=$('card-dialog').open;showDialog('card-dialog');
+  if(onboardingStep===5)setOnboardingStep(6);else syncOnboarding();
   if(mobileViewport.matches&&!wasOpen)$('card-dialog').scrollTop=0;
   if(!wasOpen){
     cardFormReadyTracked=false;
@@ -2040,11 +2081,15 @@ $('draw-create').addEventListener('click',openChristmasCard);
 for(const [id,dialog,heading,section] of [
   ['draw-from-card','card-dialog','draw-heading','draw-card'],
   ['draw-from-vouchers','vouchers-dialog','draw-heading','draw-card'],
-  ['wallet-from-vouchers','vouchers-dialog','draw-coupons','draw-coupons'],
+  ['passport-from-vouchers','vouchers-dialog','draw-passport-title','draw-passport'],
+  ['calendar-from-vouchers','vouchers-dialog','game-calendar-title','game-calendar'],
 ]){
   $(id).addEventListener('click',()=>{
     closeDialog(dialog);
-    $(heading).focus({preventScroll:true});
+    if(id==='calendar-from-vouchers'&&mobileViewport.matches){
+      $('mobile-calendar-toggle').setAttribute('aria-expanded','true');
+      $('mobile-calendar-toggle').focus({preventScroll:true});
+    }else $(heading).focus({preventScroll:true});
     $(section).scrollIntoView({block:'start'});
     if(id==='draw-from-card')window.DysonTestDraw.openResult();
   });
@@ -2512,7 +2557,7 @@ $('today-open').addEventListener('click',()=>{
 });
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
 $('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();drawFrame(0,performance.now());});
-$('edit-toggle').addEventListener('click',()=>{editMode=!editMode;if(!editMode)selectItem(null);else status('選取球內物件後拖曳。動物與一般造景可往球內上方移動，產品與雪丘保持靠近球底。');renderUI();});
+$('edit-toggle').addEventListener('click',()=>{editMode=!editMode;if(!editMode)selectItem(null);else status('選取球內物件後拖曳。動物與一般造景可往球內上方移動，產品與雪丘保持靠近球底。');renderUI();if(editMode&&onboardingStep===3)setOnboardingStep(4);else if(!editMode&&onboardingStep===4)completeOnboardingMove();});
 $('motion-toggle').addEventListener('click',()=>{motion=!motion;if(!motion)wind=false;renderUI();drawFrame(0,performance.now());});
 $('reset-layout').addEventListener('click',()=>{state().layouts={};persist();updateSelection();status('已還原預設位置，收藏與領取紀錄保留。');});
 $('scale-control').addEventListener('input',e=>{if(!selectedDay)return;const l=getLayout(selectedDay);l.scale=Number(e.target.value);state().layouts[selectedDay]=constrain(selectedDay,l);persist();drawFrame(0,performance.now());});
@@ -2521,7 +2566,7 @@ $('selected-detail').addEventListener('click',()=>{if(selectedDay)openItem(selec
 $('item-placement').addEventListener('click',()=>{
   if(!currentModalDay)return;
   togglePlacement(currentModalDay);
-  if(mobileViewport.matches&&!$('mobile-collection').open)$('globe-wrapper').scrollIntoView({block:'start'});
+  if(mobileViewport.matches&&!$('mobile-collection').open&&onboardingStep!==3)$('globe-wrapper').scrollIntoView({block:'start'});
 });
 $('item-position').addEventListener('click',()=>{if(!currentModalDay||!isPlaced(currentModalDay))return;const d=currentModalDay;if(d===25){startShow();return;}editMode=true;selectItem(d);closeDialog('item-dialog');closeDialog('mobile-collection');restoreMobileGlobe();renderUI();$('globe-wrapper').scrollIntoView({behavior:'smooth',block:'center'});});
 function renderAudioEntry(){
@@ -2543,8 +2588,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('audio-panel').h
 document.addEventListener('focusin',e=>{if(!e.target.closest('.audio-menu'))closeAudioPanel();});
 setupActivityDialog();
 $('vouchers-open').addEventListener('click',()=>openActivityDialog());
-$('draw-passport-details').addEventListener('click',()=>openActivityDialog('activity-attendance',{entryPoint:'wallet',autoplay:false}));
-$('voucher-passport-image').src=ASSETS.rewardImages.passport;
+$('draw-passport-checkin').addEventListener('click',()=>{
+  if(!cloud.email){openProgress();return;}
+  void cloudConnect(cloud.email,undefined,{userInitiated:true}).catch(openProgress);
+});
+for(const id of ['vouchers-dialog','card-dialog','mobile-collection','admin-auth-dialog']){
+  $(id).addEventListener('close',()=>syncOnboarding());
+}
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});
 $('preview-exit').addEventListener('click',exitPreview);
 $('preview-fill').addEventListener('click',()=>fillPreviewTo($('preview-date').value));
@@ -2563,7 +2613,7 @@ $('config-save').addEventListener('click',()=>{try{applyConfig(JSON.parse($('con
 $('config-reset').addEventListener('click',()=>{settings={};rewardSettings={};safeWrite(STORAGE_PREFIX+'config',settings);safeWrite(STORAGE_PREFIX+'rewards-v2',rewardSettings);renderUI();renderStudio();$('config-status').textContent='已還原內容草案，收藏紀錄與圖片保留。';});
 $('studio-export').addEventListener('click',exportConfig);
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeDialog(b.dataset.close)));
-document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){if(d.id==='welcome-dialog'&&!welcomeProgressOnly)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){if(d.id==='welcome-dialog')return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('globe-wrapper'));
 let lastDay=dateISO();setInterval(()=>{if(cloud.isAdmin&&cloud.adminToken&&Date.now()+cloud.offset>=cloud.adminSessionExpiresAt){cloudRequireAdminAuth({message:'管理員驗證已到期，請重新輸入驗證碼。'});return;}if(previewDate||document.hidden)return;const next=dateISO();if(next!==lastDay){lastDay=next;renderUI();if($('item-dialog').open&&currentModalDay&&dayState(currentModalDay)!=='owned')closeDialog('item-dialog');status('新的一天開始了，今天以前的物件皆已開放。');if(cloud.ready)cloudConnect(cloud.email).catch(()=>{});}},10000);
 async function initialise(){
@@ -2576,6 +2626,7 @@ async function initialise(){
   sprites.clear();
   for(const [d,src] of Object.entries(ASSETS.custom||{}))if(ownedDays().includes(Number(d)))try{customAssets.set(Number(d),{src,image:await imageLoad(src)});}catch{}
   sceneReady=true;timing.sceneReadyMs=Math.round(performance.now()-timing.started);renderUI();resize();syncGlobeAnimation();
+  if(onboardingStep===2&&!isPlaced(1)&&dayState(1)==='owned'&&!document.querySelector('dialog[open]'))await openDay(1);
   openDatabase().then(()=>{sprites.clear();renderUI();drawFrame(0,performance.now());}).catch(()=>{});
  }catch(error){$('scene-loading').hidden=false;$('scene-loading').classList.remove('is-busy');$('scene-loading').textContent='素材尚未載入，請重新整理。';status(error.message,{persistent:true});}
 }

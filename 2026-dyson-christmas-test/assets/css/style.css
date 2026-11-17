@@ -403,10 +403,11 @@ button,input,textarea,select{line-height:1.5}
 
 @media(max-width:1000px){.calendar-heading{grid-template-columns:minmax(0,1fr);gap:10px}.calendar-title-row{justify-content:space-between;gap:7px}.calendar-tools{flex-direction:row;align-items:center;justify-content:space-between;margin-left:0;width:100%;gap:8px;flex-wrap:wrap}}
 
-/* v38: logical reading order is write, preview, then format and sharing. */
-.card-workspace{row-gap:0}.card-form-fields,.card-export-panel{min-width:0}.card-form-fields{grid-column:1;grid-row:1}.card-preview-column{grid-column:2;grid-row:1/span 2;align-self:start;min-width:0}.card-export-panel{grid-column:1;grid-row:2}.card-result-actions{min-width:0}
+.card-editor-column,.card-form-fields,.card-export-panel,.card-preview-column,.card-result-actions{min-width:0}
+.card-editor-column .card-field:last-child{margin-bottom:0}
+.card-editor-column .card-media-options{margin-top:12px;padding-top:8px}
 #card-preview-note:empty,.card-status:empty{display:none}
-@media(max-width:760px){.card-workspace{row-gap:20px}.card-form-fields{grid-column:1;grid-row:1}.card-preview-column{grid-column:1;grid-row:3}.card-export-panel{grid-column:1;grid-row:2}.card-export-panel .card-media-options{margin-top:0;padding-top:0;border-top:0}}
+@media(max-width:760px){.card-workspace{row-gap:20px}.card-export-panel .card-media-options{margin-top:12px;padding-top:0;border-top:0}}
 
 /* v38: homepage reward summaries keep only the benefit, product and entry. */
 .benefit-card.compact-reward{gap:12px;padding:18px 15px}
@@ -788,13 +789,13 @@ button,input,textarea,select{line-height:1.5}
 .activity-intro-description { margin: 0 0 10px; color: #c9c9cc; font-size: 14px; line-height: 1.6; }
 .activity-intro-description span { display: block; }
 .activity-jumps .mission-primary { grid-column: 1 / -1; }
-.activity-jumps a {
+.activity-jumps > :is(a, .mission-card) {
   display: grid; align-content: center; min-height: 52px; padding: 7px 11px;
   border: 1px solid var(--line); border-radius: 6px; background: #101d2c;
   color: var(--gold); font-size: 13px; line-height: 1.4; text-decoration: none;
 }
-.activity-jumps a span { color: var(--text); }
-.activity-jumps a:hover { border-color: var(--gold); }
+.activity-jumps > :is(a, .mission-card) span { color: var(--text); }
+
 .activity-jumps .mission-primary {
   min-height: 63px; background: #e6c38b; color: #172332;
   font-size: 15px; font-weight: 700;
@@ -804,7 +805,6 @@ button,input,textarea,select{line-height:1.5}
 .welcome-dialog.progress-only [data-activity-missions] { display: none; }
 .ticket-icon { margin-inline-end: 6px; vertical-align: -2px; }
 .activity-attendance { margin-top: 20px; }
-#voucher-passport-days { margin: 12px 0 0; }
 @media (min-width: 761px) {
   #game-calendar { scroll-margin-top: 88px; }
 }
@@ -1194,3 +1194,28 @@ button,input,textarea,select{line-height:1.5}
     font-size: 13px;
   }
 }
+
+.activity-how-to { display: grid; gap: 16px; }
+.activity-how-to > section + section { padding-top: 14px; border-top: 1px solid var(--line); }
+.activity-how-to .activity-section-title { margin-bottom: 5px; }
+.activity-how-to .voucher-instructions { margin: 0 0 9px; }
+.activity-how-to button { min-height: 42px; }
+
+.onboarding-guide {
+  position: fixed;
+  z-index: 35;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 24px));
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #ebc786;
+  border-radius: 9px;
+  background: #142338;
+  color: #f7ecd7;
+  box-shadow: 0 7px 24px #0008;
+  font-size: 14px;
+}
+.onboarding-guide p { margin: 0; }
+.onboarding-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.onboarding-actions button { padding: 4px 8px; font-size: 13px; }
+.onboarding-target { outline: 2px solid #ffe1a1 !important; outline-offset: 3px; }

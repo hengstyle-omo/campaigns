@@ -5,7 +5,7 @@
   const dateKey = 'dyson-christmas-test-v2-date';
   const drawKey = 'dyson-christmas-test-v2-gifts';
   const giftOpeningDuration = 800;
-  const giftFlightDuration = 1100;
+  const giftFlightDuration = 2800;
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
@@ -64,11 +64,6 @@
   const stage = byId('draw-stage');
   stage.style.setProperty('--draw-touch-preview', touchPreviewDuration + 'ms');
   stage.style.setProperty('--draw-flight-duration', giftFlightDuration + 'ms');
-  const keepsakeResult = byId('draw-keepsake-result');
-  const keepsakePreview = byId('draw-keepsake-preview');
-  const keepsakeName = byId('draw-keepsake-name');
-  const sceneDirectory = new URL('./assets/images/scene/', document.baseURI);
-  let sceneKeepsakes = [];
   const simulate = byId('draw-simulate');
   const reset = byId('draw-reset');
   const validDate = value => /^2026-12-\d{2}$/.test(value ?? '') && value >= start && value <= end;
@@ -78,7 +73,6 @@
   let activeDate = '';
   let pending = null;
   let actionError = '';
-  let wonCount = 0;
   let passport = {};
   let passportOpening = null;
   const previewOpened = new Set();
@@ -178,9 +172,8 @@
   function renderWallet(days) {
     const wins = new Map(Object.entries(days).map(([day, record]) => [record.result?.prize, day]));
     const coupons = Object.entries(prizes);
-    wonCount = coupons.filter(([id]) => wins.has(id)).length;
+    const wonCount = coupons.filter(([id]) => wins.has(id)).length;
     byId('draw-count').textContent = '已抽中 ' + wonCount + '／' + coupons.length + ' 張';
-    updateBadge();
 
     wallet.replaceChildren(...coupons.map(([id, { name }]) => {
       const coupon = document.createElement('article');
@@ -224,10 +217,6 @@
     }));
   }
 
-  function updateBadge() {
-    byId('voucher-count').textContent = wonCount + Number(Boolean(passport.key));
-  }
-
   function hasOpenedPassport() {
     if (!passport.key) return false;
     if (passport.preview) return previewOpened.has(passport.key);
@@ -248,7 +237,6 @@
     if (opened && !passport.preview) passportTicket.href = prizeURL('passport');
     else passportTicket.removeAttribute('href');
     byId('draw-passport-cta').textContent = passport.preview ? '管理員模擬 · 領券連結預覽' : '領取兌換券 ↗';
-    updateBadge();
   }
 
   function setPassportReward(state) {
@@ -272,7 +260,6 @@
     passportOpening = null;
     renderPassport();
     if (passport.key === key) {
-      window.DysonTestDraw.onPassportOpened?.();
       if (!passport.preview) passportTicket.focus({ preventScroll: true });
     }
   });
@@ -376,38 +363,6 @@
     appliedLayout = key;
   }
 
-  function updateSceneKeepsakes(openedItems) {
-    const items = [];
-    for (const { day, name } of openedItems) {
-      if (!Number.isInteger(day) || day < 1 || day > 25) continue;
-      const source = window.DYSON_ASSETS.sprites?.[day] ?? window.DYSON_ASSETS.effectThumbnails?.[day];
-      if (!source) continue;
-      const url = new URL(source, document.baseURI);
-      if (url.origin === sceneDirectory.origin && url.pathname.startsWith(sceneDirectory.pathname)) {
-        items.push({ day, name, image: url.href });
-      }
-    }
-    if (JSON.stringify(items) === JSON.stringify(sceneKeepsakes)) return;
-    sceneKeepsakes = items;
-    render();
-  }
-
-  function renderKeepsake(show, selected) {
-    const day = Number(activeDate.slice(-2));
-    const eligible = show ? sceneKeepsakes.filter(item => item.day <= day) : [];
-    const keepsake = eligible.length ? eligible[(day + selected) % eligible.length] : null;
-    keepsakeResult.hidden = !keepsake;
-    byId('draw-discovery-title').textContent = keepsake ? '你拆到了一份聖誕小禮物！' : '今日 Dyson 小知識';
-    byId('draw-fact-title').hidden = !keepsake;
-    if (!keepsake) {
-      keepsakePreview.removeAttribute('src');
-      keepsakeName.textContent = '';
-      return;
-    }
-    if (keepsakePreview.getAttribute('src') !== keepsake.image) keepsakePreview.src = keepsake.image;
-    keepsakeName.textContent = keepsake.name;
-  }
-
   function render() {
     const { days } = readDraw();
     const pool = availablePrizes(days, activeDate);
@@ -434,7 +389,6 @@
     }
     giftGroup.classList.toggle('draw-ready', canOpen);
     renderFact(played && !opening && !prize, days);
-    renderKeepsake(played && !opening && !prize, selected);
     floatedTicket.hidden = !prize;
     if (prize) {
       floatedTicket.dataset.box = String(selected);
@@ -512,7 +466,7 @@
     const draw = readDraw();
     const day = draw.days[date];
     const pool = availablePrizes(draw.days, date);
-    if (!day || day.result) return false;
+    if (!day || day.result) return null;
 
     // Keep the original position on unopened days saved before two boxes could win.
     day.winningBoxes ??= chooseWinningBoxes(day.winningBox ?? day.winningGift);
@@ -525,7 +479,7 @@
     day.layout ??= currentGiftLayout(date, day);
     day.result = { selected: index, prize: prize ?? null };
     if (!prize) day.result.fact = factIndex(date, draw.days);
-    return saveDraw(draw);
+    return saveDraw(draw) ? day.result : null;
   }
 
   async function openGift(index, pointerType) {
@@ -535,7 +489,7 @@
     const attempt = { date: activeDate, choice: mode.value, index, touch };
     pending = attempt;
     const restoreFocus = document.activeElement === gifts[index];
-    let recorded = false;
+    let recorded = null;
     try {
       recorded = await withDrawLock(() => record(attempt));
       if (recorded) {
@@ -543,7 +497,7 @@
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
           await new Promise(resolve => setTimeout(resolve, duration));
-          if (activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          if (recorded.prize && activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
             stage.classList.add('draw-flying');
             const flight = flyover.getAnimations?.().find(animation => animation.animationName === 'draw-fly-past');
             if (flight) await flight.finished.catch(() => {});
@@ -610,7 +564,6 @@
     if (event.key === drawKey || event.key === null) render();
     if (event.key === passport.key || event.key === null) {
       renderPassport();
-      window.DysonTestDraw.onPassportOpened?.();
     }
   });
   function syncDate(date) {
@@ -630,7 +583,7 @@
       showError();
     }
   });
-  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, updateSceneKeepsakes, setPassportReward, hasOpenedPassport, openResult };
+  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, setPassportReward, hasOpenedPassport, openResult };
   renderPassport();
   render();
 })();
