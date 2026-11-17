@@ -6,8 +6,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
-<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v117-consolidated">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v118-coupons">
+<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v119-welcome-9x16">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v119">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -21,11 +21,37 @@
    <div><b class="mission-number">03</b><strong>獨家好禮</strong><span>每日簽到<br>累積打卡</span></div>
   </nav>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v118</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<template id="activity-rules-template">
+  <section class="activity-rules-section">
+   <h3>活動時間｜2026.12.01－12.25</h3>
+   <p>每日解鎖聖誕驚喜，打造專屬 Dyson 聖誕水晶球！</p>
+   <p>活動期間每日 00:00（UTC+8）解鎖全新聖誕裝飾，可自由選擇當日及先前已解鎖的物件，打造專屬聖誕雪境。尚未開放的日期將維持鎖定，已解鎖的裝飾可於活動期間隨時使用，重新布置水晶球。</p>
+  </section>
+  <section class="activity-rules-section">
+   <h3 data-activity-coupon-heading>聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
+   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。12/20 起加入任一商品優惠券。活動期間，每位會員每款優惠券限領一次。</p>
+   <p>抽中後，請儘速點選「立即領取優惠券」，前往恆隆行線上購完成領取。尚未成為會員，可透過同一連結註冊，完成後即可領券。領取成功後，可到「會員優惠券」查看與使用。</p>
+  </section>
+  <section class="activity-rules-section">
+   <h3>每日簽到｜累積打卡紀錄</h3>
+   <p>簽到方式與兌換條件請見首頁「打卡好禮」。</p>
+  </section>
+  <section class="activity-rules-section">
+   <h3>活動紀錄｜保存專屬聖誕進度</h3>
+   <p>無須填寫 Email 即可體驗聖誕水晶球活動。</p>
+   <p>如欲保存參與天數及好禮資格，請至首頁「打卡好禮」填寫正確 Email 並保存紀錄。下次使用相同 Email，即可接續活動進度。</p>
+   <p>水晶球內的裝飾擺放位置僅保留於當次操作頁面，重新進入活動時將恢復預設布置。</p>
+   <p>Dyson 新品與優惠資訊訂閱採自由選擇，不影響活動參與及好禮資格；已保存進度者，調整訂閱意願後將即時更新。</p>
+  </section>
+</template>
+<template id="activity-notices-template">
+ <ol><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol>
+</template>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v119</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
   <h2 id="welcome-title">Dyson 聖誕雪境</h2>
-  <div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="5 秒玩法介紹與雪境示意"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div>
+  <div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="聖誕活動玩法介紹"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div>
   <div class="welcome-intro">
    <div data-activity-missions="welcome-description"></div>
    
@@ -33,29 +59,9 @@
   </div>
  </div></div>
  <details class="welcome-rules"><summary id="welcome-rules-title">活動辦法</summary><div class="welcome-rules-content">
-  <section class="activity-rules-section" aria-labelledby="rules-period">
-   <h3 id="rules-period">活動時間｜2026.12.01－12.25</h3>
-   <p>每日解鎖聖誕驚喜，打造專屬 Dyson 聖誕水晶球！</p>
-   <p>活動期間每日 00:00（UTC+8）解鎖全新聖誕裝飾，可自由選擇當日及先前已解鎖的物件，打造專屬聖誕雪境。尚未開放的日期將維持鎖定，已解鎖的裝飾可於活動期間隨時使用，重新布置水晶球。</p>
-  </section>
-  <section class="activity-rules-section" aria-labelledby="rules-coupons">
-   <h3 id="rules-coupons">聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
-   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。12/20 起加入任一商品優惠券。活動期間，每位會員每款優惠券限領一次。</p>
-   <p>※ 抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
-  </section>
-  <section class="activity-rules-section" aria-labelledby="rules-passport">
-   <h3 id="rules-passport">每日簽到｜累積打卡紀錄</h3>
-   <p>簽到方式與兌換條件請見首頁「打卡好禮」。</p>
-  </section>
-  <section class="activity-rules-section" aria-labelledby="rules-progress">
-   <h3 id="rules-progress">活動紀錄｜保存專屬聖誕進度</h3>
-   <p>無須填寫 Email 即可體驗聖誕水晶球活動。</p>
-   <p>如欲保存參與天數及好禮資格，請至首頁「打卡好禮」填寫正確 Email 並保存紀錄。下次使用相同 Email，即可接續活動進度。</p>
-   <p>水晶球內的裝飾擺放位置僅保留於當次操作頁面，重新進入活動時將恢復預設布置。</p>
-   <p>Dyson 新品與優惠資訊訂閱採自由選擇，不影響活動參與及好禮資格；已保存進度者，調整訂閱意願後將即時更新。</p>
-  </section>
+  <div data-activity-rules></div>
  </div></details>
- <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><ol id="activity-notices-list"><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol></div></details>
+ <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><div data-activity-notices></div></div></details>
  <p class="november-test-notice">測試版提醒：本頁以 11/01–11/25 模擬 12/01–12/25，進度獨立保存。實際領取結果以恆隆行優惠券頁為準。</p>
 </dialog>
 <dialog id="admin-auth-dialog" class="admin-auth-dialog" aria-labelledby="admin-auth-title" aria-describedby="admin-auth-description">
@@ -140,7 +146,7 @@
   <section aria-labelledby="draw-wallet-prizes">
     <h4 id="draw-wallet-prizes" class="draw-wallet-heading">抽獎優惠券 <span id="draw-count"></span></h4>
     <div id="draw-wallet"></div>
-    <p class="draw-muted draw-wallet-note">抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
+    <p class="draw-muted draw-wallet-note">抽中後，請儘速點選「立即領取優惠券」，前往恆隆行線上購完成領取。尚未成為會員，可透過同一連結註冊，完成後即可領券。領取成功後，可到「會員優惠券」查看與使用。</p>
   </section>
 </section>
 <section id="draw-passport" class="draw-passport" aria-labelledby="draw-passport-title">
@@ -174,12 +180,22 @@
 </section>
 <dialog id="draw-prize" class="draw-result-dialog" aria-labelledby="draw-prize-name">
   <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
-  <p id="draw-prize-won-label" class="draw-prize-won-label" hidden>恭喜抽中！</p>
   <div class="draw-result-ticket">
+    <p id="draw-prize-won-label" class="draw-prize-won-label" hidden>恭喜抽中！</p>
     <h3 id="draw-prize-name">Dyson <strong>$1,000</strong> 優惠券</h3>
-    <p id="draw-prize-kind"></p>
-    <a id="draw-prize-claim" class="gold-button" target="_blank" rel="noopener noreferrer" hidden>領取優惠券 ↗</a>
+    <figure class="draw-prize-product">
+      <img id="draw-prize-image" alt="" width="88" height="88" hidden>
+      <figcaption id="draw-prize-kind"></figcaption>
+    </figure>
+    <a id="draw-prize-claim" class="gold-button" target="_blank" rel="noopener noreferrer" hidden>立即領取優惠券 ↗</a>
   </div>
+  <section id="draw-prize-info" class="draw-prize-info" aria-labelledby="draw-prize-info-title" hidden>
+    <h3 id="draw-prize-info-title">適用商品介紹</h3>
+    <p id="draw-prize-intro"></p>
+    <h4 id="draw-prize-features-title">產品亮點</h4>
+    <ul id="draw-prize-features"></ul>
+    <a id="draw-prize-product-link" target="_blank" rel="noopener noreferrer">了解產品詳情 ↗</a>
+  </section>
 </dialog>
 <dialog id="draw-discovery" class="draw-result-dialog draw-discovery" aria-labelledby="draw-discovery-title" aria-describedby="draw-miss-copy">
   <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
@@ -247,21 +263,14 @@
   </div>
  </header>
  <div class="activity-dialog-body activity-how-to">
-  <section aria-labelledby="activity-calendar">
-   <h3 id="activity-calendar" class="activity-section-title">佈置水晶球</h3>
-   <p class="voucher-instructions">每天解鎖聖誕收藏，選擇喜歡的物件放入水晶球，再製作專屬聖誕卡片。</p>
+  <div data-activity-missions="activity-description" class="activity-missions-overview"></div>
+  <div class="activity-how-to-actions">
    <button id="calendar-from-vouchers" type="button">前往每日解鎖</button>
-  </section>
-  <section aria-labelledby="activity-coupons">
-   <h3 id="activity-coupons" class="activity-section-title" tabindex="-1">拆禮物抽優惠券</h3>
-   <p class="voucher-instructions">當天製作聖誕卡片並下載或分享圖片，即可拆一份禮物，有機會抽到 Dyson $1,000 優惠券。活動期間，每位會員每款優惠券限領一次。</p>
    <button id="draw-from-vouchers" type="button">前往拆禮物</button>
-  </section>
-  <section aria-labelledby="activity-attendance">
-   <h3 id="activity-attendance" class="activity-section-title">每日簽到</h3>
-   <p class="voucher-instructions">到首頁「打卡好禮」簽到，查看打卡進度與兌換方式。</p>
    <button id="passport-from-vouchers" type="button">前往打卡好禮</button>
-  </section>
+  </div>
+  <div class="welcome-rules-content" data-activity-rules data-coupon-heading-id="activity-coupons"></div>
+  <details class="welcome-rules"><summary>注意事項</summary><div class="welcome-rules-content" data-activity-notices></div></details>
  </div>
 </dialog>
 
@@ -288,6 +297,6 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v118-coupons"></script>
-<script src="./assets/js/app.js?v=20261117-v117-consolidated"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v119"></script>
+<script src="./assets/js/app.js?v=20261117-v119-welcome-ff0d4776"></script>
 </body></html>

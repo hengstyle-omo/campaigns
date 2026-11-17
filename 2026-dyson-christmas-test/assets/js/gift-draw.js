@@ -10,7 +10,7 @@
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
     hd19: { rewardId: 'product-hd19', name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
-    pencilvac: { rewardId: 'product-sv50', name: 'PencilVac筆型吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
+    pencilvac: { rewardId: 'product-sv50', name: 'Dyson PencilVac 筆形吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
     hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
     bonus: { rewardId: 'product-bp10', name: '任一 Dyson 品項優惠券', image: './assets/images/brand/dyson-logo-white.png' },
   };
@@ -261,6 +261,33 @@
 
     const name = id === 'bonus' ? '任一 Dyson 商品' : prizes[id].name;
     byId('draw-prize-kind').textContent = '適用商品｜' + name;
+    const { product } = prizeDetailsById[id];
+    const image = byId('draw-prize-image');
+    image.hidden = id === 'bonus';
+    if (image.hidden) image.removeAttribute('src');
+    else image.src = prizeArt(id);
+
+    const intro = byId('draw-prize-intro');
+    intro.textContent = product?.intro?.split('點選放進雪境')[0].trim() || '';
+    intro.hidden = !intro.textContent;
+    const features = (product?.features || []).map(feature => {
+      const item = document.createElement('li');
+      item.textContent = feature;
+      return item;
+    });
+    const list = byId('draw-prize-features');
+    list.replaceChildren(...features);
+    list.hidden = !features.length;
+    byId('draw-prize-features-title').hidden = list.hidden;
+    const link = byId('draw-prize-product-link');
+    const url = validatedProductURL(product?.url);
+    link.hidden = !url;
+    if (url) link.href = url;
+    else link.removeAttribute('href');
+    const info = byId('draw-prize-info');
+    info.hidden = intro.hidden && list.hidden && link.hidden;
+    prizeCard.classList.toggle('draw-with-product-info', !info.hidden);
+
     byId('draw-prize-won-label').hidden = !claimable;
     prizeClaim.hidden = !claimable;
     if (claimable) prizeClaim.href = prizeURL(id);

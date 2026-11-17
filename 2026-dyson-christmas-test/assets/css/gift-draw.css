@@ -336,7 +336,7 @@
 .draw-result-dialog::backdrop { background: #07101bce; }
 .draw-result-close { position: absolute; inset: 8px 8px auto auto; margin: 0; }
 .draw-result-close button { min-width: 36px; min-height: 36px; padding: 0; font-size: 1.4rem; line-height: 1; }
-.draw-prize-won-label { margin: 0; color: #f6d597; font-weight: 700; }
+.draw-result-ticket .draw-prize-won-label { color: #794917; font-weight: 700; }
 .draw-coupon a:not(.gold-button) { color: #f6d597; text-underline-offset: .18em; }
 .draw-result-ticket {
   display: grid;
@@ -354,8 +354,26 @@
 .draw-result-ticket p { margin: 0; font-size: .9rem; }
 .draw-result-ticket a { padding: 8px 16px; text-decoration: none; }
 .draw-result-dialog [hidden], .draw-actions [hidden] { display: none; }
-.draw-discovery h3 { color: #f7dba4; margin: 0; }
-.draw-discovery p { margin: 0; line-height: 1.6; }
+#draw-prize { grid-template-areas: "ticket" "info"; }
+.draw-result-ticket { grid-area: ticket; }
+.draw-prize-product { display: grid; justify-items: center; gap: 6px; margin: 0; font-size: .9rem; }
+.draw-prize-product img { display: block; object-fit: contain; }
+.draw-prize-info {
+  grid-area: info; justify-self: stretch; align-self: center; min-width: 0;
+  color: #e1e6ee; text-align: left; line-height: 1.6;
+}
+.draw-prize-info :is(h3, h4, p, ul) { margin: 0 0 8px; }
+.draw-prize-info :is(h3, h4) { color: #f7dba4; font-size: 1rem; }
+.draw-prize-info ul { padding-inline-start: 1.35rem; }
+.draw-prize-info a { color: #f7dba4; }
+@media (min-width: 660px) {
+  #draw-prize.draw-with-product-info {
+    width: min(760px, calc(100% - 24px)); grid-template-areas: "info ticket";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px;
+  }
+}
+.draw-discovery h3 { color: #c6d0db; margin: 0; font-size: 1rem; font-weight: 500; }
+.draw-discovery p { color: #f7dba4; margin: 0; font-size: clamp(1.25rem, 5vw, 1.55rem); font-weight: 700; line-height: 1.55; }
 
 .draw-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 10px; }
 .draw-actions a { color: #f6d597; }

@@ -601,8 +601,8 @@ function showDialog(id){const d=$(id);if(!d.open){d.showModal();if(id==='voucher
 
 // The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
-const welcomeVideoSrc='./assets/video/dyson_2026_xmas_welcome.mp4';
-const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.webp';
+const welcomeVideoSrc='./assets/video/dyson_2026_xmas_welcome.mp4?v=20261117-0c318171';
+const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.jpg?v=20261117-ff0d4776';
 let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
@@ -1202,11 +1202,25 @@ function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
   syncOnboarding();
 }
 function setupActivityDialog(){
-  const container=document.querySelector('[data-activity-missions]');
-  const copy=$('activity-missions-template').content.cloneNode(true);
-  copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
-  for(const mission of copy.querySelectorAll('.activity-jumps > div'))mission.classList.add('mission-card');
-  container.append(copy);
+  for(const container of document.querySelectorAll('[data-activity-missions]')){
+    const copy=$('activity-missions-template').content.cloneNode(true);
+    copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
+    for(const mission of copy.querySelectorAll('.activity-jumps > div'))mission.classList.add('mission-card');
+    container.append(copy);
+  }
+  for(const container of document.querySelectorAll('[data-activity-rules]')){
+    const copy=$('activity-rules-template').content.cloneNode(true);
+    const headingId=container.dataset.couponHeadingId;
+    if(headingId){
+      const heading=copy.querySelector('[data-activity-coupon-heading]');
+      heading.id=headingId;
+      heading.tabIndex=-1;
+    }
+    container.append(copy);
+  }
+  for(const container of document.querySelectorAll('[data-activity-notices]')){
+    container.append($('activity-notices-template').content.cloneNode(true));
+  }
 }
 function renderAttendanceGrid(grid,dates){
   const earned=dates.slice(0,PASSPORT_DAYS),key=earned.join(',');
