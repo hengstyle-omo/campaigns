@@ -23,22 +23,7 @@
   width: 100%;
   aspect-ratio: 1.66;
   overflow: clip;
-  background:
-    radial-gradient(ellipse at 50% 48%, #304764 0%, #192c43 36%, #142231 72%);
-}
-.draw-stage::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 76% -14% -27%;
-  border-radius: 50% 50% 0 0 / 50% 50% 0 0;
-  background:
-    radial-gradient(ellipse at 28% 30%, #fcfdffbc, transparent 31%),
-    radial-gradient(ellipse at 70% 24%, #a0b8d48c, transparent 25%),
-    radial-gradient(ellipse at 65% 48%, #f7faffc7, transparent 34%),
-    radial-gradient(ellipse at 32% 44%, #a7bed685, transparent 28%),
-    repeating-conic-gradient(from 25deg, #fff8ea80 0% 14%, #d3e2ef50 14% 27%, #3b557425 27% 48%) 0 0 / 5px 5px,
-    linear-gradient(179deg, #f8fbff 3%, #e1ebf6 34%, #becfe2 58%, #90a8c3 100%);
+  background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
 }
 .draw-tree, .draw-gifts { position: absolute; }
 .draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }
@@ -64,18 +49,6 @@
   object-fit: contain;
   transform: translateX(-50%);
   filter: brightness(0) saturate(100%) invert(94%) sepia(32%) saturate(682%) hue-rotate(320deg) brightness(103%) contrast(98%) drop-shadow(0 0 2px #fffaf1b3) drop-shadow(0 0 8px #ffc17d66);
-}
-.draw-stage::before {
-  content: "";
-  position: absolute;
-  z-index: -2;
-  inset: 26% 0 9%;
-  background:
-    url("../images/scene/day-02-fir-tree.webp") 7% 88% / 13% auto no-repeat,
-    url("../images/scene/day-02-fir-tree.webp") 92% 89% / 17% auto no-repeat,
-    url("../images/scene/day-02-fir-tree.webp") 20% 78% / 8% auto no-repeat,
-    url("../images/scene/day-02-fir-tree.webp") 79% 83% / 10% auto no-repeat;
-  opacity: .30;
 }
 .draw-tree-lights {
   position: absolute;
@@ -362,7 +335,7 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 
 @media (max-width: 560px) {
   .draw-copy { padding-top: 18px; }
-  .draw-stage { aspect-ratio: 1.07; }
+  .draw-stage { aspect-ratio: 1.07; background-size: 100% 100%; }
   .draw-gifts .draw-gift { width: calc(var(--size) + 4%); }
   .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 76%; }
   .draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 65%; }
