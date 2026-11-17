@@ -112,15 +112,17 @@
 @keyframes draw-tree-twinkle { 0%, 100% { opacity: 1; } 45% { opacity: .4; } }
 .draw-gifts { inset: 0; }
 .draw-gifts .draw-gift {
-  --mouth-y: 48%;
+  --mouth-y: 53%;
+  --gift-seam: 0% 48.5%, 14% 49.8%, 76% 53.5%, 91% 41.8%, 100% 39%;
+  --gift-lip: 14% 49.8%, 31% 39%, 91% 41.8%, 76% 53.5%;
   position: absolute;
   top: calc(var(--y) + var(--gift-y-offset, 0%));
   left: calc(var(--x) + var(--gift-x-offset, 0%));
-  width: calc(var(--size) * var(--gift-scale, 1));
+  width: calc(100% * var(--size));
   min-width: 0;
   min-height: 0;
   height: auto;
-  aspect-ratio: var(--gift-ratio, 945 / 960);
+  aspect-ratio: 945 / 960;
   margin: 0;
   padding: 0;
   overflow: visible;
@@ -131,11 +133,11 @@
   transform: translate(-50%, -50%) rotate(var(--angle));
   appearance: none;
 }
-.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 29%; --y: 69%; --size: 13%; --angle: -7deg; }
-.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 76%; --y: 69%; --size: 12.5%; --angle: 8deg; }
-.draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 15%; --y: 86%; --size: 15%; --angle: -5deg; }
-.draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 63%; --y: 86%; --size: 16%; --angle: 2deg; }
-.draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 86%; --y: 86%; --size: 15%; --angle: 5deg; }
+.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 29%; --y: 69%; --size: .105; --angle: -7deg; }
+.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 76%; --y: 69%; --size: .125; --angle: 8deg; }
+.draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 15%; --y: 86%; --size: .145; --angle: -5deg; }
+.draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 60%; --y: 86%; --size: .185; --angle: 2deg; }
+.draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 86%; --y: 86%; --size: .162; --angle: 5deg; }
 .draw-gifts .draw-gift:disabled { opacity: 1; cursor: default; }
 .draw-gifts .draw-gift:not(:disabled) { cursor: pointer; }
 .draw-gifts .draw-gift:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 1px; z-index: 1; }
@@ -238,25 +240,8 @@
   transform: translate(-50%, -116%) rotate(-7deg);
   text-decoration: none;
 }
-.draw-floated-ticket[hidden], .draw-box-animal[hidden], .draw-animal-result[hidden], .draw-passport button[hidden] { display: none; }
+.draw-floated-ticket[hidden], .draw-keepsake-result[hidden], .draw-passport button[hidden] { display: none; }
 .draw-floated-ticket:focus-visible, a.draw-prize:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 3px; }
-.draw-box-animal {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  bottom: calc(100% - var(--mouth-y));
-  width: 113%;
-  height: 85%;
-  object-fit: contain;
-  object-position: bottom;
-  pointer-events: none;
-  transform: translateX(-50%);
-  animation: draw-animal-rise .4s ease-out both;
-}
-@keyframes draw-animal-rise {
-  from { opacity: 0; transform: translate(-50%, 40%) scale(.72); }
-  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
 @keyframes draw-lid-lift {
   0% { transform: none; }
   17% { transform: translateY(-4%) rotate(3deg); }
@@ -290,7 +275,7 @@
 .draw-prize[hidden] { display: none; }
 a.draw-prize { text-decoration: none; }
 a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
-.draw-animal-result {
+.draw-keepsake-result {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,7 +283,8 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
   color: #f2d9ab;
   margin-top: 10px;
 }
-.draw-animal-result img { object-fit: contain; }
+.draw-keepsake-result img { object-fit: contain; }
+.draw-keepsake-result small { display: block; color: #d9d9d2; }
 .draw-passport { margin: 15px 0 0; padding-top: 12px; border-top: 1px solid #80705655; }
 .draw-passport h4 { margin: 0 0 4px; color: #f2d9ab; }
 .draw-passport button { margin-top: 8px; }
@@ -331,6 +317,23 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 .draw-prize-copy { display: grid; align-content: center; gap: 4px; padding: 12px; }
 .draw-prize-copy span { font-size: .85rem; line-height: 1.35; }
 .draw-prize-copy strong { font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.05; }
+.draw-prize-copy h4 { margin: 0; font-size: 1rem; line-height: 1.3; }
+.draw-prize-information {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #dfba79;
+  font-size: .86rem;
+  line-height: 1.55;
+}
+.draw-prize-information summary { cursor: pointer; font-weight: 700; }
+.draw-prize-information ul { margin: 4px 0 0; padding-inline-start: 1.25rem; }
+.draw-prize-links { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.draw-prize-links a { color: inherit; text-decoration: underline; text-underline-offset: .18em; }
+.draw-prize-links a:focus-visible { outline: 2px solid #76501c; outline-offset: 2px; }
+.draw-prize-links .draw-prize-cta { font-weight: 700; }
+
 .draw-actions { display: flex; justify-content: center; margin-top: 10px; }
 .draw-actions a { color: #f6d597; }
 .draw-wallet, .draw-settings { margin-top: 16px; padding: 18px; border: 1px solid #6c625070; border-radius: 12px; }
@@ -364,8 +367,7 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
     aspect-ratio: auto;
     border-right: 1px solid #80705655;
   }
-  .draw-gifts .draw-gift { width: min(calc(var(--size) * var(--gift-scale, 1)), calc(var(--draw-scene-height) * .23)); }
-  .draw-gifts .draw-gift:nth-child(-n+2) { width: min(calc(var(--size) * var(--gift-scale, 1)), calc(var(--draw-scene-height) * .20)); }
+  .draw-gifts .draw-gift { width: min(calc(100% * var(--size)), calc(var(--draw-scene-height) * var(--size) * 1.55)); }
   .draw-copy {
     grid-area: 1 / 2;
     align-self: end;
@@ -388,9 +390,8 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 @media (max-width: 560px) {
   .draw-copy { padding-top: 18px; }
   .draw-stage { aspect-ratio: 1.07; background-size: 100% 100%; }
-  .draw-gifts .draw-gift { width: calc((var(--size) + 3%) * var(--gift-scale, 1)); }
+  .draw-gifts .draw-gift { width: calc(115% * var(--size)); }
   .draw-gifts :is(.draw-gift:nth-child(-n+2), .draw-floated-ticket[data-box="0"], .draw-floated-ticket[data-box="1"]) { --y: 71%; }
-  .draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 65%; }
   #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .draw-coupon { padding: 10px; }
   .draw-wallet, .draw-settings { padding: 12px; }

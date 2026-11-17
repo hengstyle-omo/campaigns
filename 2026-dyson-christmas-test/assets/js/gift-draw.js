@@ -7,26 +7,13 @@
   const giftOpeningDuration = 800;
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
-  const giftDesigns = [
-    { file: "navy-tall.webp", ratio: "227 / 390", scale: 0.76, seam: "0% 39.2%, 80.2% 39.7%, 100% 34.6%", lip: "6% 38.2%, 28% 26.6%, 96% 33.6%, 80.2% 40.7%", opening: "39.7%" },
-    { file: "ivory-wide.webp", ratio: "400 / 260", scale: 1.12, seam: "0% 58.8%, 84.2% 60.4%, 100% 45.4%", lip: "6% 57.8%, 28% 37.4%, 96% 44.4%, 84.2% 61.4%", opening: "60.4%" },
-    { file: "burgundy-gold.webp", ratio: "320 / 352", scale: 0.98, seam: "0% 48.6%, 79.1% 49.4%, 100% 37.5%", lip: "6% 47.6%, 28% 29.5%, 96% 36.5%, 79.1% 50.4%", opening: "49.4%" },
-    { file: "forest-green.webp", ratio: "254 / 274", scale: 0.84, seam: "0% 52.2%, 81.5% 53.3%, 100% 43.1%", lip: "6% 51.2%, 28% 35.1%, 96% 42.1%, 81.5% 54.3%", opening: "53.3%" },
-    { file: "slate-silver.webp", ratio: "295 / 372", scale: 0.85, seam: "0% 42.2%, 80.3% 43.3%, 100% 33.9%", lip: "6% 41.2%, 28% 25.9%, 96% 32.9%, 80.3% 44.3%", opening: "43.3%" },
-    { file: "teal-large.webp", ratio: "416 / 358", scale: 1.13, seam: "0% 52.0%, 85.8% 52.2%, 100% 39.1%", lip: "6% 51.0%, 28% 31.1%, 96% 38.1%, 85.8% 53.2%", opening: "52.2%" },
-    { file: "plum-tall.webp", ratio: "268 / 391", scale: 0.83, seam: "0% 38.9%, 80.6% 39.6%, 100% 29.7%", lip: "6% 37.9%, 28% 21.7%, 96% 28.7%, 80.6% 40.6%", opening: "39.6%" },
-    { file: "cream-green.webp", ratio: "266 / 297", scale: 0.88, seam: "0% 51.9%, 81.6% 53.2%, 100% 40.7%", lip: "6% 50.9%, 28% 32.7%, 96% 39.7%, 81.6% 54.2%", opening: "53.2%" },
-    { file: "rust-flat.webp", ratio: "433 / 296", scale: 1.12, seam: "0% 59.8%, 87.5% 61.5%, 100% 44.3%", lip: "6% 58.8%, 28% 36.3%, 96% 43.3%, 87.5% 62.5%", opening: "61.5%" },
-    { file: "rose-gold.webp", ratio: "320 / 353", scale: 0.98, seam: "0% 47.3%, 78.8% 48.4%, 100% 36.8%", lip: "6% 46.3%, 28% 28.8%, 96% 35.8%, 78.8% 49.4%", opening: "48.4%" },
-  ];
   const prizes = {
-    hd19: { name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
-    pencilvac: { name: 'PencilVac 鉛筆吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
-    hj10: { name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
-    bonus: { name: 'Dyson 任一商品', image: './assets/images/brand/dyson-logo-black.png' },
+    hd19: { rewardId: 'product-hd19', name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
+    pencilvac: { rewardId: 'product-sv50', name: 'PencilVac 鉛筆吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
+    hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
+    bonus: { rewardId: 'product-bp10', name: 'Dyson 任一商品', image: './assets/images/brand/dyson-logo-black.png' },
   };
   const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
-  const animals = window.DYSON_GAME_CONFIG.bonusItems.filter(item => window.DYSON_ASSETS.bonusSprites[item.day]);
   const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
   const blessings = [
     '願你忙碌的日子裡，也有一點時間留給自己。',
@@ -61,6 +48,11 @@
   const status = byId('draw-status');
   const feedback = byId('draw-feedback');
   const prizeCard = byId('draw-prize');
+  const prizeClaim = byId('draw-prize-claim');
+  const prizeIntro = byId('draw-prize-intro');
+  const prizeDetails = byId('draw-prize-details');
+  const prizeFeatures = byId('draw-prize-features');
+  const prizeProductLink = byId('draw-prize-product-link');
   const prizeImage = byId('draw-prize-image');
   const wallet = byId('draw-wallet');
   const giftGroup = byId('draw-gifts');
@@ -68,8 +60,11 @@
   const passportTicket = byId('draw-passport-ticket');
   const stage = byId('draw-stage');
   stage.style.setProperty('--draw-touch-preview', touchPreviewDuration + 'ms');
-  const animalResult = byId('draw-animal-result');
-  const animalPreview = byId('draw-animal-preview');
+  const keepsakeResult = byId('draw-keepsake-result');
+  const keepsakePreview = byId('draw-keepsake-preview');
+  const keepsakeName = byId('draw-keepsake-name');
+  const sceneDirectory = new URL('./assets/images/scene/', document.baseURI);
+  let sceneKeepsakes = [];
   const simulate = byId('draw-simulate');
   const reset = byId('draw-reset');
   const validDate = value => /^2026-12-\d{2}$/.test(value ?? '') && value >= start && value <= end;
@@ -102,11 +97,6 @@
     button.className = 'draw-gift';
     button.setAttribute('aria-label', '選擇' + name + '禮物');
     button.innerHTML = '<span class="draw-shadow" aria-hidden="true"></span><span class="draw-box" aria-hidden="true"><span class="draw-body"></span><span class="draw-mouth"></span><span class="draw-lid"></span></span><span class="draw-glow" aria-hidden="true"></span><span class="draw-snow" aria-hidden="true"></span>';
-    const animal = document.createElement('img');
-    animal.className = 'draw-box-animal';
-    animal.alt = '';
-    animal.hidden = true;
-    button.append(animal);
     button.addEventListener('click', event => openGift(index, event?.pointerType));
     giftGroup.append(button);
     return button;
@@ -128,7 +118,7 @@
     link.addEventListener('auxclick', event => { if (event.button === 1) track(); });
   }
   bindCouponClick(floatedTicket, () => floatedTicket.dataset.coupon);
-  bindCouponClick(prizeCard, () => prizeCard.dataset.coupon);
+  bindCouponClick(prizeClaim, () => prizeClaim.dataset.coupon);
   bindCouponClick(passportTicket, 'passport');
 
   function emptyDraw() {
@@ -259,20 +249,38 @@
     if (!id) return;
 
     const { name, image } = prizes[id];
-    prizeCard.href = prizeURL(id);
-    prizeCard.dataset.coupon = id;
+    prizeClaim.href = prizeURL(id);
+    prizeClaim.dataset.coupon = id;
     if (prizeImage.getAttribute('src') !== image) prizeImage.src = image;
     prizeCard.dataset.bonus = String(id === 'bonus');
     byId('draw-prize-name').textContent = name;
     byId('draw-prize-kind').textContent = id === 'bonus' ? '任一商品現折' : '指定商品現折';
+
+    if (prizeCard.dataset.renderedProduct === id) return;
+    prizeCard.dataset.renderedProduct = id;
+    const catalog = window.DYSON_GAME_CONFIG;
+    const reward = catalog.rewards.find(reward => reward.id === prizes[id].rewardId);
+    const product = id === 'bonus' ? null : catalog.items.find(item => item.day === reward?.productDay)?.product;
+    // The countdown introduction ends with scene-specific instructions.
+    const intro = product?.intro?.split('點選放進雪境，')[0].trim() || reward?.conditions || '';
+    prizeIntro.textContent = intro;
+    prizeIntro.hidden = !intro;
+    const features = product?.features ?? [];
+    prizeDetails.hidden = !features.length;
+    prizeDetails.open = false;
+    prizeFeatures.replaceChildren(...features.map(feature => {
+      const line = document.createElement('li');
+      line.textContent = feature;
+      return line;
+    }));
+    const productUrl = product?.url;
+    prizeProductLink.hidden = !productUrl?.startsWith('https://');
+    if (prizeProductLink.hidden) prizeProductLink.removeAttribute('href');
+    else prizeProductLink.href = productUrl;
   }
 
   function createGiftLayout(random = Math.random) {
-    const available = giftDesigns.map((_, index) => index);
-    return giftPositions.map(() => {
-      const [design] = available.splice(Math.floor(random() * available.length), 1);
-      return { design, x: random() * 4 - 2, y: random() * 3 - 1.5 };
-    });
+    return giftPositions.map(() => ({ x: random() * 4 - 2, y: random() * 3 - 1.5 }));
   }
 
   function currentGiftLayout(date, day) {
@@ -301,19 +309,38 @@
   function renderGiftLayout(layout) {
     const key = JSON.stringify(layout);
     if (appliedLayout === key) return;
-    for (const [index, box] of layout.entries()) {
-      const gift = gifts[index];
-      const design = giftDesigns[box.design];
-      placeGift(gift, box);
-      const imageUrl = new URL('./assets/images/gifts/' + design.file, document.baseURI);
-      gift.style.setProperty('--gift-art', 'url("' + imageUrl.href + '")');
-      gift.style.setProperty('--gift-ratio', design.ratio);
-      gift.style.setProperty('--gift-scale', design.scale);
-      gift.style.setProperty('--gift-seam', design.seam);
-      gift.style.setProperty('--gift-lip', design.lip);
-      gift.style.setProperty('--mouth-y', design.opening);
-    }
+    for (const [index, box] of layout.entries()) placeGift(gifts[index], box);
     appliedLayout = key;
+  }
+
+  function updateSceneKeepsakes(openedItems) {
+    const items = [];
+    for (const { day, name } of openedItems) {
+      if (!Number.isInteger(day) || day < 1 || day > 25) continue;
+      const source = window.DYSON_ASSETS.sprites?.[day] ?? window.DYSON_ASSETS.effectThumbnails?.[day];
+      if (!source) continue;
+      const url = new URL(source, document.baseURI);
+      if (url.origin === sceneDirectory.origin && url.pathname.startsWith(sceneDirectory.pathname)) {
+        items.push({ day, name, image: url.href });
+      }
+    }
+    if (JSON.stringify(items) === JSON.stringify(sceneKeepsakes)) return;
+    sceneKeepsakes = items;
+    render();
+  }
+
+  function renderKeepsake(show, selected) {
+    const day = Number(activeDate.slice(-2));
+    const eligible = show ? sceneKeepsakes.filter(item => item.day <= day) : [];
+    const keepsake = eligible.length ? eligible[(day + selected) % eligible.length] : null;
+    keepsakeResult.hidden = !keepsake;
+    if (!keepsake) {
+      keepsakePreview.removeAttribute('src');
+      keepsakeName.textContent = '';
+      return;
+    }
+    if (keepsakePreview.getAttribute('src') !== keepsake.image) keepsakePreview.src = keepsake.image;
+    keepsakeName.textContent = keepsake.name;
   }
 
   function render() {
@@ -327,9 +354,6 @@
     // Earlier trials used fifteen gifts. Keep those results visible on the five-gift scene.
     const selected = opening ? pending.index : played ? day.result.selected % gifts.length : undefined;
     const prize = opening ? null : day?.result?.prize;
-    const animal = played && !opening && !prize && (animals.find(item => item.day === day.result.animal)
-      ?? animals[(Number(activeDate.slice(-2)) + selected) % animals.length]);
-    const animalURL = animal && window.DYSON_ASSETS.bonusSprites[animal.day];
     const canOpen = day && !played && !pending;
     const bonusOption = mode.querySelector('option[value="bonus"]');
     const winOption = mode.querySelector('option[value="win"]');
@@ -342,15 +366,8 @@
       const state = index === selected ? opening ? 'opening' : prize ? 'won' : 'blessing' : 'closed';
       if (gift.dataset.state !== state) gift.dataset.state = state;
       gift.classList.toggle('draw-touch-opening', state === 'opening' && pending.touch);
-      const portrait = gift.querySelector('.draw-box-animal');
-      portrait.hidden = !animalURL || index !== selected;
-      if (!portrait.hidden && portrait.getAttribute('src') !== animalURL) portrait.src = animalURL;
     }
-    animalResult.hidden = !animalURL;
-    if (animalURL) {
-      if (animalPreview.getAttribute('src') !== animalURL) animalPreview.src = animalURL;
-      byId('draw-animal-name').textContent = animal.animal || animal.name;
-    }
+    renderKeepsake(played && !opening && !prize, selected);
     floatedTicket.hidden = !prize;
     if (prize) {
       floatedTicket.dataset.box = String(selected);
@@ -441,7 +458,7 @@
     const won = choice === 'win' || (choice === 'random' && day.winningBox === index);
     const prize = choice === 'bonus' && pool.includes('bonus') ? 'bonus' : won ? assignedPrize : null;
     day.layout ??= currentGiftLayout(date, day);
-    day.result = { selected: index, prize: prize ?? null, animal: prize ? null : randomMember(animals)?.day };
+    day.result = { selected: index, prize: prize ?? null };
     return saveDraw(draw);
   }
 
@@ -526,7 +543,7 @@
       showError();
     }
   });
-  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, setPassportReward, hasOpenedPassport };
+  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, updateSceneKeepsakes, setPassportReward, hasOpenedPassport };
   renderPassport();
   render();
 })();
