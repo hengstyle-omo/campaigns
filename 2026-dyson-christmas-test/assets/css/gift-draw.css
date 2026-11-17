@@ -25,41 +25,28 @@
   overflow: clip;
   background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
 }
-/* Aurora stays behind the tree and moves across the upper sky. */
-.draw-stage::before,
-.draw-stage::after {
+/* Fade the moving colors within the night sky, before the hillside or props. */
+.draw-stage::before {
   content: "";
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  inset: 3% -10% 58%;
-  border-radius: 50%;
-  will-change: transform, opacity;
-}
-.draw-stage::before {
-  background: radial-gradient(ellipse at 49% 112%,
-    transparent 54%, #31c8aa32 61%, #5ae6c091 64%,
-    #b8ffe4ba 65.5%, #58e5b79c 67%, #42cdb367 71%, transparent 80%);
-  opacity: .8;
-  transform: translate(-12%, 0) rotate(-9deg);
-  animation: draw-aurora-drift 9s ease-in-out infinite;
-}
-.draw-stage::after {
-  inset: 8% -7% 53%;
-  background: radial-gradient(ellipse at 54% 118%,
-    transparent 55%, #508bff26 62%, #71b6fa91 65%,
-    #a3d9ff9e 66.5%, #6ba9f650 69%, transparent 77%);
-  opacity: .62;
-  transform: translate(12%, 9%) rotate(5deg);
-  animation: draw-aurora-sweep 10s ease-in-out -2s infinite;
+  inset: 0 0 64%;
+  background:
+    radial-gradient(ellipse at 32% 45%, #56b99b63 0%, #458a9e38 30%, transparent 60%)
+      20% 25% / 168% 100% no-repeat,
+    radial-gradient(ellipse at 69% 39%, #608edc59 0%, #568fac2b 32%, transparent 65%)
+      82% 60% / 156% 112% no-repeat,
+    radial-gradient(ellipse at 51% 52%, #7696c92e 0%, transparent 66%)
+      50% 40% / 145% 100% no-repeat;
+  mask-image: radial-gradient(ellipse 52% 60% at 50% 34%, #000 26%, #000b 58%, transparent 94%);
+  opacity: .72;
+  animation: draw-aurora-drift 22s ease-in-out infinite;
 }
 @keyframes draw-aurora-drift {
-  0%, 100% { transform: translate(-18%, 0) rotate(-9deg) scaleX(.94); opacity: .58; }
-  49% { transform: translate(16%, 13%) rotate(5deg) scaleX(1.06); opacity: .94; }
-}
-@keyframes draw-aurora-sweep {
-  0%, 100% { transform: translate(17%, 12%) rotate(7deg) scaleX(.96); opacity: .48; }
-  54% { transform: translate(-16%, -3%) rotate(-6deg) scaleX(1.04); opacity: .78; }
+  0%, 100% { background-position: 20% 25%, 82% 60%, 50% 40%; opacity: .66; }
+  38% { background-position: 74% 39%, 44% 43%, 35% 46%; opacity: .92; }
+  72% { background-position: 56% 28%, 14% 56%, 63% 37%; opacity: .76; }
 }
 .draw-tree, .draw-gifts { position: absolute; }
 .draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }
@@ -79,12 +66,12 @@
 .draw-tree-logo {
   top: 3%;
   left: 50%;
-  width: clamp(92px, 32%, 224px);
-  max-height: 12%;
+  width: clamp(104px, 34%, 250px);
+  max-height: 13%;
   height: auto;
   object-fit: contain;
   transform: translateX(-50%);
-  filter: brightness(0) saturate(100%) invert(94%) sepia(32%) saturate(682%) hue-rotate(320deg) brightness(103%) contrast(98%) drop-shadow(0 0 2px #fffaf1b3) drop-shadow(0 0 8px #ffc17d66);
+  filter: brightness(0) invert(1) drop-shadow(0 2px 3px #091426b3);
 }
 .draw-tree-lights {
   position: absolute;
@@ -410,6 +397,5 @@ a.draw-prize[href] .draw-prize-cta { font-weight: 700; text-decoration: underlin
 }
 @media (prefers-reduced-motion: reduce) {
   .draw-stage *,
-  .draw-stage::before,
-  .draw-stage::after { animation: none !important; transition: none !important; }
+  .draw-stage::before { animation: none !important; transition: none !important; }
 }
