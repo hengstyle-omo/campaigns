@@ -125,7 +125,8 @@ function renderCloud(){
  renderPassport();
 }
 function openProgress(){
-  for(const id of ['card-dialog','vouchers-dialog','item-dialog'])closeDialog(id);
+  for(const id of ['card-dialog','item-dialog'])closeDialog(id);
+  closeActivityReview();
   const account=$('draw-passport-account');
   account.open=true;
   account.scrollIntoView({block:'start'});
@@ -154,7 +155,8 @@ function assertCampaignEnvironment(result){
 function cloudRequireAdminAuth(result){
  cloudCache();clearTimeout(cloud.timer);cloud.adminToken='';cloud.adminSessionExpiresAt=0;cloud.adminAuthRequired=true;cloud.ready=false;cloud.cachedView=false;cloud.isAdmin=false;cloud.canPreview=false;cloud.hasExclusive=false;cloud.bonusIds=[];cloud.previewLoaded=false;previewRestore(null);cloud.cardTask=null;live=Core.freshState();cloud.synced=Core.freshState();
  cloud.error=result.message||'請重新輸入管理員驗證碼。';
- for(const id of ['studio-dialog','item-dialog','vouchers-dialog','card-dialog'])closeDialog(id);
+ for(const id of ['studio-dialog','item-dialog','card-dialog'])closeDialog(id);
+ closeActivityReview();
  stopShow(false);pauseMusic(true);renderUI();$('admin-auth-code').value='';showDialog('admin-auth-dialog');$('admin-auth-message').textContent=cloud.error;setTimeout(()=>$('admin-auth-code').focus(),0);
 }
 let checkedEndpoint='';
@@ -597,7 +599,7 @@ function status(message,{persistent=false}={}){
   if(message&&!persistent)statusTimer=setTimeout(()=>{$('status').textContent='';},5000);
 }
 function closeDialog(id){const d=$(id);if(d.open)d.close();}
-function showDialog(id){const d=$(id);if(!d.open){d.showModal();if(id==='vouchers-dialog')trackActivity('coupon_open',{unlocked_count:rewardProgress().unlockedCount});}}
+function showDialog(id){const d=$(id);if(!d.open)d.showModal();}
 
 // The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
@@ -613,11 +615,13 @@ async function playWelcome(){
   catch{if(attempt!==welcomeAttempt||!welcomeMediaOpen())return;$('welcome-play').hidden=false;welcomeMessage(video.error?'介紹影片暫時無法播放，可以直接開始佈置水晶球。':'點一下播放介紹，或直接開始佈置水晶球。');}
 }
 function welcomeMediaOpen(){return $('welcome-dialog').open;}
-function openWelcome(){
+function openWelcome({review=false,focusId}={}){
   const dialog=$('welcome-dialog');
-  dialog.setAttribute('closedby','none');
-  dialog.scrollTop=0;
   if(dialog.open)return;
+  dialog.setAttribute('closedby',review?'closerequest':'none');
+  $('welcome-review-close').hidden=!review;
+  $('welcome-rules').open=Boolean(focusId);
+  $('welcome-notices').open=false;
   welcomeCleaned=false;
   $('welcome-play').hidden=true;
   $('welcome-play').textContent='播放介紹';
@@ -631,21 +635,31 @@ function openWelcome(){
   video.currentTime=0;
   document.body.classList.add('welcome-visible');
   showDialog('welcome-dialog');
-  trackActivity('welcome_view');
+  dialog.scrollTop=0;
+  if(focusId){
+    $(focusId).scrollIntoView({block:'nearest'});
+    $(focusId).focus({preventScroll:true});
+  }
+  if(review)trackActivity('coupon_open',{unlocked_count:rewardProgress().unlockedCount});
+  else trackActivity('welcome_view');
   welcomeTimer=setTimeout(()=>{if(welcomeMediaOpen()&&video.readyState<3){$('welcome-play').hidden=false;welcomeMessage('影片載入較慢，可以直接開始佈置水晶球。');}},8000);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){$('welcome-play').hidden=false;welcomeMessage('點一下觀看介紹，或直接開始佈置水晶球。');}
   else playWelcome();
 }
-function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');safeWrite(welcomeSeenKey,true);}
+function cleanupWelcome(){if(welcomeCleaned)return;welcomeCleaned=true;++welcomeAttempt;clearTimeout(welcomeTimer);const video=$('welcome-video');video.pause();video.removeAttribute('src');video.load();document.body.classList.remove('welcome-visible');if($('welcome-review-close').hidden)safeWrite(welcomeSeenKey,true);}
 function finishWelcome(){cleanupWelcome();closeDialog('welcome-dialog');}
+function closeActivityReview(){if(!$('welcome-review-close').hidden)closeDialog('welcome-dialog');}
 $('welcome-start').addEventListener('click',startWelcomeCollection);
 $('welcome-play').addEventListener('click',playWelcome);
 $('welcome-video').addEventListener('playing',()=>{clearTimeout(welcomeTimer);$('welcome-play').hidden=true;welcomeMessage('靜音播放中 · 可隨時開始佈置水晶球');});
 $('welcome-video').addEventListener('ended',()=>{const video=$('welcome-video');video.pause();video.removeAttribute('src');video.poster=welcomePosterSrc;video.load();$('welcome-play').hidden=true;welcomeMessage('布置屬於你的聖誕雪境。');});
 $('welcome-video').addEventListener('error',()=>{if(!welcomeMediaOpen())return;clearTimeout(welcomeTimer);$('welcome-play').hidden=false;welcomeMessage('介紹影片暫時無法播放，可以直接開始佈置水晶球。');});
-$('welcome-dialog').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();}});
-$('welcome-dialog').addEventListener('cancel',event=>event.preventDefault());
-$('welcome-dialog').addEventListener('close',cleanupWelcome);
+$('welcome-review-close').addEventListener('click',finishWelcome);
+$('welcome-dialog').addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&$('welcome-review-close').hidden){event.preventDefault();event.stopPropagation();}
+});
+$('welcome-dialog').addEventListener('cancel',event=>{if($('welcome-review-close').hidden)event.preventDefault();});
+$('welcome-dialog').addEventListener('close',()=>{if(!welcomeMediaOpen())cleanupWelcome();});
 
 const onboardingKey=STORAGE_PREFIX+'first-visit-guide-'+YEAR;
 let onboardingStep=safeRead(onboardingKey,0);
@@ -1195,32 +1209,17 @@ let activityEntryPoint='activity_rewards';
 function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
   activityEntryPoint=entryPoint;
   renderVouchers();
-  showDialog('vouchers-dialog');
-  $('vouchers-dialog').scrollTop=0;
-  if(id)$(id).scrollIntoView({block:'nearest'});
-  $(id||'vouchers-title').focus({preventScroll:true});
+  openWelcome({review:true,focusId:id});
   syncOnboarding();
 }
 function setupActivityDialog(){
-  for(const container of document.querySelectorAll('[data-activity-missions]')){
-    const copy=$('activity-missions-template').content.cloneNode(true);
-    copy.querySelector('.activity-intro-description').id=container.dataset.activityMissions;
-    for(const mission of copy.querySelectorAll('.activity-jumps > div'))mission.classList.add('mission-card');
-    container.append(copy);
-  }
-  for(const container of document.querySelectorAll('[data-activity-rules]')){
-    const copy=$('activity-rules-template').content.cloneNode(true);
-    const headingId=container.dataset.couponHeadingId;
-    if(headingId){
-      const heading=copy.querySelector('[data-activity-coupon-heading]');
-      heading.id=headingId;
-      heading.tabIndex=-1;
-    }
-    container.append(copy);
-  }
-  for(const container of document.querySelectorAll('[data-activity-notices]')){
-    container.append($('activity-notices-template').content.cloneNode(true));
-  }
+  const missions=document.querySelector('[data-activity-missions]');
+  const overview=$('activity-missions-template').content.cloneNode(true);
+  overview.querySelector('.activity-intro-description').id=missions.dataset.activityMissions;
+  for(const mission of overview.querySelectorAll('.activity-jumps > div'))mission.classList.add('mission-card');
+  missions.append(overview);
+  document.querySelector('[data-activity-rules]').append($('activity-rules-template').content.cloneNode(true));
+  document.querySelector('[data-activity-notices]').append($('activity-notices-template').content.cloneNode(true));
 }
 function renderAttendanceGrid(grid,dates){
   const earned=dates.slice(0,PASSPORT_DAYS),key=earned.join(',');
@@ -1255,7 +1254,7 @@ async function loadProductCouponLinks(retry=false){
  }catch{
    lookup.failed=true;
  }
- if(productCouponLookup===lookup&&$('vouchers-dialog').open)renderVouchers();
+ if(productCouponLookup===lookup&&$('welcome-dialog').open)renderVouchers();
 }
 function couponClaimURL(id){
  const guestLink=productCouponLookup?.key===productCouponLookupKey()?productCouponLookup.links?.[id]:'';
@@ -1285,7 +1284,7 @@ function appendCouponAction(card,b,progress,full){
    const button=el('button','gold-button','製作卡片領優惠');
    button.type='button';
    button.disabled=!sceneReady||cardCapturing;
-   button.addEventListener('click',()=>{closeDialog('vouchers-dialog');openChristmasCard();});
+   button.addEventListener('click',()=>{closeActivityReview();openChristmasCard();});
    card.append(button);return;
  }
  if(previewDate||IS_TEST){const button=el('button','',previewDate?'模擬預覽 · 已符合領券條件':'測試版 · 已開放，僅供預覽');button.type='button';button.disabled=true;card.append(button);return;}
@@ -2092,22 +2091,12 @@ function updateCardEntries(){
 }
 for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).addEventListener('click',openChristmasCard);
 $('draw-create').addEventListener('click',openChristmasCard);
-for(const [id,dialog,heading,section] of [
-  ['draw-from-card','card-dialog','draw-heading','draw-card'],
-  ['draw-from-vouchers','vouchers-dialog','draw-heading','draw-card'],
-  ['passport-from-vouchers','vouchers-dialog','draw-passport-title','draw-passport'],
-  ['calendar-from-vouchers','vouchers-dialog','game-calendar-title','game-calendar'],
-]){
-  $(id).addEventListener('click',()=>{
-    closeDialog(dialog);
-    if(id==='calendar-from-vouchers'&&mobileViewport.matches){
-      $('mobile-calendar-toggle').setAttribute('aria-expanded','true');
-      $('mobile-calendar-toggle').focus({preventScroll:true});
-    }else $(heading).focus({preventScroll:true});
-    $(section).scrollIntoView({block:'start'});
-    if(id==='draw-from-card')window.DysonTestDraw.openResult();
-  });
-}
+$('draw-from-card').addEventListener('click',()=>{
+  closeDialog('card-dialog');
+  $('draw-heading').focus({preventScroll:true});
+  $('draw-card').scrollIntoView({block:'start'});
+  window.DysonTestDraw.openResult();
+});
 $('card-form').addEventListener('submit',e=>e.preventDefault());
 for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('input',e=>{if(!e.isComposing)renderChristmasCard();});
@@ -2606,7 +2595,7 @@ $('draw-passport-checkin').addEventListener('click',()=>{
   if(!cloud.email){openProgress();return;}
   void cloudConnect(cloud.email,undefined,{userInitiated:true}).catch(openProgress);
 });
-for(const id of ['vouchers-dialog','card-dialog','mobile-collection','admin-auth-dialog']){
+for(const id of ['welcome-dialog','card-dialog','mobile-collection','admin-auth-dialog']){
   $(id).addEventListener('close',()=>syncOnboarding());
 }
 $('studio-open').addEventListener('click',()=>{if(!canPreview())return;renderStudio();renderCloud();showDialog('studio-dialog');});$('preview-start').addEventListener('click',()=>{try{setPreview($('preview-date').value);}catch(e){$('config-status').textContent=e.message;}});

@@ -5,14 +5,14 @@
   const dateKey = 'dyson-christmas-test-v2-date';
   const drawKey = 'dyson-christmas-test-v2-gifts';
   const giftOpeningDuration = 800;
-  const giftFlightDuration = 2800;
+  const giftFlightDuration = 1400;
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
     hd19: { rewardId: 'product-hd19', name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
     pencilvac: { rewardId: 'product-sv50', name: 'Dyson PencilVac 筆形吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
     hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
-    bonus: { rewardId: 'product-bp10', name: '任一 Dyson 品項優惠券', image: './assets/images/brand/dyson-logo-white.png' },
+    bonus: { rewardId: 'product-bp10', name: 'Dyson 任一主機', image: './assets/images/brand/dyson-logo-white.png' },
   };
   const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
   const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
@@ -27,7 +27,8 @@
   const prizeDetailsById = Object.fromEntries(Object.entries(prizes).map(([id, { rewardId }]) => {
     const reward = catalog.rewards.find(reward => reward.id === rewardId);
     const day = reward?.productDay;
-    return [id, { day, product: id === 'bonus' ? null : catalog.items.find(item => item.day === day)?.product }];
+    const product = id === 'bonus' ? { intro: reward?.conditions } : catalog.items.find(item => item.day === day)?.product;
+    return [id, { day, product }];
   }));
 
   const byId = id => document.getElementById(id);
@@ -37,7 +38,7 @@
   const feedback = byId('draw-feedback');
   const prizeCard = byId('draw-prize');
   const discovery = byId('draw-discovery');
-  const flyover = byId('draw-flyover');
+  const productDialog = byId('draw-product');
   const prizeClaim = byId('draw-prize-claim');
   const wallet = byId('draw-wallet');
   const giftGroup = byId('draw-gifts');
@@ -81,6 +82,8 @@
     giftGroup.append(button);
     return button;
   });
+
+  const effects = window.createDysonDrawEffects?.(stage, byId('draw-effects'), gifts);
 
   const floatedTicket = document.createElement('a');
   floatedTicket.className = 'draw-ticket draw-floated-ticket';
@@ -147,7 +150,7 @@
 
   function prizeArt(id) {
     const { day, product } = prizeDetailsById[id];
-    const sprite = product && window.DYSON_ASSETS.sprites?.[day];
+    const sprite = id !== 'bonus' && product && window.DYSON_ASSETS.sprites?.[day];
     return sprite || prizes[id].image;
   }
 
@@ -166,19 +169,17 @@
       const copy = document.createElement('div');
       copy.className = 'draw-coupon-copy';
       const title = document.createElement('strong');
-      title.textContent = name;
-      const amount = document.createElement('span');
-      amount.textContent = '折 $1,000';
+      title.textContent = name + ' $1,000 折價券';
       const note = document.createElement('small');
       note.textContent = day ? '✓ 已抽中 · ' + displayDate(day)
         : id === 'bonus' && activeDate < bonusDate ? '12/20 加入抽獎' : '尚未抽中';
       const details = document.createElement('button');
       details.type = 'button';
       details.className = 'draw-coupon-details';
-      details.textContent = '了解更多';
-      details.setAttribute('aria-label', '了解更多：' + name);
-      details.addEventListener('click', () => openPrize(id, Boolean(day)));
-      copy.append(title, amount, note, details);
+      details.textContent = '了解產品';
+      details.setAttribute('aria-label', '了解產品：' + name);
+      details.addEventListener('click', () => openProduct(id));
+      copy.append(title, note, details);
       if (day) {
         const link = document.createElement('a');
         link.href = prizeURL(id);
@@ -256,18 +257,18 @@
     return missMessages[earlierMisses % (missMessages.length - 1)];
   }
 
-  function openPrize(id, claimable) {
-    if (!prizes[id] || prizeCard.open || discovery.open) return;
+  function productURL(value) {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' ? url.href : '';
+    } catch {
+      return '';
+    }
+  }
 
-    const name = id === 'bonus' ? '任一 Dyson 商品' : prizes[id].name;
-    byId('draw-prize-kind').textContent = '適用商品｜' + name;
-    const { product } = prizeDetailsById[id];
-    const image = byId('draw-prize-image');
-    image.hidden = id === 'bonus';
-    if (image.hidden) image.removeAttribute('src');
-    else image.src = prizeArt(id);
-
-    const intro = byId('draw-prize-intro');
+  function fillProductInfo(prefix, product) {
+    const intro = byId(prefix + '-intro');
     intro.textContent = product?.intro?.split('點選放進雪境')[0].trim() || '';
     intro.hidden = !intro.textContent;
     const features = (product?.features || []).map(feature => {
@@ -275,23 +276,40 @@
       item.textContent = feature;
       return item;
     });
-    const list = byId('draw-prize-features');
+    const list = byId(prefix + '-features');
     list.replaceChildren(...features);
     list.hidden = !features.length;
-    byId('draw-prize-features-title').hidden = list.hidden;
-    const link = byId('draw-prize-product-link');
-    const url = validatedProductURL(product?.url);
+    byId(prefix + '-features-title').hidden = list.hidden;
+    const link = byId(prefix + '-product-link');
+    const url = productURL(product?.url);
     link.hidden = !url;
     if (url) link.href = url;
     else link.removeAttribute('href');
-    const info = byId('draw-prize-info');
-    info.hidden = intro.hidden && list.hidden && link.hidden;
-    prizeCard.classList.toggle('draw-with-product-info', !info.hidden);
+    return !intro.hidden || !list.hidden || !link.hidden;
+  }
 
-    byId('draw-prize-won-label').hidden = !claimable;
-    prizeClaim.hidden = !claimable;
-    if (claimable) prizeClaim.href = prizeURL(id);
-    else prizeClaim.removeAttribute('href');
+  function openProduct(id) {
+    if (pending || prizeCard.open || discovery.open || productDialog.open) return;
+    byId('draw-product-name').textContent = prizes[id].name;
+    byId('draw-product-image').src = prizeArt(id);
+    fillProductInfo('draw-product', prizeDetailsById[id].product);
+    productDialog.showModal();
+  }
+
+  function openPrize(id) {
+    if (!prizes[id] || prizeCard.open || discovery.open || productDialog.open) return;
+    byId('draw-prize-kind').textContent = '適用商品｜' + prizes[id].name;
+    const image = byId('draw-prize-image');
+    image.hidden = id === 'bonus';
+    if (image.hidden) image.removeAttribute('src');
+    else image.src = prizeArt(id);
+    const hasInfo = fillProductInfo('draw-prize', id === 'bonus' ? null : prizeDetailsById[id].product);
+    byId('draw-prize-info').hidden = !hasInfo;
+    prizeCard.classList.toggle('draw-with-product-info', hasInfo);
+
+    byId('draw-prize-won-label').hidden = false;
+    prizeClaim.hidden = false;
+    prizeClaim.href = prizeURL(id);
     prizeClaim.dataset.coupon = id;
     prizeCard.showModal();
   }
@@ -355,6 +373,7 @@
       gift.classList.toggle('draw-touch-opening', state === 'opening' && pending.touch);
     }
     giftGroup.classList.toggle('draw-ready', canOpen);
+    effects?.setReady(canOpen);
     floatedTicket.hidden = !prize;
     if (prize) {
       floatedTicket.dataset.box = String(selected);
@@ -464,9 +483,8 @@
           await new Promise(resolve => setTimeout(resolve, duration));
           if (recorded.prize && activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
             stage.classList.add('draw-flying');
-            const flight = flyover.getAnimations?.().find(animation => animation.animationName === 'draw-fly-past');
-            if (flight) await flight.finished.catch(() => {});
-            else await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
+            effects?.celebrate(index);
+            await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
           }
         }
       }
@@ -519,9 +537,9 @@
   function openResult() {
     const { days } = readDraw();
     const result = days[activeDate]?.result;
-    if (!result || pending || prizeCard.open || discovery.open) return;
+    if (!result || pending || prizeCard.open || discovery.open || productDialog.open) return;
     if (result.prize) {
-      openPrize(result.prize, true);
+      openPrize(result.prize);
     } else {
       byId('draw-miss-copy').textContent = missMessage(activeDate, days);
       discovery.showModal();

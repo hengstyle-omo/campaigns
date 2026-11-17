@@ -6,8 +6,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
-<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v119-welcome-9x16">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v119">
+<link rel="stylesheet" href="./assets/css/style.css?v=20261117-v120">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v120">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -28,13 +28,14 @@
    <p>活動期間每日 00:00（UTC+8）解鎖全新聖誕裝飾，可自由選擇當日及先前已解鎖的物件，打造專屬聖誕雪境。尚未開放的日期將維持鎖定，已解鎖的裝飾可於活動期間隨時使用，重新布置水晶球。</p>
   </section>
   <section class="activity-rules-section">
-   <h3 data-activity-coupon-heading>聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
-   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。12/20 起加入任一商品優惠券。活動期間，每位會員每款優惠券限領一次。</p>
+   <h3 id="activity-coupons" tabindex="-1">聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
+   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。有可抽優惠券時，5 盒中有 2 盒藏有優惠券，中獎率為 40%。12/20 起加入Dyson 任一主機折價券。活動期間，每位會員每款優惠券限領一次。</p>
    <p>抽中後，請儘速點選「立即領取優惠券」，前往恆隆行線上購完成領取。尚未成為會員，可透過同一連結註冊，完成後即可領券。領取成功後，可到「會員優惠券」查看與使用。</p>
   </section>
   <section class="activity-rules-section">
-   <h3>每日簽到｜累積打卡紀錄</h3>
-   <p>簽到方式與兌換條件請見首頁「打卡好禮」。</p>
+   <h3>累積參與｜滿 5 天再享專屬好禮</h3>
+   <p>至首頁「打卡好禮」留下 Email 保存打卡紀錄，累積打卡滿 5 天即可解鎖護照夾兌換券。持券至 Dyson 專櫃不限金額消費，即贈 Dyson 護照夾（價值 $1,080）。</p>
+   <p>兌換期限至 2026/12/31，每人限贈一次。</p>
   </section>
   <section class="activity-rules-section">
    <h3>活動紀錄｜保存專屬聖誕進度</h3>
@@ -47,8 +48,9 @@
 <template id="activity-notices-template">
  <ol><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v119</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v120</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+ <button id="welcome-review-close" class="dialog-close" type="button" aria-label="關閉" hidden>×</button>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
   <h2 id="welcome-title">Dyson 聖誕雪境</h2>
   <div class="welcome-media"><video id="welcome-video" muted playsinline preload="none" aria-label="聖誕活動玩法介紹"></video><div class="welcome-media-toolbar"><p id="welcome-status" class="welcome-status sr-only" role="status" aria-live="polite"></p><button id="welcome-play" type="button" hidden>播放介紹</button></div></div>
@@ -58,7 +60,7 @@
    <div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始佈置水晶球</button></div>
   </div>
  </div></div>
- <details class="welcome-rules"><summary id="welcome-rules-title">活動辦法</summary><div class="welcome-rules-content">
+ <details id="welcome-rules" class="welcome-rules"><summary id="welcome-rules-title">活動辦法</summary><div class="welcome-rules-content">
   <div data-activity-rules></div>
  </div></details>
  <details id="welcome-notices" class="welcome-rules welcome-notices"><summary id="welcome-notices-title">注意事項</summary><div class="welcome-rules-content"><div data-activity-notices></div></div></details>
@@ -115,9 +117,10 @@
   <div class="draw-copy">
     <h3 id="draw-heading" tabindex="-1">挑一份聖誕禮物</h3>
     <p id="draw-rules">每天可拆 1 份禮物，有機會抽中 Dyson $1,000 優惠券。</p>
-    <p id="draw-bonus" class="draw-bonus" hidden>12/20 加碼｜<span>Dyson 任一商品折 $1,000</span></p>
+    <p id="draw-bonus" class="draw-bonus" hidden>12/20 加碼｜<span>Dyson 任一主機 $1,000 折價券</span></p>
   </div>
   <div id="draw-stage" class="draw-stage">
+    <div class="draw-idle-deer" aria-hidden="true"><img src="./assets/images/scene/day-08-leaping-reindeer.webp" alt="" loading="lazy"></div>
     <div class="draw-tree" aria-hidden="true">
       <img class="draw-tree-art" src="./assets/images/scene/day-12-christmas-tree.webp" alt="" width="1214" height="1295" loading="lazy" decoding="async">
       <span class="draw-tree-lights"></span>
@@ -130,6 +133,7 @@
       <img class="draw-flyover-reindeer" src="./assets/images/scene/day-08-leaping-reindeer.webp" alt="" loading="lazy">
     </div>
     <div id="draw-gifts" class="draw-gifts" role="group" aria-label="五盒聖誕禮物" aria-describedby="draw-rules"></div>
+    <canvas id="draw-effects" aria-hidden="true"></canvas>
   </div>
   <div id="draw-feedback" class="draw-feedback">
     <p id="draw-status" role="status" aria-live="polite" tabindex="-1"></p>
@@ -197,6 +201,17 @@
     <a id="draw-prize-product-link" target="_blank" rel="noopener noreferrer">了解產品詳情 ↗</a>
   </section>
 </dialog>
+<dialog id="draw-product" class="draw-result-dialog" aria-labelledby="draw-product-name">
+  <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
+  <h3 id="draw-product-name"></h3>
+  <img id="draw-product-image" alt="" width="88" height="88">
+  <section class="draw-prize-info draw-product-info">
+    <p id="draw-product-intro"></p>
+    <h4 id="draw-product-features-title">產品亮點</h4>
+    <ul id="draw-product-features"></ul>
+    <a id="draw-product-product-link" target="_blank" rel="noopener noreferrer">了解產品詳情 ↗</a>
+  </section>
+</dialog>
 <dialog id="draw-discovery" class="draw-result-dialog draw-discovery" aria-labelledby="draw-discovery-title" aria-describedby="draw-miss-copy">
   <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
   <h3 id="draw-discovery-title">今天沒有抽中優惠券</h3>
@@ -255,25 +270,6 @@
 <div class="card-save-actions"><button id="card-download" type="button" disabled>下載圖片</button><button id="card-share" type="button" disabled>分享圖片</button><button id="card-share-game" type="button">分享遊戲</button></div><p id="card-status" class="card-status" role="status" aria-live="polite"></p><div class="card-share-options"><button id="card-share-file" type="button" hidden>只分享圖片</button></div><button id="draw-from-card" type="button" hidden>挑選今日禮物</button><textarea id="card-share-text" aria-label="分享文案與活動連結" readonly hidden></textarea></div></div></form></dialog>
 <dialog id="item-dialog" aria-labelledby="item-title"><button class="dialog-close" data-close="item-dialog" aria-label="關閉">×</button><p id="item-day" class="eyebrow"></p><div id="item-visual" class="item-visual"></div><p id="item-kind" class="small-label"></p><h2 id="item-title"></h2><p id="item-description"></p><section id="item-product" class="product-intro" aria-label="產品介紹" hidden><h3 id="product-features-title">產品亮點</h3><ul id="product-features"></ul><a id="product-link" class="product-link" target="_blank" rel="noopener noreferrer" hidden>了解產品詳情 ↗</a><span id="product-link-pending" class="product-link-pending">產品詳情準備中</span></section><p id="item-music" class="item-music" hidden></p><button id="item-placement" class="gold-button"></button><button id="item-position" class="secondary-button">調整擺放位置</button></dialog>
 <dialog id="music-credits-dialog" aria-labelledby="music-credits-title"><button class="dialog-close" data-close="music-credits-dialog" aria-label="關閉">×</button><p class="eyebrow">MUSIC CREDITS</p><h2 id="music-credits-title">聖誕旋律與授權</h2><p class="dialog-subtitle">以下為 Kevin MacLeod 提供的 CC BY 4.0 授權錄音，依授權標示作者與來源。可免費用於商業活動。</p><div id="music-credits-list"></div></dialog>
-<dialog id="vouchers-dialog" class="activity-dialog" aria-labelledby="vouchers-title">
- <header id="activity-dialog-top" class="activity-dialog-top">
-  <div class="activity-dialog-heading">
-   <h2 id="vouchers-title" tabindex="-1">活動玩法</h2>
-   <button class="dialog-close" data-close="vouchers-dialog" type="button" aria-label="關閉">×</button>
-  </div>
- </header>
- <div class="activity-dialog-body activity-how-to">
-  <div data-activity-missions="activity-description" class="activity-missions-overview"></div>
-  <div class="activity-how-to-actions">
-   <button id="calendar-from-vouchers" type="button">前往每日解鎖</button>
-   <button id="draw-from-vouchers" type="button">前往拆禮物</button>
-   <button id="passport-from-vouchers" type="button">前往打卡好禮</button>
-  </div>
-  <div class="welcome-rules-content" data-activity-rules data-coupon-heading-id="activity-coupons"></div>
-  <details class="welcome-rules"><summary>注意事項</summary><div class="welcome-rules-content" data-activity-notices></div></details>
- </div>
-</dialog>
-
 <dialog id="studio-dialog" class="studio-dialog" aria-labelledby="studio-title"><button class="dialog-close" data-close="studio-dialog" aria-label="關閉">×</button><p class="eyebrow">CAMPAIGN STUDIO · PREVIEW</p><h2 id="studio-title">25 天內容與場景預覽</h2><p class="dialog-subtitle">此為企劃預覽入口，並非具登入驗證的管理後台。模擬收藏與擺放保存在同一參加者列的獨立模擬欄位。</p>
 <details id="cloud-settings" hidden><summary>管理設定：連接 Google Sheet</summary><p>先將 DysonProgress.gs 貼入 Sheet 的 Apps Script，設定 GitHub 網域、執行 setup，部署為網頁應用程式。</p><label for="cloud-endpoint">部署網址（/exec）</label><input id="cloud-endpoint" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"><button id="cloud-save-export" type="button" class="gold-button">套用並下載 config.js</button><p id="cloud-summary"></p><p id="cloud-settings-status" role="status"></p></details>
  <div class="preview-controls"><label>預覽日期<input id="preview-date" type="date" value="2026-12-01" min="2026-11-30" max="2026-12-26"></label><button id="preview-start" class="gold-button">模擬當日</button><button id="preview-fill">收藏至此日（不放入）</button><button id="preview-clear">清空測試進度</button><button id="studio-export">下載活動設定 config.js</button></div>
@@ -297,6 +293,7 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v119"></script>
-<script src="./assets/js/app.js?v=20261117-v119-welcome-ff0d4776"></script>
+<script src="./assets/js/gift-effects.js?v=20261117-v120"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v120"></script>
+<script src="./assets/js/app.js?v=20261117-v120"></script>
 </body></html>

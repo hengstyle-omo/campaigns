@@ -1195,16 +1195,8 @@ button,input,textarea,select{line-height:1.5}
   }
 }
 
-.activity-how-to { display: grid; gap: 12px; }
-.activity-how-to-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.activity-how-to-actions button { min-height: 42px; }
-.activity-missions-overview .activity-intro-description { margin: 0 0 12px; }
-.activity-missions-overview .activity-jumps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
-.activity-missions-overview .mission-card {
-  display: grid; grid-column: auto; align-content: center; gap: 5px; min-width: 0; min-height: 0; padding: 10px 4px;
-  color: var(--text); font-weight: 400;
-  border: 1px solid var(--line); border-radius: 8px; background: #101d2c; text-align: center; line-height: 1.5;
-}
+#welcome-review-close { width: 44px; height: 44px; }
+.welcome-dialog:has(#welcome-review-close:not([hidden])) #welcome-title { padding-inline-end: 46px; }
 
 .onboarding-guide {
   position: fixed;
