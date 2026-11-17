@@ -2015,7 +2015,7 @@ for(const [id,dialog] of [['draw-from-card','card-dialog'],['draw-from-vouchers'
   $(id).addEventListener('click',()=>{
     closeDialog(dialog);
     $('draw-heading').focus({preventScroll:true});
-    $('draw-heading').scrollIntoView({block:'start'});
+    $('draw-card').scrollIntoView({block:'start'});
   });
 }
 $('card-form').addEventListener('submit',e=>e.preventDefault());
@@ -2471,7 +2471,12 @@ async function exportConfig(){
 $('today-open').addEventListener('click',()=>{
   if(today()===26){
     if(mobileViewport.matches)openMobileCollection();
-    else $('collection-section').scrollIntoView({behavior:'smooth'});
+    else {
+      const collection=$('collection-section');
+      collection.open=true;
+      collection.querySelector('summary').focus({preventScroll:true});
+      collection.scrollIntoView({behavior:'smooth'});
+    }
   }else if(today()>=1)openDay(today());
 });
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});

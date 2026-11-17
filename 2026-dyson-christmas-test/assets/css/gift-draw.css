@@ -10,7 +10,7 @@
 .draw-copy { padding: 26px 16px 0; }
 .draw-copy h3, .draw-wallet h3 { color: #f2d9ab; margin: 0 0 8px; }
 .draw-copy h3 { font-size: clamp(1.45rem, 3vw, 2.25rem); }
-#draw-heading { scroll-margin-top: 110px; }
+#draw-card, #draw-heading { scroll-margin-top: 110px; }
 .draw-copy p, .draw-feedback p { margin: 0; }
 .draw-copy p + p:not([hidden]) { margin-top: 6px; }
 .draw-bonus, #draw-count { color: #efc984; }
@@ -30,12 +30,28 @@
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 72% -14% -27%;
+  inset: 79% -14% -27%;
   border-radius: 50% 50% 0 0 / 50% 50% 0 0;
-  background: radial-gradient(ellipse at 50% 1%, #eef0ef 1%, #b5c2ce 32%, #61758d 67%, #33485f 100%);
+  background:
+    radial-gradient(ellipse at 28% 30%, #fcfdffbc, transparent 31%),
+    radial-gradient(ellipse at 70% 24%, #a0b8d48c, transparent 25%),
+    radial-gradient(ellipse at 65% 48%, #f7faffc7, transparent 34%),
+    radial-gradient(ellipse at 32% 44%, #a7bed685, transparent 28%),
+    linear-gradient(179deg, #f8fbff 3%, #e1ebf6 34%, #becfe2 58%, #90a8c3 100%);
 }
 .draw-tree, .draw-gifts { position: absolute; }
-.draw-tree { height: 76%; aspect-ratio: 1214 / 1295; left: 50%; top: 8%; transform: translateX(-50%); }
+.draw-tree { height: 75%; aspect-ratio: 1214 / 1295; left: 50%; top: 7%; transform: translateX(-50%); }
+.draw-tree::before {
+  content: "";
+  position: absolute;
+  left: 52%;
+  bottom: 0;
+  width: 29%;
+  height: 6%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #384e68a3 3%, #61779353 41%, transparent 72%);
+}
 .draw-tree-art, .draw-tree-logo { display: block; position: absolute; }
 .draw-tree-art { inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .draw-tree-logo {
@@ -45,7 +61,7 @@
   left: 52%;
   top: 35%;
   transform: translate(-50%, -50%);
-  filter: brightness(0) saturate(100%) invert(94%) sepia(32%) saturate(682%) hue-rotate(320deg) brightness(111%) contrast(103%) drop-shadow(0 0 5px #ffcb7c) drop-shadow(0 0 12px #fca83b);
+  filter: brightness(0) saturate(100%) invert(94%) sepia(32%) saturate(682%) hue-rotate(320deg) brightness(103%) contrast(98%) drop-shadow(0 0 2px #fffaf1b3) drop-shadow(0 0 8px #ffc17d66);
 }
 .draw-gifts { inset: 0; }
 .draw-gifts .draw-gift {
@@ -68,11 +84,11 @@
   transform: translate(-50%, -50%) rotate(var(--angle));
   appearance: none;
 }
-.draw-gifts .draw-gift:nth-child(1) { --x: 26%; --y: 72%; --size: 13%; --angle: -7deg; }
-.draw-gifts .draw-gift:nth-child(2) { --x: 74%; --y: 72%; --size: 12.5%; --angle: 8deg; }
-.draw-gifts .draw-gift:nth-child(3) { --x: 14.5%; --y: 84%; --size: 15%; --angle: -5deg; }
-.draw-gifts .draw-gift:nth-child(4) { --x: 50%; --y: 84%; --size: 16%; --angle: 2deg; }
-.draw-gifts .draw-gift:nth-child(5) { --x: 85.5%; --y: 84%; --size: 15%; --angle: 5deg; }
+.draw-gifts .draw-gift:nth-child(1) { --x: 27%; --y: 74%; --size: 13%; --angle: -7deg; }
+.draw-gifts .draw-gift:nth-child(2) { --x: 76%; --y: 74%; --size: 12.5%; --angle: 8deg; }
+.draw-gifts .draw-gift:nth-child(3) { --x: 15%; --y: 86%; --size: 15%; --angle: -5deg; }
+.draw-gifts .draw-gift:nth-child(4) { --x: 63%; --y: 86%; --size: 16%; --angle: 2deg; }
+.draw-gifts .draw-gift:nth-child(5) { --x: 86%; --y: 86%; --size: 15%; --angle: 5deg; }
 .draw-gifts .draw-gift:disabled { opacity: 1; cursor: default; }
 .draw-gifts .draw-gift:not(:disabled) { cursor: pointer; }
 .draw-gifts .draw-gift:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 1px; z-index: 1; }
@@ -199,10 +215,48 @@
 #draw-from-card { display: block; margin-top: 10px; width: 100%; }
 #draw-from-card[hidden] { display: none; }
 
+@media (min-width: 761px) {
+  .draw-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(245px, 30%, 354px);
+    grid-template-rows: repeat(2, minmax(min-content, 1fr));
+    max-width: none;
+    text-align: left;
+  }
+  .draw-stage {
+    --draw-scene-height: clamp(305px, 43vw, min(525px, calc(100svh - 165px)));
+    grid-area: 1 / 1 / span 2;
+    min-height: var(--draw-scene-height);
+    aspect-ratio: auto;
+    border-right: 1px solid #80705655;
+  }
+  .draw-gifts .draw-gift { width: min(var(--size), calc(var(--draw-scene-height) * .23)); }
+  .draw-gifts .draw-gift:nth-child(-n+2) { width: min(var(--size), calc(var(--draw-scene-height) * .20)); }
+  .draw-copy {
+    grid-area: 1 / 2;
+    align-self: end;
+    min-width: 0;
+    padding: 20px clamp(16px, 2vw, 30px) 0;
+  }
+  .draw-copy h3 { font-size: clamp(1.3rem, 2.35vw, 1.9rem); }
+  .draw-feedback {
+    grid-area: 2 / 2;
+    min-height: 0;
+    min-width: 0;
+    padding: 12px clamp(16px, 2vw, 30px) 20px;
+    border-top: 0;
+    background: transparent;
+  }
+  .draw-actions { justify-content: flex-start; }
+  .draw-prize-art img { height: 80px; }
+}
+
 @media (max-width: 560px) {
   .draw-copy { padding-top: 18px; }
   .draw-stage { aspect-ratio: 1.07; }
   .draw-gifts .draw-gift { width: calc(var(--size) + 4%); }
+  .draw-gifts .draw-gift:nth-child(-n+2) { --y: 76%; }
+  .draw-gifts .draw-gift:nth-child(4) { --x: 65%; }
   #draw-wallet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .draw-coupon { padding: 10px; }
   .draw-wallet, .draw-settings { padding: 12px; }

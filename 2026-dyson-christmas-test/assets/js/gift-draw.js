@@ -305,7 +305,7 @@
   simulate.addEventListener('click', () => {
     const heading = byId('draw-heading');
     heading.focus({ preventScroll: true });
-    heading.scrollIntoView({ block: 'start' });
+    byId('draw-card').scrollIntoView({ block: 'start' });
     complete(activeDate);
   });
   reset.addEventListener('click', () => {
