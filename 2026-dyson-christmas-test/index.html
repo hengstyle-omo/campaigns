@@ -7,7 +7,7 @@
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
 <link rel="stylesheet" href="./assets/css/style.css?v=20261117-v102-collections">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v108-prize-intro">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261117-v109-draw-result">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -21,7 +21,7 @@
    <a href="#activity-attendance"><b class="mission-number">03</b><strong>獨家好禮</strong><span>打卡五天<br>享靠櫃禮</span></a>
   </nav>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v108</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v109</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <div class="welcome-topline" hidden><button id="welcome-skip" type="button" aria-label="關閉">×</button></div>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
@@ -41,7 +41,7 @@
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-coupons">
    <h3 id="rules-coupons">聖誕禮遇｜抽 Dyson $1,000 優惠券</h3>
-   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。每盒都有聖誕祝福，有可抽優惠券時，抽中機率為 20%。同款券只會中一次，12/20 起加入任一商品優惠券。</p>
+   <p>當天製作聖誕卡片並下載或分享圖片後，每個瀏覽器每天可拆 1 盒。未抽中時可看到一則 Dyson 小知識。有可抽優惠券時，抽中機率為 20%。同款券只會中一次，12/20 起加入任一商品優惠券。</p>
    <p>※ 抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
   </section>
   <section class="activity-rules-section" aria-labelledby="rules-passport">
@@ -111,7 +111,7 @@
  <section id="benefit-section" class="benefit-section"><div class="section-heading"><div><p class="eyebrow"><svg class="ticket-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v2m0 2v2m0 2v2"/></svg>優惠券</p><h2>聖誕優惠券</h2></div></div><section id="draw-card" class="draw-card" aria-labelledby="draw-heading">
   <div class="draw-copy">
     <h3 id="draw-heading" tabindex="-1">挑一份你的聖誕回禮</h3>
-    <p id="draw-rules">每盒都有一句聖誕祝福。每天挑 1 盒。</p>
+    <p id="draw-rules">每天挑 1 盒，揭曉優惠券或 Dyson 小知識。</p>
     <p id="draw-bonus" class="draw-bonus" hidden>12/20 加碼｜<span>Dyson 任一商品折 $1,000</span></p>
   </div>
   <div id="draw-stage" class="draw-stage">
@@ -132,6 +132,15 @@
   <div id="draw-feedback" class="draw-feedback">
     <p id="draw-status" role="status" aria-live="polite" tabindex="-1"></p>
     <p id="draw-pool-note" class="draw-muted"></p>
+    <article id="draw-fact" class="draw-fact" aria-labelledby="draw-fact-title" hidden>
+      <img id="draw-fact-image" alt="" width="80" height="96">
+      <div>
+        <h4 id="draw-fact-title">今日 Dyson 小知識</h4>
+        <strong id="draw-fact-lead"></strong>
+        <p id="draw-fact-copy"></p>
+        <a id="draw-fact-link" target="_blank" rel="noopener noreferrer" hidden></a>
+      </div>
+    </article>
     <div id="draw-keepsake-result" class="draw-keepsake-result" hidden>
       <img id="draw-keepsake-preview" alt="" width="72" height="58">
       <div>
@@ -139,27 +148,9 @@
         <span id="draw-keepsake-name"></span>
       </div>
     </div>
-    <article id="draw-prize" class="draw-prize" aria-labelledby="draw-prize-name" hidden>
-      <div class="draw-prize-art"><img id="draw-prize-image" alt="" width="144" height="108"></div>
-      <div class="draw-prize-copy">
-        <h4 id="draw-prize-name"></h4>
-        <span id="draw-prize-kind"></span>
-        <strong>$1,000</strong>
-      </div>
-      <div class="draw-prize-information">
-        <p id="draw-prize-intro" hidden></p>
-        <details id="draw-prize-details" hidden>
-          <summary>產品亮點</summary>
-          <ul id="draw-prize-features"></ul>
-        </details>
-        <div class="draw-prize-links">
-          <a id="draw-prize-product-link" target="_blank" rel="noopener noreferrer" hidden>了解產品詳情 ↗</a>
-          <a id="draw-prize-claim" class="draw-prize-cta" target="_blank" rel="noopener noreferrer">前往領取優惠券 ↗</a>
-        </div>
-      </div>
-    </article>
     <div class="draw-actions">
       <button id="draw-create" class="gold-button" type="button">製作卡片解鎖禮物</button>
+      <button id="draw-result-open" type="button" hidden>查看中獎結果</button>
       <a id="draw-view" href="#draw-coupons" hidden>查看我的優惠券</a>
     </div>
     <section id="draw-passport" class="draw-passport" aria-labelledby="draw-passport-title">
@@ -183,6 +174,26 @@
   <div id="draw-wallet"></div>
   <p class="draw-muted draw-wallet-note">抽獎紀錄保存在目前使用的瀏覽器。實際領取結果以恆隆行優惠券頁為準。</p>
 </section>
+<dialog id="draw-prize" class="draw-result-dialog" aria-labelledby="draw-prize-name">
+  <form method="dialog" class="draw-result-close"><button type="submit" aria-label="關閉" autofocus>×</button></form>
+  <div class="draw-result-main">
+    <div class="draw-result-art"><img id="draw-prize-image" alt="" width="156" height="156"></div>
+    <div class="draw-result-info">
+      <h3 id="draw-prize-name"></h3>
+      <p id="draw-prize-intro" hidden></p>
+      <details id="draw-prize-details" hidden>
+        <summary>產品亮點</summary>
+        <ul id="draw-prize-features"></ul>
+      </details>
+      <a id="draw-prize-product-link" target="_blank" rel="noopener noreferrer" hidden>了解產品詳情 ↗</a>
+    </div>
+  </div>
+  <div id="draw-prize-ticket" class="draw-result-ticket" hidden>
+    <span id="draw-prize-kind"></span>
+    <strong>$1,000</strong>
+    <a id="draw-prize-claim" class="gold-button" target="_blank" rel="noopener noreferrer">立即領取優惠券 ↗</a>
+  </div>
+</dialog>
 <details id="draw-settings" class="draw-settings">
   <summary>測試設定</summary>
   <div class="draw-settings-controls">
@@ -306,6 +317,6 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-draw.js?v=20261117-v108-prize-intro"></script>
+<script src="./assets/js/gift-draw.js?v=20261117-v109-draw-result"></script>
 <script src="./assets/js/app.js?v=20261117-v106-scene-keepsakes"></script>
 </body></html>

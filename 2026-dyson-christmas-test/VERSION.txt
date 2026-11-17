@@ -1,1 +1,1 @@
-v108 test / 2026-11-17 / show existing product introductions with winning coupons
+v109 test / 2026-11-17 / gift result dialog, wallet product details and Dyson facts

@@ -8,40 +8,40 @@
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
-    hd19: { rewardId: 'product-hd19', name: 'HD19 隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
-    pencilvac: { rewardId: 'product-sv50', name: 'PencilVac 鉛筆吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
+    hd19: { rewardId: 'product-hd19', name: 'HD19隨行吹風機', image: './assets/images/rewards/dyson-HD19.jpg' },
+    pencilvac: { rewardId: 'product-sv50', name: 'PencilVac筆型吸塵器', image: './assets/images/rewards/dyson-SV50.jpg' },
     hj10: { rewardId: 'product-hj10', name: 'HJ10 噴射氣流空氣清淨機', image: './assets/images/rewards/dyson-HJ10.jpg' },
     bonus: { rewardId: 'product-bp10', name: 'Dyson 任一商品', image: './assets/images/brand/dyson-logo-black.png' },
   };
   const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
   const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
-  const blessings = [
-    '願你忙碌的日子裡，也有一點時間留給自己。',
-    '願你今天收到一句，剛好想聽見的話。',
-    '願你回到家時，有一盞暖暖的燈等著你。',
-    '願你喜歡的人，剛好也在想你。',
-    '願今天有一件小事，讓你忍不住笑出來。',
-    '願你有一頓慢慢吃、好好聊的晚餐。',
-    '願你想念的人，今年有機會再見一面。',
-    '願你期待已久的好消息，早一點到來。',
-    '願你在冷冷的早晨，剛好喝到一杯熱咖啡。',
-    '願接下來的日子，多一些值得期待的事。',
-    '願你有一個安靜的夜晚，睡一場安穩的好覺。',
-    '願今年努力過的事，在你沒留意的地方慢慢開花。',
-    '願你留一個下午，做一件單純喜歡的事。',
-    '願你收到一個擁抱，剛好在你需要的時候。',
-    '願你在回家的路上，看到一棵特別漂亮的聖誕樹。',
-    '願你和喜歡的人，多拍一張以後會想再看的照片。',
-    '願你掛念的事，終於有個讓你安心的答案。',
-    '願你把今年最喜歡的那一刻，好好收進回憶裡。',
-    '願你想說的謝謝，今天剛好有機會親口說。',
-    '願你聽見一首老歌，想起一段很好的時光。',
-    '願你在平常的一天，遇到一件想和別人分享的事。',
-    '願你今年的最後幾天，有笑聲，也有舒服的留白。',
-    '願明年的你，有時間去想去的地方。',
-    '願你在平安夜，和惦記的人互道一聲晚安。',
-    '聖誕快樂！願這個冬天，有一份剛剛好的溫暖留給你。',
+  const brandImage = './assets/images/brand/dyson-logo-white.png';
+  const counterLink = { label: '尋找 Dyson 百貨專櫃', href: 'https://shop.hengstyle.com/Article/Detail/94141' };
+  const servicesLink = { label: '查看 Dyson 百貨活動與服務', href: 'https://shop.hengstyle.com/site/dyson' };
+  const facts = [
+    { lead: 'Dyson 源自英國。', copy: '品牌由英國發明家 James Dyson 創立，並於 1993 年在英國推出 DC01 氣旋吸塵器。' },
+    { lead: '第一台氣旋吸塵器背後，有 5,127 個原型。', copy: 'James Dyson 發現集塵袋被灰塵堵住後，吸塵器的吸力就會變弱。他花了五年反覆試做，才找到解法。' },
+    { lead: '全台有 41 個據點可以現場體驗 Dyson。', copy: '除了 20 間 Dyson 專櫃，還有 21 間 hengstyle 恆隆行專櫃販售 Dyson 產品。到櫃可以試試吹風機的風量、感受吸塵器的手感，也能請專人介紹不同機型。', link: counterLink },
+    { lead: '在恆隆行直營通路買 Dyson，享自動保固。', copy: '到 Dyson 直營專櫃或恆隆行官方線上購物選購，從買前諮詢、機型比較，到買後的操作問題與維修，都有恆隆行的服務窗口。', link: servicesLink },
+    { lead: 'Dyson 百貨優惠和專櫃資訊，可以在同一頁找到。', copy: '恆隆行 Dyson 百貨首頁整理了百貨活動、選購攻略和專櫃據點。出門前，也可以用電話或 LINE 先問專櫃有沒有想體驗的機型。', link: servicesLink },
+    { lead: 'Dyson 買回家後，也有操作教學可以跟著做。', copy: '從吸塵器、美髮家電到清淨機，恆隆行都有使用教學。像是 BP 系列要換濾網，就能跟著影片一步步操作。', link: servicesLink },
+    { product: 'hd19', lead: '旅行可以帶同一支吹風機。', copy: 'HD19隨行吹風機支援 100–240V，出發前確認當地插座規格，需要時帶上轉接頭。' },
+    { product: 'hd19', lead: '主機約 330 公克。', copy: 'HD19隨行吹風機相較原版 Dyson Supersonic，機身輕 25%、小 32%，放進行李更省空間。主機重量未計入線材與插頭。' },
+    { product: 'hd19', lead: '熟悉的造型方式也能帶去旅行。', copy: 'HD19隨行吹風機可以搭配相容的 Supersonic 吹嘴，吹整完還能切換冷風定型。' },
+    { product: 'pencilvac', lead: '單手也能靈活繞過桌腳。', copy: 'PencilVac筆型吸塵器的握把直徑只有 38 毫米，搭配可 360° 轉向的吸頭，沿牆或繞過家具都好操作。' },
+    { product: 'pencilvac', lead: '吸頭裡有四個錐形滾刷。', copy: 'PencilVac筆型吸塵器的 Fluffycones 吸頭用這個設計減少清潔時的毛髮纏繞。' },
+    { product: 'pencilvac', lead: '平常容易漏看的細灰，也能照得更清楚。', copy: 'PencilVac筆型吸塵器的吸頭會照亮前後兩側的地面，打掃完還能免手碰清空集塵筒。' },
+    { product: 'hj10', lead: '空氣品質變化時，風速會跟著調整。', copy: '開啟自動模式後，HJ10 會依微粒偵測結果調整風速，機身螢幕也能查看 PM2.5 和 PM10 濃度。' },
+    { product: 'hj10', lead: '放在臥室，晚上可以把螢幕調暗。', copy: 'HJ10 的底部約 23 × 23 公分，切到夜間模式，機身螢幕就會變暗。' },
+    { product: 'hj10', lead: '手機就能控制清淨機。', copy: '用 MyDyson App 可以遠端操作、設定最長 9 小時的關機定時，也能查看濾網更換提醒。' },
   ];
+  const catalog = window.DYSON_GAME_CONFIG;
+  const prizeDetailsById = Object.fromEntries(Object.entries(prizes).map(([id, { rewardId }]) => {
+    const reward = catalog.rewards.find(reward => reward.id === rewardId);
+    const day = reward?.productDay;
+    return [id, { reward, day, product: id === 'bonus' ? null : catalog.items.find(item => item.day === day)?.product }];
+  }));
+
   const byId = id => document.getElementById(id);
   const dateInput = byId('draw-date');
   const mode = byId('draw-mode');
@@ -170,12 +170,21 @@
       note.textContent = day ? '✓ 已抽中 · ' + displayDate(day)
         : id === 'bonus' && activeDate < bonusDate ? '12/20 加入抽獎' : '尚未抽中';
       coupon.append(title, amount, note);
+      if (prizeDetailsById[id].product) {
+        const details = document.createElement('button');
+        details.type = 'button';
+        details.className = 'draw-coupon-details';
+        details.textContent = '查看產品介紹';
+        details.setAttribute('aria-label', '查看 ' + name + ' 的產品介紹');
+        details.addEventListener('click', () => openPrize(id, Boolean(day)));
+        coupon.append(details);
+      }
       if (day) {
         const link = document.createElement('a');
         link.href = prizeURL(id);
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.textContent = '前往領取優惠券 ↗';
+        link.textContent = '立即領取優惠券 ↗';
         bindCouponClick(link, id);
         coupon.append(link);
       }
@@ -239,28 +248,53 @@
     return day.slice(5).replace('-', '/');
   }
 
-  function dailyBlessing(date, index) {
-    const dayOffset = Number(date.slice(-2)) - 1;
-    return blessings[(dayOffset + index * gifts.length) % blessings.length];
+  function factIndex(date, days) {
+    const day = Number(date.slice(-2));
+    const choices = Array.from(facts.keys()).filter(index => {
+      const { product } = facts[index];
+      return !product || prizeDetailsById[product].day <= day;
+    });
+    const saved = days[date]?.result?.fact;
+    if (choices.includes(saved)) return saved;
+    const earlierMisses = Object.entries(days).filter(([key, record]) => key < date && record.result && !record.result.prize);
+    const seen = new Set(earlierMisses.map(([, record]) => record.result.fact));
+    return choices.find(index => !seen.has(index)) ?? choices[earlierMisses.length % choices.length];
   }
 
-  function renderPrize(id) {
-    prizeCard.hidden = !id;
-    if (!id) return;
+  function renderFact(show, days) {
+    byId('draw-fact').hidden = !show;
+    if (!show) return;
+    const fact = facts[factIndex(activeDate, days)];
+    const image = byId('draw-fact-image');
+    const source = fact.product ? window.DYSON_ASSETS.sprites?.[prizeDetailsById[fact.product].day] ?? prizes[fact.product].image : brandImage;
+    if (image.getAttribute('src') !== source) image.src = source;
+    image.alt = fact.product ? prizes[fact.product].name : '';
+    byId('draw-fact-lead').textContent = fact.lead;
+    byId('draw-fact-copy').textContent = fact.copy;
+    const link = byId('draw-fact-link');
+    link.hidden = !fact.link;
+    if (fact.link) {
+      link.href = fact.link.href;
+      link.textContent = fact.link.label + ' ↗';
+    } else {
+      link.removeAttribute('href');
+    }
+  }
+
+  function openPrize(id, claimable) {
+    if (!prizes[id] || prizeCard.open) return;
 
     const { name, image } = prizes[id];
-    prizeClaim.href = prizeURL(id);
+    const { reward, day, product } = prizeDetailsById[id];
+    byId('draw-prize-ticket').hidden = !claimable;
+    if (claimable) prizeClaim.href = prizeURL(id);
+    else prizeClaim.removeAttribute('href');
     prizeClaim.dataset.coupon = id;
-    if (prizeImage.getAttribute('src') !== image) prizeImage.src = image;
-    prizeCard.dataset.bonus = String(id === 'bonus');
+    prizeImage.src = product ? window.DYSON_ASSETS.sprites?.[day] ?? image : image;
+    prizeImage.alt = product ? name : '';
     byId('draw-prize-name').textContent = name;
     byId('draw-prize-kind').textContent = id === 'bonus' ? '任一商品現折' : '指定商品現折';
 
-    if (prizeCard.dataset.renderedProduct === id) return;
-    prizeCard.dataset.renderedProduct = id;
-    const catalog = window.DYSON_GAME_CONFIG;
-    const reward = catalog.rewards.find(reward => reward.id === prizes[id].rewardId);
-    const product = id === 'bonus' ? null : catalog.items.find(item => item.day === reward?.productDay)?.product;
     // The countdown introduction ends with scene-specific instructions.
     const intro = product?.intro?.split('點選放進雪境，')[0].trim() || reward?.conditions || '';
     prizeIntro.textContent = intro;
@@ -277,6 +311,7 @@
     prizeProductLink.hidden = !productUrl?.startsWith('https://');
     if (prizeProductLink.hidden) prizeProductLink.removeAttribute('href');
     else prizeProductLink.href = productUrl;
+    prizeCard.showModal();
   }
 
   function createGiftLayout(random = Math.random) {
@@ -354,7 +389,7 @@
     // Earlier trials used fifteen gifts. Keep those results visible on the five-gift scene.
     const selected = opening ? pending.index : played ? day.result.selected % gifts.length : undefined;
     const prize = opening ? null : day?.result?.prize;
-    const canOpen = day && !played && !pending;
+    const canOpen = Boolean(day && !played && !pending);
     const bonusOption = mode.querySelector('option[value="bonus"]');
     const winOption = mode.querySelector('option[value="win"]');
     bonusOption.disabled = !pool.includes('bonus');
@@ -363,10 +398,12 @@
 
     for (const [index, gift] of gifts.entries()) {
       gift.disabled = !canOpen;
-      const state = index === selected ? opening ? 'opening' : prize ? 'won' : 'blessing' : 'closed';
+      const state = index === selected ? opening ? 'opening' : prize ? 'won' : 'miss' : 'closed';
       if (gift.dataset.state !== state) gift.dataset.state = state;
       gift.classList.toggle('draw-touch-opening', state === 'opening' && pending.touch);
     }
+    giftGroup.classList.toggle('draw-ready', canOpen);
+    renderFact(played && !opening && !prize, days);
     renderKeepsake(played && !opening && !prize, selected);
     floatedTicket.hidden = !prize;
     if (prize) {
@@ -379,27 +416,23 @@
     if (!prize) stage.classList.remove('draw-celebrate');
     byId('draw-bonus').hidden = activeDate < bonusDate;
     byId('draw-create').hidden = Boolean(day) || !validDate(activeDate);
+    byId('draw-result-open').hidden = !prize;
     byId('draw-view').hidden = !prize;
     const drawFromCard = byId('draw-from-card');
     drawFromCard.hidden = !day;
-    if (played) drawFromCard.textContent = '查看今日聖誕祝福';
-    else drawFromCard.textContent = pool.length
-      ? '取得今日抽獎資格 · 前往拆禮物'
-      : '今日祝福已解鎖 · 前往拆禮物';
-    feedback.classList.toggle('draw-is-blessing', played && !opening);
+    drawFromCard.textContent = played ? '查看今日拆盒結果' : '取得今日抽獎資格 · 前往拆禮物';
+    feedback.classList.toggle('draw-has-result', played && !opening);
     dateInput.disabled = Boolean(pending);
     reset.disabled = Boolean(pending);
     simulate.disabled = Boolean(pending || day || !validDate(activeDate));
     mode.disabled = Boolean(pending || played);
-    renderPrize(prize);
-
     let message;
     if (actionError) {
       message = actionError;
     } else if (opening) {
       message = '正在拆開你的聖誕禮物…';
     } else if (played) {
-      message = dailyBlessing(activeDate, selected);
+      message = prize ? '抽中優惠券！' : '今天未抽中優惠券。';
     } else if (day) {
       message = '今日禮物已解鎖，挑一盒拆開吧。';
     } else if (!validDate(activeDate)) {
@@ -414,7 +447,7 @@
     if (!note.hidden) {
       note.textContent = activeDate < bonusDate
         ? '前三張優惠券已集齊，12/20 再來抽加碼券。'
-        : '優惠券已集齊，仍可每天拆一份聖誕祝福。';
+        : '優惠券已集齊，仍可每天拆盒看一則 Dyson 小知識。';
     }
     if (!opening) renderWallet(days);
   }
@@ -459,6 +492,7 @@
     const prize = choice === 'bonus' && pool.includes('bonus') ? 'bonus' : won ? assignedPrize : null;
     day.layout ??= currentGiftLayout(date, day);
     day.result = { selected: index, prize: prize ?? null };
+    if (!prize) day.result.fact = factIndex(date, draw.days);
     return saveDraw(draw);
   }
 
@@ -469,8 +503,10 @@
     const attempt = { date: activeDate, choice: mode.value, index, touch };
     pending = attempt;
     const restoreFocus = document.activeElement === gifts[index];
+    let recorded = false;
     try {
-      if (await withDrawLock(() => record(attempt))) {
+      recorded = await withDrawLock(() => record(attempt));
+      if (recorded) {
         render();
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
@@ -482,10 +518,14 @@
     } finally {
       pending = null;
       render();
-      if (readDraw().days[attempt.date]?.result?.prize && activeDate === attempt.date) {
+      const prize = recorded && activeDate === attempt.date && readDraw().days[attempt.date]?.result?.prize;
+      if (prize) {
         stage.classList.add('draw-celebrate');
+        byId('draw-result-open').focus({ preventScroll: true });
+        openPrize(prize, true);
+      } else if (restoreFocus) {
+        status.focus({ preventScroll: true });
       }
-      if (restoreFocus) status.focus({ preventScroll: true });
     }
   }
 
@@ -518,6 +558,7 @@
       render();
     }).catch(showError);
   });
+  byId('draw-result-open').addEventListener('click', () => openPrize(readDraw().days[activeDate]?.result?.prize, true));
   byId('draw-view').addEventListener('click', () => byId('draw-coupons').focus({ preventScroll: true }));
   window.addEventListener('storage', event => {
     if (event.key === drawKey || event.key === null) render();
