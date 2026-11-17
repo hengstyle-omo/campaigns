@@ -25,34 +25,41 @@
   overflow: clip;
   background: #142231 url("../images/scene/draw-lapland-paper-snow.webp") center 72% / cover no-repeat;
 }
-/* Sky ribbons sit within the isolated stage, underneath the scene artwork. */
+/* Aurora stays behind the tree and moves across the upper sky. */
 .draw-stage::before,
 .draw-stage::after {
   content: "";
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  inset: 3% -24% 53%;
+  inset: 3% -10% 58%;
   border-radius: 50%;
-  opacity: .38;
-  background:
-    radial-gradient(ellipse at 48% 102%, transparent 38%, #59ddbc42 51%, #80eed650 57%, #50bdd91c 64%, transparent 70%);
-  transform: translate(-11%, -7%) rotate(-10deg);
-  animation: draw-aurora-drift 16s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.draw-stage::before {
+  background: radial-gradient(ellipse at 49% 112%,
+    transparent 54%, #31c8aa32 61%, #5ae6c091 64%,
+    #b8ffe4ba 65.5%, #58e5b79c 67%, #42cdb367 71%, transparent 80%);
+  opacity: .8;
+  transform: translate(-12%, 0) rotate(-9deg);
+  animation: draw-aurora-drift 9s ease-in-out infinite;
 }
 .draw-stage::after {
-  inset: 6% -18% 58%;
-  opacity: .26;
-  background:
-    radial-gradient(ellipse at 53% 102%, transparent 43%, #529ed636 54%, #77dfba46 59%, transparent 70%);
-  transform: translate(16%, 6%) rotate(9deg);
-  animation-direction: reverse;
-  animation-duration: 21s;
+  inset: 8% -7% 53%;
+  background: radial-gradient(ellipse at 54% 118%,
+    transparent 55%, #508bff26 62%, #71b6fa91 65%,
+    #a3d9ff9e 66.5%, #6ba9f650 69%, transparent 77%);
+  opacity: .62;
+  transform: translate(12%, 9%) rotate(5deg);
+  animation: draw-aurora-sweep 10s ease-in-out -2s infinite;
 }
 @keyframes draw-aurora-drift {
-  0%, 100% { transform: translate(-15%, -5%) rotate(-11deg); opacity: .30; }
-  48% { transform: translate(8%, 3%) rotate(2deg); opacity: .70; }
-  75% { opacity: .51; }
+  0%, 100% { transform: translate(-18%, 0) rotate(-9deg) scaleX(.94); opacity: .58; }
+  49% { transform: translate(16%, 13%) rotate(5deg) scaleX(1.06); opacity: .94; }
+}
+@keyframes draw-aurora-sweep {
+  0%, 100% { transform: translate(17%, 12%) rotate(7deg) scaleX(.96); opacity: .48; }
+  54% { transform: translate(-16%, -3%) rotate(-6deg) scaleX(1.04); opacity: .78; }
 }
 .draw-tree, .draw-gifts { position: absolute; }
 .draw-tree { height: 66%; aspect-ratio: 1214 / 1295; left: 50%; top: 16%; transform: translateX(-50%); }

@@ -305,7 +305,8 @@
       const gift = gifts[index];
       const design = giftDesigns[box.design];
       placeGift(gift, box);
-      gift.style.setProperty('--gift-art', 'url("./assets/images/gifts/' + design.file + '")');
+      const imageUrl = new URL('./assets/images/gifts/' + design.file, document.baseURI);
+      gift.style.setProperty('--gift-art', 'url("' + imageUrl.href + '")');
       gift.style.setProperty('--gift-ratio', design.ratio);
       gift.style.setProperty('--gift-scale', design.scale);
       gift.style.setProperty('--gift-seam', design.seam);
