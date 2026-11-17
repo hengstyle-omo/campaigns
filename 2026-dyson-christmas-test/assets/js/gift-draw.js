@@ -5,6 +5,7 @@
   const dateKey = 'dyson-christmas-test-v2-date';
   const drawKey = 'dyson-christmas-test-v2-gifts';
   const giftOpeningDuration = 800;
+  const giftFlightDuration = 1100;
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
@@ -16,8 +17,8 @@
   const couponCodes = { hd19: 'FBQCDQQK', pencilvac: '87GBMGJS', hj10: '2PSUJGKX', bonus: '9AVPFVKJ', passport: 'GDCZZD8X' };
   const prizeURL = id => 'https://shop.hengstyle.com/V2/ECoupon/MyECoupon?source=linksetmembercoupon&ecouponCode=' + couponCodes[id];
   const brandImage = './assets/images/brand/dyson-logo-white.png';
-  const counterLink = { label: '尋找 Dyson 百貨專櫃', href: 'https://shop.hengstyle.com/Article/Detail/94141' };
-  const servicesLink = { label: '查看 Dyson 百貨活動與服務', href: 'https://shop.hengstyle.com/site/dyson' };
+  const counterLink = 'https://shop.hengstyle.com/Article/Detail/94141';
+  const servicesLink = 'https://shop.hengstyle.com/site/dyson';
   const facts = [
     { lead: 'Dyson 源自英國。', copy: '品牌由英國發明家 James Dyson 創立，並於 1993 年在英國推出 DC01 氣旋吸塵器。' },
     { lead: '第一台氣旋吸塵器背後，有 5,127 個原型。', copy: 'James Dyson 發現集塵袋被灰塵堵住後，吸塵器的吸力就會變弱。他花了五年反覆試做，才找到解法。' },
@@ -48,6 +49,8 @@
   const status = byId('draw-status');
   const feedback = byId('draw-feedback');
   const prizeCard = byId('draw-prize');
+  const discovery = byId('draw-discovery');
+  const flyover = byId('draw-flyover');
   const prizeClaim = byId('draw-prize-claim');
   const prizeIntro = byId('draw-prize-intro');
   const prizeDetails = byId('draw-prize-details');
@@ -60,6 +63,7 @@
   const passportTicket = byId('draw-passport-ticket');
   const stage = byId('draw-stage');
   stage.style.setProperty('--draw-touch-preview', touchPreviewDuration + 'ms');
+  stage.style.setProperty('--draw-flight-duration', giftFlightDuration + 'ms');
   const keepsakeResult = byId('draw-keepsake-result');
   const keepsakePreview = byId('draw-keepsake-preview');
   const keepsakeName = byId('draw-keepsake-name');
@@ -300,22 +304,17 @@
     image.alt = fact.product ? prizes[fact.product].name : '';
     byId('draw-fact-lead').textContent = fact.lead;
     byId('draw-fact-copy').textContent = fact.copy;
-    const link = byId('draw-fact-link');
-    link.hidden = !fact.link;
-    if (fact.link) {
-      link.href = fact.link.href;
-      link.textContent = fact.link.label + ' ↗';
-    } else {
-      link.removeAttribute('href');
-    }
+    const productUrl = prizeDetailsById[fact.product]?.product?.url;
+    byId('draw-fact-link').href = fact.link || (productUrl?.startsWith('https://') ? productUrl : servicesLink);
   }
 
   function openPrize(id, claimable) {
-    if (!prizes[id] || prizeCard.open) return;
+    if (!prizes[id] || prizeCard.open || discovery.open) return;
 
     const { name } = prizes[id];
     const { reward, product } = prizeDetailsById[id];
     byId('draw-prize-ticket').hidden = !claimable;
+    byId('draw-prize-won-label').hidden = !claimable;
     if (claimable) prizeClaim.href = prizeURL(id);
     else prizeClaim.removeAttribute('href');
     prizeClaim.dataset.coupon = id;
@@ -398,6 +397,8 @@
     const eligible = show ? sceneKeepsakes.filter(item => item.day <= day) : [];
     const keepsake = eligible.length ? eligible[(day + selected) % eligible.length] : null;
     keepsakeResult.hidden = !keepsake;
+    byId('draw-discovery-title').textContent = keepsake ? '你拆到了一份聖誕小禮物！' : '今日 Dyson 小知識';
+    byId('draw-fact-title').hidden = !keepsake;
     if (!keepsake) {
       keepsakePreview.removeAttribute('src');
       keepsakeName.textContent = '';
@@ -445,10 +446,10 @@
     if (!prize) stage.classList.remove('draw-celebrate');
     byId('draw-bonus').hidden = activeDate < bonusDate;
     byId('draw-create').hidden = Boolean(day) || !validDate(activeDate);
-    byId('draw-result-open').hidden = !prize;
+    byId('draw-result-open').hidden = !played || opening;
     const drawFromCard = byId('draw-from-card');
     drawFromCard.hidden = !day;
-    drawFromCard.textContent = played ? '查看今日拆盒結果' : '取得今日抽獎資格 · 前往拆禮物';
+    drawFromCard.textContent = played ? '查看今日拆盒結果' : '挑選今日禮物';
     feedback.classList.toggle('draw-has-result', played && !opening);
     dateInput.disabled = Boolean(pending);
     reset.disabled = Boolean(pending);
@@ -542,18 +543,25 @@
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
           await new Promise(resolve => setTimeout(resolve, duration));
+          if (activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            stage.classList.add('draw-flying');
+            const flight = flyover.getAnimations?.().find(animation => animation.animationName === 'draw-fly-past');
+            if (flight) await flight.finished.catch(() => {});
+            else await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
+          }
         }
       }
     } catch {
       showError();
     } finally {
+      stage.classList.remove('draw-flying');
       pending = null;
       render();
-      const prize = recorded && activeDate === attempt.date && readDraw().days[attempt.date]?.result?.prize;
-      if (prize) {
-        stage.classList.add('draw-celebrate');
+      const result = recorded && activeDate === attempt.date && readDraw().days[attempt.date]?.result;
+      if (result) {
+        if (result.prize) stage.classList.add('draw-celebrate');
         byId('draw-result-open').focus({ preventScroll: true });
-        openPrize(prize, true);
+        openResult();
       } else if (restoreFocus) {
         status.focus({ preventScroll: true });
       }
@@ -589,7 +597,14 @@
       render();
     }).catch(showError);
   });
-  byId('draw-result-open').addEventListener('click', () => openPrize(readDraw().days[activeDate]?.result?.prize, true));
+  function openResult() {
+    const result = readDraw().days[activeDate]?.result;
+    if (!result || pending || prizeCard.open || discovery.open) return;
+    if (result.prize) openPrize(result.prize, true);
+    else discovery.showModal();
+  }
+
+  byId('draw-result-open').addEventListener('click', openResult);
   byId('draw-view').addEventListener('click', () => byId('draw-coupons').focus({ preventScroll: true }));
   window.addEventListener('storage', event => {
     if (event.key === drawKey || event.key === null) render();
@@ -615,7 +630,7 @@
       showError();
     }
   });
-  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, updateSceneKeepsakes, setPassportReward, hasOpenedPassport };
+  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, updateSceneKeepsakes, setPassportReward, hasOpenedPassport, openResult };
   renderPassport();
   render();
 })();

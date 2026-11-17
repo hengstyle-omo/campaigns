@@ -670,7 +670,7 @@ function togglePlacement(d,{fromCollection=false}={}){
   if(!placed&&selectedDay===d)selectItem(null);
   if(Number(d)===25&&!placed)stopShow(false);
   persist();renderUI({placementDay:d});if($('item-dialog').open){if(Number(currentModalDay)===Number(d))closeDialog('item-dialog');else renderItemDialog();}drawFrame(0,performance.now());
-  status(`「${item(d).name}」已${placed?'放入':'移出'}水晶球。`);
+  if(!placed)status(`「${item(d).name}」已移出水晶球。`);
   if(Number(d)===25&&placed)startShow({scrollToGlobe:!fromCollection});
 }
 function setPreview(iso){
