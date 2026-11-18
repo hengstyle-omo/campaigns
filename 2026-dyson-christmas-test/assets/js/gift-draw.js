@@ -183,7 +183,7 @@
       const details = document.createElement(id === 'bonus' ? 'a' : 'button');
       details.className = 'draw-coupon-details';
       if (id === 'bonus') {
-        details.textContent = '了解更多 Dyson 資訊 ↗';
+        details.textContent = '了解更多 Dyson 資訊';
         details.href = 'https://shop.hengstyle.com/site/dyson';
         details.target = '_blank';
         details.rel = 'noopener noreferrer';
@@ -436,7 +436,7 @@
     } else if (played) {
       message = prize ? '抽中優惠券！' : '今天未抽中優惠券。';
     } else if (day) {
-      message = '今日禮物已解鎖，挑一盒拆開吧。';
+      message = '今日禮物已解鎖。點一下禮物盒，看看裡面藏了什麼！';
     } else if (!validDate(activeDate)) {
       message = '每日拆禮物於 12/01 至 12/25 開放。';
     } else {

@@ -4,6 +4,23 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   let width = 0, height = 0, frame = 0, idleStart = 0, ready = false;
   let visible = true, selected = null, targets = [], hovered = null, consolation = null;
   let animals = [], visitorUntil = 0, nextVisitor = 0;
+  let animalBag = [], lastAnimalDay = null;
+  function nextAmbientAnimal() {
+    if (!animals.length) return null;
+    if (!animalBag.length) {
+      animalBag = [...animals];
+      for (let i = animalBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [animalBag[i], animalBag[j]] = [animalBag[j], animalBag[i]];
+      }
+      if (animalBag.length > 1 && animalBag[0].day === lastAnimalDay) {
+        [animalBag[0], animalBag[1]] = [animalBag[1], animalBag[0]];
+      }
+    }
+    const animal = animalBag.shift();
+    lastAnimalDay = animal.day;
+    return animal;
+  }
   const visitor = document.getElementById('draw-visitor');
   const visitorImage = document.getElementById('draw-visitor-image');
   const visitorRoutes = [
@@ -42,7 +59,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     if (!animals.length || document.querySelector('dialog[open]')) return;
     if (!nextVisitor) nextVisitor = now + 6000 + Math.random()*4000;
     if (now < nextVisitor) return;
-    const animal = animals[Math.floor(Math.random()*animals.length)];
+    const animal = nextAmbientAnimal();
     const routeIndex = lastVisitorRoute < 0 ? Math.floor(Math.random()*visitorRoutes.length)
       : (lastVisitorRoute + 1 + Math.floor(Math.random()*(visitorRoutes.length - 1))) % visitorRoutes.length;
     lastVisitorRoute = routeIndex;
@@ -94,10 +111,53 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     locateGifts();
   }
+  const giftCues = gifts.map((gift,index)=>({ gift, next: 0, until: 0, index }));
+  let spotlightIndex = -1, spotlightStart = 0;
+  function clearGiftCues() {
+    for (const cue of giftCues) { cue.gift.classList.remove('draw-wobble','draw-spotlit'); cue.next=0; cue.until=0; }
+    spotlightIndex=-1; spotlightStart=0;
+    stage.classList.remove('draw-idle-pulse');
+  }
   function drawIdle(now) {
-    if (!idleStart) idleStart = now;
-    const time = (now - idleStart) % 10000;
-    stage.classList.toggle('draw-idle-pulse', time > 1200 && time < 3000);
+    if (!ready || gifts.some(gift=>gift.dataset.state==='opening')) { clearGiftCues(); return; }
+    for (const cue of giftCues) {
+      const eligible=cue.gift.dataset.state==='closed' && !cue.gift.disabled;
+      if (!eligible) { cue.gift.classList.remove('draw-wobble','draw-spotlit'); continue; }
+      if (!cue.next) cue.next=now+900+cue.index*850+Math.random()*2000;
+      if (cue.until && now>=cue.until) { cue.gift.classList.remove('draw-wobble'); cue.until=0; }
+      if (now>=cue.next) {
+        cue.gift.classList.add('draw-wobble'); cue.until=now+950;
+        cue.next=now+6500+Math.random()*7000;
+      }
+    }
+    if (spotlightIndex<0 || now-spotlightStart>=4800) {
+      if (spotlightIndex>=0) gifts[spotlightIndex].classList.remove('draw-spotlit');
+      let next=spotlightIndex;
+      for(let count=0;count<gifts.length;count++) {
+        next=(next+1)%gifts.length;
+        if(gifts[next].dataset.state==='closed' && !gifts[next].disabled) { spotlightIndex=next; spotlightStart=now; break; }
+      }
+    }
+    const gift=gifts[spotlightIndex];
+    if (!gift || gift.disabled || gift.dataset.state!=='closed') return;
+    gift.classList.add('draw-spotlit');
+    const progress=(now-spotlightStart)/4800;
+    const strength=Math.min(1,progress/.18,(1-progress)/.18);
+    const scene=stage.getBoundingClientRect(),box=gift.getBoundingClientRect();
+    const x=box.left+box.width/2-scene.left,y=box.bottom-scene.top;
+    const sourceX=x-width*.08,sourceY=-height*.08,radius=Math.max(box.width*.85,width*.055);
+    ctx.save();
+    const beam=ctx.createLinearGradient(sourceX,sourceY,x,y);
+    beam.addColorStop(0,'rgba(255,245,221,0)');
+    beam.addColorStop(.5,`rgba(255,245,221,${strength*.025})`);
+    beam.addColorStop(1,`rgba(255,245,221,${strength*.14})`);
+    ctx.fillStyle=beam;ctx.beginPath();ctx.moveTo(sourceX,sourceY);
+    ctx.lineTo(x-radius,y);ctx.quadraticCurveTo(x,y+radius*.24,x+radius,y);ctx.closePath();ctx.fill();
+    ctx.translate(x,y);ctx.scale(1,.28);
+    const pool=ctx.createRadialGradient(0,0,0,0,0,radius);
+    pool.addColorStop(0,`rgba(255,247,222,${strength*.32})`);
+    pool.addColorStop(1,'rgba(255,247,222,0)');ctx.fillStyle=pool;
+    ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.fill();ctx.restore();
   }
   function drawWin(now) {
     const progress = (now - selected.start) / 1400;
@@ -163,6 +223,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   function update() {
     const running = visible && !document.hidden && !motion.matches;
     if (running && !frame && ctx) frame = requestAnimationFrame(paint);
+    if (!running) clearGiftCues();
     if (!running && frame) {
       cancelAnimationFrame(frame);
       frame = 0;
@@ -206,7 +267,10 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   }
   return {
     setAnimals(value) {
-      animals = value;
+      const incoming = Array.isArray(value) ? value.filter(animal=>animal && animal.image) : [];
+      const key = list=>list.map(animal=>`${animal.day}:${animal.image}`).join('|');
+      if (key(incoming) !== key(animals)) animalBag = [];
+      animals = incoming;
       if (!animals.length || !animals.some(animal=>animal.image===visitorImage.getAttribute('src'))) {
         visitor.hidden=true;visitorUntil=0;visitorTrip=null;
         if (!animals.length) nextVisitor=0;
@@ -215,7 +279,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     setReady(value) {
       if (ready === value) return;
       ready = value;
-      if (!ready) hovered = null;
+      if (!ready) { hovered = null; clearGiftCues(); }
       stage.classList.toggle('draw-idle-ready', ready);
       stage.classList.remove('draw-idle-pulse');
       if (ready) {

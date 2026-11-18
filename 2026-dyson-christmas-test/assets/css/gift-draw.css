@@ -692,3 +692,44 @@
 .draw-coupon-product { display: grid; justify-items: center; align-content: start; gap: 5px; min-width: 0; }
 .draw-coupon-product .draw-coupon-image-button { max-width: 90px; }
 .draw-coupon-product .draw-coupon-details { justify-self: center; text-align: center; font-size: .8rem; line-height: 1.5; max-width: 100%; }
+
+/* A small timber sign sits in the left snowbank, clear of the gift hit areas. */
+.draw-stage { container-type: inline-size; }
+.draw-wood-sign {
+  position: absolute; left: 4.5%; top: 42%; width: 27%; z-index: 2;
+  padding-bottom: 7%; pointer-events: none; transform: rotate(-3deg);
+  filter: drop-shadow(2px 5px 3px #0b172d55);
+}
+.draw-wood-sign::before, .draw-wood-sign::after {
+  content: ''; position: absolute; top: 55%; bottom: 0; width: 7%;
+  border: 1px solid #68513c; border-radius: 1px;
+  background: repeating-linear-gradient(90deg,#76583c 0 2px,#a98559 3px 5px,#947047 6px 8px);
+}
+.draw-wood-sign::before { left: 20%; }
+.draw-wood-sign::after { right: 20%; }
+.draw-wood-sign > span {
+  position: relative; z-index: 1; display: block; padding: 8% 3%;
+  border: 1px solid #795b3a; border-radius: 4px 7px 5px 3px;
+  background: repeating-linear-gradient(2deg,transparent 0 5px,#6d48231c 6px,transparent 7px 12px),linear-gradient(100deg,#c6a678,#ddbf8e 35%,#b98f5f 83%,#c8a376);
+  box-shadow: inset 0 2px 0 #fff4,inset 0 -3px 0 #63402044;
+  color: #35291f; text-align: center; font-weight: 600; line-height: 1.65;
+  font-size: clamp(9px,1.7cqw,17px); text-shadow: 0 1px #fff3;
+}
+
+/* Independent invitation motions; the opening animation retains control. */
+.draw-gifts .draw-gift.draw-wobble[data-state="closed"] .draw-box {
+  transform-origin: 50% 88%; animation: draw-gift-wobble .9s ease-in-out both;
+}
+.draw-gifts .draw-gift.draw-spotlit[data-state="closed"] .draw-box {
+  filter: brightness(1.12) drop-shadow(0 0 7px #fff0cf55);
+}
+@keyframes draw-gift-wobble {
+  0%,100% { transform: rotate(0) translateY(0); }
+  22% { transform: rotate(-3deg) translateY(-1.5%); }
+  46% { transform: rotate(3deg) translateY(-2%); }
+  70% { transform: rotate(-1.8deg) translateY(-1%); }
+  86% { transform: rotate(1deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .draw-gifts .draw-gift.draw-wobble[data-state="closed"] .draw-box { animation: none; }
+}
