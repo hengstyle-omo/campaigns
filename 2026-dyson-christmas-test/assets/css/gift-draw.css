@@ -677,3 +677,12 @@
   .draw-stage::before, .draw-stage::after { animation: none; opacity: .5; }
   .draw-visitor { display: none; }
 }
+
+@media (min-width: 761px) {
+  .draw-coupon.draw-passport-card { grid-template-columns: 84px minmax(160px,1.25fr) minmax(190px,1fr) minmax(124px,.55fr); column-gap: 12px; align-items: center; }
+  .draw-passport-card > .draw-coupon-image { grid-column: 1; grid-row: 1; }
+  .draw-passport-card > .draw-coupon-copy { grid-column: 2; grid-row: 1; }
+  #draw-passport-days { grid-column: 3; grid-row: 1; align-self: center; gap: 6px; margin: 0; }
+  #draw-passport-days .participation-cell { min-height: 58px; }
+  .draw-passport-card > .draw-passport-status { grid-column: 4; grid-row: 1; padding-left: 12px; }
+}

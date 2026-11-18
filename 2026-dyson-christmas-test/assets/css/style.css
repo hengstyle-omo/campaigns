@@ -1350,3 +1350,9 @@ main > :is(.intro, .experience, .benefit-section, .collection-section, footer) {
   #card-dialog .card-save-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
   #card-dialog .card-save-actions button { width: 100%; min-width: 0; padding-inline: 3px; white-space: nowrap; font-size: clamp(12px,3.3vw,14px); }
 }
+
+@media (min-width: 761px) {
+  .welcome-intro .activity-jumps .mission-card .mission-number { font-size: 24px; }
+  .welcome-intro .activity-jumps .mission-card strong { font-size: 20px; line-height: 1.4; }
+  .welcome-intro .activity-jumps .mission-card span { font-size: 16px; }
+}

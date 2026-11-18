@@ -7,9 +7,9 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   const visitor = document.getElementById('draw-visitor');
   const visitorImage = document.getElementById('draw-visitor-image');
   const visitorRoutes = [
-    { id: 'near-slope', feet: [53, 49, 45, 47, 53], size: 10.5 },
-    { id: 'middle-ridge', feet: [49, 46, 43, 45, 50], size: 8.8 },
-    { id: 'far-ridge', feet: [46, 43, 41, 44, 48], size: 7.3 },
+    { id: 'near-slope', feet: [53, 49, 45, 47, 53], size: 12.6 },
+    { id: 'middle-ridge', feet: [49, 46, 43, 45, 50], size: 10.56 },
+    { id: 'far-ridge', feet: [46, 43, 41, 44, 48], size: 8.76 },
   ];
   let visitorTrip = null, lastVisitorRoute = -1;
   function visitorProfile(day) {

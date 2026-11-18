@@ -176,16 +176,23 @@
       copy.className = 'draw-coupon-copy';
       const title = document.createElement('strong');
       title.className = 'draw-coupon-title';
-      title.textContent = name + ' $1,000 折價券';
+      title.textContent = name + ' $1,000 優惠券';
       const note = document.createElement('small');
       note.textContent = day ? '✓ 已抽中 · ' + displayDate(day)
         : id === 'bonus' && activeDate < bonusDate ? '12/20 加入抽獎' : '尚未抽中';
-      const details = document.createElement('button');
-      details.type = 'button';
+      const details = document.createElement(id === 'bonus' ? 'a' : 'button');
       details.className = 'draw-coupon-details';
-      details.textContent = '了解產品';
-      details.setAttribute('aria-label', '了解產品：' + name);
-      details.addEventListener('click', () => openProduct(id));
+      if (id === 'bonus') {
+        details.textContent = '了解更多 Dyson 資訊 ↗';
+        details.href = 'https://shop.hengstyle.com/site/dyson';
+        details.target = '_blank';
+        details.rel = 'noopener noreferrer';
+      } else {
+        details.type = 'button';
+        details.textContent = '了解產品';
+        details.setAttribute('aria-label', '了解產品：' + name);
+        details.addEventListener('click', () => openProduct(id));
+      }
       copy.append(note, details);
       if (day) {
         const link = document.createElement('a');
@@ -196,11 +203,18 @@
         bindCouponClick(link, id);
         copy.append(link);
       }
-      const imageButton = document.createElement('button');
-      imageButton.type = 'button';
+      const imageButton = document.createElement(id === 'bonus' ? 'a' : 'button');
       imageButton.className = 'draw-coupon-image-button';
-      imageButton.setAttribute('aria-label', '查看產品介紹：' + name);
-      imageButton.addEventListener('click', () => openProduct(id));
+      if (id === 'bonus') {
+        imageButton.href = 'https://shop.hengstyle.com/site/dyson';
+        imageButton.target = '_blank';
+        imageButton.rel = 'noopener noreferrer';
+        imageButton.setAttribute('aria-label', '了解更多 Dyson 資訊');
+      } else {
+        imageButton.type = 'button';
+        imageButton.setAttribute('aria-label', '查看產品介紹：' + name);
+        imageButton.addEventListener('click', () => openProduct(id));
+      }
       const image = document.createElement('img');
       image.className = 'draw-coupon-image';
       image.alt = '';

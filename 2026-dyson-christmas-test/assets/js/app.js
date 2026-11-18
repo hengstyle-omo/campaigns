@@ -2173,12 +2173,18 @@ $('card-preview-dialog').addEventListener('close',()=>{
   $('card-preview-large').replaceChildren();
 });
 
-$('draw-from-card').addEventListener('click',()=>{
+function goToGiftDraw(){
+  closeDialog('card-preview-dialog');
   closeDialog('card-dialog');
-  $('draw-heading').focus({preventScroll:true});
-  $('draw-card').scrollIntoView({block:'start'});
-  window.DysonTestDraw.openResult();
-});
+  closeDialog('mobile-collection');
+  restoreMobileGlobe();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    $('draw-heading').focus({preventScroll:true});
+    $('draw-stage').scrollIntoView({block:'center',behavior:'instant'});
+    window.DysonTestDraw.openResult();
+  }));
+}
+$('draw-from-card').addEventListener('click',goToGiftDraw);
 $('card-form').addEventListener('submit',e=>e.preventDefault());
 for(const name of ['recipient','message','signature']){
   $(`card-${name}`).addEventListener('input',e=>{if(!e.isComposing)renderChristmasCard();});
