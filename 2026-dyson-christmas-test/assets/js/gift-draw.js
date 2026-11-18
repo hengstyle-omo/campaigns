@@ -377,6 +377,7 @@
     if (appliedLayout === key) return;
     for (const [index, box] of layout.entries()) placeGift(gifts[index], box);
     appliedLayout = key;
+    effects?.relayout();
   }
 
   function render() {
@@ -410,6 +411,7 @@
     if (prize) {
       floatedTicket.dataset.box = String(selected);
       placeGift(floatedTicket, layout[selected]);
+      for (const axis of ['x','y']) floatedTicket.style.setProperty('--gift-clear-'+axis,gifts[selected].style.getPropertyValue('--gift-clear-'+axis)||'0px');
       floatedTicket.dataset.coupon = prize;
       floatedTicket.href = prizeURL(prize);
     }

@@ -148,12 +148,12 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     const tree=stage.querySelector('.draw-tree');
     let placements=null;
     for(const scale of [1,.92,.84,.76,.68,.60,.52]) {
-      for(const gift of gifts){gift.style.setProperty('--gift-layout-scale',scale);gift.style.setProperty('--gift-x-offset','0px');gift.style.setProperty('--gift-y-offset','0px');}
+      for(const gift of gifts){gift.style.setProperty('--gift-layout-scale',scale);gift.style.setProperty('--gift-clear-x','0px');gift.style.setProperty('--gift-clear-y','0px');}
       placements=fitGiftPositions(stage.getBoundingClientRect(),sign.getBoundingClientRect(),gifts.map(gift=>gift.getBoundingClientRect()),tree?.getBoundingClientRect());
       if(placements)break;
     }
     if(!placements)return;
-    placements.forEach((point,index)=>{gifts[index].style.setProperty('--gift-x-offset',point.x+'px');gifts[index].style.setProperty('--gift-y-offset',point.y+'px');});
+    placements.forEach((point,index)=>{gifts[index].style.setProperty('--gift-clear-x',point.x+'px');gifts[index].style.setProperty('--gift-clear-y',point.y+'px');});
   }
   function resize() {
     if (!ctx) return;
@@ -321,6 +321,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     update();
   }
   return {
+    relayout() { avoidWoodSign(); locateGifts(); },
     setAnimals(value) {
       const incoming = Array.isArray(value) ? value.filter(animal=>animal && animal.image) : [];
       const key = list=>list.map(animal=>`${animal.day}:${animal.image}`).join('|');

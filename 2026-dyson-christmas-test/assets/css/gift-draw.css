@@ -760,3 +760,9 @@
   text-shadow: 0 1px 2px #241205, 1px 0 2px #241205, -1px 0 2px #241205;
 }
 .draw-gifts .draw-gift { scale: var(--gift-layout-scale,1); }
+
+/* Daily random placement and collision correction must remain independent. */
+.draw-gifts .draw-gift, .draw-floated-ticket {
+  left: calc(var(--x) + var(--gift-x-offset,0%) + var(--gift-clear-x,0px));
+  top: calc(var(--y) + var(--gift-y-offset,0%) + var(--gift-clear-y,0px));
+}
