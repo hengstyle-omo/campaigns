@@ -765,7 +765,7 @@ function syncOnboarding({reveal=false}={}){
       }else if(mobileViewport.matches){
         step=1;
         target=dialog?.id==='mobile-collection'
-          ?$('mobile-collection-pages').querySelector('[data-day="1"] .mobile-tile-toggle')
+          ?$('mobile-collection-pages').querySelector('.mobile-collection-tile[data-day="1"]')
           :!dialog?$('mobile-collection-open'):null;
       }else if(!dialog){
         step=1;
@@ -1077,6 +1077,7 @@ function renderMobileCollection(){
     for(const day of days.slice(start,start+MOBILE_COLLECTION_PAGE_SIZE)){
       const tile=el('div','mobile-collection-tile');
       tile.dataset.day=String(day);
+      tile.tabIndex=-1;
       const toggle=el('button','mobile-tile-toggle');
       toggle.type='button';
       updateMobileTile(toggle,day);
@@ -1548,9 +1549,9 @@ function drawSnowLayer(pool,count,dt,time,show=false,target=ctx,environment=null
       if(p.y<185){p.y=185;p.vy=Math.abs(p.vy)*.5;}
     }
     if(environment?.advanceOnly)continue;
-    const alpha=p.gold?.6+Math.sin(time*2+p.phase)*.23:.44+p.depth*.29;
+    const alpha=p.gold?.6+Math.sin(time*2+p.phase)*.23:.44+p.depth*.29+(activeSnow?.06:0);
     ctx.fillStyle=p.gold?`rgba(230,199,143,${alpha})`:`rgba(247,239,221,${Math.min(.94,alpha)})`;
-    const flakeSize=p.size*(airflow&&!p.gold?(k%11===0?1.85:1.4):1);
+    const flakeSize=p.size*(!p.gold&&activeSnow?1.12:1)*(airflow&&!p.gold?(k%11===0?1.85:1.4):1);
     ctx.beginPath();
     if(!p.gold&&k%7===0){const size=flakeSize*p.depth,dx=Math.cos(p.phase)*size,dy=Math.sin(p.phase)*size;ctx.moveTo(p.x-dx,p.y-dy);ctx.lineTo(p.x-dy,p.y+dx);ctx.lineTo(p.x+dx,p.y+dy);ctx.lineTo(p.x+dy,p.y-dx);ctx.closePath();}
     else ctx.ellipse(p.x,p.y,flakeSize*p.depth,flakeSize*p.depth*(p.gold?.9:.7),p.phase,0,Math.PI*2);
@@ -1746,7 +1747,7 @@ function drawCandyRain(target,time){
 
 function sceneParticleCounts({elapsed=0,finalShow=false,animate=true,airflow=false,activeSnow=false,goldSnow=false,timeline=SHOW_LIVE}){
   const showFade=finalShow&&animate?showState(elapsed,timeline).fade:1;
-  const baseWhite=animate&&airflow?420:activeSnow?240:0,baseGold=goldSnow?310:0;
+  const baseWhite=animate&&airflow?420:activeSnow?300:0,baseGold=goldSnow?310:0;
   const whiteCount=finalShow?Math.max(baseWhite,Math.round(100*showFade)):baseWhite,goldCount=finalShow?Math.max(baseGold,Math.round(90*showFade)):baseGold;
   return {showFade,whiteCount,goldCount};
 }
@@ -2231,7 +2232,7 @@ function invalidateCardMedia(format){
   if(format)cardMediaOutputs.delete(format);else cardMediaOutputs.clear();
   if(!format||format==='png'){cardBlob=null;cardFile=null;}
   if(!format||cardFailedFormat===format)cardFailedFormat=null;
-  resetCardShareOptions();clearCardMediaPreview();$('card-file-size').textContent='';
+  resetCardShareOptions();clearCardMediaPreview();
 }
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
@@ -2258,10 +2259,7 @@ function renderCardMediaResult(){
   resetCardShareOptions();
   $('card-download').textContent=format==='mp4'?'下載影片':'下載圖片';
   $('card-share').textContent=format==='mp4'?'分享影片':'分享圖片';
-  $('card-preview-state').textContent=blob?'卡片完成了':'';
-  $('card-preview-state').closest('.card-preview-label').hidden=!blob;
   $('card-download').closest('.card-result-actions').toggleAttribute('data-card-ready',!!blob);
-  $('card-file-size').textContent=blob?`${format.toUpperCase()} · ${cardBytesLabel(blob.size)}${format==='png'?'':' · 5 秒'}`:'';
   clearCardMediaPreview();
   if(result&&format!=='png'){
     cardMediaURL=URL.createObjectURL(result.blob);const preview=$(format==='gif'?'card-gif-preview':'card-video-preview');preview.src=cardMediaURL;preview.hidden=false;$('card-preview').hidden=true;

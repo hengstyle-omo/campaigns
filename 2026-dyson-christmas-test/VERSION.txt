@@ -1,1 +1,1 @@
-v127 integrated r4 / 2026-11-18 / all r3 updates + format descriptions in selector, no repeated normal hint
+v127 integrated r6 / 2026-11-18 / all r5 updates + complete mobile tile highlight + slightly denser larger brighter first snow
