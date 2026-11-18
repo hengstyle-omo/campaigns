@@ -102,37 +102,56 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     });
   }
   // Keep the sign fixed. Fit gift hit areas around both the board and its post.
-  function fitGiftPositions(scene, sign, boxes) {
-    const gap=Math.max(12,scene.width*.025);
+  function fitGiftPositions(scene, sign, boxes, tree) {
+    const gap=Math.max(8,scene.width*.02);
     const zones=[
       {left:sign.left,top:sign.top+sign.height*.11,right:sign.right,bottom:sign.top+sign.height*.54},
       {left:sign.left+sign.width*.39,top:sign.top,right:sign.left+sign.width*.56,bottom:sign.bottom}
     ];
     const intersects=(a,b,pad=gap)=>a.left<b.right+pad && a.right>b.left-pad && a.top<b.bottom+pad && a.bottom>b.top-pad;
-    const occupied=[], placements=[];
-    for(const {box,index} of boxes.map((box,index)=>({box,index})).sort((a,b)=>b.box.width*b.box.height-a.box.width*a.box.height)) {
+    const touchesTree=rect=>{
+      if(!tree || rect.bottom<tree.top-gap || rect.top>tree.bottom+gap)return false;
+      const depth=Math.max(0,Math.min(1,(Math.min(rect.bottom+gap,tree.bottom)-tree.top)/tree.height));
+      const half=tree.width*(.07+.43*depth)+gap;
+      const centre=(tree.left+tree.right)/2;
+      return rect.left<centre+half && rect.right>centre-half;
+    };
+    const options=boxes.map((box,index)=>{
       const original={x:(box.left+box.right)/2,y:(box.top+box.bottom)/2};
-      const candidates=[original];
-      for(let y=.40;y<=.95;y+=.025)for(let x=.09;x<=.92;x+=.025)candidates.push({x:scene.left+scene.width*x,y:scene.top+scene.height*y});
-      candidates.sort((a,b)=>(a.x-original.x)**2+(a.y-original.y)**2-((b.x-original.x)**2+(b.y-original.y)**2));
-      let chosen=null;
-      for(const point of candidates) {
-        const rect={left:point.x-box.width/2,right:point.x+box.width/2,top:point.y-box.height/2,bottom:point.y+box.height/2};
-        if(rect.left<scene.left+gap || rect.right>scene.right-gap || rect.top<scene.top+gap || rect.bottom>scene.bottom-gap)continue;
-        if(zones.some(zone=>intersects(rect,zone)) || occupied.some(other=>intersects(rect,other,gap*.5)))continue;
-        chosen={rect,x:point.x-original.x,y:point.y-original.y};break;
+      const anchors=[[.12,.92],[.90,.63],[.36,.94],[.64,.92],[.90,.86]];
+      const target={x:scene.left+scene.width*anchors[index][0],y:scene.top+scene.height*anchors[index][1]};
+      const points=[target];
+      for(let y=.56;y<=.97;y+=.02)for(let x=.06;x<=.95;x+=.02)points.push({x:scene.left+scene.width*x,y:scene.top+scene.height*y});
+      const choices=points.map(point=>({rect:{left:point.x-box.width/2,right:point.x+box.width/2,top:point.y-box.height/2,bottom:point.y+box.height/2},x:point.x-original.x,y:point.y-original.y}))
+        .filter(({rect})=>rect.bottom>=scene.top+scene.height*.65 && rect.top>=scene.top+scene.height*.48 && rect.left>=scene.left+gap && rect.right<=scene.right-gap && rect.bottom<=scene.bottom-gap && !touchesTree(rect) && !zones.some(zone=>intersects(rect,zone)))
+        .sort((a,b)=>(a.rect.left+box.width/2-target.x)**2+(a.rect.top+box.height/2-target.y)**2-((b.rect.left+box.width/2-target.x)**2+(b.rect.top+box.height/2-target.y)**2)).slice(0,600);
+      return {index,choices};
+    }).sort((a,b)=>a.choices.length-b.choices.length);
+    const placements=[],occupied=[];let attempts=0;
+    function search(depth){
+      if(depth===options.length)return true;
+      if(++attempts>100000)return false;
+      const {index,choices}=options[depth];
+      for(const choice of choices){
+        if(occupied.some(other=>intersects(choice.rect,other,gap*.5)))continue;
+        occupied.push(choice.rect);placements[index]=choice;
+        if(search(depth+1))return true;
+        occupied.pop();
       }
-      // The gift grid has ample free snow to the right of the fixed sign.
-      if(!chosen) return null;
-      occupied.push(chosen.rect);placements[index]=chosen;
+      return false;
     }
-    return placements;
+    return search(0)?placements:null;
   }
   function avoidWoodSign() {
     const sign=stage.querySelector('.draw-wood-sign');
     if(!sign)return;
-    for(const gift of gifts){gift.style.setProperty('--gift-x-offset','0px');gift.style.setProperty('--gift-y-offset','0px');}
-    const placements=fitGiftPositions(stage.getBoundingClientRect(),sign.getBoundingClientRect(),gifts.map(gift=>gift.getBoundingClientRect()));
+    const tree=stage.querySelector('.draw-tree');
+    let placements=null;
+    for(const scale of [1,.92,.84,.76,.68,.60,.52]) {
+      for(const gift of gifts){gift.style.setProperty('--gift-layout-scale',scale);gift.style.setProperty('--gift-x-offset','0px');gift.style.setProperty('--gift-y-offset','0px');}
+      placements=fitGiftPositions(stage.getBoundingClientRect(),sign.getBoundingClientRect(),gifts.map(gift=>gift.getBoundingClientRect()),tree?.getBoundingClientRect());
+      if(placements)break;
+    }
     if(!placements)return;
     placements.forEach((point,index)=>{gifts[index].style.setProperty('--gift-x-offset',point.x+'px');gifts[index].style.setProperty('--gift-y-offset',point.y+'px');});
   }

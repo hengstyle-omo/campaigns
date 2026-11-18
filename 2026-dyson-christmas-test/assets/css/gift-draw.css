@@ -751,3 +751,12 @@
 .draw-gifts .draw-gift:nth-child(3) { --x: 30%; --y: 88%; }
 .draw-gifts .draw-gift:nth-child(2) { --x: 71%; --y: 61%; }
 .draw-gifts .draw-gift:nth-child(5) { --x: 85%; --y: 80%; }
+
+/* Keep lettering large and high-contrast on a more compact timber sign. */
+.draw-wood-sign { width: 28%; }
+.draw-wood-sign > img { filter: brightness(1.10) saturate(.86); }
+.draw-wood-sign > span {
+  color: #fff8e8; -webkit-text-stroke: .35px #38200f;
+  text-shadow: 0 1px 2px #241205, 1px 0 2px #241205, -1px 0 2px #241205;
+}
+.draw-gifts .draw-gift { scale: var(--gift-layout-scale,1); }
