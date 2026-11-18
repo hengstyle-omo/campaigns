@@ -133,19 +133,25 @@
     return Object.keys(prizes).filter(id => (id !== 'bonus' || date >= bonusDate) && !won.has(id));
   }
 
-  function chooseWinningBoxes(previousBox) {
-    const first = Number.isInteger(previousBox) && previousBox >= 0 && previousBox < gifts.length
-      ? previousBox : Math.floor(Math.random() * gifts.length);
-    const other = Math.floor(Math.random() * (gifts.length - 1));
-    return [first, other >= first ? other + 1 : other];
+  function chooseWinningBoxes(previous) {
+    const saved = Array.isArray(previous) ? previous : [previous];
+    const selected = [...new Set(saved.filter(index => Number.isInteger(index) && index >= 0 && index < gifts.length))].slice(0, 3);
+    const remaining = gifts.map((_, index) => index).filter(index => !selected.includes(index));
+    while (selected.length < 3 && remaining.length) {
+      selected.push(remaining.splice(Math.floor(Math.random() * remaining.length), 1)[0]);
+    }
+    return selected;
   }
 
   function assignPrizes(pool, preferred = []) {
-    if (!pool.length) return [null, null];
-    const first = pool.includes(preferred[0]) ? preferred[0] : randomMember(pool);
-    const remaining = pool.length > 1 ? pool.filter(prize => prize !== first) : pool;
-    const second = remaining.includes(preferred[1]) ? preferred[1] : randomMember(remaining);
-    return [first, second];
+    if (!pool.length) return [null, null, null];
+    let remaining = [...pool];
+    return Array.from({ length: 3 }, (_, index) => {
+      if (!remaining.length) remaining = [...pool];
+      const prize = remaining.includes(preferred[index]) ? preferred[index] : randomMember(remaining);
+      remaining.splice(remaining.indexOf(prize), 1);
+      return prize;
+    });
   }
 
   function prizeArt(id) {
@@ -464,8 +470,8 @@
     const pool = availablePrizes(draw.days, date);
     if (!day || day.result) return null;
 
-    // Keep the original position on unopened days saved before two boxes could win.
-    day.winningBoxes ??= chooseWinningBoxes(day.winningBox ?? day.winningGift);
+    // Preserve saved positions when extending an unopened draw.
+    day.winningBoxes = chooseWinningBoxes(day.winningBoxes ?? day.winningBox ?? day.winningGift);
     day.hiddenPrizes = assignPrizes(pool, day.hiddenPrizes ?? [day.hiddenPrize]);
     const slot = day.winningBoxes.indexOf(index);
     let prize = null;

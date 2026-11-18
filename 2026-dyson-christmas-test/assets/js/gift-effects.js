@@ -6,17 +6,57 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   let animals = [], visitorUntil = 0, nextVisitor = 0;
   const visitor = document.getElementById('draw-visitor');
   const visitorImage = document.getElementById('draw-visitor-image');
+  const visitorRoutes = [
+    { id: 'near-slope', feet: [53, 49, 45, 47, 53], size: 10.5 },
+    { id: 'middle-ridge', feet: [49, 46, 43, 45, 50], size: 8.8 },
+    { id: 'far-ridge', feet: [46, 43, 41, 44, 48], size: 7.3 },
+  ];
+  let visitorTrip = null, lastVisitorRoute = -1;
+  function visitorProfile(day) {
+    if (day === 106) return { kind: 'slide', duration: 8200, bob: .35, tilt: 1.1, pace: 1.8 };
+    if (day === 107) return { kind: 'amble', duration: 12500, bob: .6, tilt: .6, pace: 2.2 };
+    if (day === 109) return { kind: 'amble', duration: 11200, bob: .65, tilt: .8, pace: 2.5 };
+    return { kind: 'trot', duration: day === 101 ? 9500 : 10800, bob: 1.65, tilt: 1.3, pace: 4.2 };
+  }
+  function paintVisitor(now) {
+    const { start, duration, route, direction, profile, phase } = visitorTrip;
+    const p = Math.max(0, Math.min(1, (now - start) / duration));
+    const travel = direction === 1 ? p : 1 - p;
+    const position = travel * (route.feet.length - 1);
+    const segment = Math.min(route.feet.length - 2, Math.floor(position));
+    const blend = (1 - Math.cos((position - segment) * Math.PI)) / 2;
+    const feet = route.feet[segment] * (1 - blend) + route.feet[segment + 1] * blend;
+    const stride = Math.sin((now - start) / 1000 * profile.pace * Math.PI + phase);
+    const bob = stride * profile.bob * Math.min(width / 700, 1.3);
+    visitor.style.left = (-18 + travel * 136) + '%';
+    visitor.style.top = feet + '%';
+    visitor.style.width = (route.size * (1 + Math.sin(p * Math.PI) * .035)) + '%';
+    visitor.style.opacity = String(Math.max(0, Math.min(1, p / .1, (1 - p) / .1)));
+    visitorImage.style.transform = `scaleX(${direction}) translateY(${bob.toFixed(2)}px) rotate(${(stride * profile.tilt).toFixed(2)}deg)`;
+  }
   function updateVisitor(now) {
-    if (visitorUntil && now >= visitorUntil) {
-      visitor.hidden = true; visitorUntil = 0;
+    if (visitorTrip && now >= visitorUntil) {
+      visitor.hidden = true; visitorUntil = 0; visitorTrip = null;
     }
-    if (!animals.length || visitorUntil || document.querySelector('dialog[open]')) return;
+    if (visitorTrip) { paintVisitor(now); return; }
+    if (!animals.length || document.querySelector('dialog[open]')) return;
     if (!nextVisitor) nextVisitor = now + 6000 + Math.random()*4000;
     if (now < nextVisitor) return;
     const animal = animals[Math.floor(Math.random()*animals.length)];
+    const routeIndex = lastVisitorRoute < 0 ? Math.floor(Math.random()*visitorRoutes.length)
+      : (lastVisitorRoute + 1 + Math.floor(Math.random()*(visitorRoutes.length - 1))) % visitorRoutes.length;
+    lastVisitorRoute = routeIndex;
+    const profile = visitorProfile(animal.day);
+    const duration = profile.duration * (.95 + Math.random() * .1);
+    const direction = Math.random() < .5 ? 1 : -1;
+    visitorTrip = { start: now, duration, route: visitorRoutes[routeIndex], direction, profile, phase: Math.random()*Math.PI*2 };
+    visitor.dataset.route = visitorTrip.route.id;
+    visitor.dataset.direction = direction === 1 ? 'left-to-right' : 'right-to-left';
+    visitor.dataset.motion = profile.kind;
     visitorImage.src = animal.image;
     visitor.hidden = false;
-    visitorUntil = now + 7500;
+    paintVisitor(now);
+    visitorUntil = now + duration;
     nextVisitor = visitorUntil + 30000 + Math.random()*15000;
   }
   const pointer = { x: 0, y: 0, currentX: 0, currentY: 0 };
@@ -156,7 +196,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       const wasVisible = visible;
       visible = entry.isIntersecting && entry.intersectionRatio >= .2;
       if (!visible || !wasVisible) {
-        visitor.hidden = true; visitorUntil = 0; nextVisitor = 0;
+        visitor.hidden = true; visitorUntil = 0; visitorTrip = null; nextVisitor = 0;
       }
       update();
     }, { threshold: [0, .2] }).observe(stage);
@@ -168,7 +208,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     setAnimals(value) {
       animals = value;
       if (!animals.length || !animals.some(animal=>animal.image===visitorImage.getAttribute('src'))) {
-        visitor.hidden=true;visitorUntil=0;
+        visitor.hidden=true;visitorUntil=0;visitorTrip=null;
         if (!animals.length) nextVisitor=0;
       }
     },

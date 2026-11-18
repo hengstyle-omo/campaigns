@@ -666,18 +666,10 @@
   78% { opacity: .8; }
 }
 .draw-visitor {
-  position: absolute; z-index: 0; width: 12%; top: 49%; left: -15%; pointer-events: none;
-  animation: draw-exclusive-visit 7.5s linear both;
+  position: absolute; z-index: 0; width: 10.5%; top: 49%; left: -18%; pointer-events: none;
+  transform: translateY(-100%); opacity: 0; will-change: left, top;
 }
-.draw-visitor img { display: block; width: 100%; height: auto; }
-@keyframes draw-exclusive-visit {
-  0% { left: -15%; opacity: 0; transform: translateY(3%); }
-  12% { opacity: 1; }
-  35% { transform: translateY(-4%); }
-  60% { transform: translateY(2%); }
-  87% { opacity: 1; }
-  100% { left: 105%; opacity: 0; transform: translateY(-3%); }
-}
+.draw-visitor img { display: block; width: 100%; height: auto; transform-origin: 50% 100%; will-change: transform; }
 #draw-prize .draw-result-ticket h3 { font-size: clamp(1.05rem, 4.6vw, 1.55rem); }
 #draw-prize-claim.gold-button { background: #96713c; border-color: #96713c; color: #fff; font-weight: 600; }
 #draw-prize-claim.gold-button:hover { background: #805c2e; border-color: #805c2e; }

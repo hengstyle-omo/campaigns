@@ -1137,7 +1137,7 @@ function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
   // Decorative visitors use existing artwork without granting exclusive collections.
   window.DysonTestDraw.setAmbientAnimals(bonusCatalog.filter(animal=>[101,103,106,107,109].includes(animal.day)).map(animal=>({
-    image:ASSETS.bonusSprites?.[animal.day], name:animal.name,
+    day:animal.day, image:ASSETS.bonusSprites?.[animal.day], name:animal.name,
   })).filter(animal=>animal.image));
 }
 function updatePlacementUI(d){

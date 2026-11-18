@@ -1287,7 +1287,7 @@ button,input,textarea,select{line-height:1.5}
 #card-dialog .card-save-actions { order: 2; }
 #card-dialog .card-status { order: 3; font-size: .8rem; line-height: 1.6; }
 #card-dialog .card-share-options { order: 4; }
-#card-dialog #card-share-game { border: 0; background: none; text-decoration: underline; color: #bfcbd8; font-size: .8rem; }
+/* Share game uses the same button styling as download/share image. */
 #card-dialog #card-audio-options { margin-top: 10px; padding-block: 8px; }
 #card-dialog #card-audio-options summary { color: #d3bf9d; cursor: pointer; padding-block: 6px; }
 #card-dialog #card-audio-options[open] summary { margin-bottom: 10px; }
@@ -1319,7 +1319,7 @@ button,input,textarea,select{line-height:1.5}
   }
   #card-dialog .card-save-actions { flex-direction: row; flex-wrap: wrap; }
   #card-dialog .card-save-actions button { flex: 1 1 40%; width: auto; }
-  #card-dialog #card-share-game { flex-basis: 100%; min-height: 30px; padding: 2px; }
+
   #card-dialog .card-status { margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .onboarding-target { animation: none; box-shadow: 0 0 0 3px #fff5; } }
@@ -1335,3 +1335,9 @@ main > :is(.intro, .experience, .benefit-section, .collection-section, footer) {
 .site-header { padding-inline: max(var(--page-gutter), calc((100% - var(--page-width)) / 2 + var(--page-gutter))); }
 @media (max-width: 760px) { :root { --page-gutter: 18px; } }
 @media (max-width: 420px) { :root { --page-gutter: 12px; } }
+
+/* Status and media details share a compact row above the card. */
+#card-dialog .card-preview-label { justify-content: flex-start; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); line-height: 1.5; }
+#card-dialog #card-preview-state { flex: 0 0 auto; color: var(--text); }
+#card-dialog #card-preview-note { margin: 0; min-width: 0; font-size: inherit; color: var(--muted); }
+#card-dialog #card-preview-note:empty { display: none; }
