@@ -11,13 +11,13 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       visitor.hidden = true; visitorUntil = 0;
     }
     if (!animals.length || visitorUntil || document.querySelector('dialog[open]')) return;
-    if (!nextVisitor) nextVisitor = now + 45000 + Math.random()*45000;
+    if (!nextVisitor) nextVisitor = now + 6000 + Math.random()*4000;
     if (now < nextVisitor) return;
     const animal = animals[Math.floor(Math.random()*animals.length)];
     visitorImage.src = animal.image;
     visitor.hidden = false;
     visitorUntil = now + 7500;
-    nextVisitor = visitorUntil + 45000 + Math.random()*45000;
+    nextVisitor = visitorUntil + 30000 + Math.random()*15000;
   }
   const pointer = { x: 0, y: 0, currentX: 0, currentY: 0 };
   const snow = Array.from({ length: 64 }, (_, i) => ({
@@ -153,9 +153,13 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage);
     else window.addEventListener('resize', resize);
     if ('IntersectionObserver' in window) new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
+      const wasVisible = visible;
+      visible = entry.isIntersecting && entry.intersectionRatio >= .2;
+      if (!visible || !wasVisible) {
+        visitor.hidden = true; visitorUntil = 0; nextVisitor = 0;
+      }
       update();
-    }).observe(stage);
+    }, { threshold: [0, .2] }).observe(stage);
     motion.addEventListener('change', update);
     document.addEventListener('visibilitychange', update);
     update();
@@ -165,6 +169,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       animals = value;
       if (!animals.length || !animals.some(animal=>animal.image===visitorImage.getAttribute('src'))) {
         visitor.hidden=true;visitorUntil=0;
+        if (!animals.length) nextVisitor=0;
       }
     },
     setReady(value) {

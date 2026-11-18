@@ -1,5 +1,6 @@
 .draw-card {
-  max-width: 980px;
+  width: 100%;
+  max-width: none;
   margin-inline: auto;
   overflow: clip;
   border: 1px solid #807056;
@@ -144,11 +145,11 @@
   transform: translate(-50%, -50%) rotate(var(--angle));
   appearance: none;
 }
-.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 27%; --y: 69%; --size: .116; --angle: -7deg; }
-.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 76%; --y: 69%; --size: .138; --angle: 8deg; }
-.draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 15%; --y: 86%; --size: .160; --angle: -5deg; }
-.draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 64%; --y: 87%; --size: .203; --angle: 2deg; }
-.draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 86%; --y: 85%; --size: .178; --angle: 5deg; }
+.draw-gifts :is(.draw-gift:nth-child(1), .draw-floated-ticket[data-box="0"]) { --x: 28%; --y: 67%; --size: .116; --angle: -7deg; }
+.draw-gifts :is(.draw-gift:nth-child(2), .draw-floated-ticket[data-box="1"]) { --x: 75%; --y: 66%; --size: .125; --angle: 8deg; }
+.draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 18%; --y: 84%; --size: .160; --angle: -5deg; }
+.draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 60%; --y: 78%; --size: .170; --angle: 2deg; }
+.draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 83%; --y: 75%; --size: .145; --angle: 5deg; }
 /* Five matching navy/ivory/gold gift sprites. Only artwork changes; saved box indices stay stable. */
 .draw-gifts .draw-gift:nth-child(1) { --gift-art: url("../images/gifts/navy-leaf-cube.webp?v=20261118-gifts1"); --gift-ratio: 1254 / 1254; --gift-seam: 0% 47%, 14% 49.5%, 78% 53%, 92% 43%, 100% 40%; --gift-lip: 14% 49.5%, 31% 39%, 92% 43%, 78% 53%; --mouth-y: 53%; }
 .draw-gifts .draw-gift:nth-child(2) { --gift-art: url("../images/gifts/navy-star-tall.webp?v=20261118-gifts1"); --gift-ratio: 1080 / 1457; --gift-seam: 0% 40%, 14% 42%, 80% 44%, 94% 35%, 100% 33%; --gift-lip: 14% 42%, 30% 34%, 94% 35%, 80% 44%; --mouth-y: 44%; }
@@ -665,7 +666,7 @@
   78% { opacity: .8; }
 }
 .draw-visitor {
-  position: absolute; width: 12%; top: 45%; left: -15%; pointer-events: none;
+  position: absolute; z-index: 0; width: 12%; top: 49%; left: -15%; pointer-events: none;
   animation: draw-exclusive-visit 7.5s linear both;
 }
 .draw-visitor img { display: block; width: 100%; height: auto; }

@@ -612,7 +612,7 @@ function showDialog(id){const d=$(id);if(!d.open)d.showModal();}
 // The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
 const welcomeVideoSrc='./assets/video/dyson_2026_xmas_welcome.mp4?v=20261117-0c318171';
-const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.jpg?v=20261117-ff0d4776';
+const welcomePosterSrc='./assets/video/dyson_2026_xmas_welcome.webp?v=20261118-0ccb0c56';
 let welcomeTimer=null,welcomeAttempt=0,welcomeCleaned=true;
 function welcomeMessage(message){$('welcome-status').textContent=message;}
 async function playWelcome(){
@@ -1135,8 +1135,9 @@ mobileViewport.addEventListener('change',event=>{
 
 function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
-  window.DysonTestDraw.setAmbientAnimals(bonusDays().map(day=>({
-    image:ASSETS.bonusSprites?.[day], name:item(day).name,
+  // Decorative visitors use existing artwork without granting exclusive collections.
+  window.DysonTestDraw.setAmbientAnimals(bonusCatalog.filter(animal=>[101,103,106,107,109].includes(animal.day)).map(animal=>({
+    image:ASSETS.bonusSprites?.[animal.day], name:animal.name,
   })).filter(animal=>animal.image));
 }
 function updatePlacementUI(d){
