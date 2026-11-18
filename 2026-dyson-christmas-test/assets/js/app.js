@@ -690,7 +690,7 @@ const onboardingMessages={
   1:'點開 12/01「第一場雪」，看看你的第一份聖誕收藏。',
   2:'按「放入水晶球」，讓第一場雪飄進球裡。',
   3:'按「調整位置」，試著佈置你的水晶球。',
-  5:'分享聖誕祝福，天天抽好禮！下載或分享卡片，每天可抽 1 次 Dyson $1,000 優惠券。'
+  5:'下載或分享卡片，天天抽 Dyson $1,000 優惠券！'
 };
 function setOnboardingStep(step){
   onboardingStep=step;
@@ -2152,29 +2152,7 @@ function updateCardEntries(){
 }
 for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).addEventListener('click',openChristmasCard);
 $('draw-create').addEventListener('click',openChristmasCard);
-$('card-preview-enlarge').addEventListener('click',()=>{
-  const large=$('card-preview-large');
-  const video=$('card-video-preview'),gif=$('card-gif-preview');
-  let preview;
-  if(!video.hidden&&video.src){
-    preview=el('video');preview.src=video.src;preview.controls=true;preview.playsInline=true;
-  }else if(!gif.hidden&&gif.src){
-    preview=el('img');preview.src=gif.src;preview.alt='放大聖誕卡片';
-  }else{
-    const original=$('card-preview');
-    preview=el('canvas');preview.width=original.width;preview.height=original.height;
-    preview.getContext('2d').drawImage(original,0,0);
-  }
-  large.replaceChildren(preview);
-  showDialog('card-preview-dialog');
-});
-$('card-preview-dialog').addEventListener('close',()=>{
-  const video=$('card-preview-large').querySelector('video');if(video)video.pause();
-  $('card-preview-large').replaceChildren();
-});
-
 function goToGiftDraw(){
-  closeDialog('card-preview-dialog');
   closeDialog('card-dialog');
   closeDialog('mobile-collection');
   restoreMobileGlobe();
@@ -2266,8 +2244,10 @@ function updateCardMediaControls(){
   $('card-export-progress').hidden=!cardExportBusy;
   $('card-making').hidden=!cardExportBusy;$('card-making').parentElement.setAttribute('aria-busy',String(cardExportBusy));
   $('card-making-title').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
-  $('card-format-note').textContent=format==='gif'?'會動的祝福，無聲。':format==='png'?'靜態圖片。':cardMP4Support===false?'此瀏覽器暫時無法製作 MP4，請選擇 GIF 或 PNG。':'有配樂，也能錄下祝福。';
-  $('card-format-note').classList.toggle('card-format-error',format==='mp4'&&cardMP4Support===false);
+  const formatUnavailable=format==='mp4'&&cardMP4Support===false;
+  $('card-format-note').textContent=formatUnavailable?'此瀏覽器暫時無法製作 MP4，請選擇 GIF 或 PNG。':'';
+  $('card-format-note').hidden=!formatUnavailable;
+  $('card-format-note').classList.toggle('card-format-error',formatUnavailable);
   if(!navigator.mediaDevices?.getUserMedia)$('card-record-status').textContent='目前環境未提供麥克風；仍可使用預設聖誕配樂。錄音請使用允許麥克風的安全網頁環境。';
 }
 function cardReadyMessage(){
@@ -2278,11 +2258,11 @@ function renderCardMediaResult(){
   resetCardShareOptions();
   $('card-download').textContent=format==='mp4'?'下載影片':'下載圖片';
   $('card-share').textContent=format==='mp4'?'分享影片':'分享圖片';
-  $('card-preview-state').textContent=blob?'卡片完成了':'圖片預覽';
+  $('card-preview-state').textContent=blob?'卡片完成了':'';
+  $('card-preview-state').closest('.card-preview-label').hidden=!blob;
   $('card-download').closest('.card-result-actions').toggleAttribute('data-card-ready',!!blob);
   $('card-file-size').textContent=blob?`${format.toUpperCase()} · ${cardBytesLabel(blob.size)}${format==='png'?'':' · 5 秒'}`:'';
   clearCardMediaPreview();
-  $('card-preview-note').textContent=blob?`${format.toUpperCase()} · ${cardBytesLabel(blob.size)} · ${format==='gif'?'5 秒循環預覽，無聲':format==='mp4'?'按播放試看並試聽':'靜態圖片'}`:'';
   if(result&&format!=='png'){
     cardMediaURL=URL.createObjectURL(result.blob);const preview=$(format==='gif'?'card-gif-preview':'card-video-preview');preview.src=cardMediaURL;preview.hidden=false;$('card-preview').hidden=true;
   }

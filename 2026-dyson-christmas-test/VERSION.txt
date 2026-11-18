@@ -1,1 +1,1 @@
-v127 integrated / 2026-11-18 / all v126 r10 updates + desktop mission typography + shared rules copy + mobile gift navigation + brand homepage link + larger visitors + uniform coupon wording + single-row desktop attendance
+v127 integrated r4 / 2026-11-18 / all r3 updates + format descriptions in selector, no repeated normal hint
