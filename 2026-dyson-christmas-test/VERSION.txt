@@ -1,1 +1,1 @@
-v126 integrated r7 / 2026-11-18 / all r6 updates + three winning boxes per five; preserve completed draws
+v126 integrated r10 / 2026-11-18 / all r9 updates + approved miss messages

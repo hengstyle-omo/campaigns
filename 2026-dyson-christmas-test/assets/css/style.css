@@ -1341,3 +1341,12 @@ main > :is(.intro, .experience, .benefit-section, .collection-section, footer) {
 #card-dialog #card-preview-state { flex: 0 0 auto; color: var(--text); }
 #card-dialog #card-preview-note { margin: 0; min-width: 0; font-size: inherit; color: var(--muted); }
 #card-dialog #card-preview-note:empty { display: none; }
+
+/* Keep preview controls in the status header. */
+#card-dialog .card-preview-label { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 8px; }
+#card-dialog .card-preview-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; min-width: 0; }
+#card-dialog .card-preview-label #card-preview-enlarge { position: static; margin: 0; min-height: 34px; white-space: nowrap; }
+@media (max-width: 760px) {
+  #card-dialog .card-save-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+  #card-dialog .card-save-actions button { width: 100%; min-width: 0; padding-inline: 3px; white-space: nowrap; font-size: clamp(12px,3.3vw,14px); }
+}

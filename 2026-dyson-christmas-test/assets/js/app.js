@@ -705,6 +705,24 @@ function setOnboardingStep(step){
     if(onboardingStep===current)syncOnboarding({reveal:true});
   });
 }
+function revealOnboardingTarget(target) {
+  const bottomAligned = target.id === 'edit-toggle' || target.id === 'card-open';
+  if (!bottomAligned) {
+    if (target.id !== 'mobile-card-open') target.scrollIntoView({block:'center',behavior:'instant'});
+    return;
+  }
+  if (target.closest('dialog[open]')) {
+    target.scrollIntoView({block:'nearest',behavior:'instant'});
+    return;
+  }
+  const viewport = window.visualViewport;
+  const viewportBottom = viewport ? viewport.offsetTop + viewport.height : window.innerHeight;
+  const mobileBar = mobileViewport.matches ? document.querySelector('.mobile-workspace-actions') : null;
+  const reservedBottom = mobileBar ? mobileBar.getBoundingClientRect().height : 0;
+  const bottom = viewportBottom - reservedBottom - 12;
+  const rect = target.getBoundingClientRect();
+  window.scrollTo({top:Math.max(0,window.scrollY + rect.bottom - bottom),behavior:'instant'});
+}
 function positionOnboarding(){
   const guide=$('onboarding-guide');
   if(guide.hidden||!onboardingTarget)return;
@@ -718,7 +736,8 @@ function positionOnboarding(){
   const above=rect.top-gap-guideHeight;
   const below=rect.bottom+gap;
   let x=rect.left+rect.width/2-guideWidth/2;
-  let y=below+guideHeight<=usableBottom?below:above;
+  const preferAbove=['edit-toggle','card-open','mobile-card-open','mobile-collection-card'].includes(onboardingTarget.id);
+  let y=preferAbove?above:below+guideHeight<=usableBottom?below:above;
   if(y<inset&&Math.max(widthLeft,widthRight)>=guideWidth){
     x=widthRight>=guideWidth?rect.right+gap:rect.left-gap-guideWidth;
     y=rect.top+Math.min(24,rect.height/2);
@@ -783,7 +802,7 @@ function syncOnboarding({reveal=false}={}){
   if($('onboarding-message').textContent!==displayMessage)$('onboarding-message').textContent=displayMessage;
   $('onboarding-done').hidden=step!==4;
   if(reveal){
-    if(target.id!=='mobile-card-open')target.scrollIntoView({block:'center',behavior:'instant'});
+    revealOnboardingTarget(target);
     if(!target.disabled)target.focus({preventScroll:true});
   }
   positionOnboarding();
