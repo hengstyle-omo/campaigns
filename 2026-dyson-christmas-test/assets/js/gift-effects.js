@@ -101,6 +101,41 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       return [box.left + box.width / 2 - scene.left, box.top + box.height * .2 - scene.top];
     });
   }
+  // Keep the sign fixed. Fit gift hit areas around both the board and its post.
+  function fitGiftPositions(scene, sign, boxes) {
+    const gap=Math.max(12,scene.width*.025);
+    const zones=[
+      {left:sign.left,top:sign.top+sign.height*.11,right:sign.right,bottom:sign.top+sign.height*.54},
+      {left:sign.left+sign.width*.39,top:sign.top,right:sign.left+sign.width*.56,bottom:sign.bottom}
+    ];
+    const intersects=(a,b,pad=gap)=>a.left<b.right+pad && a.right>b.left-pad && a.top<b.bottom+pad && a.bottom>b.top-pad;
+    const occupied=[], placements=[];
+    for(const {box,index} of boxes.map((box,index)=>({box,index})).sort((a,b)=>b.box.width*b.box.height-a.box.width*a.box.height)) {
+      const original={x:(box.left+box.right)/2,y:(box.top+box.bottom)/2};
+      const candidates=[original];
+      for(let y=.40;y<=.95;y+=.025)for(let x=.09;x<=.92;x+=.025)candidates.push({x:scene.left+scene.width*x,y:scene.top+scene.height*y});
+      candidates.sort((a,b)=>(a.x-original.x)**2+(a.y-original.y)**2-((b.x-original.x)**2+(b.y-original.y)**2));
+      let chosen=null;
+      for(const point of candidates) {
+        const rect={left:point.x-box.width/2,right:point.x+box.width/2,top:point.y-box.height/2,bottom:point.y+box.height/2};
+        if(rect.left<scene.left+gap || rect.right>scene.right-gap || rect.top<scene.top+gap || rect.bottom>scene.bottom-gap)continue;
+        if(zones.some(zone=>intersects(rect,zone)) || occupied.some(other=>intersects(rect,other,gap*.5)))continue;
+        chosen={rect,x:point.x-original.x,y:point.y-original.y};break;
+      }
+      // The gift grid has ample free snow to the right of the fixed sign.
+      if(!chosen) return null;
+      occupied.push(chosen.rect);placements[index]=chosen;
+    }
+    return placements;
+  }
+  function avoidWoodSign() {
+    const sign=stage.querySelector('.draw-wood-sign');
+    if(!sign)return;
+    for(const gift of gifts){gift.style.setProperty('--gift-x-offset','0px');gift.style.setProperty('--gift-y-offset','0px');}
+    const placements=fitGiftPositions(stage.getBoundingClientRect(),sign.getBoundingClientRect(),gifts.map(gift=>gift.getBoundingClientRect()));
+    if(!placements)return;
+    placements.forEach((point,index)=>{gifts[index].style.setProperty('--gift-x-offset',point.x+'px');gifts[index].style.setProperty('--gift-y-offset',point.y+'px');});
+  }
   function resize() {
     if (!ctx) return;
     width = canvas.clientWidth;
@@ -109,6 +144,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     canvas.width = Math.round(width * scale);
     canvas.height = Math.round(height * scale);
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    avoidWoodSign();
     locateGifts();
   }
   const giftCues = gifts.map((gift,index)=>({ gift, next: 0, until: 0, index }));
@@ -148,14 +184,14 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     const sourceX=x-width*.08,sourceY=-height*.08,radius=Math.max(box.width*.85,width*.055);
     ctx.save();
     const beam=ctx.createLinearGradient(sourceX,sourceY,x,y);
-    beam.addColorStop(0,'rgba(255,245,221,0)');
-    beam.addColorStop(.5,`rgba(255,245,221,${strength*.025})`);
-    beam.addColorStop(1,`rgba(255,245,221,${strength*.14})`);
+    beam.addColorStop(0,`rgba(255,245,221,${strength*.035})`);
+    beam.addColorStop(.5,`rgba(255,245,221,${strength*.085})`);
+    beam.addColorStop(1,`rgba(255,245,221,${strength*.26})`);
     ctx.fillStyle=beam;ctx.beginPath();ctx.moveTo(sourceX,sourceY);
     ctx.lineTo(x-radius,y);ctx.quadraticCurveTo(x,y+radius*.24,x+radius,y);ctx.closePath();ctx.fill();
     ctx.translate(x,y);ctx.scale(1,.28);
     const pool=ctx.createRadialGradient(0,0,0,0,0,radius);
-    pool.addColorStop(0,`rgba(255,247,222,${strength*.32})`);
+    pool.addColorStop(0,`rgba(255,247,222,${strength*.5})`);
     pool.addColorStop(1,'rgba(255,247,222,0)');ctx.fillStyle=pool;
     ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.fill();ctx.restore();
   }

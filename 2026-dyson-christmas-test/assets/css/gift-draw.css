@@ -721,7 +721,7 @@
   transform-origin: 50% 88%; animation: draw-gift-wobble .9s ease-in-out both;
 }
 .draw-gifts .draw-gift.draw-spotlit[data-state="closed"] .draw-box {
-  filter: brightness(1.12) drop-shadow(0 0 7px #fff0cf55);
+  filter: brightness(1.24) drop-shadow(0 0 12px #fff0cf99);
 }
 @keyframes draw-gift-wobble {
   0%,100% { transform: rotate(0) translateY(0); }
@@ -733,3 +733,21 @@
 @media (prefers-reduced-motion: reduce) {
   .draw-gifts .draw-gift.draw-wobble[data-state="closed"] .draw-box { animation: none; }
 }
+
+/* Original timber arrow asset with larger, crisp HTML lettering. */
+.draw-wood-sign { left: 2%; top: 34%; width: 32%; padding: 0; aspect-ratio: 1; transform: rotate(-3deg); }
+.draw-wood-sign::before, .draw-wood-sign::after { display: none; }
+.draw-wood-sign > img { width: 100%; height: 100%; object-fit: contain; }
+.draw-wood-sign > span {
+  position: absolute; inset: 8% 17% auto 5%; height: 50%;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+  border: 0; border-radius: 0; box-shadow: none; background: transparent;
+  font-size: clamp(10px,2.15cqw,22px); line-height: 1.55; font-weight: 700;
+  color: #2c1b0f; text-shadow: 0 1px 0 #ffe4b888;
+}
+
+/* Give the clearance solver a safe starting layout around the fixed post. */
+.draw-gifts .draw-gift:nth-child(1) { --x: 43%; --y: 66%; }
+.draw-gifts .draw-gift:nth-child(3) { --x: 30%; --y: 88%; }
+.draw-gifts .draw-gift:nth-child(2) { --x: 71%; --y: 61%; }
+.draw-gifts .draw-gift:nth-child(5) { --x: 85%; --y: 80%; }
