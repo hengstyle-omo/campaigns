@@ -193,7 +193,7 @@
         details.setAttribute('aria-label', '了解產品：' + name);
         details.addEventListener('click', () => openProduct(id));
       }
-      copy.append(note, details);
+      copy.append(note);
       if (day) {
         const link = document.createElement('a');
         link.href = prizeURL(id);
@@ -222,7 +222,10 @@
       image.decoding = 'async';
       image.src = prizeArt(id);
       imageButton.append(image);
-      coupon.append(title, copy, imageButton);
+      const product = document.createElement('div');
+      product.className = 'draw-coupon-product';
+      product.append(imageButton, details);
+      coupon.append(title, copy, product);
       return coupon;
     }));
   }

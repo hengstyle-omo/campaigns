@@ -686,3 +686,9 @@
   #draw-passport-days .participation-cell { min-height: 58px; }
   .draw-passport-card > .draw-passport-status { grid-column: 4; grid-row: 1; padding-left: 12px; }
 }
+
+/* Product navigation stays directly beneath its artwork. */
+#draw-wallet .draw-coupon { grid-template-columns: minmax(0,1fr) minmax(104px,42%); }
+.draw-coupon-product { display: grid; justify-items: center; align-content: start; gap: 5px; min-width: 0; }
+.draw-coupon-product .draw-coupon-image-button { max-width: 90px; }
+.draw-coupon-product .draw-coupon-details { justify-self: center; text-align: center; font-size: .8rem; line-height: 1.5; max-width: 100%; }

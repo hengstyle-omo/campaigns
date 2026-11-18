@@ -197,7 +197,7 @@ function cloudAcceptClock(result){
  cloud.attendance=result.attendance||null;
  cloud.unlockedRewards=Array.isArray(result.unlockedRewardIds)?result.unlockedRewardIds:[];
  cloud.rewardLinks=result.rewardLinks||{};
- cloud.isAdmin=result.isAdmin===true&&result.adminAuthenticated===true&&!!cloud.adminToken;cloud.canPreview=cloud.isAdmin&&result.canPreview===true;cloud.hasExclusive=result.hasExclusiveCollection===true;cloud.bonusIds=cloud.hasExclusive&&Array.isArray(result.bonusIds)?result.bonusIds.filter(d=>BONUS_IDS.includes(d)):[];
+ cloud.isAdmin=result.isAdmin===true&&result.adminAuthenticated===true&&!!cloud.adminToken;cloud.canPreview=cloud.isAdmin&&result.canPreview===true;cloud.hasExclusive=result.hasExclusiveCollection===true;cloud.bonusIds=cloud.hasExclusive&&Array.isArray(result.bonusIds)?[...new Set(result.bonusIds.map(Number).filter(d=>BONUS_IDS.includes(d)))]:[];
  if(!cloud.isAdmin){cloud.previewLoaded=false;previewRestore(null);}
  if(Number.isFinite(Date.parse(result.serverTime))){cloud.offset=Date.parse(result.serverTime)-Date.now();cloud.hasClock=true;}
 }
@@ -1061,7 +1061,7 @@ function syncMobileCollectionPage(){
 function renderMobileCollection(){
   if(!$('mobile-collection').open)return;
   const pages=$('mobile-collection-pages');
-  const days=[...STARTER_IDS,...availableDays().reverse(),...bonusDays()];
+  const days=[...STARTER_IDS,...bonusDays(),...availableDays().reverse()];
   const key=JSON.stringify(days.map(day=>[day,item(day).name]));
   if(key===mobileCollectionKey){
     for(const button of pages.querySelectorAll('.mobile-tile-toggle'))updateMobileTile(button,Number(button.closest('[data-day]').dataset.day));
@@ -1645,7 +1645,7 @@ function drawDysonSignature(elapsed,target=ctx,animate=motion,timeline=SHOW_LIVE
   target.restore();
 }
 function placedObjects(){
-  const layer=p=>item(p.day).starter?0:item(p.day).product?2:1;
+  const layer=p=>item(p.day).starter?0:Number(p.day)===12?.5:item(p.day).product?2:1;
   // Shared by the live globe, hit testing and card capture: products stay in
   // front of scenery, while user-selected positions remain fully editable.
   return sceneDays().filter(d=>isPlaced(d)&&!item(d).effect).map(d=>({day:d,...getLayout(d)})).sort((a,b)=>layer(a)-layer(b)||a.y-b.y||a.day-b.day);
@@ -2189,7 +2189,23 @@ async function copyCardShareText(){
     $('card-status').textContent='請複製下方的分享文案與活動連結。';
   }
 }
-async function shareGame(){
+function gameLineShareURL(){
+  const {message,url}=cardShareCopy();
+  const shareURL=new URL('https://social-plugins.line.me/lineit/share');
+  shareURL.searchParams.set('url',url);
+  shareURL.searchParams.set('text',message);
+  return shareURL.href;
+}
+function shareGame(){
+  if($('card-share-game').disabled||cardSaving)return;
+  $('game-share-line').href=gameLineShareURL();
+  $('game-share-other').hidden=typeof navigator.share!=='function';
+  showDialog('game-share-dialog');
+}
+$('game-share-line').addEventListener('click',()=>closeDialog('game-share-dialog'));
+$('game-share-copy').addEventListener('click',async()=>{closeDialog('game-share-dialog');await copyCardShareText();});
+$('game-share-other').addEventListener('click',()=>{closeDialog('game-share-dialog');shareGameOther();});
+async function shareGameOther(){
   const button=$('card-share-game');
   if(button.disabled||cardSaving)return;
   const data=cardShareMetadata();
