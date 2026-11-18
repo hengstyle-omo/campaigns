@@ -5,7 +5,7 @@
   const dateKey = 'dyson-christmas-test-v2-date';
   const drawKey = 'dyson-christmas-test-v2-gifts';
   const giftOpeningDuration = 800;
-  const giftFlightDuration = 1400;
+  const giftFlightDuration = 2400;
   const touchPreviewDuration = 160;
   const giftPositions = ['後排左側', '後排右側', '前排左側', '前排中央', '前排右側'];
   const prizes = {
@@ -397,7 +397,9 @@
     byId('draw-result-open').hidden = !played || opening;
     const drawFromCard = byId('draw-from-card');
     drawFromCard.hidden = !day;
-    drawFromCard.textContent = played ? '查看今日拆盒結果' : '挑選今日禮物';
+    drawFromCard.textContent = played ? '查看今日拆盒結果' : '今日抽獎已解鎖｜前往拆禮物 →';
+    drawFromCard.classList.toggle('gold-button', Boolean(day && !played));
+    byId('card-dialog').dataset.drawReady = String(Boolean(day && !played));
     feedback.classList.toggle('draw-has-result', played && !opening);
     dateInput.disabled = Boolean(pending);
     reset.disabled = Boolean(pending);
@@ -491,6 +493,7 @@
           const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
           await new Promise(resolve => setTimeout(resolve, duration));
           if (recorded.prize && activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            stage.classList.add('draw-flying');
             effects?.celebrate(index);
             await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
           } else if (!recorded.prize && activeDate === attempt.date) {
@@ -582,7 +585,7 @@
       showError();
     }
   });
-  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, setPassportReward, hasOpenedPassport, openResult };
+  window.DysonTestDraw = { date: () => activeDate, complete, syncDate, setPassportReward, hasOpenedPassport, openResult, setAmbientAnimals: animals => effects?.setAnimals(animals) };
   renderPassport();
   render();
 })();

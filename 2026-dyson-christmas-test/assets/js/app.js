@@ -690,7 +690,7 @@ const onboardingMessages={
   1:'點開 12/01「第一場雪」，看看你的第一份聖誕收藏。',
   2:'按「放入水晶球」，讓第一場雪飄進球裡。',
   3:'按「調整位置」，試著佈置你的水晶球。',
-  5:'把聖誕祝福送出去，天天拆禮物！製作卡片並下載或分享，即可獲得當天 1 次抽獎機會。每天完成一次，就能天天回來拆禮物，抽 Dyson $1,000 優惠券。'
+  5:'分享聖誕祝福，天天抽好禮！下載或分享卡片，每天可抽 1 次 Dyson $1,000 優惠券。'
 };
 function setOnboardingStep(step){
   onboardingStep=step;
@@ -723,6 +723,8 @@ function positionOnboarding(){
     x=widthRight>=guideWidth?rect.right+gap:rect.left-gap-guideWidth;
     y=rect.top+Math.min(24,rect.height/2);
   }
+  guide.dataset.direction=y>=rect.bottom?'up':y+guideHeight<=rect.top?'down':x>=rect.right?'left':'right';
+  guide.style.setProperty('--guide-arrow-x',Math.max(16,Math.min(guideWidth-16,rect.left+rect.width/2-Math.max(inset,Math.min(viewportWidth-guideWidth-inset,x))))+'px');
   guide.style.left=Math.max(inset,Math.min(viewportWidth-guideWidth-inset,x))+'px';
   guide.style.top=Math.max(inset,Math.min(usableBottom-guideHeight,y))+'px';
 }
@@ -1133,6 +1135,9 @@ mobileViewport.addEventListener('change',event=>{
 
 function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
+  window.DysonTestDraw.setAmbientAnimals(bonusDays().map(day=>({
+    image:ASSETS.bonusSprites?.[day], name:item(day).name,
+  })).filter(animal=>animal.image));
 }
 function updatePlacementUI(d){
   // Keep the clicked button and the list height intact: replacing the collection
@@ -1993,6 +1998,9 @@ function updateCardButtons(){
   $('card-share-file').disabled=disabled||cardSaving;
   if(disabled)resetCardShareOptions();
   updateCardMediaControls();
+  $('card-generate').hidden=!!blob&&!cardExportBusy;
+  $('card-download').hidden=!blob;
+  $('card-share').hidden=!blob;
 }
 function renderChristmasCard(){
   if(cardExportBusy)return;
@@ -2051,7 +2059,7 @@ function downloadChristmasCard(){
   $('card-dialog').append(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),10000);
   markCardTask(cardFormat(),'download');updateCardButtons();trackActivity('card_download',{card_format:cardFormat()});
-  $('card-status').textContent='已準備下載卡片檔案。可將檔案傳給想祝福的人。';return true;
+  $('card-status').textContent='卡片已準備下載。完成當天卡片任務後，可按「前往拆禮物」參加抽獎。';return true;
 }
 function cardShareCopy(){
   return {
@@ -2124,6 +2132,27 @@ function updateCardEntries(){
 }
 for(const id of ['card-open','mobile-card-open','mobile-collection-card'])$(id).addEventListener('click',openChristmasCard);
 $('draw-create').addEventListener('click',openChristmasCard);
+$('card-preview-enlarge').addEventListener('click',()=>{
+  const large=$('card-preview-large');
+  const video=$('card-video-preview'),gif=$('card-gif-preview');
+  let preview;
+  if(!video.hidden&&video.src){
+    preview=el('video');preview.src=video.src;preview.controls=true;preview.playsInline=true;
+  }else if(!gif.hidden&&gif.src){
+    preview=el('img');preview.src=gif.src;preview.alt='放大聖誕卡片';
+  }else{
+    const original=$('card-preview');
+    preview=el('canvas');preview.width=original.width;preview.height=original.height;
+    preview.getContext('2d').drawImage(original,0,0);
+  }
+  large.replaceChildren(preview);
+  showDialog('card-preview-dialog');
+});
+$('card-preview-dialog').addEventListener('close',()=>{
+  const video=$('card-preview-large').querySelector('video');if(video)video.pause();
+  $('card-preview-large').replaceChildren();
+});
+
 $('draw-from-card').addEventListener('click',()=>{
   closeDialog('card-dialog');
   $('draw-heading').focus({preventScroll:true});
@@ -2202,7 +2231,7 @@ function invalidateCardMedia(format){
 }
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
-  $('card-generate').hidden=false;$('card-generate').disabled=busy||!valid||(format==='mp4'&&cardMP4Support===false);
+  $('card-generate').hidden=!!currentCardBlob()&&!cardExportBusy;$('card-generate').disabled=busy||!valid||(format==='mp4'&&cardMP4Support===false);
   $('card-generate').textContent=cardExportBusy?'正在製作…':cardFailedFormat===format?'再試一次':format==='png'?'製作圖片卡片':'製作 5 秒卡片';$('card-generate').classList.toggle('is-busy',cardExportBusy);$('card-generate').setAttribute('aria-busy',String(cardExportBusy));
   $('card-audio-options').hidden=format!=='mp4';$('card-record').disabled=busy||!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder!=='function';
   $('card-record').textContent=cardVoiceBuffer?'重新錄音':'開始錄音';$('card-record').hidden=!!cardRecorder;

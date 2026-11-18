@@ -3,6 +3,22 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let width = 0, height = 0, frame = 0, idleStart = 0, ready = false;
   let visible = true, selected = null, targets = [], hovered = null, consolation = null;
+  let animals = [], visitorUntil = 0, nextVisitor = 0;
+  const visitor = document.getElementById('draw-visitor');
+  const visitorImage = document.getElementById('draw-visitor-image');
+  function updateVisitor(now) {
+    if (visitorUntil && now >= visitorUntil) {
+      visitor.hidden = true; visitorUntil = 0;
+    }
+    if (!animals.length || visitorUntil || document.querySelector('dialog[open]')) return;
+    if (!nextVisitor) nextVisitor = now + 45000 + Math.random()*45000;
+    if (now < nextVisitor) return;
+    const animal = animals[Math.floor(Math.random()*animals.length)];
+    visitorImage.src = animal.image;
+    visitor.hidden = false;
+    visitorUntil = now + 7500;
+    nextVisitor = visitorUntil + 45000 + Math.random()*45000;
+  }
   const pointer = { x: 0, y: 0, currentX: 0, currentY: 0 };
   const snow = Array.from({ length: 64 }, (_, i) => ({
     x: Math.random(), y: Math.random(), phase: Math.random() * 6.28,
@@ -97,6 +113,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       dot(((x + now * size / 200000 + breeze) % 1 + 1) % 1 * width,
         ((y + now * size / 38000) % 1) * height, size, size > 1.8 ? .53 : .33);
     }
+    updateVisitor(now);
     if (ready) drawIdle(now);
     if (selected) drawWin(now);
     if (hovered !== null && ready) { locateGifts(); drawGather(now); }
@@ -144,6 +161,12 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     update();
   }
   return {
+    setAnimals(value) {
+      animals = value;
+      if (!animals.length || !animals.some(animal=>animal.image===visitorImage.getAttribute('src'))) {
+        visitor.hidden=true;visitorUntil=0;
+      }
+    },
     setReady(value) {
       if (ready === value) return;
       ready = value;

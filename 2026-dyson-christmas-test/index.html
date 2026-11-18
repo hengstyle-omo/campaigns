@@ -6,8 +6,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dyson 聖誕倒數日曆｜每天解鎖一份驚喜">
 <meta property="og:description" content="下載或分享卡片抽千元優惠券，打卡滿 5 天解鎖靠櫃禮兌換券，持券消費贈 Dyson 護照夾（價值 $1,080）。">
-<link rel="stylesheet" href="./assets/css/style.css?v=20261118-v124">
-<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261118-v124">
+<link rel="stylesheet" href="./assets/css/style.css?v=20261118-v126">
+<link rel="stylesheet" href="./assets/css/gift-draw.css?v=20261118-v126-gifts1">
 </head>
 <body>
 <template id="activity-missions-template">
@@ -48,7 +48,7 @@
 <template id="activity-notices-template">
  <ol><li><p>本活動由恆隆行貿易股份有限公司（以下簡稱「主辦單位」）舉辦。參加者一經參與本活動，即視為已詳閱、瞭解並同意遵守本活動辦法、注意事項及相關規範。</p></li><li><p>如因參加者使用之裝置、LINE App 版本、網路連線或其他非可歸責於主辦單位之因素，導致活動頁面、動畫效果、會員綁定或優惠資訊顯示異常，主辦單位恕不另行補發或補償。</p></li><li><p>如因天災、系統異常、政府法令變更或其他不可抗力因素，致本活動無法正常進行，主辦單位得於法令允許範圍內調整、暫停或終止活動，並依實際情況公告相關處理方式。</p></li><li><p>主辦單位保留於法令允許範圍內調整活動內容及相關辦法之權利，相關異動將於活動頁面公告。</p></li><li><p>本活動如有未盡事宜，悉依相關法令、主辦單位活動辦法及最新公告辦理。</p></li></ol>
 </template>
-<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v125</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
+<aside class="november-test-banner" aria-label="11 月測試版"><strong>11 月一般使用者測試版 · v126</strong><span id="november-test-clock" role="status">依台灣日期，每天對應開放 12 月同一天的禮物。</span></aside>
 <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
  <button id="welcome-review-close" class="dialog-close" type="button" aria-label="關閉" hidden>×</button>
  <div id="welcome-overview"><div id="welcome-content" class="welcome-content">
@@ -58,7 +58,7 @@
    <div data-activity-missions="welcome-description"></div>
    <section id="welcome-account" aria-labelledby="welcome-account-title">
     <h3 id="welcome-account-title">留下 Email，累積打卡領好禮</h3>
-    <p>填寫 Email 並簽到，累積滿 5 天即可解鎖 Dyson 護照夾兌換券。你也可以直接開始佈置水晶球。</p>
+    <p>留下 Email 保存打卡紀錄，累積 5 天解鎖護照夾兌換券。也可以直接開始佈置。</p>
    </section>
    
    <div class="welcome-footer"><button id="welcome-start" class="gold-button" type="button">開始佈置水晶球</button></div>
@@ -125,7 +125,7 @@
   </div>
   <div id="draw-stage" class="draw-stage">
     <div class="draw-landscape" aria-hidden="true"></div>
-    <div class="draw-idle-deer" aria-hidden="true"><img src="./assets/images/scene/day-08-leaping-reindeer.webp" alt="" loading="lazy"></div>
+    <div id="draw-visitor" class="draw-visitor" aria-hidden="true" hidden><img id="draw-visitor-image" alt=""></div>
     <div class="draw-tree" aria-hidden="true">
       <img class="draw-tree-art" src="./assets/images/scene/day-12-christmas-tree.webp" alt="" width="1214" height="1295" loading="lazy" decoding="async">
       <span class="draw-tree-lights"></span>
@@ -269,10 +269,14 @@
  </div>
 </dialog>
 <dialog id="card-dialog" class="card-dialog" aria-labelledby="card-title"><button class="dialog-close" data-close="card-dialog" aria-label="關閉">×</button><p class="eyebrow">A LITTLE WORLD, JUST FOR YOU</p><h2 id="card-title">寄一份聖誕心意</h2><p class="dialog-subtitle">以你親手布置的水晶球，留住此刻想說的話。</p><form id="card-form" class="card-form card-workspace" novalidate>
-<div class="card-editor-column"><div class="card-form-fields"><div class="card-field"><div class="card-label"><label for="card-recipient">送給誰 <span>必填</span></label><output id="card-recipient-count" for="card-recipient">0／12</output></div><input id="card-recipient" type="text" placeholder="名字或暱稱" autocomplete="off" required aria-describedby="card-recipient-error"><p id="card-recipient-error" class="card-error" aria-live="polite"></p></div><div class="card-field"><div class="card-label"><label for="card-message">想說的話 <span>必填</span></label><output id="card-message-count" for="card-message">0／100</output></div><textarea id="card-message" rows="5" placeholder="寫下想送給對方的聖誕祝福…" required aria-describedby="card-message-error"></textarea><p id="card-message-error" class="card-error" aria-live="polite"></p></div><div class="card-field"><div class="card-label"><label for="card-signature">自己的署名 <span>必填</span></label><output id="card-signature-count" for="card-signature">0／12</output></div><input id="card-signature" type="text" placeholder="留下你的名字或暱稱" autocomplete="off" required aria-describedby="card-signature-error"><p id="card-signature-error" class="card-error" aria-live="polite"></p></div></div><div class="card-export-panel"><section class="card-media-options" aria-label="卡片格式與聲音"><label class="card-format-label" for="card-format">傳出什麼樣的祝福？</label><select id="card-format"><option value="gif" selected>GIF 動態圖片 · 5 秒</option><option value="mp4">MP4 有聲影片 · 5 秒</option><option value="png">PNG 靜態圖片</option></select><p id="card-format-note" class="card-hint"></p><div id="card-audio-options"><label class="card-audio-check"><input id="card-bgm" type="checkbox" checked>聖誕背景音樂 <span>預設開啟</span></label><div class="card-voice-heading"><strong>錄一句自己的祝福 <span>選填，最多 5 秒</span></strong><span id="card-record-time">0.0／5 秒</span></div><div class="card-voice-actions"><button id="card-record" type="button">開始錄音</button><button id="card-record-stop" type="button" hidden>完成錄音</button><button id="card-record-delete" type="button" disabled>刪除錄音</button></div><audio id="card-voice-preview" controls preload="none" hidden aria-label="試聽自己的祝福"></audio><p id="card-record-status" class="card-hint" role="status" aria-live="polite">按下錄音才會要求麥克風權限。有錄音時，配樂會自動降低音量。</p></div><button id="card-generate" class="gold-button" type="button" disabled>製作 5 秒卡片</button><div id="card-export-progress" hidden><progress id="card-progress" max="100" value="0" aria-label="卡片製作進度"></progress><button id="card-cancel-export" type="button">取消製作</button></div><p id="card-file-size" role="status" aria-live="polite"></p></section></div></div>
-<div class="card-preview-column"><div class="card-preview-area"><div class="card-preview-label"><span>你的聖誕卡片</span><span id="card-preview-state">圖片預覽</span></div><div class="card-preview-stage"><div id="card-making" class="card-making" role="status" aria-live="polite" hidden><div class="mini-globe" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><strong id="card-making-title">正在製作你的聖誕卡片…</strong><span id="card-making-stage">準備畫面</span><span id="card-making-percent"></span><button id="card-making-cancel" type="button">取消製作</button></div><canvas id="card-preview" width="1200" height="2000" role="img" aria-label="聖誕卡片預覽"></canvas><video id="card-video-preview" controls playsinline preload="metadata" hidden aria-label="5 秒有聲聖誕卡片預覽"></video><img id="card-gif-preview" hidden alt="5 秒循環的聖誕卡片動畫"></div><p id="card-preview-note"></p></div>
-<div class="card-result-actions">
+<div class="card-editor-column"><div class="card-form-fields"><div class="card-field"><div class="card-label"><label for="card-recipient">送給誰 <span>必填</span></label><output id="card-recipient-count" for="card-recipient">0／12</output></div><input id="card-recipient" type="text" placeholder="名字或暱稱" autocomplete="off" required aria-describedby="card-recipient-error"><p id="card-recipient-error" class="card-error" aria-live="polite"></p></div><div class="card-field"><div class="card-label"><label for="card-message">想說的話 <span>必填</span></label><output id="card-message-count" for="card-message">0／100</output></div><textarea id="card-message" rows="5" placeholder="寫下想送給對方的聖誕祝福…" required aria-describedby="card-message-error"></textarea><p id="card-message-error" class="card-error" aria-live="polite"></p></div><div class="card-field"><div class="card-label"><label for="card-signature">自己的署名 <span>必填</span></label><output id="card-signature-count" for="card-signature">0／12</output></div><input id="card-signature" type="text" placeholder="留下你的名字或暱稱" autocomplete="off" required aria-describedby="card-signature-error"><p id="card-signature-error" class="card-error" aria-live="polite"></p></div></div><div class="card-export-panel"><section class="card-media-options" aria-label="卡片格式與聲音"><label class="card-format-label" for="card-format">傳出什麼樣的祝福？</label><select id="card-format"><option value="gif" selected>GIF 動態圖片 · 5 秒</option><option value="mp4">MP4 有聲影片 · 5 秒</option><option value="png">PNG 靜態圖片</option></select><p id="card-format-note" class="card-hint"></p><details id="card-audio-options"><summary>聲音設定（選填）</summary><label class="card-audio-check"><input id="card-bgm" type="checkbox" checked>聖誕背景音樂 <span>預設開啟</span></label><div class="card-voice-heading"><strong>錄一句自己的祝福 <span>選填，最多 5 秒</span></strong><span id="card-record-time">0.0／5 秒</span></div><div class="card-voice-actions"><button id="card-record" type="button">開始錄音</button><button id="card-record-stop" type="button" hidden>完成錄音</button><button id="card-record-delete" type="button" disabled>刪除錄音</button></div><audio id="card-voice-preview" controls preload="none" hidden aria-label="試聽自己的祝福"></audio><p id="card-record-status" class="card-hint" role="status" aria-live="polite">按下錄音才會要求麥克風權限。有錄音時，配樂會自動降低音量。</p></details><div id="card-export-progress" hidden><progress id="card-progress" max="100" value="0" aria-label="卡片製作進度"></progress><button id="card-cancel-export" type="button">取消製作</button></div><p id="card-file-size" role="status" aria-live="polite"></p></section></div></div>
+<div class="card-preview-column"><div class="card-preview-area"><div class="card-preview-label"><span>你的聖誕卡片</span><span id="card-preview-state">圖片預覽</span></div><div class="card-preview-stage"><button id="card-preview-enlarge" type="button">放大預覽 ↗</button><div id="card-making" class="card-making" role="status" aria-live="polite" hidden><div class="mini-globe" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><strong id="card-making-title">正在製作你的聖誕卡片…</strong><span id="card-making-stage">準備畫面</span><span id="card-making-percent"></span><button id="card-making-cancel" type="button">取消製作</button></div><canvas id="card-preview" width="1200" height="2000" role="img" aria-label="聖誕卡片預覽"></canvas><video id="card-video-preview" controls playsinline preload="metadata" hidden aria-label="5 秒有聲聖誕卡片預覽"></video><img id="card-gif-preview" hidden alt="5 秒循環的聖誕卡片動畫"></div><p id="card-preview-note"></p></div>
+<div class="card-result-actions"><button id="card-generate" class="gold-button" type="button" disabled>製作 5 秒卡片</button>
 <div class="card-save-actions"><button id="card-download" type="button" disabled>下載圖片</button><button id="card-share" type="button" disabled>分享圖片</button><button id="card-share-game" type="button">分享遊戲</button></div><p id="card-status" class="card-status" role="status" aria-live="polite"></p><div class="card-share-options"><button id="card-share-file" type="button" hidden>只分享圖片</button></div><button id="draw-from-card" type="button" hidden>挑選今日禮物</button><textarea id="card-share-text" aria-label="分享文案與活動連結" readonly hidden></textarea></div></div></form></dialog>
+<dialog id="card-preview-dialog" aria-label="放大卡片預覽">
+ <button class="dialog-close" type="button" data-close="card-preview-dialog" aria-label="關閉放大預覽">×</button>
+ <div id="card-preview-large"></div>
+</dialog>
 <dialog id="item-dialog" aria-labelledby="item-title"><button class="dialog-close" data-close="item-dialog" aria-label="關閉">×</button><p id="item-day" class="eyebrow"></p><div id="item-visual" class="item-visual"></div><p id="item-kind" class="small-label"></p><h2 id="item-title"></h2><p id="item-description"></p><section id="item-product" class="product-intro" aria-label="產品介紹" hidden><h3 id="product-features-title">產品亮點</h3><ul id="product-features"></ul><a id="product-link" class="product-link" target="_blank" rel="noopener noreferrer" hidden>了解產品詳情 ↗</a><span id="product-link-pending" class="product-link-pending">產品詳情準備中</span></section><p id="item-music" class="item-music" hidden></p><button id="item-placement" class="gold-button"></button><button id="item-position" class="secondary-button">調整擺放位置</button></dialog>
 <dialog id="music-credits-dialog" aria-labelledby="music-credits-title"><button class="dialog-close" data-close="music-credits-dialog" aria-label="關閉">×</button><p class="eyebrow">MUSIC CREDITS</p><h2 id="music-credits-title">聖誕旋律與授權</h2><p class="dialog-subtitle">以下為 Kevin MacLeod 提供的 CC BY 4.0 授權錄音，依授權標示作者與來源。可免費用於商業活動。</p><div id="music-credits-list"></div></dialog>
 <dialog id="studio-dialog" class="studio-dialog" aria-labelledby="studio-title"><button class="dialog-close" data-close="studio-dialog" aria-label="關閉">×</button><p class="eyebrow">CAMPAIGN STUDIO · PREVIEW</p><h2 id="studio-title">25 天內容與場景預覽</h2><p class="dialog-subtitle">此為企劃預覽入口，並非具登入驗證的管理後台。模擬收藏與擺放保存在同一參加者列的獨立模擬欄位。</p>
@@ -298,7 +302,7 @@
 
 <script src="./assets/js/config.js?v=20261117-v102-gift-rewards"></script>
 <script src="./assets/js/analytics.js?v=20261116-v101"></script>
-<script src="./assets/js/gift-effects.js?v=20261118-v124"></script>
-<script src="./assets/js/gift-draw.js?v=20261118-v125"></script>
-<script src="./assets/js/app.js?v=20261118-v125"></script>
+<script src="./assets/js/gift-effects.js?v=20261118-v126"></script>
+<script src="./assets/js/gift-draw.js?v=20261118-v126"></script>
+<script src="./assets/js/app.js?v=20261118-v126-guide1"></script>
 </body></html>

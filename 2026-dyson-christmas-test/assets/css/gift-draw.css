@@ -133,7 +133,7 @@
   min-width: 0;
   min-height: 0;
   height: auto;
-  aspect-ratio: 945 / 960;
+  aspect-ratio: var(--gift-ratio, 945 / 960);
   margin: 0;
   padding: 0;
   overflow: visible;
@@ -149,6 +149,12 @@
 .draw-gifts :is(.draw-gift:nth-child(3), .draw-floated-ticket[data-box="2"]) { --x: 15%; --y: 86%; --size: .160; --angle: -5deg; }
 .draw-gifts :is(.draw-gift:nth-child(4), .draw-floated-ticket[data-box="3"]) { --x: 64%; --y: 87%; --size: .203; --angle: 2deg; }
 .draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --x: 86%; --y: 85%; --size: .178; --angle: 5deg; }
+/* Five matching navy/ivory/gold gift sprites. Only artwork changes; saved box indices stay stable. */
+.draw-gifts .draw-gift:nth-child(1) { --gift-art: url("../images/gifts/navy-leaf-cube.webp?v=20261118-gifts1"); --gift-ratio: 1254 / 1254; --gift-seam: 0% 47%, 14% 49.5%, 78% 53%, 92% 43%, 100% 40%; --gift-lip: 14% 49.5%, 31% 39%, 92% 43%, 78% 53%; --mouth-y: 53%; }
+.draw-gifts .draw-gift:nth-child(2) { --gift-art: url("../images/gifts/navy-star-tall.webp?v=20261118-gifts1"); --gift-ratio: 1080 / 1457; --gift-seam: 0% 40%, 14% 42%, 80% 44%, 94% 35%, 100% 33%; --gift-lip: 14% 42%, 30% 34%, 94% 35%, 80% 44%; --mouth-y: 44%; }
+.draw-gifts .draw-gift:nth-child(3) { --gift-art: url("../images/gifts/navy-fern-wide.webp?v=20261118-gifts1"); --gift-ratio: 1752 / 897; --gift-seam: 0% 52%, 8% 55%, 85% 58%, 96% 46%, 100% 43%; --gift-lip: 8% 55%, 20% 44%, 96% 46%, 85% 58%; --mouth-y: 58%; }
+.draw-gifts .draw-gift:nth-child(4) { --gift-art: url("../images/gifts/navy-berry-small.webp?v=20261118-gifts1"); --gift-ratio: 1254 / 1254; --gift-seam: 0% 47%, 22% 49%, 66% 50%, 79% 44%, 82% 41%; --gift-lip: 22% 49%, 34% 42%, 79% 44%, 66% 50%; --mouth-y: 50%; }
+.draw-gifts .draw-gift:nth-child(5) { --gift-art: url("../images/gifts/navy-pine-large.webp?v=20261118-gifts1"); --gift-ratio: 1097 / 1434; --gift-seam: 0% 33%, 12% 35%, 78% 39%, 94% 31%, 100% 28%; --gift-lip: 12% 35%, 29% 28%, 94% 31%, 78% 39%; --mouth-y: 39%; }
 .draw-gifts .draw-gift:disabled { opacity: 1; cursor: default; }
 .draw-gifts .draw-gift:not(:disabled) { cursor: pointer; }
 .draw-gifts .draw-gift:focus-visible { outline: 2px solid #ffe1a5; outline-offset: 1px; z-index: 1; }
@@ -630,3 +636,51 @@
 }
 
 @media (max-width: 600px) { .draw-landscape { background-size: 100% 100%; } }
+
+/* Put the aurora above the landscape instead of behind its opaque image. */
+.draw-landscape { z-index: -2; }
+.draw-stage::before, .draw-stage::after {
+  z-index: -1; inset: 0 0 52%;
+  mask-image: linear-gradient(#000 0%, #000d 65%, transparent 100%);
+  mix-blend-mode: screen;
+}
+.draw-stage::before {
+  background: repeating-linear-gradient(109deg, transparent 0 10%, #61e3c871 18%, #a0f6d98a 22%, transparent 31%) center / 150% 140%;
+  animation: draw-aurora-vivid-green 13s ease-in-out infinite;
+}
+.draw-stage::after {
+  background: repeating-linear-gradient(78deg, transparent 0 20%, #6d9eff66 30%, #a1b6ff70 33%, transparent 43%) center / 160% 130%;
+  animation: draw-aurora-vivid-blue 17s -6s ease-in-out infinite;
+}
+@keyframes draw-aurora-vivid-green {
+  0%,100% { opacity: .4; background-position: 10% 30%; transform: skewX(-5deg); }
+  33% { opacity: .78; }
+  48% { opacity: .52; }
+  66% { opacity: .9; background-position: 90% 45%; transform: skewX(6deg); }
+}
+@keyframes draw-aurora-vivid-blue {
+  0%,100% { opacity: .35; background-position: 90% 20%; }
+  40% { opacity: .75; background-position: 20% 60%; }
+  62% { opacity: .45; }
+  78% { opacity: .8; }
+}
+.draw-visitor {
+  position: absolute; width: 12%; top: 45%; left: -15%; pointer-events: none;
+  animation: draw-exclusive-visit 7.5s linear both;
+}
+.draw-visitor img { display: block; width: 100%; height: auto; }
+@keyframes draw-exclusive-visit {
+  0% { left: -15%; opacity: 0; transform: translateY(3%); }
+  12% { opacity: 1; }
+  35% { transform: translateY(-4%); }
+  60% { transform: translateY(2%); }
+  87% { opacity: 1; }
+  100% { left: 105%; opacity: 0; transform: translateY(-3%); }
+}
+#draw-prize .draw-result-ticket h3 { font-size: clamp(1.05rem, 4.6vw, 1.55rem); }
+#draw-prize-claim.gold-button { background: #96713c; border-color: #96713c; color: #fff; font-weight: 600; }
+#draw-prize-claim.gold-button:hover { background: #805c2e; border-color: #805c2e; }
+@media (prefers-reduced-motion: reduce) {
+  .draw-stage::before, .draw-stage::after { animation: none; opacity: .5; }
+  .draw-visitor { display: none; }
+}
