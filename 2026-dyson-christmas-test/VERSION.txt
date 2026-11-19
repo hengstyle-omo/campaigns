@@ -1,1 +1,1 @@
-v130 integrated r5 / 2026-11-19 / fixed foreground gifts, background tree/sign, blue-gold textured sign, rotating gold halos and hops, stable asset names / test environment
+v130 integrated r6 / 2026-11-19 / hanging plaque, equal visible gift area, ambient exclusion of shiba+fox / test environment

@@ -1158,7 +1158,7 @@ mobileViewport.addEventListener('change',event=>{
 function renderBenefits(){
   window.DysonTestDraw.syncDate(dateISO());
   // Decorative visitors use existing artwork without granting exclusive collections.
-  window.DysonTestDraw.setAmbientAnimals(bonusCatalog.map(animal=>({
+  window.DysonTestDraw.setAmbientAnimals(bonusCatalog.filter(animal=>![102,110].includes(Number(animal.day))).map(animal=>({
     day:animal.day, image:ASSETS.bonusSprites?.[animal.day], name:animal.name,
   })).filter(animal=>animal.image));
 }

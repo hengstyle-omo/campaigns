@@ -96,14 +96,19 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     } else ctx.fillStyle = color(alpha, gold);
     ctx.fill();
   }
+  const GIFT_ART_BOUNDS=[{"x":0.12440191387559808,"y":0.12280701754385964,"w":0.7743221690590112,"h":0.7974481658692185},{"x":0.11481481481481481,"y":0.07343857240905971,"w":0.7694444444444445,"h":0.8641043239533288},{"x":0.03995433789954338,"y":0.0713489409141583,"w":0.9178082191780822,"h":0.8439241917502787},{"x":0.21371610845295055,"y":0.21770334928229665,"w":0.5629984051036683,"h":0.5566188197767146},{"x":0.10027347310847767,"y":0.03138075313807531,"w":0.8003646308113036,"h":0.9218967921896792}];
   function locateGifts() {
     const scene=stage.getBoundingClientRect();feetTargets=[];
-    targets=gifts.map(gift=>{
-      const box=gift.getBoundingClientRect();
-      feetTargets.push({x:box.left+box.width/2-scene.left-pointer.currentX*7,y:box.bottom-scene.top-pointer.currentY*7,width:box.width,height:box.height});
-      return [box.left+box.width/2-scene.left,box.top+box.height*.2-scene.top];
+    targets=gifts.map((gift,index)=>{
+      const box=gift.getBoundingClientRect(),b=GIFT_ART_BOUNDS[index];
+      const x=box.left+box.width*(b.x+b.w/2)-scene.left;
+      const y=box.top+box.height*(b.y+b.h)-scene.top;
+      const visibleWidth=box.width*b.w,visibleHeight=box.height*b.h;
+      feetTargets.push({x:x-pointer.currentX*7,y:y-pointer.currentY*7,width:visibleWidth,height:visibleHeight});
+      return [x,y-visibleHeight*.8];
     });
   }
+
   // Foreground composition: the tree is scenery, never a gift obstacle.
   function layoutForegroundGifts() {
     for(const gift of gifts){gift.style.setProperty('--gift-layout-scale','1');gift.style.setProperty('--gift-clear-x','0px');gift.style.setProperty('--gift-clear-y','0px');}
@@ -287,7 +292,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   return {
     relayout() { layoutForegroundGifts(); locateGifts(); },
     setAnimals(value) {
-      const incoming = Array.isArray(value) ? value.filter(animal=>animal && animal.image) : [];
+      const incoming = Array.isArray(value) ? value.filter(animal=>animal && animal.image && ![102,110].includes(Number(animal.day))) : [];
       const key = list=>list.map(animal=>`${animal.day}:${animal.image}`).join('|');
       if (key(incoming) !== key(animals)) animalBag = [];
       animals = incoming;
