@@ -1,1 +1,1 @@
-v131 integrated / 2026-11-19 / direct game share, unified create-card button, less frequent ambient animals / test environment
+v132 r3 / 2026-11-19 / simplify plaque corner ornamentation / test environment
