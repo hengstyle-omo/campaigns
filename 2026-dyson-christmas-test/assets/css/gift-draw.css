@@ -722,12 +722,12 @@
 .draw-gifts :is(.draw-gift:nth-child(5), .draw-floated-ticket[data-box="4"]) { --gift-balanced-width:0.135429587; }
 .draw-gifts .draw-gift { width:calc(100% * var(--gift-balanced-width)); }
 /* Plaque, tree, then gifts: suspension leaves the snow floor clear. */
-.draw-wood-sign { left:50%; top:3%; width:44%; aspect-ratio:2.4; translate:-50% 0; transform:rotate(-.5deg); transform-origin:50% -24%; animation:draw-sign-sway 8s ease-in-out infinite; }
+.draw-wood-sign { left:50%; top:3%; width:38%; aspect-ratio:2.4; translate:-50% 0; transform:rotate(-.5deg); transform-origin:50% -24%; animation:draw-sign-sway 8s ease-in-out infinite; }
 .draw-wood-sign::before,.draw-wood-sign::after { content:''; position:absolute; top:-30%; height:32%; width:1px; background:linear-gradient(90deg,#a17c3c,#f2dca7); box-shadow:0 0 2px #ffe1a644; z-index:-1; }
 .draw-wood-sign::before { left:25%; }
 .draw-wood-sign::after { left:75%; }
 .draw-wood-sign > img { width:100%; height:100%; object-fit:contain; }
-.draw-wood-sign > span { inset:5% 10%; height:auto; font-size:clamp(12px,2cqw,21px); line-height:1.5; }
+.draw-wood-sign > span { inset:5% 10%; height:auto; font-size:clamp(14px,2.5cqw,26px); line-height:1.35; }
 .draw-tree { top:29%; height:40%; }
 @keyframes draw-sign-sway { 0%,100% { transform:rotate(-.5deg); } 50% { transform:rotate(.5deg); } }
 @media (prefers-reduced-motion:reduce) { .draw-wood-sign { animation:none; transform:none; } }

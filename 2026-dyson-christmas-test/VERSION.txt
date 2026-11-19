@@ -1,1 +1,1 @@
-v130 integrated r6 / 2026-11-19 / hanging plaque, equal visible gift area, ambient exclusion of shiba+fox / test environment
+v130 integrated r7 / 2026-11-19 / smaller hanging plaque with larger lettering / test environment
