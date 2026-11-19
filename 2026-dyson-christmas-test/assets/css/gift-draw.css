@@ -777,3 +777,12 @@
 .draw-tap-hint[hidden] { display:none; }
 @keyframes draw-tap-hint { 0%,100% { opacity:.65; margin-top:0; } 50% { opacity:1; margin-top:4px; } }
 @media (prefers-reduced-motion:reduce) { .draw-tap-hint { display:none; } }
+
+/* A little more depth leaves room for the larger gifts in the foreground. */
+.draw-tree { height:60%; top:12%; }
+.draw-wood-sign { width:25%; top:31%; }
+.draw-wood-sign::before { background:linear-gradient(90deg,#102d38,#294a50 48%,#102d38); }
+.draw-wood-sign > span { font-size:clamp(10px,2.15cqw,22px); text-shadow:0 1px 1px #071923; }
+.draw-sign-garnish { position:absolute; inset:5% -2% 42%; z-index:3; pointer-events:none; background:url('../images/scene/christmas-sign-garnish-v130.svg') center/100% 100% no-repeat; }
+.draw-tap-hint { font-family:Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif; font-size:clamp(23px,4.5cqw,38px); transform:rotate(-18deg); filter:drop-shadow(0 2px 2px #11283766); animation:draw-tap-hint 0.8s ease-in-out infinite; }
+@keyframes draw-tap-hint { 0%,100% { opacity:.85; margin-top:0; } 50% { opacity:1; margin-top:-7px; } }
