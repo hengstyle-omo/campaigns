@@ -178,6 +178,7 @@
       title.className = 'draw-coupon-title';
       title.textContent = name + ' $1,000 優惠券';
       const note = document.createElement('small');
+      note.className = 'draw-coupon-status';
       note.textContent = day ? '✓ 已抽中 · ' + displayDate(day)
         : id === 'bonus' && activeDate < bonusDate ? '12/20 加入抽獎' : '尚未抽中';
       const details = document.createElement(id === 'bonus' ? 'a' : 'button');
@@ -194,14 +195,16 @@
         details.addEventListener('click', () => openProduct(id));
       }
       copy.append(note);
+      let claim;
       if (day) {
         const link = document.createElement('a');
         link.href = prizeURL(id);
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
+        link.className = 'draw-coupon-claim';
         link.textContent = '立即領取優惠券 ↗';
         bindCouponClick(link, id);
-        copy.append(link);
+        claim = link;
       }
       const imageButton = document.createElement(id === 'bonus' ? 'a' : 'button');
       imageButton.className = 'draw-coupon-image-button';
@@ -226,6 +229,7 @@
       product.className = 'draw-coupon-product';
       product.append(imageButton, details);
       coupon.append(title, copy, product);
+      if (claim) coupon.append(claim);
       return coupon;
     }));
   }

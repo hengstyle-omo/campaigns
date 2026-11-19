@@ -1,1 +1,1 @@
-v132 r3 / 2026-11-19 / simplify plaque corner ornamentation / test environment
+v132 r4 / 2026-11-19 / wallet status badge and product / claim buttons / test environment

@@ -739,3 +739,72 @@
 
 /* A little more breathing room inside the plaque on phones. */
 @media (max-width:760px) { .draw-wood-sign > span { font-size:clamp(12.5px,2.25cqw,23.4px); } }
+
+
+/* Wallet: status, product and primary action have distinct visual weight. */
+#draw-wallet .draw-coupon {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  gap: 12px;
+}
+#draw-wallet .draw-coupon-title { grid-column: 1; grid-row: 1; }
+#draw-wallet .draw-coupon-copy { grid-column: 1; grid-row: 2; justify-items: start; }
+#draw-wallet .draw-coupon-status { line-height: 1.5; }
+#draw-wallet .draw-coupon[data-won] .draw-coupon-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #b9d68b24;
+  color: #d2e7ad;
+  font-weight: 700;
+}
+#draw-wallet .draw-coupon-product {
+  grid-column: 1;
+  grid-row: 3;
+  gap: 10px;
+}
+#draw-wallet .draw-coupon-product .draw-coupon-image-button { width: 100%; max-width: 104px; }
+#draw-wallet .draw-coupon-product .draw-coupon-image { height: 100px; }
+#draw-wallet .draw-coupon-details {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 1px solid #67717c80;
+  border-radius: 7px;
+  background: #101c27;
+  color: #f6d597;
+  text-decoration: none;
+  cursor: pointer;
+}
+#draw-wallet .draw-coupon-details:hover { border-color: #c8a66b; background: #1b2835; }
+#draw-wallet .draw-coupon-claim {
+  grid-column: 1;
+  grid-row: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid #f2d395;
+  border-radius: 8px;
+  background: linear-gradient(110deg, #efd6a0, #c69a50);
+  box-shadow: 0 2px 12px #e7bc6726;
+  color: #261e13;
+  font-size: .95rem;
+  line-height: 1.4;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+#draw-wallet .draw-coupon-claim:hover { filter: brightness(1.07); }
+#draw-wallet :is(.draw-coupon-details, .draw-coupon-claim):focus-visible {
+  outline: 2px solid #f4dbad;
+  outline-offset: 3px;
+}
+@media (min-width: 561px) {
+  @supports (grid-template-rows: subgrid) {
+    #draw-wallet .draw-coupon { grid-row: span 4; grid-template-rows: subgrid; }
+  }
+}
