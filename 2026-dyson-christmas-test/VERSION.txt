@@ -1,1 +1,1 @@
-v130 integrated r7 / 2026-11-19 / smaller hanging plaque with larger lettering / test environment
+v130 integrated r8 / 2026-11-19 / soft warm-white outline glow, no rings or orbiting sparks / test environment

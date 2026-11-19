@@ -158,22 +158,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
       else{const at=eligible.indexOf(spotlightIndex);spotlightIndex=eligible[(at+1)%eligible.length];}
       spotlightStart=now;gifts[spotlightIndex].classList.add('draw-spotlit');
     }
-    const foot=feetTargets[spotlightIndex];if(!foot)return;
-    const p=(now-spotlightStart)/SPOTLIGHT_DURATION;
-    const strength=Math.min(1,p/.15,(1-p)/.15);
-    const x=foot.x+pointer.currentX*7,y=foot.y-foot.height*.5+pointer.currentY*7;
-    const rx=foot.width*.66,ry=Math.max(foot.height*.62,foot.width*.55);
-    ctx.save();ctx.translate(x,y);ctx.scale(1,ry/rx);
-    const halo=ctx.createRadialGradient(0,0,rx*.55,0,0,rx*1.13);
-    halo.addColorStop(0,'rgba(255,220,121,0)');halo.addColorStop(.55,`rgba(255,224,135,${strength*.10})`);halo.addColorStop(.7,`rgba(255,228,144,${strength*.8})`);halo.addColorStop(.79,`rgba(255,218,102,${strength*.22})`);halo.addColorStop(1,'rgba(255,215,100,0)');
-    ctx.fillStyle=halo;ctx.beginPath();ctx.arc(0,0,rx*1.13,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle=`rgba(255,236,169,${strength*.82})`;ctx.lineWidth=1.25;ctx.shadowColor='#ffda77';ctx.shadowBlur=9;
-    ctx.beginPath();ctx.arc(0,0,rx*.91,-Math.PI*.94,Math.PI*.94);ctx.stroke();ctx.restore();
-    for(let i=0;i<7;i++){
-      const angle=now/1900+i*Math.PI*2/7,xx=x+Math.cos(angle)*rx,yy=y+Math.sin(angle)*ry;
-      const alpha=strength*(.42+.28*Math.sin(now/310+i*1.8));
-      ctx.strokeStyle=`rgba(255,233,161,${alpha})`;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(xx-3,yy);ctx.lineTo(xx+3,yy);ctx.moveTo(xx,yy-3);ctx.lineTo(xx,yy+3);ctx.stroke();
-    }
+    // The cue's soft light follows the artwork alpha via CSS drop-shadows.
   }
   function drawWin(now) {
     const progress = (now - selected.start) / 1400;
