@@ -693,96 +693,23 @@
 .draw-coupon-product .draw-coupon-image-button { max-width: 90px; }
 .draw-coupon-product .draw-coupon-details { justify-self: center; text-align: center; font-size: .8rem; line-height: 1.5; max-width: 100%; }
 
-/* A small timber sign sits in the left snowbank, clear of the gift hit areas. */
-.draw-stage { container-type: inline-size; }
-.draw-wood-sign {
-  position: absolute; left: 4.5%; top: 42%; width: 27%; z-index: 2;
-  padding-bottom: 7%; pointer-events: none; transform: rotate(-3deg);
-  filter: drop-shadow(2px 5px 3px #0b172d55);
-}
-.draw-wood-sign::before, .draw-wood-sign::after {
-  content: ''; position: absolute; top: 55%; bottom: 0; width: 7%;
-  border: 1px solid #68513c; border-radius: 1px;
-  background: repeating-linear-gradient(90deg,#76583c 0 2px,#a98559 3px 5px,#947047 6px 8px);
-}
-.draw-wood-sign::before { left: 20%; }
-.draw-wood-sign::after { right: 20%; }
-.draw-wood-sign > span {
-  position: relative; z-index: 1; display: block; padding: 8% 3%;
-  border: 1px solid #795b3a; border-radius: 4px 7px 5px 3px;
-  background: repeating-linear-gradient(2deg,transparent 0 5px,#6d48231c 6px,transparent 7px 12px),linear-gradient(100deg,#c6a678,#ddbf8e 35%,#b98f5f 83%,#c8a376);
-  box-shadow: inset 0 2px 0 #fff4,inset 0 -3px 0 #63402044;
-  color: #35291f; text-align: center; font-weight: 600; line-height: 1.65;
-  font-size: clamp(9px,1.7cqw,17px); text-shadow: 0 1px #fff3;
-}
 
-/* Independent invitation motions; the opening animation retains control. */
-.draw-gifts .draw-gift.draw-wobble[data-state="closed"] .draw-box {
-  transform-origin: 50% 88%; animation: draw-gift-wobble .9s ease-in-out both;
+/* Fixed foreground size; no tree collision solver or automatic shrinking. */
+.draw-stage { container-type:inline-size; aspect-ratio:1.2; min-height:0; }
+.draw-tree { top:10%; height:54%; z-index:0; }
+.draw-gifts { z-index:3; }
+.draw-gifts .draw-gift { width:calc(135% * var(--size)); scale:1; }
+.draw-gifts .draw-gift, .draw-floated-ticket {
+  left:calc(var(--x) + var(--gift-x-offset,0%) + var(--gift-clear-x,0px));
+  top:calc(var(--y) + var(--gift-y-offset,0%) + var(--gift-clear-y,0px));
 }
 .draw-gifts .draw-gift.draw-spotlit[data-state="closed"] .draw-box {
-  filter: brightness(1.24) drop-shadow(0 0 12px #fff0cf99);
+  filter:brightness(1.19) drop-shadow(0 0 14px #ffd36ca8);
+  animation:draw-gift-gold-hop 1.2s ease-in-out infinite;
 }
-@keyframes draw-gift-wobble {
-  0%,100% { transform: rotate(0) translateY(0); }
-  22% { transform: rotate(-3deg) translateY(-1.5%); }
-  46% { transform: rotate(3deg) translateY(-2%); }
-  70% { transform: rotate(-1.8deg) translateY(-1%); }
-  86% { transform: rotate(1deg); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .draw-gifts .draw-gift.draw-wobble[data-state="closed"] .draw-box { animation: none; }
-}
-
-/* Original timber arrow asset with larger, crisp HTML lettering. */
-.draw-wood-sign { left: 2%; top: 34%; width: 32%; padding: 0; aspect-ratio: 1; transform: rotate(-3deg); }
-.draw-wood-sign::before, .draw-wood-sign::after { display: none; }
-.draw-wood-sign > img { width: 100%; height: 100%; object-fit: contain; }
-.draw-wood-sign > span {
-  position: absolute; inset: 8% 17% auto 5%; height: 50%;
-  display: flex; align-items: center; justify-content: center; padding: 0;
-  border: 0; border-radius: 0; box-shadow: none; background: transparent;
-  font-size: clamp(10px,2.15cqw,22px); line-height: 1.55; font-weight: 700;
-  color: #2c1b0f; text-shadow: 0 1px 0 #ffe4b888;
-}
-
-/* Give the clearance solver a safe starting layout around the fixed post. */
-.draw-gifts .draw-gift:nth-child(1) { --x: 43%; --y: 66%; }
-.draw-gifts .draw-gift:nth-child(3) { --x: 30%; --y: 88%; }
-.draw-gifts .draw-gift:nth-child(2) { --x: 71%; --y: 61%; }
-.draw-gifts .draw-gift:nth-child(5) { --x: 85%; --y: 80%; }
-
-/* Keep lettering large and high-contrast on a more compact timber sign. */
-.draw-wood-sign { width: 28%; }
-.draw-wood-sign > img { filter: brightness(1.10) saturate(.86); }
-.draw-wood-sign > span {
-  color: #fff8e8; -webkit-text-stroke: .35px #38200f;
-  text-shadow: 0 1px 2px #241205, 1px 0 2px #241205, -1px 0 2px #241205;
-}
-.draw-gifts .draw-gift { scale: var(--gift-layout-scale,1); }
-
-/* Daily random placement and collision correction must remain independent. */
-.draw-gifts .draw-gift, .draw-floated-ticket {
-  left: calc(var(--x) + var(--gift-x-offset,0%) + var(--gift-clear-x,0px));
-  top: calc(var(--y) + var(--gift-y-offset,0%) + var(--gift-clear-y,0px));
-}
-
-/* A lightweight navy-and-gold sign, kept inside the existing clearance zones. */
-.draw-wood-sign { left:2%; top:34%; width:28%; aspect-ratio:1; transform:rotate(-3deg); padding:0; }
-.draw-wood-sign::before { display:block; left:39%; right:auto; top:46%; bottom:0; width:17%; border:1px solid #b69a62; border-radius:0; background:linear-gradient(90deg,#102a35,#203e48 48%,#102a35); }
-.draw-wood-sign::after { display:block; left:0; right:0; top:11%; bottom:46%; width:auto; border:0; border-radius:8%; background:#c9aa70; clip-path:polygon(7% 0,93% 0,93% 7%,100% 14%,100% 86%,93% 93%,93% 100%,7% 100%,7% 93%,0 86%,0 14%,7% 7%); }
-.draw-wood-sign > span { position:absolute; inset:calc(11% + 2px) 2px auto; height:calc(43% - 4px); display:flex; justify-content:center; align-items:center; padding:0; border:1px solid #b99d6890; border-radius:7%; background:linear-gradient(135deg,#173542,#0d2632); color:#f5dfad; font-size:clamp(10px,2.15cqw,22px); font-weight:600; line-height:1.55; -webkit-text-stroke:0; text-shadow:0 1px 1px #071923; clip-path:polygon(7% 0,93% 0,93% 7%,100% 14%,100% 86%,93% 93%,93% 100%,7% 100%,7% 93%,0 86%,0 14%,7% 7%); }
-.draw-gifts .draw-gift.draw-spotlit[data-state="closed"] .draw-box { filter:brightness(1.16) drop-shadow(0 0 10px #fff0cf80); }
-.draw-tap-hint { position:absolute; z-index:5; pointer-events:none; color:#f6dfab; font-size:clamp(22px,5cqw,40px); line-height:1; transform:translate(-20%,-20%) rotate(-20deg); text-shadow:0 1px 3px #0b1d28; animation:draw-tap-hint 1.2s ease-in-out infinite; }
-.draw-tap-hint[hidden] { display:none; }
-@keyframes draw-tap-hint { 0%,100% { opacity:.65; margin-top:0; } 50% { opacity:1; margin-top:4px; } }
-@media (prefers-reduced-motion:reduce) { .draw-tap-hint { display:none; } }
-
-/* A little more depth leaves room for the larger gifts in the foreground. */
-.draw-tree { height:60%; top:12%; }
-.draw-wood-sign { width:25%; top:31%; }
-.draw-wood-sign::before { background:linear-gradient(90deg,#102d38,#294a50 48%,#102d38); }
-.draw-wood-sign > span { font-size:clamp(10px,2.15cqw,22px); text-shadow:0 1px 1px #071923; }
-.draw-sign-garnish { position:absolute; inset:5% -2% 42%; z-index:3; pointer-events:none; background:url('../images/scene/christmas-sign-garnish-v130.svg') center/100% 100% no-repeat; }
-.draw-tap-hint { font-family:Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif; font-size:clamp(23px,4.5cqw,38px); transform:rotate(-18deg); filter:drop-shadow(0 2px 2px #11283766); animation:draw-tap-hint 0.8s ease-in-out infinite; }
-@keyframes draw-tap-hint { 0%,100% { opacity:.85; margin-top:0; } 50% { opacity:1; margin-top:-7px; } }
+@keyframes draw-gift-gold-hop { 0%,100% { transform:translateY(0) rotate(0); } 30% { transform:translateY(-7px) rotate(-2deg); } 60% { transform:translateY(-2px) rotate(2deg); } }
+.draw-wood-sign { position:absolute; left:2%; top:14%; width:27%; aspect-ratio:1; z-index:1; pointer-events:none; transform:rotate(-3deg); filter:drop-shadow(1px 4px 3px #06142755); }
+.draw-wood-sign > img { display:block; width:100%; height:100%; object-fit:contain; }
+.draw-wood-sign > span { position:absolute; inset:10% 5% auto; height:43%; display:flex; align-items:center; justify-content:center; color:#f5dfa9; font-size:clamp(10px,2cqw,21px); line-height:1.55; font-weight:650; text-align:center; text-shadow:0 1px 2px #061427; }
+@media (max-width:560px) { .draw-stage { aspect-ratio:1.07; } }
+@media (prefers-reduced-motion:reduce) { .draw-gifts .draw-gift.draw-spotlit .draw-box { animation:none; } }

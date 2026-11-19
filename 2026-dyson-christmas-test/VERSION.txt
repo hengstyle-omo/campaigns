@@ -1,1 +1,1 @@
-v130 integrated r4 / 2026-11-19 / r3 + gifts 20% larger, deeper tree/sign, botanical Christmas sign, recurring rotating emoji hints / test environment
+v130 integrated r5 / 2026-11-19 / fixed foreground gifts, background tree/sign, blue-gold textured sign, rotating gold halos and hops, stable asset names / test environment

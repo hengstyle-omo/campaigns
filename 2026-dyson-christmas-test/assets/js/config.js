@@ -781,7 +781,7 @@ window.DYSON_ASSETS = {
     "id": "jingle-bright",
     "duration": 5,
     "sourceOffset": 8,
-    "src": "./assets/audio/card-jingle-bells-5s-pcm-v38.wav",
+    "src": "./assets/audio/card-jingle-bells-5s-pcm.wav",
     "fallbackSrc": "./assets/audio/card-jingle-bells-5s.m4a"
   },
   "productStyle": "miniature-relief-v1",

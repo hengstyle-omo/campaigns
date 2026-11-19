@@ -2420,7 +2420,7 @@ async function cardDecodeAudio(bytes){
 async function loadCardMusic(){
   if(cardMusicBuffer)return cardMusicBuffer;
   if(!cardMusicLoading)cardMusicLoading=(async()=>{
-    const sources=[...new Set([ASSETS.cardMusic?.src,ASSETS.cardMusic?.fallbackSrc,'./assets/audio/card-jingle-bells-5s-pcm-v38.wav'].filter(Boolean))];
+    const sources=[...new Set([ASSETS.cardMusic?.src,ASSETS.cardMusic?.fallbackSrc,'./assets/audio/card-jingle-bells-5s-pcm.wav'].filter(Boolean))];
     for(const src of sources){
       try{
         const buffer=await cardDecodeAudio(await cardDataBytes(src));
@@ -2472,7 +2472,7 @@ async function validateCardMP4(blob,token){
 }
 async function encodeCardMP4WebCodecs(options,audio,token,support){
   // Video timestamps come from frame number, not how long rendering takes.
-  const prepared=!support.audioWeb&&$('card-bgm').checked?window.DysonMP4Support.readAAC(await cardDataBytes('./assets/audio/card-jingle-bells-5s-aac-v48.m4a')):null;
+  const prepared=!support.audioWeb&&$('card-bgm').checked?window.DysonMP4Support.readAAC(await cardDataBytes('./assets/audio/card-jingle-bells-5s-aac.m4a')):null;
   if(!support.audioWeb&&cardVoiceBuffer)throw new Error('此裝置需使用相容模式製作錄音影片。');
   checkCardJob(token);
   const withAudio=!!(support.audioWeb||prepared),{Muxer,ArrayBufferTarget}=window.DysonMediaCodecs,target=new ArrayBufferTarget(),muxer=new Muxer({target,video:{codec:'avc',width:options.width,height:options.height,frameRate:options.fps},...(withAudio?{audio:{codec:'aac',sampleRate:prepared?.rate||audio.rate,numberOfChannels:1}}:{}),fastStart:'in-memory',firstTimestampBehavior:'offset'});
