@@ -118,7 +118,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     };
     const options=boxes.map((box,index)=>{
       const original={x:(box.left+box.right)/2,y:(box.top+box.bottom)/2};
-      const anchors=[[.12,.92],[.90,.63],[.36,.94],[.64,.92],[.90,.86]];
+      const anchors=[[.20,.74],[.77,.66],[.30,.89],[.64,.90],[.87,.84]];
       const target={x:scene.left+scene.width*anchors[index][0],y:scene.top+scene.height*anchors[index][1]};
       const points=[target];
       for(let y=.56;y<=.97;y+=.02)for(let x=.06;x<=.95;x+=.02)points.push({x:scene.left+scene.width*x,y:scene.top+scene.height*y});
