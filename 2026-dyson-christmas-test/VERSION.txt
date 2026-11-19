@@ -1,1 +1,1 @@
-v132 r6 / 2026-11-19 / Christmas decoration controls label and direct-drag guide / test environment
+v132 r8 / 2026-11-19 / desktop LINE legacy protocol experiment / test environment

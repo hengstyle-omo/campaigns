@@ -2238,8 +2238,11 @@ async function shareGame(){
   button.disabled=true;
   try{
     if(!mobileGameShare()){
-      if(openGameLineShare())$('card-status').textContent='請在 LINE 分享畫面確認送出。';
-      else await copyCardShareText();
+      const {message,url}=cardShareCopy();
+      const lineAppUrl='line://msg/text/'+encodeURIComponent(message+'\n'+url);
+      $('card-status').textContent='正在嘗試開啟 LINE，請允許瀏覽器開啟應用程式，並確認分享內容。';
+      try{window.location.href=lineAppUrl;}
+      catch{await copyCardShareText();}
       return;
     }
     try{
