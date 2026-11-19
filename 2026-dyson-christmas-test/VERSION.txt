@@ -1,1 +1,1 @@
-v132 r8 / 2026-11-19 / desktop LINE legacy protocol experiment / test environment
+v132 r9 / 2026-11-19 / desktop game share copies text and URL / test environment

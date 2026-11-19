@@ -2195,13 +2195,13 @@ $('card-download').addEventListener('click',downloadChristmasCard);
 $('card-share').addEventListener('click',()=>shareChristmasCard());
 $('card-share-file').addEventListener('click',()=>shareChristmasCard({fileOnly:true}));
 $('card-share-game').addEventListener('click',shareGame);
-async function copyCardShareText(){
+async function copyCardShareText(successMessage='已複製分享文案與活動連結。'){
   const {text}=cardShareMetadata();
   const field=$('card-share-text');
   try{
     await navigator.clipboard.writeText(text);
     field.hidden=true;
-    $('card-status').textContent='已複製分享文案與活動連結。';
+    $('card-status').textContent=successMessage;
   }catch{
     field.value=text;
     field.hidden=false;
@@ -2238,11 +2238,7 @@ async function shareGame(){
   button.disabled=true;
   try{
     if(!mobileGameShare()){
-      const {message,url}=cardShareCopy();
-      const lineAppUrl='line://msg/text/'+encodeURIComponent(message+'\n'+url);
-      $('card-status').textContent='正在嘗試開啟 LINE，請允許瀏覽器開啟應用程式，並確認分享內容。';
-      try{window.location.href=lineAppUrl;}
-      catch{await copyCardShareText();}
+      await copyCardShareText('已複製，貼到 LINE 即可分享');
       return;
     }
     try{
