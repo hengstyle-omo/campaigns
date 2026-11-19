@@ -1,1 +1,1 @@
-v132 r4 / 2026-11-19 / wallet status badge and product / claim buttons / test environment
+v132 r6 / 2026-11-19 / Christmas decoration controls label and direct-drag guide / test environment
