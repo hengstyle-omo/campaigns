@@ -1,1 +1,1 @@
-v130 integrated r10 / 2026-11-19 / slightly smaller plaque text on mobile only / test environment
+v131 integrated / 2026-11-19 / direct game share, unified create-card button, less frequent ambient animals / test environment

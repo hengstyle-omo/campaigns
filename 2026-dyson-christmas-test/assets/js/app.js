@@ -2044,7 +2044,7 @@ function renderChristmasCard(){
     $(`card-${name}-error`).textContent=show?error:'';$(`card-${name}`).setAttribute('aria-invalid',String(!!error&&show));
   }
   paintChristmasCard(data);renderCardMediaResult();updateCardButtons();
-  $('card-status').textContent=!data.valid?'':currentCardBlob()?cardReadyMessage():cardFormat()==='png'?'按下製作圖片卡片，完成後即可下載或分享。':'按下製作，產生這個格式的 5 秒卡片。';
+  $('card-status').textContent=!data.valid?'':currentCardBlob()?cardReadyMessage():'按下「製作卡片」，完成後即可下載或分享。';
 }
 // A frozen scene and its completed formats survive reopening unless the arrangement changes.
 function cardSceneSignature(){
@@ -2204,16 +2204,7 @@ function gameLineShareURL(){
   shareURL.searchParams.set('text',message);
   return shareURL.href;
 }
-function shareGame(){
-  if($('card-share-game').disabled||cardSaving)return;
-  $('game-share-line').href=gameLineShareURL();
-  $('game-share-other').hidden=typeof navigator.share!=='function';
-  showDialog('game-share-dialog');
-}
-$('game-share-line').addEventListener('click',()=>closeDialog('game-share-dialog'));
-$('game-share-copy').addEventListener('click',async()=>{closeDialog('game-share-dialog');await copyCardShareText();});
-$('game-share-other').addEventListener('click',()=>{closeDialog('game-share-dialog');shareGameOther();});
-async function shareGameOther(){
+async function shareGame(){
   const button=$('card-share-game');
   if(button.disabled||cardSaving)return;
   const data=cardShareMetadata();
@@ -2229,7 +2220,15 @@ async function shareGameOther(){
     }catch(error){
       if(error.name==='AbortError')return;
     }
-    await copyCardShareText();
+    // Direct LINE share on systems without native sharing, without an extra chooser.
+    let popup=null;
+    try{popup=window.open(gameLineShareURL(),'_blank');}catch{}
+    if(popup){
+      try{popup.opener=null;}catch{}
+      $('card-status').textContent='請在 LINE 分享畫面確認送出。';
+    }else{
+      await copyCardShareText();
+    }
   }finally{
     button.disabled=false;
   }
@@ -2261,14 +2260,14 @@ function invalidateCardMedia(format){
 function updateCardMediaControls(){
   const busy=cardExportBusy||cardRecordingBusy()||cardSaving||cardCapturing,format=cardFormat(),valid=validateCard().valid&&!!cardSnapshot;
   $('card-generate').hidden=!!currentCardBlob()&&!cardExportBusy;$('card-generate').disabled=busy||!valid||(format==='mp4'&&cardMP4Support===false);
-  $('card-generate').textContent=cardExportBusy?'正在製作…':cardFailedFormat===format?'再試一次':format==='png'?'製作圖片卡片':'製作 5 秒卡片';$('card-generate').classList.toggle('is-busy',cardExportBusy);$('card-generate').setAttribute('aria-busy',String(cardExportBusy));
+  $('card-generate').textContent=cardExportBusy?'正在製作…':'製作卡片';$('card-generate').classList.toggle('is-busy',cardExportBusy);$('card-generate').setAttribute('aria-busy',String(cardExportBusy));
   $('card-audio-options').hidden=format!=='mp4';$('card-record').disabled=busy||!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder!=='function';
   $('card-record').textContent=cardVoiceBuffer?'重新錄音':'開始錄音';$('card-record').hidden=!!cardRecorder;
   $('card-record-stop').hidden=!cardRecorder;$('card-record-delete').disabled=busy||!cardVoiceBuffer;
   for(const id of ['card-recipient','card-message','card-signature','card-format','card-bgm'])$(id).disabled=busy;
   $('card-export-progress').hidden=!cardExportBusy;
   $('card-making').hidden=!cardExportBusy;$('card-making').parentElement.setAttribute('aria-busy',String(cardExportBusy));
-  $('card-making-title').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
+  $('card-making-title').textContent='正在製作卡片…';
   const formatUnavailable=format==='mp4'&&cardMP4Support===false;
   $('card-format-note').textContent=formatUnavailable?'此瀏覽器暫時無法製作 MP4，請選擇 GIF 或 PNG。':'';
   $('card-format-note').hidden=!formatUnavailable;
@@ -2540,7 +2539,7 @@ async function generateCardMedia(){
   const token=++cardExportToken;
   trackActivity('card_generate_start',{card_format:format});
   cardExportBusy=true;syncGlobeAnimation();cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
-  cardMaking('準備畫面');$('card-status').textContent=format==='png'?'正在製作圖片卡片…':'正在製作 5 秒卡片…';
+  cardMaking('準備畫面');$('card-status').textContent='正在製作卡片…';
   try{
     await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));checkCardJob(token);
     await cardEncodingWait(Promise.all([loadCardFont(),loadCardFormat(format)]),token,30000,'字型或匯出工具載入較慢，請稍後再試一次。');
@@ -2570,7 +2569,7 @@ async function generateCardMedia(){
     const cancelled=e.name==='AbortError';
     if(!cancelled)cardFailedFormat=format;
     trackActivity('card_generate',{card_format:format,status:cancelled?'cancelled':'failure'});
-    $('card-status').textContent=cancelled?'已取消製作，文字、錄音與擺設已保留。':`製作未完成：${e.message} 文字、錄音與擺設已保留，可按「再試一次」。`;return false;
+    $('card-status').textContent=cancelled?'已取消製作，文字、錄音與擺設已保留。':`製作未完成：${e.message} 文字、錄音與擺設已保留，可按「製作卡片」重試。`;return false;
   }finally{
     cardExportBusy=false;cardExportStop=null;syncGlobeAnimation();renderCardMediaResult();updateCardButtons();
   }
@@ -2616,7 +2615,7 @@ function deleteCardRecording(){
   $('card-record-time').textContent='0.0／5 秒';$('card-record-status').textContent='已刪除錄音，MP4 會使用目前的背景音樂設定。';invalidateCardMedia('mp4');updateCardButtons();renderCardMediaResult();
 }
 $('card-format').value='gif';
-$('card-format').addEventListener('change',()=>{loadCardFormat(cardFormat()).catch(()=>{});renderCardMediaResult();updateCardButtons();$('card-status').textContent=currentCardBlob()?cardReadyMessage():cardFailedFormat===cardFormat()?'製作未完成，內容已保留，可按「再試一次」。':cardFormat()==='png'?'按下製作圖片卡片，完成後即可下載或分享。':'按下製作，產生這個格式的 5 秒卡片。';});
+$('card-format').addEventListener('change',()=>{loadCardFormat(cardFormat()).catch(()=>{});renderCardMediaResult();updateCardButtons();$('card-status').textContent=currentCardBlob()?cardReadyMessage():cardFailedFormat===cardFormat()?'製作未完成，內容已保留，可按「製作卡片」重試。':'按下「製作卡片」，完成後即可下載或分享。';});
 $('card-bgm').addEventListener('change',()=>{invalidateCardMedia('mp4');updateCardButtons();renderCardMediaResult();$('card-status').textContent='聲音設定已更新，按下製作即可產生新的影片。';});
 $('card-generate').addEventListener('click',generateCardMedia);$('card-cancel-export').addEventListener('click',cancelCardExport);$('card-making-cancel').addEventListener('click',cancelCardExport);
 $('card-record').addEventListener('click',startCardRecording);$('card-record-stop').addEventListener('click',stopCardRecording);$('card-record-delete').addEventListener('click',deleteCardRecording);

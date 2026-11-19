@@ -59,7 +59,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     }
     if (visitorTrip) { paintVisitor(now); return; }
     if (!animals.length || document.querySelector('dialog[open]')) return;
-    if (!nextVisitor) nextVisitor = now + 6000 + Math.random()*4000;
+    if (!nextVisitor) nextVisitor = now + 10000 + Math.random()*5000;
     if (now < nextVisitor) return;
     const animal = nextAmbientAnimal();
     const routeIndex = lastVisitorRoute < 0 ? Math.floor(Math.random()*visitorRoutes.length)
@@ -76,7 +76,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     visitor.hidden = false;
     paintVisitor(now);
     visitorUntil = now + duration;
-    nextVisitor = visitorUntil + 30000 + Math.random()*15000;
+    nextVisitor = visitorUntil + 45000 + Math.random()*20000;
   }
   const pointer = { x: 0, y: 0, currentX: 0, currentY: 0 };
   const snow = Array.from({ length: 64 }, (_, i) => ({
