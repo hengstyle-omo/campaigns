@@ -1,1 +1,1 @@
-v130 integrated r8 / 2026-11-19 / soft warm-white outline glow, no rings or orbiting sparks / test environment
+v130 integrated r9 / 2026-11-19 / stronger warm-white silhouette glow and 10% larger tree / test environment
