@@ -606,8 +606,10 @@ function status(message,{persistent=false}={}){
   clearTimeout(statusTimer);$('status').textContent=message;
   if(message&&!persistent)statusTimer=setTimeout(()=>{$('status').textContent='';},5000);
 }
-function closeDialog(id){const d=$(id);if(d.open)d.close();}
-function showDialog(id){const d=$(id);if(!d.open)d.showModal();}
+function closeDialog(id){const d=$(id);if(d.open){d.close();document.dispatchEvent(new Event('dyson-dialog-change'));}}
+
+function showDialog(id){const d=$(id);if(!d.open){d.showModal();document.dispatchEvent(new Event('dyson-dialog-change'));}}
+
 
 // The welcome and activity dialogs share one introduction and Email form.
 const welcomeSeenKey=STORAGE_PREFIX+'welcome-seen-'+YEAR;
@@ -1415,6 +1417,11 @@ function loadSprite(d){
   const cached=sprites.get(d);
   if(cached&&cached.sourceImage===image)return cached;
   sprites.delete(d);
+  const known=ASSETS.spriteBounds?.[d];
+  const source=ASSETS.sprites?.[d]||ASSETS.bonusSprites?.[d];
+  if(image===builtinAssets.get(d)&&known?.src===source&&known.width===image.naturalWidth&&known.height===image.naturalHeight){
+    const sprite={image,bounds:known.bounds,sourceImage:image};sprites.set(d,sprite);return sprite;
+  }
   const out=el('canvas'),oc=out.getContext('2d');
   out.width=image.naturalWidth;out.height=image.naturalHeight;oc.drawImage(image,0,0);
   let bounds={x:0,y:0,w:out.width,h:out.height};
@@ -1793,7 +1800,8 @@ function drawFrame(dt=0,now=0){
 }
 let globeVisible=typeof IntersectionObserver!=='function',globeFrame=null;
 function syncGlobeAnimation(){
-  if(sceneReady&&globeVisible&&!document.hidden&&!cardExportBusy){
+  const overlay=document.querySelector('dialog[open]');
+  if(sceneReady&&motion&&globeVisible&&!document.hidden&&!cardExportBusy&&(!overlay||overlay.id==='mobile-collection')){
     if(globeFrame===null)globeFrame=requestAnimationFrame(loop);
   }else{
     if(globeFrame!==null)cancelAnimationFrame(globeFrame);
@@ -2643,7 +2651,7 @@ $('today-open').addEventListener('click',()=>{
 $('show-replay').addEventListener('click',startShow);$('show-stop').addEventListener('click',()=>{stopShow(true);drawFrame(0,performance.now());status('已停止星光秀。收藏與擺放保留。');});
 $('wind-button').addEventListener('click',()=>{wind=!wind;renderUI();drawFrame(0,performance.now());});
 $('edit-toggle').addEventListener('click',()=>{editMode=!editMode;if(!editMode)selectItem(null);else status('選取球內物件後拖曳。動物與一般造景可往球內上方移動，產品與雪丘保持靠近球底。');renderUI();if(editMode&&onboardingStep===3)setOnboardingStep(4);else if(!editMode&&onboardingStep===4)completeOnboardingMove();});
-$('motion-toggle').addEventListener('click',()=>{motion=!motion;if(!motion)wind=false;renderUI();drawFrame(0,performance.now());});
+$('motion-toggle').addEventListener('click',()=>{motion=!motion;if(!motion)wind=false;renderUI();drawFrame(0,performance.now());syncGlobeAnimation();});
 $('reset-layout').addEventListener('click',()=>{state().layouts={};persist();updateSelection();status('已還原預設位置，收藏與領取紀錄保留。');});
 $('scale-control').addEventListener('input',e=>{if(!selectedDay)return;const l=getLayout(selectedDay);l.scale=Number(e.target.value);state().layouts[selectedDay]=constrain(selectedDay,l);persist();drawFrame(0,performance.now());});
 $('selected-reset').addEventListener('click',()=>{if(!selectedDay)return;delete state().layouts[selectedDay];persist();updateSelection();});
@@ -2802,5 +2810,9 @@ document.addEventListener('click',event=>{
 
 window.__DYSON_GAME__={analyticsAllowed,cloud:{enabled:cloudEnabled,connect:cloudConnect,flush:cloudFlush,canPreview,status:()=>({ready:cloud.ready,email:cloud.email,error:cloud.error,saving:!!cloud.saving,marketingSaving:!!cloud.marketingSaving,previewLoaded:cloud.previewLoaded,previewPending:Object.keys(previewPending()).length>0,hasExclusive:cloud.hasExclusive})},Core,claimDay,openDay,setPreview,exitPreview,participationDates,dayState,rewardProgress,rewards,state:()=>state(),live:()=>live,preview:()=>preview,items,applyConfig,constrain,getLayout,selected:()=>selectedDay,selectItem,moveSelected,renderUI,ready:()=>sceneReady,snapshotSprite:d=>loadSprite(d)?.image,cards:{count:cardCount,validate:validateCard,capture:captureCardScene,open:openChristmasCard,render:renderChristmasCard,download:downloadChristmasCard,share:shareChristmasCard,snapshot:()=>cardSnapshot,capturedAt:()=>cardCapturedAt,shareMetadata:cardShareMetadata,blob:()=>cardBlob,format:cardFormat,generate:generateCardMedia,outputs:()=>cardMediaOutputs,renderer:createCardMovieRenderer,limits:CARD_LIMITS,cancel:cancelCardExport,record:startCardRecording,stopRecord:stopCardRecording,deleteRecord:deleteCardRecording,mixAudio:mixCardAudio,voice:()=>cardVoiceBuffer,exporting:()=>cardExportBusy},diagnostics:()=>({timing:{...timing},errors:[...spriteErrors],assetSources:{builtin:builtinAssets.size,custom:customAssets.size},objects:placedObjects(),effects:frameEffects,showUntil,showStarted,view:SCENE_VIEW,music:{currentTrackId,musicEnabled,musicPlaying,showMusic},sprites:[...sprites].map(([day,s])=>({day,bounds:s.bounds})),regions:hitRegions.map(r=>r.rect)})};
 if(!safeRead(welcomeSeenKey,false))openWelcome();
+// Reconcile animation state after any modal opens or closes.
+document.addEventListener('dyson-dialog-change',()=>queueMicrotask(syncGlobeAnimation));
+document.addEventListener('toggle',event=>{if(event.target.tagName==='DIALOG')queueMicrotask(syncGlobeAnimation);},true);
 initialise();
 })();
+

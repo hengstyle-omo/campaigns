@@ -1,1 +1,1 @@
-v127 integrated r6 / 2026-11-18 / all r5 updates + complete mobile tile highlight + slightly denser larger brighter first snow
+v130 integrated r3 / 2026-11-19 / r2 + larger gifts with actual tree silhouette clearance / test environment

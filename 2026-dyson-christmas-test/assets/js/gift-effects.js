@@ -2,7 +2,9 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   const ctx = canvas.getContext('2d');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let width = 0, height = 0, frame = 0, idleStart = 0, ready = false;
-  let visible = true, selected = null, targets = [], hovered = null, consolation = null;
+  let visible = true, selected = null, targets = [], feetTargets = [], hovered = null, consolation = null;
+  let lastParallaxX=NaN,lastParallaxY=NaN,lastPaint=0,resizeFrame=0;
+  const compactScreen=matchMedia('(max-width: 760px)');
   let animals = [], visitorUntil = 0, nextVisitor = 0;
   let animalBag = [], lastAnimalDay = null;
   function nextAmbientAnimal() {
@@ -76,6 +78,13 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     visitorUntil = now + duration;
     nextVisitor = visitorUntil + 30000 + Math.random()*15000;
   }
+  const tapHint=document.createElement('span');
+  tapHint.className='draw-tap-hint';tapHint.textContent='☝︎';tapHint.hidden=true;tapHint.setAttribute('aria-hidden','true');stage.append(tapHint);
+  let tapShown=false,tapUntil=0,tapSeen=false;
+  try{tapSeen=localStorage.getItem('dyson-v130-gift-tap-seen')==='1';}catch{}
+  const hideTap=()=>{tapHint.hidden=true;tapUntil=0;};
+  stage.addEventListener('pointerdown',hideTap,{passive:true});
+  stage.addEventListener('keydown',hideTap);
   const pointer = { x: 0, y: 0, currentX: 0, currentY: 0 };
   const snow = Array.from({ length: 64 }, (_, i) => ({
     x: Math.random(), y: Math.random(), phase: Math.random() * 6.28,
@@ -95,14 +104,17 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     ctx.fill();
   }
   function locateGifts() {
-    const scene = stage.getBoundingClientRect();
-    targets = gifts.map(gift => {
-      const box = gift.getBoundingClientRect();
-      return [box.left + box.width / 2 - scene.left, box.top + box.height * .2 - scene.top];
+    const scene=stage.getBoundingClientRect();feetTargets=[];
+    targets=gifts.map(gift=>{
+      const box=gift.getBoundingClientRect();
+      feetTargets.push({x:box.left+box.width/2-scene.left-pointer.currentX*7,y:box.bottom-scene.top-pointer.currentY*7,width:box.width});
+      return [box.left+box.width/2-scene.left,box.top+box.height*.2-scene.top];
     });
   }
-  // Keep the sign fixed. Fit gift hit areas around both the board and its post.
-  function fitGiftPositions(scene, sign, boxes, tree) {
+  const GIFT_LAYOUT_PLANS=[{"ratio":1.0716981132075472,"points":[[0.18,0.9],[0.12,0.76],[0.3,0.89],[0.88,0.9],[0.88,0.74]]},{"ratio":1.0694864048338368,"points":[[0.16,0.92],[0.12,0.76],[0.3,0.89],[0.9,0.9],[0.88,0.72]]},{"ratio":1.0693877551020408,"points":[[0.16,0.92],[0.12,0.76],[0.3,0.89],[0.86,0.66],[0.88,0.84]]},{"ratio":1.6581632653061225,"points":[[0.24,0.74],[0.76,0.64],[0.24,0.9],[0.78,0.86],[0.9,0.84]]},{"ratio":2.721311475409836,"points":[[0.66,0.58],[0.77,0.66],[0.3,0.88],[0.68,0.82],[0.86,0.8]]},{"ratio":1.5809523809523809,"points":[[0.9,0.62],[0.78,0.84],[0.22,0.9],[0.76,0.6],[0.92,0.84]]},{"ratio":1.2,"points":[[0.92,0.72],[0.8,0.6],[0.3,0.89],[0.86,0.88],[0.16,0.84]]},{"ratio":0.8,"points":[[0.08,0.68],[0.9,0.6],[0.3,0.89],[0.64,0.9],[0.86,0.9]]},{"ratio":1,"points":[[0.1,0.86],[0.1,0.72],[0.3,0.89],[0.9,0.9],[0.9,0.74]]},{"ratio":1.07,"points":[[0.18,0.9],[0.12,0.76],[0.3,0.89],[0.88,0.9],[0.88,0.74]]},{"ratio":1.2,"points":[[0.92,0.68],[0.8,0.6],[0.3,0.9],[0.14,0.88],[0.87,0.84]]},{"ratio":1.4,"points":[[0.1,0.84],[0.2,0.86],[0.32,0.9],[0.82,0.88],[0.86,0.7]]},{"ratio":1.66,"points":[[0.92,0.76],[0.92,0.58],[0.9,0.9],[0.78,0.86],[0.8,0.64]]},{"ratio":1.9,"points":[[0.26,0.76],[0.76,0.6],[0.88,0.62],[0.76,0.84],[0.88,0.82]]},{"ratio":2.2,"points":[[0.86,0.6],[0.76,0.66],[0.72,0.88],[0.28,0.84],[0.86,0.82]]},{"ratio":2.5,"points":[[0.8,0.84],[0.8,0.6],[0.3,0.86],[0.7,0.8],[0.9,0.8]]},{"ratio":0.8,"points":[[0.08,0.68],[0.9,0.62],[0.3,0.89],[0.64,0.9],[0.86,0.9]]},{"ratio":1,"points":[[0.16,0.9],[0.1,0.74],[0.3,0.89],[0.9,0.7],[0.9,0.88]]},{"ratio":1.07,"points":[[0.16,0.92],[0.12,0.76],[0.3,0.89],[0.9,0.88],[0.88,0.68]]},{"ratio":1.2,"points":[[0.92,0.72],[0.8,0.6],[0.3,0.89],[0.86,0.88],[0.16,0.84]]},{"ratio":1.4,"points":[[0.2,0.84],[0.92,0.62],[0.34,0.9],[0.78,0.6],[0.87,0.84]]},{"ratio":1.66,"points":[[0.24,0.74],[0.76,0.64],[0.88,0.66],[0.78,0.86],[0.9,0.84]]},{"ratio":1.9,"points":[[0.72,0.58],[0.26,0.8],[0.9,0.88],[0.76,0.82],[0.9,0.64]]},{"ratio":2.2,"points":[[0.06,0.82],[0.74,0.66],[0.72,0.88],[0.28,0.84],[0.86,0.82]]},{"ratio":2.5,"points":[[0.06,0.86],[0.68,0.62],[0.3,0.88],[0.78,0.82],[0.88,0.8]]},{"ratio":2.8,"points":[[0.94,0.74],[0.77,0.66],[0.66,0.6],[0.68,0.82],[0.86,0.8]]},{"ratio":3.2,"points":[[0.36,0.62],[0.76,0.62],[0.76,0.86],[0.66,0.8],[0.86,0.78]]}];
+  const GIFT_LARGER_PLANS = [{"ratio":1.0716981132075472,"mobile":true,"scale":0.9659999999999999,"points":[[0.66,0.88],[0.86,0.86],[0.36,0.9],[0.14,0.86],[0.88,0.6]]},{"ratio":1.0694864048338368,"mobile":true,"scale":0.9659999999999999,"points":[[0.36,0.88],[0.86,0.86],[0.54,0.9],[0.16,0.86],[0.86,0.6]]},{"ratio":1.0693877551020408,"mobile":true,"scale":0.9659999999999999,"points":[[0.34,0.88],[0.16,0.78],[0.52,0.9],[0.88,0.86],[0.86,0.62]]},{"ratio":1.6581632653061225,"mobile":false,"scale":0.782,"points":[[0.26,0.74],[0.76,0.62],[0.3,0.9],[0.76,0.86],[0.9,0.84]]},{"ratio":2.721311475409836,"mobile":false,"scale":0.8739999999999999,"points":[[0.36,0.7],[0.77,0.66],[0.3,0.88],[0.66,0.82],[0.86,0.8]]},{"ratio":1.5809523809523809,"mobile":false,"scale":0.782,"points":[[0.26,0.72],[0.76,0.62],[0.3,0.89],[0.76,0.86],[0.9,0.84]]},{"ratio":1.2,"mobile":false,"scale":1.058,"points":[[0.36,0.88],[0.82,0.6],[0.54,0.9],[0.84,0.86],[0.18,0.84]]}];
+  const TREE_CLEARANCE_BANDS = [{"left":0.5032948929159803,"right":0.5378912685337727,"top":0.03166023166023166,"bottom":0.06332046332046332},{"left":0.48352553542009885,"right":0.556836902800659,"top":0.06332046332046332,"bottom":0.09498069498069497},{"left":0.46210873146622733,"right":0.5774299835255354,"top":0.09498069498069497,"bottom":0.12664092664092663},{"left":0.43986820428336076,"right":0.5988467874794069,"top":0.12664092664092663,"bottom":0.1583011583011583},{"left":0.4159802306425041,"right":0.6219110378912686,"top":0.1583011583011583,"bottom":0.18996138996138995},{"left":0.4011532125205931,"right":0.6367380560131796,"top":0.18996138996138995,"bottom":0.22162162162162163},{"left":0.4085667215815486,"right":0.6301482701812191,"top":0.22162162162162163,"bottom":0.25328185328185326},{"left":0.38632619439868204,"right":0.6532125205930808,"top":0.25328185328185326,"bottom":0.28494208494208495},{"left":0.3624382207578254,"right":0.6771004942339374,"top":0.28494208494208495,"bottom":0.3166023166023166},{"left":0.3369028006589786,"right":0.7034596375617792,"top":0.3166023166023166,"bottom":0.34826254826254827},{"left":0.3113673805601318,"right":0.729818780889621,"top":0.34826254826254827,"bottom":0.3799227799227799},{"left":0.3171334431630972,"right":0.7248764415156508,"top":0.3799227799227799,"bottom":0.4115830115830116},{"left":0.3418451400329489,"right":0.700164744645799,"top":0.4115830115830116,"bottom":0.44324324324324327},{"left":0.3154859967051071,"right":0.7257001647446458,"top":0.44324324324324327,"bottom":0.4749034749034749},{"left":0.2883031301482702,"right":0.7528830313014827,"top":0.4749034749034749,"bottom":0.5065637065637065},{"left":0.26112026359143325,"right":0.7792421746293245,"top":0.5065637065637065,"bottom":0.5382239382239382},{"left":0.27100494233937394,"right":0.7685337726523888,"top":0.5382239382239382,"bottom":0.5698841698841699},{"left":0.2833607907742998,"right":0.757001647446458,"top":0.5698841698841699,"bottom":0.6015444015444016},{"left":0.25617792421746294,"right":0.7841845140032949,"top":0.6015444015444016,"bottom":0.6332046332046332},{"left":0.22652388797364087,"right":0.8138385502471169,"top":0.6332046332046332,"bottom":0.6648648648648648},{"left":0.19439868204283361,"right":0.8451400329489291,"top":0.6648648648648648,"bottom":0.6965250965250965},{"left":0.18698517298187808,"right":0.8525535420098846,"top":0.6965250965250965,"bottom":0.7281853281853282},{"left":0.22240527182866557,"right":0.8171334431630972,"top":0.7281853281853282,"bottom":0.7598455598455598},{"left":0.19686985172981877,"right":0.842668863261944,"top":0.7598455598455598,"bottom":0.7915057915057915},{"left":0.17051070840197693,"right":0.8682042833607908,"top":0.7915057915057915,"bottom":0.8231660231660232},{"left":0.14250411861614498,"right":0.8970345963756178,"top":0.8231660231660232,"bottom":0.8548262548262548},{"left":0.12026359143327842,"right":0.9200988467874794,"top":0.8548262548262548,"bottom":0.8864864864864865},{"left":0.14250411861614498,"right":0.9019769357495881,"top":0.8864864864864865,"bottom":0.9181467181467181},{"left":0.46622734761120266,"right":0.57166392092257,"top":0.9181467181467181,"bottom":0.9498069498069498},{"left":0.46622734761120266,"right":0.5724876441515651,"top":0.9498069498069498,"bottom":0.9814671814671815}];
+  function fitGiftPositions(scene, sign, boxes, tree, precise=false) {
     const gap=Math.max(8,scene.width*.02);
     const zones=[
       {left:sign.left,top:sign.top+sign.height*.11,right:sign.right,bottom:sign.top+sign.height*.54},
@@ -110,50 +122,64 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     ];
     const intersects=(a,b,pad=gap)=>a.left<b.right+pad && a.right>b.left-pad && a.top<b.bottom+pad && a.bottom>b.top-pad;
     const touchesTree=rect=>{
+      if(precise&&tree)return TREE_CLEARANCE_BANDS.some(b=>intersects(rect,{left:tree.left+b.left*tree.width,right:tree.left+b.right*tree.width,top:tree.top+b.top*tree.height,bottom:tree.top+b.bottom*tree.height}));
       if(!tree || rect.bottom<tree.top-gap || rect.top>tree.bottom+gap)return false;
       const depth=Math.max(0,Math.min(1,(Math.min(rect.bottom+gap,tree.bottom)-tree.top)/tree.height));
       const half=tree.width*(.07+.43*depth)+gap;
       const centre=(tree.left+tree.right)/2;
       return rect.left<centre+half && rect.right>centre-half;
     };
-    const options=boxes.map((box,index)=>{
-      const original={x:(box.left+box.right)/2,y:(box.top+box.bottom)/2};
-      const anchors=[[.20,.74],[.77,.66],[.30,.89],[.64,.90],[.87,.84]];
-      const target={x:scene.left+scene.width*anchors[index][0],y:scene.top+scene.height*anchors[index][1]};
-      const points=[target];
-      for(let y=.56;y<=.97;y+=.02)for(let x=.06;x<=.95;x+=.02)points.push({x:scene.left+scene.width*x,y:scene.top+scene.height*y});
-      const choices=points.map(point=>({rect:{left:point.x-box.width/2,right:point.x+box.width/2,top:point.y-box.height/2,bottom:point.y+box.height/2},x:point.x-original.x,y:point.y-original.y}))
-        .filter(({rect})=>rect.bottom>=scene.top+scene.height*.65 && rect.top>=scene.top+scene.height*.48 && rect.left>=scene.left+gap && rect.right<=scene.right-gap && rect.bottom<=scene.bottom-gap && !touchesTree(rect) && !zones.some(zone=>intersects(rect,zone)))
-        .sort((a,b)=>(a.rect.left+box.width/2-target.x)**2+(a.rect.top+box.height/2-target.y)**2-((b.rect.left+box.width/2-target.x)**2+(b.rect.top+box.height/2-target.y)**2)).slice(0,600);
-      return {index,choices};
-    }).sort((a,b)=>a.choices.length-b.choices.length);
-    const placements=[],occupied=[];let attempts=0;
-    function search(depth){
-      if(depth===options.length)return true;
-      if(++attempts>100000)return false;
-      const {index,choices}=options[depth];
-      for(const choice of choices){
-        if(occupied.some(other=>intersects(choice.rect,other,gap*.5)))continue;
-        occupied.push(choice.rect);placements[index]=choice;
-        if(search(depth+1))return true;
-        occupied.pop();
+    // Bounded work: validate precomputed layouts, with no recursive search.
+    const profiles=[...GIFT_LAYOUT_PLANS,...(precise?GIFT_LARGER_PLANS:[])].sort((a,b)=>Math.abs(a.ratio-scene.width/scene.height)-Math.abs(b.ratio-scene.width/scene.height));
+    for(const profile of profiles){
+      const placements=[],occupied=[];let valid=true;
+      for(let index=0;index<boxes.length;index++){
+        const box=boxes[index],point=profile.points[index];
+        const x=scene.left+scene.width*point[0],y=scene.top+scene.height*point[1];
+        const rect={left:x-box.width/2,right:x+box.width/2,top:y-box.height/2,bottom:y+box.height/2};
+        if(rect.bottom<scene.top+scene.height*.65 || rect.top<scene.top+scene.height*.48 || rect.left<scene.left+gap || rect.right>scene.right-gap || rect.bottom>scene.bottom-gap || touchesTree(rect) || zones.some(zone=>intersects(rect,zone)) || occupied.some(other=>intersects(rect,other,gap*.5))){valid=false;break;}
+        occupied.push(rect);placements[index]={rect,x:x-(box.left+box.right)/2,y:y-(box.top+box.bottom)/2};
       }
-      return false;
+      if(valid)return placements;
     }
-    return search(0)?placements:null;
+    return null;
   }
   function avoidWoodSign() {
     const sign=stage.querySelector('.draw-wood-sign');
     if(!sign)return;
     const tree=stage.querySelector('.draw-tree');
-    let placements=null;
-    for(const scale of [1,.92,.84,.76,.68,.60,.52]) {
-      for(const gift of gifts){gift.style.setProperty('--gift-layout-scale',scale);gift.style.setProperty('--gift-clear-x','0px');gift.style.setProperty('--gift-clear-y','0px');}
-      placements=fitGiftPositions(stage.getBoundingClientRect(),sign.getBoundingClientRect(),gifts.map(gift=>gift.getBoundingClientRect()),tree?.getBoundingClientRect());
-      if(placements)break;
+    for(const gift of gifts){gift.style.setProperty('--gift-layout-scale',1);gift.style.setProperty('--gift-clear-x','0px');gift.style.setProperty('--gift-clear-y','0px');}
+    // Read geometry once, then evaluate smaller sizes without reflowing the DOM.
+    const scene=stage.getBoundingClientRect(),signRect=sign.getBoundingClientRect(),treeRect=tree?.getBoundingClientRect();
+    if(!scene.width || !scene.height)return;
+    const base=gifts.map(gift=>({rect:gift.getBoundingClientRect(),width:gift.offsetWidth,height:gift.offsetHeight}));
+    let placements=null,chosenScale=1;
+    for(const scale of [1,.92,.84,.76,.68,.60,.52,.44,.36]){
+      const boxes=base.map(({rect,width,height})=>{
+        const x=(rect.left+rect.right)/2+(1-scale)*width/2,y=(rect.top+rect.bottom)/2+(1-scale)*height/2;
+        const w=rect.width*scale,h=rect.height*scale;
+        return {left:x-w/2,right:x+w/2,top:y-h/2,bottom:y+h/2,width:w,height:h};
+      });
+      placements=fitGiftPositions(scene,signRect,boxes,treeRect);
+      if(placements){chosenScale=scale;break;}
     }
     if(!placements)return;
-    placements.forEach((point,index)=>{gifts[index].style.setProperty('--gift-clear-x',point.x+'px');gifts[index].style.setProperty('--gift-clear-y',point.y+'px');});
+    // Enlarge relative to the previous safe size; use the actual tree silhouette.
+    const previousScale=chosenScale;
+    for(const factor of [1.15,1.12,1.09,1.06,1.03]){
+      const scale=previousScale*factor;
+      const boxes=base.map(({rect,width,height})=>{
+        const x=(rect.left+rect.right)/2+(1-scale)*width/2,y=(rect.top+rect.bottom)/2+(1-scale)*height/2;
+        const w=rect.width*scale,h=rect.height*scale;
+        return {left:x-w/2,right:x+w/2,top:y-h/2,bottom:y+h/2,width:w,height:h};
+      });
+      const enlarged=fitGiftPositions(scene,signRect,boxes,treeRect,true);
+      if(enlarged){placements=enlarged;chosenScale=scale;break;}
+    }
+    placements.forEach((point,index)=>{
+      gifts[index].style.setProperty('--gift-layout-scale',chosenScale);
+      gifts[index].style.setProperty('--gift-clear-x',point.x+'px');gifts[index].style.setProperty('--gift-clear-y',point.y+'px');
+    });
   }
   function resize() {
     if (!ctx) return;
@@ -170,7 +196,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   let spotlightIndex = -1, spotlightStart = 0;
   function clearGiftCues() {
     for (const cue of giftCues) { cue.gift.classList.remove('draw-wobble','draw-spotlit'); cue.next=0; cue.until=0; }
-    spotlightIndex=-1; spotlightStart=0;
+    spotlightIndex=-1; spotlightStart=0; hideTap();
     stage.classList.remove('draw-idle-pulse');
   }
   function drawIdle(now) {
@@ -187,7 +213,7 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     }
     if (spotlightIndex<0 || now-spotlightStart>=4800) {
       if (spotlightIndex>=0) gifts[spotlightIndex].classList.remove('draw-spotlit');
-      let next=spotlightIndex;
+      let next=spotlightIndex<0?Math.floor(Math.random()*gifts.length)-1:spotlightIndex;
       for(let count=0;count<gifts.length;count++) {
         next=(next+1)%gifts.length;
         if(gifts[next].dataset.state==='closed' && !gifts[next].disabled) { spotlightIndex=next; spotlightStart=now; break; }
@@ -196,11 +222,17 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     const gift=gifts[spotlightIndex];
     if (!gift || gift.disabled || gift.dataset.state!=='closed') return;
     gift.classList.add('draw-spotlit');
+    if(!tapSeen&&!tapShown){
+      tapShown=true;tapSeen=true;tapUntil=now+3600;tapHint.hidden=false;
+      const point=targets[spotlightIndex];if(point){tapHint.style.left=point[0]+'px';tapHint.style.top=point[1]+'px';}
+      try{localStorage.setItem('dyson-v130-gift-tap-seen','1');}catch{}
+    }
+    if(tapUntil&&now>=tapUntil)hideTap();
     const progress=(now-spotlightStart)/4800;
     const strength=Math.min(1,progress/.18,(1-progress)/.18);
-    const scene=stage.getBoundingClientRect(),box=gift.getBoundingClientRect();
-    const x=box.left+box.width/2-scene.left,y=box.bottom-scene.top;
-    const sourceX=x-width*.08,sourceY=-height*.08,radius=Math.max(box.width*.85,width*.055);
+    const foot=feetTargets[spotlightIndex];if(!foot)return;
+    const x=foot.x+pointer.currentX*7,y=foot.y+pointer.currentY*7;
+    const sourceX=x-width*.08,sourceY=-height*.08,radius=Math.max(foot.width*.85,width*.055);
     ctx.save();
     const beam=ctx.createLinearGradient(sourceX,sourceY,x,y);
     beam.addColorStop(0,`rgba(255,245,221,${strength*.035})`);
@@ -255,13 +287,18 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   }
   function paint(now) {
     frame = 0;
-    if (!visible || document.hidden || motion.matches) return;
+    if (!visible || document.hidden || motion.matches || document.querySelector('dialog[open]')) return;
+    if(compactScreen.matches && !selected && !consolation && now-lastPaint<32){frame=requestAnimationFrame(paint);return;}
+    lastPaint=now;
     ctx.clearRect(0, 0, width, height);
     pointer.currentX += (pointer.x - pointer.currentX) * .065;
     pointer.currentY += (pointer.y - pointer.currentY) * .065;
+    if(!Number.isFinite(lastParallaxX)||Math.abs(pointer.currentX-lastParallaxX)>.001||Math.abs(pointer.currentY-lastParallaxY)>.001){
+    lastParallaxX=pointer.currentX;lastParallaxY=pointer.currentY;
     for (const [layer, depth] of [['land', 2], ['tree', 4], ['gift', 7]]) {
       stage.style.setProperty('--' + layer + '-x', pointer.currentX * depth + 'px');
       stage.style.setProperty('--' + layer + '-y', pointer.currentY * depth + 'px');
+    }
     }
     for (const { x, y, phase, size } of snow) {
       const breeze = Math.sin(now / 1100 + phase) * .026;
@@ -271,12 +308,12 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     updateVisitor(now);
     if (ready) drawIdle(now);
     if (selected) drawWin(now);
-    if (hovered !== null && ready) { locateGifts(); drawGather(now); }
+    if (hovered !== null && ready) drawGather(now);
     if (consolation) drawConsolation(now);
     frame = requestAnimationFrame(paint);
   }
   function update() {
-    const running = visible && !document.hidden && !motion.matches;
+    const running = visible && !document.hidden && !motion.matches && !document.querySelector('dialog[open]');
     if (running && !frame && ctx) frame = requestAnimationFrame(paint);
     if (!running) clearGiftCues();
     if (!running && frame) {
@@ -306,8 +343,9 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
   }
   if (ctx) {
     resize();
-    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage);
-    else window.addEventListener('resize', resize);
+    const scheduleResize=()=>{if(!resizeFrame)resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;resize();});};
+    if ('ResizeObserver' in window) new ResizeObserver(scheduleResize).observe(stage);
+    else window.addEventListener('resize', scheduleResize);
     if ('IntersectionObserver' in window) new IntersectionObserver(([entry]) => {
       const wasVisible = visible;
       visible = entry.isIntersecting && entry.intersectionRatio >= .2;
@@ -318,6 +356,8 @@ window.createDysonDrawEffects = (stage, canvas, gifts) => {
     }, { threshold: [0, .2] }).observe(stage);
     motion.addEventListener('change', update);
     document.addEventListener('visibilitychange', update);
+    document.addEventListener('dyson-dialog-change',update);
+    document.addEventListener('toggle',event=>{if(event.target.tagName==='DIALOG')update();},true);
     update();
   }
   return {
