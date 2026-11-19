@@ -1,1 +1,1 @@
-v130 integrated r9 / 2026-11-19 / stronger warm-white silhouette glow and 10% larger tree / test environment
+v130 integrated r10 / 2026-11-19 / slightly smaller plaque text on mobile only / test environment

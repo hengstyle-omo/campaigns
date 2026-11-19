@@ -736,3 +736,6 @@
 .draw-tree { top:28%; height:44%; }
 @keyframes draw-sign-sway { 0%,100% { transform:rotate(-.5deg); } 50% { transform:rotate(.5deg); } }
 @media (prefers-reduced-motion:reduce) { .draw-wood-sign { animation:none; transform:none; } }
+
+/* A little more breathing room inside the plaque on phones. */
+@media (max-width:760px) { .draw-wood-sign > span { font-size:clamp(12.5px,2.25cqw,23.4px); } }
