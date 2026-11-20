@@ -1,0 +1,17 @@
+v133 removed files relative to 2026-dyson-christmas-test/
+assets/video/dyson_2026_xmas_welcome.jpg
+assets/audio/card-jingle-bells-5s-pcm-v38.wav
+assets/audio/jingle-calm.m4a
+assets/audio/card-jingle-bells-5s-aac-v48.m4a
+assets/images/bonus/bonus-otter.png
+assets/images/products/hj10-snowglobe.png
+assets/images/products/hd19-snowglobe.png
+assets/images/products/bp10-snowglobe.png
+assets/images/products/sv50-snowglobe.png
+assets/images/scene/wood-arrow-sign.webp
+assets/images/scene/wood-arrow-sign-v129.png
+assets/images/scene/christmas-sign-garnish-v130.svg
+assets/images/scene/christmas-sign-garnish.svg
+assets/images/scene/wood-arrow-sign-v129.webp
+assets/images/rewards/dyson-BP10.jpg
+assets/fonts/source-han-sans-tw-bold.woff2
