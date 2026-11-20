@@ -1,1 +1,1 @@
-v132 r9 / 2026-11-19 / desktop game share copies text and URL / test environment
+v132 r10 / 2026-11-20 / desktop copy card image / test environment

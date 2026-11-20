@@ -2131,7 +2131,40 @@ function resetCardShareOptions(){
   $('card-share-file').hidden=true;
   $('card-share-text').hidden=true;
 }
+async function copyChristmasCardImage(){
+  const blob=currentCardBlob(),data=validateCard(),format=cardFormat();
+  if(!blob||!data.valid||cardSaving||cardExportBusy||cardCapturing||cardRecordingBusy())return;
+  const cardStatus=$('card-status');
+  resetCardShareOptions();
+  if(typeof navigator.clipboard?.write!=='function'||typeof ClipboardItem!=='function'){
+    cardStatus.textContent='目前瀏覽器不支援複製圖片，請下載卡片後再傳送。';
+    return;
+  }
+  cardSaving=true;
+  trackActivity('card_share_click',{card_format:format,method:'clipboard'});
+  try{
+    let png;
+    if(format==='png'&&blob.type==='image/png')png=Promise.resolve(blob);
+    else{
+      const image=el('canvas');
+      paintChristmasCard(data,image);
+      png=new Promise((resolve,reject)=>image.toBlob(result=>result?resolve(result):reject(new Error('PNG unavailable')),'image/png'));
+    }
+    // Start clipboard.write within the click; encoding may finish asynchronously.
+    png.catch(()=>{});
+    const request=navigator.clipboard.write([new ClipboardItem({'image/png':png})]);
+    updateCardButtons();
+    cardStatus.textContent='正在複製圖片…';
+    await request;
+    markCardTask(format,'share');
+    trackActivity('card_share',{card_format:format,method:'clipboard'});
+    cardStatus.textContent=format==='png'?'已複製圖片，貼到 LINE 即可分享。':'已複製靜態預覽圖片，貼到 LINE 即可分享；動態卡片請下載原檔。';
+  }catch{
+    cardStatus.textContent='未能複製圖片，請允許剪貼簿權限後重試，或下載卡片再傳送。';
+  }finally{cardSaving=false;updateCardButtons();}
+}
 async function shareChristmasCard({fileOnly=false}={}){
+  if(!mobileGameShare())return copyChristmasCardImage();
   const blob=currentCardBlob();
   if(!blob||!validateCard().valid||cardSaving||cardExportBusy||cardCapturing||cardRecordingBusy())return;
   const format=cardFormat();
@@ -2302,13 +2335,13 @@ function updateCardMediaControls(){
   if(!navigator.mediaDevices?.getUserMedia)$('card-record-status').textContent='目前環境未提供麥克風；仍可使用預設聖誕配樂。錄音請使用允許麥克風的安全網頁環境。';
 }
 function cardReadyMessage(){
-  const blob=currentCardBlob();return blob?`卡片完成了 · ${cardFormat().toUpperCase()} · ${cardBytesLabel(blob.size)}，可以預覽、下載或分享。`:'';
+  const blob=currentCardBlob();return blob?`卡片完成了 · ${cardFormat().toUpperCase()} · ${cardBytesLabel(blob.size)}，可以預覽、下載或${mobileGameShare()?'分享':'複製圖片'}。`:'';
 }
 function renderCardMediaResult(){
   const format=cardFormat(),result=cardMediaOutputs.get(format),blob=currentCardBlob();
   resetCardShareOptions();
   $('card-download').textContent=format==='mp4'?'下載影片':'下載圖片';
-  $('card-share').textContent=format==='mp4'?'分享影片':'分享圖片';
+  $('card-share').textContent=!mobileGameShare()?'複製圖片':format==='mp4'?'分享影片':'分享圖片';
   $('card-download').closest('.card-result-actions').toggleAttribute('data-card-ready',!!blob);
   clearCardMediaPreview();
   if(result&&format!=='png'){
