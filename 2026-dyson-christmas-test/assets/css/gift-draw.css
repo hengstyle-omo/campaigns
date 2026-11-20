@@ -462,6 +462,8 @@
   .draw-stage {
     --draw-scene-height: clamp(305px, 43vw, min(525px, calc(100svh - 165px)));
     grid-area: 1 / 1 / span 2;
+    /* Fill the full grid row height even when the scene has an aspect ratio. */
+    align-self: stretch;
     min-height: var(--draw-scene-height);
     aspect-ratio: auto;
     border-right: 1px solid #80705655;

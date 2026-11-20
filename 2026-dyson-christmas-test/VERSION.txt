@@ -1,1 +1,1 @@
-v133 / 2026-11-20 / lightweight full test build with occasional pink aurora / test environment
+v133 r1 / 2026-11-20 / desktop gift scene fills container bottom / test environment
