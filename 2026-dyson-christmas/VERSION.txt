@@ -1,1 +1,1 @@
-v133 r2 / 2026-11-20 / production full build / restore missing OG preview JPG / GA4 enabled
+v133 r3 / 2026-11-23 / production / sharing preview logo headroom
