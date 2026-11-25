@@ -19,7 +19,7 @@ window.DYSON_GAME_CONFIG = {
   "scheduleRevision": "20261021-four-products-v2",
   "year": 2026,
   "timeZone": "Asia/Taipei",
-  "starterSceneRevision": "20261105-attendance-v70",
+  "starterSceneRevision": "20261125-neon-outline-and-mailbox",
   "starterItems": [
     {
       "day": 201,
@@ -59,6 +59,32 @@ window.DYSON_GAME_CONFIG = {
         "h": 78
       },
       "hint": "等第一場雪落下，一起出發。"
+    },
+    {
+      "day": 204,
+      "starter": true,
+      "type": "基礎造景",
+      "name": "Dyson 霓虹招牌",
+      "description": "暖白描邊與香檳金光暈點亮冬夜。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
+      "layout": {
+        "x": 778,
+        "y": 679,
+        "h": 124
+      },
+      "hint": "一點暖光，讓雪境更亮。"
+    },
+    {
+      "day": 205,
+      "starter": true,
+      "type": "基礎造景",
+      "name": "聖誕信箱",
+      "description": "一座覆著薄雪的紅色信箱。可移除、重新放入與調整位置，不計入每日收藏或參與天數。",
+      "layout": {
+        "x": 512,
+        "y": 895,
+        "h": 124
+      },
+      "hint": "把想說的祝福，留給聖誕。"
     }
   ],
   "items": [
@@ -730,6 +756,8 @@ window.DYSON_ASSETS = {
     "201": "./assets/images/scene/starter-cabin.webp?opt=20261120",
     "202": "./assets/images/scene/starter-fir-tree.webp?opt=20261120",
     "203": "./assets/images/scene/starter-wooden-sled.webp?opt=20261120",
+    "204": "./assets/images/scene/starter-dyson-neon-sign.webp?v=20261125-r3",
+    "205": "./assets/images/scene/starter-christmas-mailbox.webp?v=20261125",
     "2": "./assets/images/scene/day-02-fir-tree.webp?rev=20261029-style-a-final&opt=20261120",
     "3": "./assets/images/scene/day-03-ribbon-gift.webp?rev=20261029-style-a-final&opt=20261120",
     "4": "./assets/images/scene/day-04-santa-hat.webp?rev=20261029-style-a-final&opt=20261120",
@@ -5824,3 +5852,4 @@ window.DYSON_ASSETS = {
 
 // Built-in artwork bounds, computed from alpha > 48 during packaging.
 window.DYSON_ASSETS.spriteBounds={"2":{"src":"./assets/images/scene/day-02-fir-tree.webp?rev=20261029-style-a-final&opt=20261120","width":954,"height":960,"bounds":{"x":182,"y":79,"w":573,"h":799}},"3":{"src":"./assets/images/scene/day-03-ribbon-gift.webp?rev=20261029-style-a-final&opt=20261120","width":945,"height":960,"bounds":{"x":123,"y":125,"w":739,"h":760}},"4":{"src":"./assets/images/scene/day-04-santa-hat.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":792,"bounds":{"x":48,"y":70,"w":897,"h":674}},"5":{"src":"./assets/images/products/hd19-snowglobe.webp?opt=20261120","width":647,"height":1024,"bounds":{"x":201,"y":34,"w":241,"h":963}},"6":{"src":"./assets/images/scene/day-06-snowman.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":953,"bounds":{"x":135,"y":33,"w":737,"h":888}},"7":{"src":"./assets/images/scene/day-07-christmas-bauble.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":959,"bounds":{"x":108,"y":3,"w":757,"h":931}},"8":{"src":"./assets/images/scene/day-08-leaping-reindeer.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":953,"bounds":{"x":46,"y":52,"w":896,"h":821}},"9":{"src":"./assets/images/scene/day-09-street-lamp.webp?rev=20261029-style-a-final&opt=20261120","width":648,"height":960,"bounds":{"x":210,"y":5,"w":215,"h":923}},"10":{"src":"./assets/images/products/sv50-snowglobe.webp?opt=20261120","width":548,"height":1024,"bounds":{"x":161,"y":20,"w":208,"h":963}},"11":{"src":"./assets/images/scene/day-11-shooting-star.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":629,"bounds":{"x":31,"y":45,"w":911,"h":538}},"12":{"src":"./assets/images/scene/day-12-christmas-tree.webp?rev=20261029-tree-gingerbread-music&opt=20261120","width":960,"height":1024,"bounds":{"x":116,"y":34,"w":767,"h":967}},"14":{"src":"./assets/images/scene/day-14-christmas-wreath.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":835,"bounds":{"x":129,"y":2,"w":723,"h":819}},"15":{"src":"./assets/images/products/hj10-snowglobe.webp?opt=20261120","width":683,"height":1024,"bounds":{"x":129,"y":69,"w":427,"h":889}},"16":{"src":"./assets/images/scene/day-16-red-green-stocking-row.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":633,"bounds":{"x":46,"y":117,"w":878,"h":398}},"17":{"src":"./assets/images/scene/day-17-gingerbread.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":887,"bounds":{"x":150,"y":49,"w":636,"h":776}},"18":{"src":"./assets/images/scene/day-18-clock-tower.webp?rev=20261029-style-a-final&opt=20261120","width":958,"height":960,"bounds":{"x":346,"y":4,"w":286,"h":932}},"19":{"src":"./assets/images/scene/day-19-candy-cane.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":941,"bounds":{"x":254,"y":3,"w":432,"h":928}},"20":{"src":"./assets/images/products/bp10-snowglobe.webp?opt=20261120","width":683,"height":1024,"bounds":{"x":149,"y":26,"w":385,"h":963}},"21":{"src":"./assets/images/scene/day-21-department-store.webp?rev=20261029-simple-store-notices","width":1024,"height":1024,"bounds":{"x":37,"y":76,"w":950,"h":913}},"22":{"src":"./assets/images/scene/day-22-golden-sleigh.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":633,"bounds":{"x":37,"y":51,"w":915,"h":527}},"23":{"src":"./assets/images/scene/day-23-cat-santa.webp?rev=20261029-style-a-final&opt=20261120","width":960,"height":874,"bounds":{"x":12,"y":2,"w":940,"h":851}},"24":{"src":"./assets/images/scene/day-24-christmas-star.webp?rev=20261029-intro-tree-top-star&opt=20261120","width":1024,"height":920,"bounds":{"x":54,"y":37,"w":915,"h":858}},"101":{"src":"./assets/images/bonus/bonus-golden-retriever.webp?opt=20261120","width":667,"height":1000,"bounds":{"x":11,"y":41,"w":634,"h":933}},"102":{"src":"./assets/images/bonus/bonus-shiba.webp?opt=20261120","width":1000,"height":800,"bounds":{"x":155,"y":10,"w":774,"h":768}},"103":{"src":"./assets/images/bonus/bonus-polar-bear-samoyed.webp?opt=20261120","width":1000,"height":833,"bounds":{"x":15,"y":12,"w":980,"h":805}},"104":{"src":"./assets/images/bonus/bonus-british-shorthair.webp?opt=20261120","width":1000,"height":934,"bounds":{"x":46,"y":12,"w":943,"h":917}},"105":{"src":"./assets/images/bonus/bonus-capybara-bath.webp?opt=20261120","width":989,"height":1000,"bounds":{"x":55,"y":56,"w":899,"h":901}},"106":{"src":"./assets/images/bonus/bonus-penguin.webp?opt=20261120","width":1000,"height":667,"bounds":{"x":21,"y":18,"w":962,"h":622}},"107":{"src":"./assets/images/bonus/bonus-sea-lion.webp?opt=20261120","width":1000,"height":390,"bounds":{"x":21,"y":23,"w":966,"h":345}},"108":{"src":"./assets/images/bonus/bonus-red-panda.webp?opt=20261120","width":833,"height":1000,"bounds":{"x":23,"y":12,"w":799,"h":975}},"109":{"src":"./assets/images/bonus/bonus-otter.webp?opt=20261120","width":1024,"height":683,"bounds":{"x":55,"y":14,"w":960,"h":647}},"110":{"src":"./assets/images/bonus/bonus-fox.webp?opt=20261120","width":1000,"height":833,"bounds":{"x":72,"y":34,"w":895,"h":782}},"201":{"src":"./assets/images/scene/starter-cabin.webp?opt=20261120","width":1024,"height":683,"bounds":{"x":320,"y":197,"w":385,"h":351}},"202":{"src":"./assets/images/scene/starter-fir-tree.webp?opt=20261120","width":1013,"height":1024,"bounds":{"x":248,"y":144,"w":516,"h":763}},"203":{"src":"./assets/images/scene/starter-wooden-sled.webp?opt=20261120","width":1024,"height":512,"bounds":{"x":188,"y":175,"w":648,"h":237}}};
+window.DYSON_ASSETS.spriteBounds[204]={src:"./assets/images/scene/starter-dyson-neon-sign.webp?v=20261125-r3",width:704,height:292,bounds:{x:0,y:0,w:704,h:292}};

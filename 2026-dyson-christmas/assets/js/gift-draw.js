@@ -4,7 +4,9 @@
   const bonusDate = '2026-12-20';
   const isProduction = document.documentElement.dataset.activityEnvironment === 'production';
   const dateKey = isProduction ? 'dyson-christmas-production-v1-date' : 'dyson-christmas-test-v2-date';
-  const drawKey = isProduction ? 'dyson-christmas-production-v1-gifts' : 'dyson-christmas-test-v2-gifts';
+  const formalDrawKey = isProduction ? 'dyson-christmas-production-v1-gifts' : 'dyson-christmas-test-v2-gifts';
+  let drawKey = formalDrawKey;
+  let cardCompleted = false;
   const giftOpeningDuration = 800;
   const giftFlightDuration = 2400;
   const touchPreviewDuration = 160;
@@ -391,12 +393,13 @@
     const day = days[activeDate];
     const layout = currentGiftLayout(activeDate, day);
     renderGiftLayout(layout);
-    const opening = pending?.date === activeDate;
+    const opening = pending?.date === activeDate && pending?.key === drawKey;
     const played = Boolean(day?.result);
     // Earlier trials used fifteen gifts. Keep those results visible on the five-gift scene.
     const selected = opening ? pending.index : played ? day.result.selected % gifts.length : undefined;
     const prize = opening ? null : day?.result?.prize;
-    const canOpen = Boolean(day && !played && !pending);
+    const unlocked = validDate(activeDate) && Boolean(day || cardCompleted);
+    const canOpen = unlocked && !played && !pending;
     const bonusOption = mode.querySelector('option[value="bonus"]');
     const winOption = mode.querySelector('option[value="win"]');
     bonusOption.disabled = !pool.includes('bonus');
@@ -423,13 +426,13 @@
     stage.classList.toggle('draw-stage-won', Boolean(prize));
     if (!prize) stage.classList.remove('draw-celebrate');
     byId('draw-bonus').hidden = activeDate < bonusDate;
-    byId('draw-create').hidden = Boolean(day) || !validDate(activeDate);
+    byId('draw-create').hidden = unlocked || !validDate(activeDate);
     byId('draw-result-open').hidden = !played || opening;
     const drawFromCard = byId('draw-from-card');
-    drawFromCard.hidden = !day;
+    drawFromCard.hidden = !unlocked;
     drawFromCard.textContent = played ? '查看今日拆盒結果' : '今日抽獎已解鎖｜前往拆禮物 →';
-    drawFromCard.classList.toggle('gold-button', Boolean(day && !played));
-    byId('card-dialog').dataset.drawReady = String(Boolean(day && !played));
+    drawFromCard.classList.toggle('gold-button', Boolean(unlocked && !played));
+    byId('card-dialog').dataset.drawReady = String(Boolean(unlocked && !played));
     feedback.classList.toggle('draw-has-result', played && !opening);
     dateInput.disabled = Boolean(pending);
     reset.disabled = Boolean(pending);
@@ -442,12 +445,12 @@
       message = '正在拆開你的聖誕禮物…';
     } else if (played) {
       message = prize ? '抽中優惠券！' : '今天未抽中優惠券。';
-    } else if (day) {
+    } else if (unlocked) {
       message = '今日禮物已解鎖。點一下禮物盒，看看裡面藏了什麼！';
     } else if (!validDate(activeDate)) {
       message = '每日拆禮物於 12/01 至 12/25 開放。';
     } else {
-      message = '今天製作卡片並下載或分享圖片後，即可拆開今日禮物。';
+      message = '製作卡片並下載或分享一次，活動期間每天都能拆 1 盒禮物。';
     }
     if (status.textContent !== message) status.textContent = message;
 
@@ -488,11 +491,13 @@
     }).catch(showError);
   }
 
-  function record({ date, choice, index }) {
+  function record({ date, key, choice, index }) {
+    if (date !== activeDate || key !== drawKey || !validDate(date)) return null;
     const draw = readDraw();
-    const day = draw.days[date];
+    const savedDay = draw.days[date];
+    if (savedDay?.result || (!savedDay && !cardCompleted)) return null;
+    const day = savedDay ?? (draw.days[date] = {});
     const pool = availablePrizes(draw.days, date);
-    if (!day || day.result) return null;
 
     // Preserve saved positions when extending an unopened draw.
     day.winningBoxes = chooseWinningBoxes(day.winningBoxes ?? day.winningBox ?? day.winningGift);
@@ -511,7 +516,7 @@
     if (pending || gifts[index].disabled) return;
     actionError = '';
     const touch = pointerType === 'touch' || (!pointerType && matchMedia('(hover: none)').matches);
-    const attempt = { date: activeDate, choice: isProduction ? 'random' : mode.value, index, touch };
+    const attempt = { date: activeDate, key: drawKey, choice: isProduction ? 'random' : mode.value, index, touch };
     pending = attempt;
     const restoreFocus = document.activeElement === gifts[index];
     let recorded = null;
@@ -522,11 +527,11 @@
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const duration = giftOpeningDuration + (touch ? touchPreviewDuration : 0);
           await new Promise(resolve => setTimeout(resolve, duration));
-          if (recorded.prize && activeDate === attempt.date && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          if (recorded.prize && activeDate === attempt.date && drawKey === attempt.key && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
             stage.classList.add('draw-flying');
             effects?.celebrate(index);
             await new Promise(resolve => setTimeout(resolve, giftFlightDuration));
-          } else if (!recorded.prize && activeDate === attempt.date) {
+          } else if (!recorded.prize && activeDate === attempt.date && drawKey === attempt.key) {
             effects?.showConsolation(index);
             await new Promise(resolve => setTimeout(resolve, 950));
           }
@@ -538,7 +543,7 @@
       stage.classList.remove('draw-flying');
       pending = null;
       render();
-      const result = recorded && activeDate === attempt.date && readDraw().days[attempt.date]?.result;
+      const result = recorded && activeDate === attempt.date && drawKey === attempt.key && readDraw().days[attempt.date]?.result;
       if (result) {
         if (result.prize) stage.classList.add('draw-celebrate');
         byId('draw-result-open').focus({ preventScroll: true });
@@ -601,10 +606,16 @@
       renderPassport();
     }
   });
-  function syncDate(date) {
+  function syncDate(date, { cardCompleted: completed = cardCompleted, preview = drawKey !== formalDrawKey } = {}) {
     activityDate = date;
     const nextDate = simulatedDate || activityDate;
-    if (activeDate === nextDate) return;
+    const nextKey = isProduction && preview ? formalDrawKey + '-preview' : formalDrawKey;
+    if (activeDate === nextDate && cardCompleted === completed && drawKey === nextKey) return;
+    cardCompleted = completed;
+    if (drawKey !== nextKey) {
+      drawKey = nextKey;
+      layoutDate = undefined;
+    }
     activeDate = nextDate;
     dateInput.value = validDate(activeDate) ? activeDate : '';
     render();

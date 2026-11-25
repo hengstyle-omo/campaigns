@@ -1,4 +1,6 @@
 /* CORE START */
+const STARTER_PLACEMENT={201:true,202:true,203:true,204:true,205:true};
+const STARTER_IDS=Object.keys(STARTER_PLACEMENT).map(Number);
 const Core = {
   dateFormatter:new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}),
   taipeiDate(date = new Date()) {
@@ -28,7 +30,7 @@ const Core = {
     const valid=new RegExp('^'+year+'-12-(?:0[1-9]|1[0-9]|2[0-5])$');
     return Object.keys(visits||{}).filter(date=>valid.test(date)&&visits[date]===true&&date<=throughDate).sort();
   },
-  freshState(){return {claimed:{},placement:{201:true,202:true,203:true},layouts:{},visits:{}};},
+  freshState(){return {claimed:{},placement:{...STARTER_PLACEMENT},layouts:{},visits:{}};},
   normaliseState(raw){
     const state=this.freshState();if(!raw||typeof raw!=='object')return state;
     for(let d=1;d<=25;d++){
@@ -36,7 +38,7 @@ const Core = {
       state.placement[d]=raw.placement?.[d]===true;
       const l=raw.layouts?.[d];if(l&&Number.isFinite(l.x)&&Number.isFinite(l.y)&&Number.isFinite(l.scale))state.layouts[d]={x:l.x,y:l.y,scale:Math.max(.65,Math.min(1.35,l.scale)),rotation:Number.isFinite(l.rotation)?Math.max(-180,Math.min(180,l.rotation)):0};
     }
-    for(const d of [101,102,103,104,105,106,107,108,109,110,201,202,203]){
+    for(const d of [101,102,103,104,105,106,107,108,109,110,...STARTER_IDS]){
       if(Object.hasOwn(raw.placement||{},d))state.placement[d]=raw.placement[d]===true;
       const l=raw.layouts?.[d];if(l&&[l.x,l.y,l.scale].every(Number.isFinite))state.layouts[d]={x:l.x,y:l.y,scale:Math.max(.65,Math.min(1.35,l.scale)),rotation:Number.isFinite(l.rotation)?Math.max(-180,Math.min(180,l.rotation)):0};
     }
@@ -44,7 +46,7 @@ const Core = {
     return state;
   },
   accountState(raw){
-    const state=this.normaliseState(raw);state.layouts={};state.placement={201:true,202:true,203:true};
+    const state=this.normaliseState(raw);state.layouts={};state.placement={...STARTER_PLACEMENT};
     for(const d of Object.keys(state.claimed))state.placement[d]=false;
     return state;
   },
@@ -72,7 +74,7 @@ const safeRead=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))
 const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
 // Ordinary participants use an unverified Email. Admin accounts require a server-verified code and an in-memory, expiring session.
 const BONUS_IDS=[101,102,103,104,105,106,107,108,109,110],bonusCatalog=BASE_CONFIG.bonusItems||[];
-const STARTER_IDS=[201,202,203],starterCatalog=BASE_CONFIG.starterItems||[];
+const starterCatalog=BASE_CONFIG.starterItems||[];
 const CLOUD_CONFIG=window.DYSON_CLOUD_CONFIG;
 const cloudEmail=v=>String(v||'').trim().toLowerCase();
 const isCloudEmail=v=>v.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -85,8 +87,8 @@ const cloud={endpoint:CLOUD_CONFIG.endpoint||safeRead(STORAGE_PREFIX+'cloud-endp
 const timing={started:performance.now(),sceneReadyMs:null,progressReadMs:null,lastSaveMs:null};
 const cloudEnabled=()=>location.protocol==='https:'&&/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(cloud.endpoint);
 const canPreview=()=>cloud.ready&&cloud.isAdmin&&cloud.canPreview&&!!cloud.adminToken&&Date.now()+cloud.offset<cloud.adminSessionExpiresAt;
-let sessionScene={placement:{201:true,202:true,203:true},layouts:{}},previewScene={placement:{201:true,202:true,203:true},layouts:{}};
-function resetSessionScene(){sessionScene={placement:{201:true,202:true,203:true},layouts:{}};}
+let sessionScene={placement:{...STARTER_PLACEMENT},layouts:{}},previewScene={placement:{...STARTER_PLACEMENT},layouts:{}};
+function resetSessionScene(){sessionScene={placement:{...STARTER_PLACEMENT},layouts:{}};}
 function rememberSessionScene(){sessionScene={placement:{...live.placement},layouts:JSON.parse(JSON.stringify(live.layouts))};}
 const cloudCacheKey=email=>STORAGE_PREFIX+'cloud-state:'+cloud.endpoint+':'+email;
 function cloudDiff(current,previous){const changes={};for(const raw of [...Object.keys(current.claimed),...BONUS_IDS,...STARTER_IDS]){const d=Number(raw),patch={};if(BONUS_IDS.includes(d)&&!cloud.bonusIds.includes(d))continue;if((current.placement[d]===true)!==(previous.placement[d]===true))patch.placement=current.placement[d]===true;const a=current.layouts[d]||null,b=previous.layouts[d]||null;if(JSON.stringify(a)!==JSON.stringify(b))patch.layout=a;if(Object.keys(patch).length)changes[d]=patch;}return changes;}
@@ -275,8 +277,6 @@ async function saveCheckInAccount(){
 }
 function markCardTask(format,method){
  const task=cardTaskNormalise({completed:true,format,method,at:new Date().toISOString()});if(!task)return;
- window.DysonTestDraw.syncDate(dateISO());
- window.DysonTestDraw.complete(cardMediaOutputs.get(format)?.drawDate);
  if(!previewDate&&!deviceCouponTask){
    deviceCouponTask=task;
    safeWrite(couponTaskKey,task);
@@ -691,7 +691,7 @@ let onboardingTarget=null;
 const onboardingMessages={
   1:'點開 12/01「第一場雪」，看看你的第一份聖誕收藏。',
   2:'按「放入水晶球」，讓第一場雪飄進球裡。',
-  5:'下載或分享卡片，天天抽 Dyson $1,000 優惠券！'
+  5:'下載或分享卡片一次，天天抽 Dyson $1,000 優惠券！'
 };
 function setOnboardingStep(step){
   onboardingStep=step;
@@ -1155,8 +1155,19 @@ mobileViewport.addEventListener('change',event=>{
   restoreMobileGlobe();
 });
 
+window.addEventListener('storage',event=>{
+  if(event.key!==couponTaskKey&&event.key!==null)return;
+  deviceCouponTask=cardTaskNormalise(safeRead(couponTaskKey,null))||cardTaskNormalise(safeRead(STORAGE_PREFIX+'guest-card-task',null));
+  syncDailyDraw();
+});
+function syncDailyDraw(){
+  window.DysonTestDraw.syncDate(dateISO(), {
+    cardCompleted: Boolean(previewDate ? previewCardTask : deviceCouponTask),
+    preview: Boolean(previewDate),
+  });
+}
 function renderBenefits(){
-  window.DysonTestDraw.syncDate(dateISO());
+  syncDailyDraw();
   // Decorative visitors use existing artwork without granting exclusive collections.
   window.DysonTestDraw.setAmbientAnimals(bonusCatalog.filter(animal=>![102,110].includes(Number(animal.day))).map(animal=>({
     day:animal.day, image:ASSETS.bonusSprites?.[animal.day], name:animal.name,
@@ -1262,7 +1273,7 @@ function trackPassportComplete(){
   }
 }
 function renderVouchers(){
-  window.DysonTestDraw.syncDate(dateISO());
+  syncDailyDraw();
 }
 let activityEntryPoint='activity_rewards';
 function openActivityDialog(id,{entryPoint='activity_rewards'}={}){
@@ -2102,7 +2113,7 @@ function downloadChristmasCard(){
   $('card-dialog').append(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),10000);
   markCardTask(cardFormat(),'download');updateCardButtons();trackActivity('card_download',{card_format:cardFormat()});
-  $('card-status').textContent='卡片已準備下載。完成當天卡片任務後，可按「前往拆禮物」參加抽獎。';return true;
+  $('card-status').textContent='卡片已準備下載。活動期間每天可回來拆 1 盒禮物。';return true;
 }
 function cardShareCopy(){
   return {
@@ -2596,8 +2607,6 @@ async function generateCardMedia(){
   if(cardExportBusy||cardCapturing||cardSaving||cardRecordingBusy()||!validateCard().valid||!cardMotionBase)return false;
   const format=cardFormat();
   if(currentCardBlob()){renderCardMediaResult();updateCardButtons();$('card-status').textContent=cardReadyMessage();return true;}
-  window.DysonTestDraw.syncDate(dateISO());
-  const drawDate=window.DysonTestDraw.date();
   const token=++cardExportToken;
   trackActivity('card_generate_start',{card_format:format});
   cardExportBusy=true;syncGlobeAnimation();cardFailedFormat=null;clearCardMediaPreview();updateCardButtons();
@@ -2624,7 +2633,7 @@ async function generateCardMedia(){
       chosen=options;
     }
     checkCardJob(token);
-    cardMediaOutputs.set(format,{blob,...chosen,drawDate,duration:format==='png'?0:5});
+    cardMediaOutputs.set(format,{blob,...chosen,duration:format==='png'?0:5});
     if(format==='png'){cardBlob=blob;if(typeof File==='function')cardFile=new File([blob],'dyson-christmas-card.png',{type:'image/png'});}
     trackActivity('card_generate',{card_format:format,status:'success',has_voice:!!cardVoiceBuffer,has_bgm:$('card-bgm').checked});$('card-status').textContent=cardReadyMessage()+(blob.size>CARD_LIMITS[format]?' 此場景檔案較大，已優先保留文字清晰度。':'');return true;
   }catch(e){
